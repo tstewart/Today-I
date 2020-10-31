@@ -12,14 +12,18 @@
         android:id="@+id/textViewCurrentDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView"
-        android:textAlignment="center" />
+        android:gravity="center_horizontal"
+        android:paddingBottom="16dp"
+        android:text="@string/current_date"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
     <fragment
         android:id="@+id/listFragment"
         android:name="io.github.tstewart.todayi.fragments.AccomplishmentListFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1" />
 
     <FrameLayout
@@ -33,18 +37,18 @@
             android:layout_height="wrap_content">
 
             <Button
+                android:id="@+id/buttonPrevDay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/prev_day" />
+
+            <Button
                 android:id="@+id/buttonNextDay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Button" />
-
-            <Button
-                android:id="@+id/buttonPreviousDay"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Button" />
+                android:text="@string/next_day" />
         </LinearLayout>
     </FrameLayout>
 

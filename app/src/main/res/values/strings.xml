@@ -1,12 +1,15 @@
 <resources>
     <string name="app_name">Today I</string>
 
-    <string name="title_activity_splash_screen">SplashScreenActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="title_activity_options">OptionsActivity</string>
-    <string name="title_activity_calender_view">CalenderViewActivity</string>
+    <!-- Main Activity -->
+    <string name="current_date"></string>
+    <string name="new_accomplishment">New…</string>
+    <string name="next_day">Next</string>
+    <string name="prev_day">Previous</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Other -->
+    <string name="title_activity_calender_view">Calender</string>
+    <string name="title_activity_options">Options</string>
+    <string name="title_activity_splash_screen">Splash</string>
+
 </resources>
