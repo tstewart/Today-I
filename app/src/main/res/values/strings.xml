@@ -7,9 +7,15 @@
     <string name="next_day">Next</string>
     <string name="prev_day">Previous</string>
 
+    <!-- Accomplishment dialog -->
+    <string name="new_accomplishment_dialog_title">Enter your new accomplishment:</string>
+
     <!-- Other -->
+    <string name="button_confirm">Confirm</string>
+    <string name="button_cancel">Cancel</string>
     <string name="title_activity_calender_view">Calender</string>
     <string name="title_activity_options">Options</string>
     <string name="title_activity_splash_screen">Splash</string>
+    <string name="new_accomplishment_invalid_text">Your accomplishment must be between 0 and 100 characters.</string>
 
 </resources>

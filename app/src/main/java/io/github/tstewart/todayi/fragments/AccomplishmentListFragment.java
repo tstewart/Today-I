@@ -1,27 +1,31 @@
 package io.github.tstewart.todayi.fragments;
 
-import android.content.Context;
+import android.app.AlertDialog;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListAdapter;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import androidx.fragment.app.ListFragment;
 import io.github.tstewart.todayi.R;
+import io.github.tstewart.todayi.dialog.AddAccomplishmentDialog;
+import io.github.tstewart.todayi.util.OnDialogResponseListener;
 
 public class AccomplishmentListFragment extends ListFragment {
 
     private OnFragmentInteractionListener mListener;
+
+    private AddAccomplishmentDialog addAccomplishmentDialog;
 
     private ArrayAdapter<String> listAdapter;
     private ArrayList<String> items = new ArrayList<>();
@@ -45,13 +49,29 @@ public class AccomplishmentListFragment extends ListFragment {
         setListAdapter(listAdapter);
 
         addNewAccomplishmentButton = new Button(getActivity());
-        addNewAccomplishmentButton.setText("New...");
+        addNewAccomplishmentButton.setText(getResources().getText(R.string.new_accomplishment));
         addNewAccomplishmentButton.setOnClickListener(this::onButtonPressed);
         getListView().addFooterView(addNewAccomplishmentButton);
     }
 
     private void onButtonPressed(View view) {
-        listAdapter.add("Test " + listAdapter.getCount());
+        showNewAccomplishmentDialog();
+    }
+
+    void showNewAccomplishmentDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.getContext());
+        builder.setTitle(this.getResources().getString(R.string.new_accomplishment_dialog_title));
+
+        final EditText input = new EditText(this.getContext());
+
+        builder.setView(input);
+        builder.setPositiveButton(R.string.button_confirm, ((dialog, which) -> {
+            listAdapter.add(input.getText().toString());
+        }));
+        builder.setNegativeButton(R.string.button_cancel, null);
+        builder.show();
+
+        input.requestFocus();
     }
 
     @Override
