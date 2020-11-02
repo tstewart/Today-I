@@ -9,23 +9,19 @@ import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import androidx.fragment.app.ListFragment;
 import io.github.tstewart.todayi.R;
-import io.github.tstewart.todayi.dialog.AddAccomplishmentDialog;
-import io.github.tstewart.todayi.util.OnDialogResponseListener;
 
 public class AccomplishmentListFragment extends ListFragment {
 
     private OnFragmentInteractionListener mListener;
-
-    private AddAccomplishmentDialog addAccomplishmentDialog;
 
     private ArrayAdapter<String> listAdapter;
     private ArrayList<String> items = new ArrayList<>();
@@ -55,23 +51,31 @@ public class AccomplishmentListFragment extends ListFragment {
     }
 
     private void onButtonPressed(View view) {
-        showNewAccomplishmentDialog();
+        AlertDialog dialog = getAccomplishmentDialog();
+
+        // Change the input mode, so the keyboard pops up when the dialog opens
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+
+        dialog.show();
     }
 
-    void showNewAccomplishmentDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this.getContext());
+    AlertDialog getAccomplishmentDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle(this.getResources().getString(R.string.new_accomplishment_dialog_title));
 
-        final EditText input = new EditText(this.getContext());
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        View view = inflater.inflate(R.layout.dialog_new_accomplishment, null);
+        builder.setView(view);
 
-        builder.setView(input);
         builder.setPositiveButton(R.string.button_confirm, ((dialog, which) -> {
+            //TODO null check
+            EditText input = view.findViewById(R.id.editTextNewAccomplishment);
             listAdapter.add(input.getText().toString());
         }));
         builder.setNegativeButton(R.string.button_cancel, null);
-        builder.show();
 
-        input.requestFocus();
+        return builder.create();
     }
 
     @Override
