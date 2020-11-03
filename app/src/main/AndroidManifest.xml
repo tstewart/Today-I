@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".CalenderViewActivity"
+            android:name=".CalendarViewActivity"
             android:label="@string/title_activity_calender_view"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">

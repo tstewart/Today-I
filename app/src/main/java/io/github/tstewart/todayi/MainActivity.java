@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
         switch(item.getItemId()) {
             case R.id.toolbar_calendar:
-                targetIntent = new Intent(this, CalenderViewActivity.class);
+                targetIntent = new Intent(this, CalendarViewActivity.class);
                 break;
             case R.id.toolbar_settings:
                 targetIntent = new Intent(this, OptionsActivity.class);
