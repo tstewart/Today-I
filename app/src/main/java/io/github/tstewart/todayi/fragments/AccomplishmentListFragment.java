@@ -21,8 +21,6 @@ import io.github.tstewart.todayi.R;
 
 public class AccomplishmentListFragment extends ListFragment {
 
-    private OnFragmentInteractionListener mListener;
-
     private ArrayAdapter<String> listAdapter;
     private ArrayList<String> items = new ArrayList<>();
 
@@ -81,7 +79,6 @@ public class AccomplishmentListFragment extends ListFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
     public interface OnFragmentInteractionListener {
