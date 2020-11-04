@@ -3,9 +3,13 @@ package io.github.tstewart.todayi;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import io.github.tstewart.todayi.sql.Database;
+
+import android.database.sqlite.SQLiteDatabase;
 
 import android.app.Activity;
 import android.content.Intent;
+
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,15 +22,22 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
+
+    SQLiteDatabase accomplishmentDb;
+
     private ListView accomplishmentList;
 
     // Used to ensure the response from the calendar's selection matches the requested number
     private final int PARENT_ACTIVITY_REQUEST_CODE = 1;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Database db = new Database(getApplicationContext());
+        accomplishmentDb = db.getWritableDatabase();
 
         //TODO replace with seperate date tracking
         //TODO replace setText with resource edit
