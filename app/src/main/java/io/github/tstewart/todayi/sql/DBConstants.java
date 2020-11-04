@@ -12,6 +12,9 @@ public class DBConstants {
     public static final String COLUMN_DATE = "date";
     public static final String COLUMN_CONTENT = "content";
 
+    public static final String RATING_TABLE = "dayratings";
+    public static final String COLUMN_RATING = "rating";
+
     public static final String DATE_FORMAT = "yyyy-MM-dd";
 
     public static final String ACCOMPLISHMENT_QUERY = "select * from " + ACCOMPLISHMENT_TABLE + " where date = ?";

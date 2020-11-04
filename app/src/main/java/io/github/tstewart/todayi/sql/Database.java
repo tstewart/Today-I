@@ -1,6 +1,5 @@
 package io.github.tstewart.todayi.sql;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
@@ -11,11 +10,18 @@ import androidx.annotation.Nullable;
 
 public class Database extends SQLiteOpenHelper {
 
-    private final String CREATE_TABLE = "create table if not exists " + DBConstants.ACCOMPLISHMENT_TABLE + " "
+    private final String CREATE_TABLE_ACCOMPLISHMENT = "create table if not exists " + DBConstants.ACCOMPLISHMENT_TABLE + " "
             + "("
             + DBConstants.COLUMN_ID + " integer primary key autoincrement, "
             + DBConstants.COLUMN_DATE + " string not null, "
             + DBConstants.COLUMN_CONTENT + " text not null"
+            + ")";
+
+    private final String CREATE_TABLE_RATINGS = "create table if not exists " + DBConstants.RATING_TABLE + " "
+            + "("
+            + DBConstants.COLUMN_ID + " integer primary key autoincrement, "
+            + DBConstants.COLUMN_DATE + " string not null, "
+            + DBConstants.COLUMN_RATING + " int not null"
             + ")";
 
     public Database(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
@@ -37,7 +43,8 @@ public class Database extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(CREATE_TABLE);
+        db.execSQL(CREATE_TABLE_ACCOMPLISHMENT);
+        db.execSQL(CREATE_TABLE_RATINGS);
     }
 
     @Override
