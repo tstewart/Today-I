@@ -1,14 +1,17 @@
 package io.github.tstewart.todayi;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -16,6 +19,9 @@ import java.util.Date;
 public class MainActivity extends AppCompatActivity {
 
     private ListView accomplishmentList;
+
+    // Used to ensure the response from the calendar's selection matches the requested number
+    private final int PARENT_ACTIVITY_REQUEST_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         //TODO replace with seperate date tracking
         //TODO replace setText with resource edit
         TextView date = findViewById(R.id.textViewCurrentDate);
-        date.setText(getDateFormatted("MMMM d Y"));
+        date.setText(getDateFormatted("MMMM d Y", new Date()));
     }
 
     @Override
@@ -50,15 +56,39 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
 
-        if(targetIntent != null) startActivity(targetIntent);
+        // Await response from calendar option selected
+        if(targetIntent != null) startActivityForResult(targetIntent, 1);
 
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
+        long dateResult = -1;
+
+        if (requestCode == PARENT_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK && data != null) {
+                dateResult = data.getLongExtra("result", -1);
+            }
+        }
+
+        if(dateResult>=0) {
+
+            Date date = new Date();
+            date.setTime(dateResult);
+
+            //TODO change current date based on calendar click
+            Toast.makeText(this, getDateFormatted("MMMM d y", date), Toast.LENGTH_SHORT).show();
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
     // TODO: Move to seperate file, date will be tracked elsewhere
-    public String getDateFormatted(String format) {
+    public String getDateFormatted(String format, Date date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(format);
-        return dateFormat.format(new Date());
+        return dateFormat.format(date);
     }
 
 }

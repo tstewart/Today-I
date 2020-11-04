@@ -1,11 +1,15 @@
 package io.github.tstewart.todayi;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.widget.CalendarView;
 import android.widget.Toast;
+
+import java.util.GregorianCalendar;
 
 public class CalendarViewActivity extends AppCompatActivity {
 
@@ -21,7 +25,12 @@ public class CalendarViewActivity extends AppCompatActivity {
     }
 
     private void onCalendarClick(CalendarView calendarView, int year, int month, int day) {
-        Toast.makeText(this, "TODO", Toast.LENGTH_SHORT).show();
+        GregorianCalendar gregorianCalendar = new GregorianCalendar(year, month, day);
+
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("result",gregorianCalendar.getTimeInMillis());
+        setResult(Activity.RESULT_OK,returnIntent);
+        finish();
     }
 
 }
