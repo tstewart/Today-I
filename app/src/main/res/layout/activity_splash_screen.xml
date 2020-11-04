@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/splashScreenLayout"
     android:layout_width="match_parent"
@@ -19,6 +20,13 @@
         android:textColor="#33b5e5"
         android:textSize="50sp"
         android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/imageViewLogo"
+        android:layout_width="241dp"
+        android:layout_height="262dp"
+        android:layout_gravity="center"
+        app:srcCompat="@mipmap/ic_launcher" />
 
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->
