@@ -15,7 +15,7 @@ import io.github.tstewart.todayi.object.Accomplishment;
 public class AccomplishmentQuery implements Query {
 
     @Override
-    public List<Accomplishment> getTableResponses(SQLiteDatabase db, String query, Object[] args) {
+    public ArrayList<Accomplishment> getTableResponses(SQLiteDatabase db, String query, Object[] args) {
 
         ArrayList<Accomplishment> accomplishments = new ArrayList<>();
 
