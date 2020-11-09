@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -32,11 +33,8 @@ import static android.content.DialogInterface.BUTTON_POSITIVE;
 public class AccomplishmentListFragment extends ListFragment {
 
     private ArrayAdapter<String> listAdapter;
-    private ArrayList<String> items = new ArrayList<>();
 
     private Button addNewAccomplishmentButton;
-
-    public AccomplishmentListFragment() { }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -49,38 +47,13 @@ public class AccomplishmentListFragment extends ListFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        listAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, items);
+        listAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, new ArrayList<>());
         setListAdapter(listAdapter);
-
-        // TODO ACCEPT DATE INPUT
-        ArrayList<String> accomplishments = getAccomplishmentsForDate(new Date());
-
-        if(accomplishments != null && accomplishments.size() > 0) listAdapter.addAll(accomplishments);
 
         addNewAccomplishmentButton = new Button(getActivity());
         addNewAccomplishmentButton.setText(getResources().getText(R.string.new_accomplishment));
         addNewAccomplishmentButton.setOnClickListener(this::onButtonPressed);
         getListView().addFooterView(addNewAccomplishmentButton);
-    }
-
-    private ArrayList<String> getAccomplishmentsForDate(Date date) {
-        // TODO CHANGE LIST ADAPTER TO SUPPORT ACCOMPLISHMENTS
-
-        SQLiteDatabase db = new Database(getContext()).getReadableDatabase();
-
-        if(db != null) {
-
-            ArrayList<Accomplishment> accomplishments = new DatabaseAccomplishmentLoader().getAccomplishmentsFromDatabase(db, date);
-
-            ArrayList<String> accomplishmentContent = new ArrayList<>();
-
-            for (Accomplishment accomplishment : accomplishments) {
-                accomplishmentContent.add(accomplishment.getContent());
-            }
-
-            return accomplishmentContent;
-        }
-        return null;
     }
 
     private void onButtonPressed(View view) {
@@ -127,12 +100,17 @@ public class AccomplishmentListFragment extends ListFragment {
         db.insert(DBConstants.ACCOMPLISHMENT_TABLE, null, cv);
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
+    public void setAccomplishments(ArrayList<Accomplishment> accomplishments) {
+        //TODO ADD ACCOMPLISHMENT ARRAY ADAPTER
+        ArrayList<String> values = new ArrayList<>();
 
-    public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
+        if(accomplishments != null && accomplishments.size() > 0) {
+            for(Accomplishment accomplishment : accomplishments) {
+                values.add(accomplishment.getContent());
+            }
+        }
+
+        this.listAdapter.clear();
+        this.listAdapter.addAll(values);
     }
 }
