@@ -35,6 +35,7 @@ public class AccomplishmentListFragment extends ListFragment {
     private ArrayAdapter<String> listAdapter;
 
     private Button addNewAccomplishmentButton;
+    private Date selectedDate = new Date();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -95,7 +96,7 @@ public class AccomplishmentListFragment extends ListFragment {
         //TODO MOVE
         // Add to database
         SQLiteDatabase db = new Database(getContext()).getWritableDatabase();
-        ContentValues cv = DBConstants.getContentValues(content, new Date());
+        ContentValues cv = DBConstants.getContentValues(content, selectedDate);
 
         db.insert(DBConstants.ACCOMPLISHMENT_TABLE, null, cv);
     }
@@ -112,5 +113,9 @@ public class AccomplishmentListFragment extends ListFragment {
 
         this.listAdapter.clear();
         this.listAdapter.addAll(values);
+    }
+
+    public void setCurrentDate(Date selectedDate) {
+        this.selectedDate = selectedDate;
     }
 }

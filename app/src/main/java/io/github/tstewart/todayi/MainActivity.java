@@ -134,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
 
             if(accomplishments != null) {
                 listFragment.setAccomplishments(accomplishments);
+                listFragment.setCurrentDate(selectedDate);
             }
         }
 
