@@ -14,11 +14,7 @@ import io.github.tstewart.todayi.object.Accomplishment;
 
 public class AccomplishmentQuery implements Query {
 
-    @Override
-    public ArrayList<Accomplishment> getTableResponses(SQLiteDatabase db, String query, Object[] args) {
-
-        ArrayList<Accomplishment> accomplishments = new ArrayList<>();
-
+    public Cursor getCursor(SQLiteDatabase db, String query, Object[] args) {
         String date = "";
         SimpleDateFormat dateFormat = new SimpleDateFormat(DBConstants.DATE_FORMAT);
 
@@ -34,7 +30,17 @@ public class AccomplishmentQuery implements Query {
             }
         }
 
-        Cursor cursor = db.rawQuery(query, new String[]{date});
+        return db.rawQuery(query, new String[]{date});
+    }
+
+    @Override
+    public ArrayList<Accomplishment> getTableResponses(SQLiteDatabase db, String query, Object[] args) {
+
+        ArrayList<Accomplishment> accomplishments = new ArrayList<>();
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DBConstants.DATE_FORMAT);
+
+        Cursor cursor = getCursor(db, query, args);
+
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 do {

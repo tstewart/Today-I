@@ -3,6 +3,7 @@ package io.github.tstewart.todayi.fragments;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,24 +16,29 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CursorAdapter;
 import android.widget.EditText;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
 import androidx.fragment.app.ListFragment;
 import io.github.tstewart.todayi.DatabaseAccomplishmentLoader;
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.object.Accomplishment;
+import io.github.tstewart.todayi.sql.AccomplishmentQuery;
 import io.github.tstewart.todayi.sql.DBConstants;
 import io.github.tstewart.todayi.sql.Database;
+import io.github.tstewart.todayi.ui.AccomplishmentCursorAdapter;
 
 import static android.content.DialogInterface.BUTTON_POSITIVE;
 
 public class AccomplishmentListFragment extends ListFragment {
 
-    private ArrayAdapter<String> listAdapter;
+    private AccomplishmentCursorAdapter adapter;
+    private Cursor cursor;
 
     private Button addNewAccomplishmentButton;
     private Date selectedDate = new Date();
@@ -48,8 +54,8 @@ public class AccomplishmentListFragment extends ListFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        listAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, new ArrayList<>());
-        setListAdapter(listAdapter);
+        adapter = new AccomplishmentCursorAdapter(getActivity(), cursor, android.R.layout.simple_list_item_1);
+        setListAdapter(adapter);
 
         addNewAccomplishmentButton = new Button(getActivity());
         addNewAccomplishmentButton.setText(getResources().getText(R.string.new_accomplishment));
@@ -90,29 +96,20 @@ public class AccomplishmentListFragment extends ListFragment {
     }
 
     private void addAccomplishmentToDb(String content) {
-        // Add to list adapter
-        listAdapter.add(content);
-
-        //TODO MOVE
-        // Add to database
         SQLiteDatabase db = new Database(getContext()).getWritableDatabase();
         ContentValues cv = DBConstants.getContentValues(content, selectedDate);
 
         db.insert(DBConstants.ACCOMPLISHMENT_TABLE, null, cv);
+
+        Cursor newCursor = new AccomplishmentQuery().getCursor(db, DBConstants.ACCOMPLISHMENT_QUERY, new Object[]{selectedDate});
+        setCursor(newCursor);
     }
 
-    public void setAccomplishments(ArrayList<Accomplishment> accomplishments) {
-        //TODO ADD ACCOMPLISHMENT ARRAY ADAPTER
-        ArrayList<String> values = new ArrayList<>();
+    public void setCursor(Cursor cursor) {
+        Cursor currentCursor = adapter.getCursor();
+        if(currentCursor != null) currentCursor.close();
 
-        if(accomplishments != null && accomplishments.size() > 0) {
-            for(Accomplishment accomplishment : accomplishments) {
-                values.add(accomplishment.getContent());
-            }
-        }
-
-        this.listAdapter.clear();
-        this.listAdapter.addAll(values);
+        adapter.swapCursor(cursor);
     }
 
     public void setCurrentDate(Date selectedDate) {
