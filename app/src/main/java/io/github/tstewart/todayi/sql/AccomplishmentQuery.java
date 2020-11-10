@@ -38,11 +38,12 @@ public class AccomplishmentQuery implements Query {
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 do {
+                    int idResponse = cursor.getInt(cursor.getColumnIndex(DBConstants.COLUMN_ID));
                     String dateResponse = cursor.getString(cursor.getColumnIndex(DBConstants.COLUMN_DATE));
                     String contentResponse = cursor.getString(cursor.getColumnIndex(DBConstants.COLUMN_CONTENT));
 
                     try {
-                        accomplishments.add(new Accomplishment(dateFormat.parse(dateResponse), contentResponse));
+                        accomplishments.add(new Accomplishment(idResponse, dateFormat.parse(dateResponse), contentResponse));
                     } catch (ParseException e) {
                         //TODO deal with parse exception
                         Log.e("SQL", e.toString());
