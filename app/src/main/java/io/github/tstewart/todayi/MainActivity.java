@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import io.github.tstewart.todayi.fragments.AccomplishmentListFragment;
+import io.github.tstewart.todayi.ui.fragment.AccomplishmentListFragment;
 import io.github.tstewart.todayi.sql.Database;
 
 import android.app.Activity;

@@ -1,4 +1,4 @@
-package io.github.tstewart.todayi.dialog;
+package io.github.tstewart.todayi.ui.dialog;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 
 import io.github.tstewart.todayi.R;
 

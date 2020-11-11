@@ -1,4 +1,4 @@
-package io.github.tstewart.todayi.fragments;
+package io.github.tstewart.todayi.ui.fragment;
 
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -8,11 +8,9 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,7 +20,7 @@ import java.util.Date;
 import androidx.fragment.app.ListFragment;
 import io.github.tstewart.todayi.AccomplishmentCursorLoader;
 import io.github.tstewart.todayi.R;
-import io.github.tstewart.todayi.dialog.AccomplishmentDialog;
+import io.github.tstewart.todayi.ui.dialog.AccomplishmentDialog;
 import io.github.tstewart.todayi.sql.DBConstants;
 import io.github.tstewart.todayi.sql.Database;
 import io.github.tstewart.todayi.ui.AccomplishmentCursorAdapter;
