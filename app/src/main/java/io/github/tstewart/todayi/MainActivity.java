@@ -4,8 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import io.github.tstewart.todayi.fragments.AccomplishmentListFragment;
-import io.github.tstewart.todayi.object.Accomplishment;
+import io.github.tstewart.todayi.ui.fragment.AccomplishmentListFragment;
 import io.github.tstewart.todayi.sql.Database;
 
 import android.app.Activity;
@@ -13,7 +12,6 @@ import android.content.Intent;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,10 +20,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -129,13 +123,8 @@ public class MainActivity extends AppCompatActivity {
     void updateCurrentDayAccomplishments() {
         if(selectedDate == null) selectedDate = new Date();
 
-        if(listFragment != null) {
-            ArrayList<Accomplishment> accomplishments = new DatabaseAccomplishmentLoader().getAccomplishmentsFromDatabase(sqLiteDatabase, selectedDate);
-
-            if(accomplishments != null) {
-                listFragment.setAccomplishments(accomplishments);
-                listFragment.setCurrentDate(selectedDate);
-            }
+        if(listFragment != null && sqLiteDatabase != null) {
+            listFragment.updateDateAndFetch(selectedDate);
         }
 
         TextView dateLabel = findViewById(R.id.textViewCurrentDate);
@@ -147,8 +136,6 @@ public class MainActivity extends AppCompatActivity {
 
         if(viewId == R.id.buttonNextDay || viewId == R.id.buttonPrevDay) {
 
-            Log.i("here", "HERE");
-
             Calendar calendar = getInstance();
             calendar.setTime(selectedDate);
 
@@ -159,8 +146,6 @@ public class MainActivity extends AppCompatActivity {
             }
 
             selectedDate = calendar.getTime();
-
-            Log.i("here", selectedDate.toString());
 
             updateCurrentDayAccomplishments();
         }
