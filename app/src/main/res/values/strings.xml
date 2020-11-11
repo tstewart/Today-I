@@ -4,8 +4,9 @@
     <!-- Main Activity -->
     <string name="current_date"></string>
     <string name="new_accomplishment">New…</string>
-    <string name="next_day">Next</string>
-    <string name="prev_day">Previous</string>
+    <string name="button_next_day">Next</string>
+    <string name="button_today">Today</string>
+    <string name="button_prev_day">Previous</string>
 
     <!-- Accomplishment dialog -->
     <string name="new_accomplishment_dialog_title">Enter your new accomplishment:</string>

@@ -44,9 +44,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Button prevButton = findViewById(R.id.buttonPrevDay);
+        Button todayButton = findViewById(R.id.buttonToday);
         Button nextButton = findViewById(R.id.buttonNextDay);
 
         prevButton.setOnClickListener(this::onDayChangeButtonClicked);
+        todayButton.setOnClickListener(this::onDayChangeButtonClicked);
         nextButton.setOnClickListener(this::onDayChangeButtonClicked);
     }
 
@@ -134,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
     void onDayChangeButtonClicked(View view) {
         int viewId = view.getId();
 
-        if(viewId == R.id.buttonNextDay || viewId == R.id.buttonPrevDay) {
+        if (viewId == R.id.buttonNextDay || viewId == R.id.buttonPrevDay) {
 
             Calendar calendar = getInstance();
             calendar.setTime(selectedDate);
@@ -147,8 +149,9 @@ public class MainActivity extends AppCompatActivity {
 
             selectedDate = calendar.getTime();
 
-            updateCurrentDayAccomplishments();
         }
+        else if(viewId == R.id.buttonToday) selectedDate = new Date();
+        updateCurrentDayAccomplishments();
     }
 
     // TODO: Move to seperate file, date will be tracked elsewhere

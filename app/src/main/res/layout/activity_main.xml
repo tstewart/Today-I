@@ -41,14 +41,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/prev_day" />
+                android:text="@string/button_prev_day" />
+
+            <Button
+                android:id="@+id/buttonToday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/button_today" />
 
             <Button
                 android:id="@+id/buttonNextDay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/next_day" />
+                android:text="@string/button_next_day" />
         </LinearLayout>
     </FrameLayout>
 
