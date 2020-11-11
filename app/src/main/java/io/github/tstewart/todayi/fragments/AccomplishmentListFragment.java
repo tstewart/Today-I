@@ -2,13 +2,13 @@ package io.github.tstewart.todayi.fragments;
 
 import android.app.AlertDialog;
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +16,6 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import java.util.Date;
 
@@ -57,24 +56,36 @@ public class AccomplishmentListFragment extends ListFragment {
     }
 
     private void onListItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        SQLiteDatabase db = new Database(getContext()).getReadableDatabase();
-        Cursor cursor = db.rawQuery("select * from " + DBConstants.ACCOMPLISHMENT_TABLE
-                + " where " + DBConstants.COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
+        Object selectedItem = adapter.getItem(position);
 
-        if(cursor.moveToFirst()) {
+        if(selectedItem instanceof Cursor) {
+            Cursor cursor = (Cursor) selectedItem;
             String content = cursor.getString(cursor.getColumnIndex(DBConstants.COLUMN_CONTENT));
-            Toast.makeText(this.getContext(), content, Toast.LENGTH_SHORT).show();
-        }
 
-        db.close();
+            AccomplishmentDialog dialog = new AccomplishmentDialog(this.getContext(), AccomplishmentDialog.DialogType.EDIT);
+
+            dialog.setPositiveClickListener((dialogInterface, which) -> {
+                SQLiteDatabase db = new Database(getContext()).getWritableDatabase();
+                ContentValues vars = new ContentValues();
+
+                EditText input = dialog.getView().findViewById(R.id.editTextAccomplishmentManage);
+                String newContent = input.getText().toString();
+
+                vars.put(DBConstants.COLUMN_CONTENT, newContent);
+                db.update(DBConstants.ACCOMPLISHMENT_TABLE, vars, DBConstants.COLUMN_ID + "=?", new String[]{String.valueOf(id)});
+
+                setCursor(getNewCursor());
+            });
+            dialog.setNegativeButton(null);
+
+            dialog.setText(content);
+
+            dialog.create().show();
+        }
     }
 
     private void onButtonPressed(View view) {
         AlertDialog dialog = getAccomplishmentDialog();
-
-        // Change the input mode, so the keyboard pops up when the dialog opens
-        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-
         dialog.show();
     }
 
@@ -83,7 +94,7 @@ public class AccomplishmentListFragment extends ListFragment {
         AccomplishmentDialog dialog = new AccomplishmentDialog(this.getContext(), AccomplishmentDialog.DialogType.NEW);
 
         dialog.setPositiveClickListener((dialogInterface, which) -> {
-            EditText input = dialog.getView().findViewById(R.id.editTextNewAccomplishment);
+            EditText input = dialog.getView().findViewById(R.id.editTextAccomplishmentManage);
             String content = input.getText().toString();
 
             addAccomplishmentToDb(content);
