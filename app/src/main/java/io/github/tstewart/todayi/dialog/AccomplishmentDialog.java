@@ -2,9 +2,9 @@ package io.github.tstewart.todayi.dialog;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 
 import io.github.tstewart.todayi.R;
 
@@ -17,7 +17,7 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
         super(context);
 
         LayoutInflater inflater = LayoutInflater.from(getContext());
-        View view = inflater.inflate(R.layout.dialog_new_accomplishment, null);
+        View view = inflater.inflate(R.layout.dialog_accomplishment_manage, null);
         this.setView(view);
 
         if(dialogType == DialogType.NEW) {
@@ -26,6 +26,11 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
         else if(dialogType == DialogType.EDIT) {
             this.setTitle(R.string.edit_accomplishment_dialog_title);
         }
+    }
+
+    public void setText(String content) {
+        EditText editText =  this.getView().findViewById(R.id.editTextAccomplishmentManage);
+
     }
 
     public void setPositiveClickListener(AlertDialog.OnClickListener listener) {
