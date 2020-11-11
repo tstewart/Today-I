@@ -13,14 +13,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.Date;
 
 import androidx.fragment.app.ListFragment;
 import io.github.tstewart.todayi.AccomplishmentCursorLoader;
 import io.github.tstewart.todayi.R;
+import io.github.tstewart.todayi.dialog.AccomplishmentDialog;
 import io.github.tstewart.todayi.sql.DBConstants;
 import io.github.tstewart.todayi.sql.Database;
 import io.github.tstewart.todayi.ui.AccomplishmentCursorAdapter;
@@ -45,11 +48,25 @@ public class AccomplishmentListFragment extends ListFragment {
 
         adapter = new AccomplishmentCursorAdapter(getActivity(), cursor);
         setListAdapter(adapter);
+        getListView().setOnItemClickListener(this::onListItemClick);
 
         Button addNewAccomplishmentButton = new Button(getActivity());
         addNewAccomplishmentButton.setText(getResources().getText(R.string.new_accomplishment));
         addNewAccomplishmentButton.setOnClickListener(this::onButtonPressed);
         getListView().addFooterView(addNewAccomplishmentButton);
+    }
+
+    private void onListItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        SQLiteDatabase db = new Database(getContext()).getReadableDatabase();
+        Cursor cursor = db.rawQuery("select * from " + DBConstants.ACCOMPLISHMENT_TABLE
+                + " where " + DBConstants.COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
+
+        if(cursor.moveToFirst()) {
+            String content = cursor.getString(cursor.getColumnIndex(DBConstants.COLUMN_CONTENT));
+            Toast.makeText(this.getContext(), content, Toast.LENGTH_SHORT).show();
+        }
+
+        db.close();
     }
 
     private void onButtonPressed(View view) {
@@ -61,27 +78,20 @@ public class AccomplishmentListFragment extends ListFragment {
         dialog.show();
     }
 
-    AlertDialog getAccomplishmentDialog() {
+    private AlertDialog getAccomplishmentDialog() {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle(this.getResources().getString(R.string.new_accomplishment_dialog_title));
+        AccomplishmentDialog dialog = new AccomplishmentDialog(this.getContext(), AccomplishmentDialog.DialogType.NEW);
 
-        LayoutInflater inflater = LayoutInflater.from(getContext());
-        View view = inflater.inflate(R.layout.dialog_new_accomplishment, null);
-        builder.setView(view);
+        dialog.setPositiveClickListener((dialogInterface, which) -> {
+            EditText input = dialog.getView().findViewById(R.id.editTextNewAccomplishment);
+            String content = input.getText().toString();
 
-        builder.setPositiveButton(R.string.button_confirm, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                EditText input = view.findViewById(R.id.editTextNewAccomplishment);
-                String content = input.getText().toString();
-
-                addAccomplishmentToDb(content);
-            }
+            addAccomplishmentToDb(content);
         });
-        builder.setNegativeButton(R.string.button_cancel, null);
 
-        return builder.create();
+        dialog.setNegativeButton(null);
+
+        return dialog.create();
     }
 
     private void addAccomplishmentToDb(String content) {
