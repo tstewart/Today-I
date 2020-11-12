@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
         switch(item.getItemId()) {
             case R.id.toolbar_calendar:
                 targetIntent = new Intent(this, CalendarViewActivity.class);
+                targetIntent.putExtra("selectedDate", selectedDate.getTime());
                 break;
             case R.id.toolbar_settings:
                 targetIntent = new Intent(this, OptionsActivity.class);
