@@ -33,6 +33,13 @@
         android:id="@+id/buttonExportData"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/export_data_button" />
+        android:text="@string/button_export_data" />
+
+    <Button
+        android:id="@+id/buttonEraseAll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#EB7777"
+        android:text="@string/button_erase_all_data" />
 
 </LinearLayout>

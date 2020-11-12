@@ -29,7 +29,8 @@ import static java.util.Calendar.getInstance;
 public class MainActivity extends AppCompatActivity {
 
     // Used to ensure the response from the calendar's selection matches the requested number
-    private final int PARENT_ACTIVITY_REQUEST_CODE = 1;
+    private final int CALENDAR_ACTIVITY_REQUEST_CODE = 1;
+    private final int OPTIONS_ACTIVITY_REQUEST_CODE = 2;
 
     Date selectedDate;
 
@@ -81,20 +82,23 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         Intent targetIntent = null;
+        int requestCode = 0;
 
         switch(item.getItemId()) {
             case R.id.toolbar_calendar:
                 targetIntent = new Intent(this, CalendarViewActivity.class);
+                requestCode = CALENDAR_ACTIVITY_REQUEST_CODE;
                 break;
             case R.id.toolbar_settings:
                 targetIntent = new Intent(this, OptionsActivity.class);
+                requestCode = OPTIONS_ACTIVITY_REQUEST_CODE;
                 break;
             default:
                 break;
         }
 
         // Await response from calendar option selected
-        if(targetIntent != null) startActivityForResult(targetIntent, 1);
+        if(targetIntent != null) startActivityForResult(targetIntent, requestCode);
 
         return super.onOptionsItemSelected(item);
     }
@@ -104,20 +108,30 @@ public class MainActivity extends AppCompatActivity {
 
         long dateResult = -1;
 
-        if (requestCode == PARENT_ACTIVITY_REQUEST_CODE) {
+        if (requestCode == CALENDAR_ACTIVITY_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK && data != null) {
                 dateResult = data.getLongExtra("result", -1);
+
+                if(dateResult>=0) {
+
+                    Date date = new Date();
+                    date.setTime(dateResult);
+
+                    //TODO change current date based on calendar click
+                    Toast.makeText(this, getDateFormatted("MMMM d y", date), Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+        else if (requestCode == OPTIONS_ACTIVITY_REQUEST_CODE) {
+            // On receive OK response, settings activity forces reset of accomplishments
+            if (resultCode == Activity.RESULT_OK) {
+                if(this.listFragment != null) {
+                    listFragment.updateDateAndFetch(selectedDate);
+                }
             }
         }
 
-        if(dateResult>=0) {
 
-            Date date = new Date();
-            date.setTime(dateResult);
-
-            //TODO change current date based on calendar click
-            Toast.makeText(this, getDateFormatted("MMMM d y", date), Toast.LENGTH_SHORT).show();
-        }
 
         super.onActivityResult(requestCode, resultCode, data);
     }
