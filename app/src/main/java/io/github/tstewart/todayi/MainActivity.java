@@ -102,22 +102,24 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 
-        long dateResult = -1;
-
         if (requestCode == PARENT_ACTIVITY_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK && data != null) {
+                long dateResult = -1;
+
                 dateResult = data.getLongExtra("result", -1);
+
+                if(dateResult>=0) {
+
+                    Date date = new Date();
+                    date.setTime(dateResult);
+
+                    selectedDate = date;
+                    updateCurrentDayAccomplishments();
+                }
+
             }
         }
 
-        if(dateResult>=0) {
-
-            Date date = new Date();
-            date.setTime(dateResult);
-
-            //TODO change current date based on calendar click
-            Toast.makeText(this, getDateFormatted("MMMM d y", date), Toast.LENGTH_SHORT).show();
-        }
 
         super.onActivityResult(requestCode, resultCode, data);
     }
