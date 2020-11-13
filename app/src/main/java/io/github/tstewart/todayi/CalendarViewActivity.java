@@ -6,19 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import io.github.tstewart.todayi.sql.DBConstants;
-import io.github.tstewart.todayi.sql.Database;
-
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CalendarView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
@@ -27,8 +17,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Locale;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import io.github.tstewart.todayi.sql.DBConstants;
+import io.github.tstewart.todayi.sql.Database;
 
 import static java.util.Calendar.getInstance;
 
@@ -45,9 +40,9 @@ public class CalendarViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_calendar_view);
 
         Bundle extras = getIntent().getExtras();
-        if(extras != null) {
+        if (extras != null) {
             long time = extras.getLong("selectedDate");
-            if(time>0) {
+            if (time > 0) {
                 selectedDate.setTime(time);
             }
         }
@@ -57,7 +52,7 @@ public class CalendarViewActivity extends AppCompatActivity {
 
         datePicker = findViewById(R.id.calendarView);
 
-        if(datePicker != null) {
+        if (datePicker != null) {
             datePicker.shouldDrawIndicatorsBelowSelectedDays(true);
             datePicker.setCurrentDate(selectedDate);
 
@@ -79,10 +74,10 @@ public class CalendarViewActivity extends AppCompatActivity {
         Button prevMonthButton = findViewById(R.id.buttonPrevMonth);
         Button nextMonthButton = findViewById(R.id.buttonNextMonth);
 
-        if(prevMonthButton != null) {
+        if (prevMonthButton != null) {
             prevMonthButton.setOnClickListener(this::onChangeMonthButtonClick);
         }
-        if(nextMonthButton != null) {
+        if (nextMonthButton != null) {
             nextMonthButton.setOnClickListener(this::onChangeMonthButtonClick);
         }
     }
@@ -98,21 +93,21 @@ public class CalendarViewActivity extends AppCompatActivity {
 
         Cursor cursor = sqlDb.rawQuery(DBConstants.ACCOMPLISHMENT_DATE_GROUP_QUERY, null);
 
-        if(cursor.moveToFirst()) {
+        if (cursor.moveToFirst()) {
             do {
                 String dateString = cursor.getString(cursor.getColumnIndex(DBConstants.COLUMN_DATE));
 
-                if(dateString != null) {
+                if (dateString != null) {
                     try {
                         Date date = new SimpleDateFormat(DBConstants.DATE_FORMAT, Locale.getDefault()).parse(dateString);
-                        if(datePicker != null && date != null) {
+                        if (datePicker != null && date != null) {
                             datePicker.addEvent(new Event(Color.BLACK, date.getTime()));
                         }
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
                 }
-            } while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
 
         cursor.close();
@@ -123,18 +118,17 @@ public class CalendarViewActivity extends AppCompatActivity {
         Calendar calendar = getInstance();
         calendar.setTime(selectedDate);
 
-        if(view.getId() == R.id.buttonPrevMonth) {
+        if (view.getId() == R.id.buttonPrevMonth) {
             calendar.add(Calendar.MONTH, -1);
-        }
-        else if(view.getId() == R.id.buttonNextMonth) {
+        } else if (view.getId() == R.id.buttonNextMonth) {
             calendar.add(Calendar.MONTH, 1);
         }
 
         selectedDate = calendar.getTime();
 
-        if(datePicker != null) {
+        if (datePicker != null) {
             datePicker.setCurrentDate(selectedDate);
-            if(calendarEventListener != null) {
+            if (calendarEventListener != null) {
                 calendarEventListener.onMonthScroll(datePicker.getFirstDayOfCurrentMonth());
             }
         }
@@ -143,8 +137,8 @@ public class CalendarViewActivity extends AppCompatActivity {
     private void onCalendarClick(Date date) {
 
         Intent returnIntent = new Intent();
-        returnIntent.putExtra("result",date.getTime());
-        setResult(Activity.RESULT_OK,returnIntent);
+        returnIntent.putExtra("result", date.getTime());
+        setResult(Activity.RESULT_OK, returnIntent);
         finish();
     }
 

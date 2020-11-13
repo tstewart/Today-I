@@ -5,10 +5,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,18 +15,18 @@ import android.widget.Toast;
 
 import java.util.Date;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.ListFragment;
 import io.github.tstewart.todayi.AccomplishmentCursorLoader;
 import io.github.tstewart.todayi.R;
-import io.github.tstewart.todayi.ui.dialog.AccomplishmentDialog;
 import io.github.tstewart.todayi.sql.DBConstants;
 import io.github.tstewart.todayi.sql.Database;
 import io.github.tstewart.todayi.ui.AccomplishmentCursorAdapter;
+import io.github.tstewart.todayi.ui.dialog.AccomplishmentDialog;
 
 public class AccomplishmentListFragment extends ListFragment {
 
     private AccomplishmentCursorAdapter adapter;
-    private Cursor cursor;
 
     private Date selectedDate = new Date();
 
@@ -45,7 +41,7 @@ public class AccomplishmentListFragment extends ListFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        adapter = new AccomplishmentCursorAdapter(getActivity(), cursor);
+        adapter = new AccomplishmentCursorAdapter(getActivity(), null);
         setListAdapter(adapter);
         getListView().setOnItemClickListener(this::onListItemClick);
 
@@ -58,7 +54,7 @@ public class AccomplishmentListFragment extends ListFragment {
     private void onListItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         Object selectedItem = adapter.getItem(position);
 
-        if(selectedItem instanceof Cursor) {
+        if (selectedItem instanceof Cursor) {
             Cursor cursor = (Cursor) selectedItem;
             SQLiteDatabase db = new Database(getContext()).getWritableDatabase();
 
@@ -70,15 +66,14 @@ public class AccomplishmentListFragment extends ListFragment {
                 EditText input = dialog.getView().findViewById(R.id.editTextAccomplishmentManage);
                 String newContent = input.getText().toString();
 
-                if(content.length()>=1 && content.length()<=200) {
+                if (content.length() >= 1 && content.length() <= 200) {
                     ContentValues vars = new ContentValues();
 
                     vars.put(DBConstants.COLUMN_CONTENT, newContent);
                     db.update(DBConstants.ACCOMPLISHMENT_TABLE, vars, DBConstants.COLUMN_ID + "=?", new String[]{String.valueOf(id)});
 
                     refreshCursor();
-                }
-                else {
+                } else {
                     Toast.makeText(this.getContext(), R.string.new_accomplishment_invalid_text, Toast.LENGTH_SHORT).show();
                 }
             });
@@ -107,10 +102,9 @@ public class AccomplishmentListFragment extends ListFragment {
             EditText input = dialog.getView().findViewById(R.id.editTextAccomplishmentManage);
             String content = input.getText().toString();
 
-            if(content.length()>=1 && content.length()<=200) {
+            if (content.length() >= 1 && content.length() <= 200) {
                 addAccomplishmentToDb(content);
-            }
-            else {
+            } else {
                 Toast.makeText(this.getContext(), R.string.new_accomplishment_invalid_text, Toast.LENGTH_SHORT).show();
             }
         });
@@ -132,22 +126,22 @@ public class AccomplishmentListFragment extends ListFragment {
         refreshCursor();
     }
 
-    public void setCurrentDate(Date selectedDate) {
+    private void setCurrentDate(Date selectedDate) {
         this.selectedDate = selectedDate;
     }
 
-    public void refreshCursor() {
+    private void refreshCursor() {
         setCursor(getNewCursor());
     }
 
-    public Cursor getNewCursor() {
+    private Cursor getNewCursor() {
         SQLiteDatabase db = new Database(getContext()).getWritableDatabase();
         return AccomplishmentCursorLoader.getCursor(db, DBConstants.ACCOMPLISHMENT_QUERY, selectedDate);
     }
 
-    public void setCursor(Cursor cursor) {
+    private void setCursor(Cursor cursor) {
         Cursor currentCursor = adapter.getCursor();
-        if(currentCursor != null) currentCursor.close();
+        if (currentCursor != null) currentCursor.close();
 
         adapter.swapCursor(cursor);
     }

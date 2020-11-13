@@ -4,7 +4,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -16,7 +15,7 @@ public class AccomplishmentCursorLoader {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DBConstants.DATE_FORMAT, Locale.getDefault());
         String dateQuery = "";
 
-        if(date != null) {
+        if (date != null) {
             dateQuery = dateFormat.format(date);
         }
 

@@ -13,13 +13,13 @@ import io.github.tstewart.todayi.R;
 
 public class AccomplishmentDialog extends AlertDialog.Builder {
 
-    View view;
+    private View view;
 
-    AlertDialog instance;
+    private AlertDialog instance;
 
-    Button buttonDelete;
-    Button buttonCancel;
-    Button buttonConfirm;
+    private Button buttonDelete;
+    private Button buttonCancel;
+    private Button buttonConfirm;
 
     public AccomplishmentDialog(Context context, DialogType dialogType) {
         super(context);
@@ -29,20 +29,20 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
         this.setView(view);
 
         buttonDelete = view.findViewById(R.id.buttonDelete);
+        // Cancel button disabled at the moment
         //buttonCancel = view.findViewById(R.id.buttonCancel);
         buttonConfirm = view.findViewById(R.id.buttonConfirm);
 
-        if(dialogType == DialogType.NEW) {
+        if (dialogType == DialogType.NEW) {
             this.setTitle(R.string.new_accomplishment_dialog_title);
 
-            if(buttonDelete != null) {
+            if (buttonDelete != null) {
                 buttonDelete.setVisibility(View.GONE);
             }
-        }
-        else if(dialogType == DialogType.EDIT) {
+        } else if (dialogType == DialogType.EDIT) {
             this.setTitle(R.string.edit_accomplishment_dialog_title);
 
-            if(buttonDelete != null) {
+            if (buttonDelete != null) {
                 buttonDelete.setVisibility(View.VISIBLE);
             }
         }
@@ -56,46 +56,46 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
         this.instance = dialog;
 
         Window window = dialog.getWindow();
-        if(window != null) {
-         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        if (window != null) {
+            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         }
 
         return dialog;
     }
 
     public void setText(String content) {
-        EditText editText =  this.getView().findViewById(R.id.editTextAccomplishmentManage);
+        EditText editText = this.getView().findViewById(R.id.editTextAccomplishmentManage);
 
-        if(editText != null) {
-           editText.setText(content);
-           // Set cursor position to the end of the string
-           editText.setSelection(content.length());
+        if (editText != null) {
+            editText.setText(content);
+            // Set cursor position to the end of the string
+            editText.setSelection(content.length());
         }
     }
 
     public void setConfirmClickListener(View.OnClickListener listener) {
-        if(buttonConfirm != null) {
+        if (buttonConfirm != null) {
             buttonConfirm.setOnClickListener(v -> {
                 listener.onClick(v);
-                if(this.instance != null) instance.dismiss();
+                if (this.instance != null) instance.dismiss();
             });
         }
     }
 
     public void setCancelButtonListener(View.OnClickListener listener) {
-        if(buttonCancel != null) {
+        if (buttonCancel != null) {
             buttonCancel.setOnClickListener(v -> {
                 listener.onClick(v);
-                if(this.instance != null) instance.dismiss();
+                if (this.instance != null) instance.dismiss();
             });
         }
     }
 
     public void setDeleteButtonListener(View.OnClickListener listener) {
-        if(buttonDelete != null) {
+        if (buttonDelete != null) {
             buttonDelete.setOnClickListener(v -> {
                 listener.onClick(v);
-                if(this.instance != null) instance.dismiss();
+                if (this.instance != null) instance.dismiss();
             });
         }
     }

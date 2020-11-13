@@ -26,7 +26,8 @@ public class DBConstants {
     public static final String ACCOMPLISHMENT_QUERY = "select * from " + ACCOMPLISHMENT_TABLE + " where date = ?";
     public static final String ACCOMPLISHMENT_DATE_GROUP_QUERY = "select " + COLUMN_DATE + "  from " + ACCOMPLISHMENT_TABLE + " group by " + COLUMN_DATE;
 
-    private DBConstants(){}
+    private DBConstants() {
+    }
 
     public static ContentValues getContentValues(@NonNull String content, @NonNull Date date) {
         ContentValues cv = new ContentValues();

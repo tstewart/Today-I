@@ -1,15 +1,7 @@
 package io.github.tstewart.todayi;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import io.github.tstewart.todayi.ui.fragment.AccomplishmentListFragment;
-import io.github.tstewart.todayi.sql.Database;
-
 import android.app.Activity;
 import android.content.Intent;
-
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.Menu;
@@ -17,13 +9,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import io.github.tstewart.todayi.sql.Database;
+import io.github.tstewart.todayi.ui.fragment.AccomplishmentListFragment;
 
 import static java.util.Calendar.getInstance;
 
@@ -59,8 +57,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Set Accomplishment Fragment Date
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
-        for(Fragment fragment : fragments) {
-            if(fragment instanceof AccomplishmentListFragment) {
+        for (Fragment fragment : fragments) {
+            if (fragment instanceof AccomplishmentListFragment) {
                 this.listFragment = (AccomplishmentListFragment) fragment;
                 break;
             }
@@ -83,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
         Intent targetIntent = null;
 
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.toolbar_calendar:
                 targetIntent = new Intent(this, CalendarViewActivity.class);
                 targetIntent.putExtra("selectedDate", selectedDate.getTime());
@@ -96,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Await response from calendar option selected
-        if(targetIntent != null) startActivityForResult(targetIntent, 1);
+        if (targetIntent != null) startActivityForResult(targetIntent, 1);
 
         return super.onOptionsItemSelected(item);
     }
@@ -106,11 +104,11 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == PARENT_ACTIVITY_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK && data != null) {
-                long dateResult = -1;
+                long dateResult;
 
                 dateResult = data.getLongExtra("result", -1);
 
-                if(dateResult>=0) {
+                if (dateResult >= 0) {
 
                     Date date = new Date();
                     date.setTime(dateResult);
@@ -127,9 +125,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void updateCurrentDayAccomplishments() {
-        if(selectedDate == null) selectedDate = new Date();
+        if (selectedDate == null) selectedDate = new Date();
 
-        if(listFragment != null && sqLiteDatabase != null) {
+        if (listFragment != null && sqLiteDatabase != null) {
             listFragment.updateDateAndFetch(selectedDate);
         }
 
@@ -153,8 +151,7 @@ public class MainActivity extends AppCompatActivity {
 
             selectedDate = calendar.getTime();
 
-        }
-        else if(viewId == R.id.buttonToday) selectedDate = new Date();
+        } else if (viewId == R.id.buttonToday) selectedDate = new Date();
         updateCurrentDayAccomplishments();
     }
 

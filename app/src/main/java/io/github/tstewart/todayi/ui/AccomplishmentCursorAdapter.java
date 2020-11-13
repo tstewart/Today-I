@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
@@ -16,10 +15,6 @@ public class AccomplishmentCursorAdapter extends CursorAdapter {
 
     public AccomplishmentCursorAdapter(Context context, Cursor c) {
         super(context, c, 0);
-    }
-
-    public AccomplishmentCursorAdapter(Context context, Cursor c, int flags) {
-        super(context, c, flags);
     }
 
     @Override
