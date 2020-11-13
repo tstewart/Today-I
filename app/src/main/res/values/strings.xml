@@ -18,6 +18,10 @@
 
     <string name="export_data_button">Export data to device</string>
 
+    <!-- Calendar Activity -->
+    <string name="button_next_month">Next</string>
+    <string name="button_prev_month">Previous</string>
+
     <!-- Other -->
     <string name="button_confirm">Confirm</string>
     <string name="button_cancel">Cancel</string>

@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import static java.util.Calendar.getInstance;
 
@@ -85,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
         switch(item.getItemId()) {
             case R.id.toolbar_calendar:
                 targetIntent = new Intent(this, CalendarViewActivity.class);
+                targetIntent.putExtra("selectedDate", selectedDate.getTime());
                 break;
             case R.id.toolbar_settings:
                 targetIntent = new Intent(this, OptionsActivity.class);
@@ -102,22 +104,24 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 
-        long dateResult = -1;
-
         if (requestCode == PARENT_ACTIVITY_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK && data != null) {
+                long dateResult = -1;
+
                 dateResult = data.getLongExtra("result", -1);
+
+                if(dateResult>=0) {
+
+                    Date date = new Date();
+                    date.setTime(dateResult);
+
+                    selectedDate = date;
+                    updateCurrentDayAccomplishments();
+                }
+
             }
         }
 
-        if(dateResult>=0) {
-
-            Date date = new Date();
-            date.setTime(dateResult);
-
-            //TODO change current date based on calendar click
-            Toast.makeText(this, getDateFormatted("MMMM d y", date), Toast.LENGTH_SHORT).show();
-        }
 
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -130,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         TextView dateLabel = findViewById(R.id.textViewCurrentDate);
-        dateLabel.setText(getDateFormatted("MMMM d Y", selectedDate));
+        dateLabel.setText(getDateFormatted("MMMM d yyyy", selectedDate));
     }
 
     void onDayChangeButtonClicked(View view) {
@@ -156,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
 
     // TODO: Move to seperate file, date will be tracked elsewhere
     public String getDateFormatted(String format, Date date) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.getDefault());
         return dateFormat.format(date);
     }
 
