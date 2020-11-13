@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import static java.util.Calendar.getInstance;
 
@@ -133,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         TextView dateLabel = findViewById(R.id.textViewCurrentDate);
-        dateLabel.setText(getDateFormatted("MMMM d Y", selectedDate));
+        dateLabel.setText(getDateFormatted("MMMM d yyyy", selectedDate));
     }
 
     void onDayChangeButtonClicked(View view) {
@@ -159,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
 
     // TODO: Move to seperate file, date will be tracked elsewhere
     public String getDateFormatted(String format, Date date) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.getDefault());
         return dateFormat.format(date);
     }
 
