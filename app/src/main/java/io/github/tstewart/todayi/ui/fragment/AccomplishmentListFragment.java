@@ -8,12 +8,14 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.Date;
 
@@ -58,23 +60,33 @@ public class AccomplishmentListFragment extends ListFragment {
 
         if(selectedItem instanceof Cursor) {
             Cursor cursor = (Cursor) selectedItem;
+            SQLiteDatabase db = new Database(getContext()).getWritableDatabase();
+
             String content = cursor.getString(cursor.getColumnIndex(DBConstants.COLUMN_CONTENT));
 
             AccomplishmentDialog dialog = new AccomplishmentDialog(this.getContext(), AccomplishmentDialog.DialogType.EDIT);
 
-            dialog.setPositiveClickListener((dialogInterface, which) -> {
-                SQLiteDatabase db = new Database(getContext()).getWritableDatabase();
-                ContentValues vars = new ContentValues();
-
+            dialog.setConfirmClickListener((dialogView) -> {
                 EditText input = dialog.getView().findViewById(R.id.editTextAccomplishmentManage);
                 String newContent = input.getText().toString();
 
-                vars.put(DBConstants.COLUMN_CONTENT, newContent);
-                db.update(DBConstants.ACCOMPLISHMENT_TABLE, vars, DBConstants.COLUMN_ID + "=?", new String[]{String.valueOf(id)});
+                if(content.length()>=1 && content.length()<=200) {
+                    ContentValues vars = new ContentValues();
 
-                setCursor(getNewCursor());
+                    vars.put(DBConstants.COLUMN_CONTENT, newContent);
+                    db.update(DBConstants.ACCOMPLISHMENT_TABLE, vars, DBConstants.COLUMN_ID + "=?", new String[]{String.valueOf(id)});
+
+                    refreshCursor();
+                }
+                else {
+                    Toast.makeText(this.getContext(), R.string.new_accomplishment_invalid_text, Toast.LENGTH_SHORT).show();
+                }
             });
-            dialog.setNegativeButton(null);
+
+            dialog.setDeleteButtonListener((dialogView) -> {
+                db.delete(DBConstants.ACCOMPLISHMENT_TABLE, DBConstants.COLUMN_ID + "=?", new String[]{String.valueOf(id)});
+                refreshCursor();
+            });
 
             dialog.setText(content);
 
@@ -91,14 +103,17 @@ public class AccomplishmentListFragment extends ListFragment {
 
         AccomplishmentDialog dialog = new AccomplishmentDialog(this.getContext(), AccomplishmentDialog.DialogType.NEW);
 
-        dialog.setPositiveClickListener((dialogInterface, which) -> {
+        dialog.setConfirmClickListener((dialogView) -> {
             EditText input = dialog.getView().findViewById(R.id.editTextAccomplishmentManage);
             String content = input.getText().toString();
 
-            addAccomplishmentToDb(content);
+            if(content.length()>=1 && content.length()<=200) {
+                addAccomplishmentToDb(content);
+            }
+            else {
+                Toast.makeText(this.getContext(), R.string.new_accomplishment_invalid_text, Toast.LENGTH_SHORT).show();
+            }
         });
-
-        dialog.setNegativeButton(null);
 
         return dialog.create();
     }
@@ -109,16 +124,20 @@ public class AccomplishmentListFragment extends ListFragment {
 
         db.insert(DBConstants.ACCOMPLISHMENT_TABLE, null, cv);
 
-        setCursor(getNewCursor());
+        refreshCursor();
     }
 
     public void updateDateAndFetch(Date selectedDate) {
         setCurrentDate(selectedDate);
-        setCursor(getNewCursor());
+        refreshCursor();
     }
 
     public void setCurrentDate(Date selectedDate) {
         this.selectedDate = selectedDate;
+    }
+
+    public void refreshCursor() {
+        setCursor(getNewCursor());
     }
 
     public Cursor getNewCursor() {
