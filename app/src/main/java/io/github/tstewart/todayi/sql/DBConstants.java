@@ -24,6 +24,7 @@ public class DBConstants {
     public static final String DATE_FORMAT = "yyyy-MM-dd";
 
     public static final String ACCOMPLISHMENT_QUERY = "select * from " + ACCOMPLISHMENT_TABLE + " where date = ?";
+    public static final String ACCOMPLISHMENT_DATE_GROUP_QUERY = "select " + COLUMN_DATE + "  from " + ACCOMPLISHMENT_TABLE + " group by " + COLUMN_DATE;
 
     private DBConstants(){}
 

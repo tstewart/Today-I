@@ -2,10 +2,16 @@ package io.github.tstewart.todayi;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import io.github.tstewart.todayi.sql.DBConstants;
+import io.github.tstewart.todayi.sql.Database;
 
 import android.util.Log;
 import android.view.View;
@@ -15,7 +21,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
+import com.github.sundeepk.compactcalendarview.domain.Event;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -50,6 +58,7 @@ public class CalendarViewActivity extends AppCompatActivity {
         datePicker = findViewById(R.id.calendarView);
 
         if(datePicker != null) {
+            datePicker.shouldDrawIndicatorsBelowSelectedDays(true);
             datePicker.setCurrentDate(selectedDate);
 
             calendarEventListener = new CompactCalendarView.CompactCalendarViewListener() {
@@ -76,6 +85,37 @@ public class CalendarViewActivity extends AppCompatActivity {
         if(nextMonthButton != null) {
             nextMonthButton.setOnClickListener(this::onChangeMonthButtonClick);
         }
+    }
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+
+        //TODO move to separate class
+
+        Database db = new Database(this);
+        SQLiteDatabase sqlDb = db.getReadableDatabase();
+
+        Cursor cursor = sqlDb.rawQuery(DBConstants.ACCOMPLISHMENT_DATE_GROUP_QUERY, null);
+
+        if(cursor.moveToFirst()) {
+            do {
+                String dateString = cursor.getString(cursor.getColumnIndex(DBConstants.COLUMN_DATE));
+
+                if(dateString != null) {
+                    try {
+                        Date date = new SimpleDateFormat(DBConstants.DATE_FORMAT, Locale.getDefault()).parse(dateString);
+                        if(datePicker != null && date != null) {
+                            datePicker.addEvent(new Event(Color.BLACK, date.getTime()));
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } while(cursor.moveToNext());
+        }
+
+        cursor.close();
     }
 
     private void onChangeMonthButtonClick(View view) {
