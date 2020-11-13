@@ -27,16 +27,16 @@ public class SplashScreenActivity extends AppCompatActivity {
         mainLayout.setOnClickListener(v -> {
             // Ends splash screen on click
             splashWaitHandler.removeCallbacksAndMessages(null);
-            changeActivityToMain();
+            endSplashToMainActivity();
         });
 
-        splashWaitHandler.postDelayed(this::changeActivityToMain, SPLASH_DISPLAY_LENGTH_MILLIS);
+        splashWaitHandler.postDelayed(this::endSplashToMainActivity, SPLASH_DISPLAY_LENGTH_MILLIS);
     }
 
-    // TODO rename this terrible function name
-    void changeActivityToMain() {
+    void endSplashToMainActivity() {
         Intent mainIntent = new Intent(this, MainActivity.class);
         startActivity(mainIntent);
+        overridePendingTransition(0, R.anim.fade_out);
         finish();
     }
 }
