@@ -21,7 +21,7 @@ public class Database extends SQLiteOpenHelper {
             + "("
             + DBConstants.COLUMN_ID + " integer primary key autoincrement, "
             + DBConstants.COLUMN_DATE + " string not null, "
-            + DBConstants.COLUMN_RATING + " int not null"
+            + DBConstants.COLUMN_RATING + " int not null check(" + DBConstants.COLUMN_RATING + ">=1 and "+ DBConstants.COLUMN_RATING + " <=5)"
             + ")";
 
     public Database(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
