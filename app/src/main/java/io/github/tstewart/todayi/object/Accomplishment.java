@@ -9,28 +9,25 @@ import java.util.Locale;
 import androidx.annotation.NonNull;
 import io.github.tstewart.todayi.sql.DBConstants;
 
-// Track opinion of the day from 1-5
-// E.g. on a bad day you may vote the day a 1.
-public class DayRating extends DatabaseObject {
+public class Accomplishment extends DatabaseObject {
 
-    private final int MIN_RATING = 1;
-    private final int MAX_RATING = 5;
+    private final int MAX_CONTENT_LENGTH = 100;
 
-    private Date date;
-    private int dayRating;
+    Date date;
+    String content;
 
-    public DayRating(@NonNull Date date, int dayRating) {
+    public Accomplishment(@NonNull Date date, @NonNull String content) {
         this.date = date;
-        this.dayRating = dayRating;
+        this.content = content;
     }
 
     @Override
     public void validate() throws IllegalArgumentException {
-        if(dayRating < MIN_RATING) {
-            throw new IllegalArgumentException("Rating cannot be lower than " + MIN_RATING + ".");
+        if(content.isEmpty()) {
+            throw new IllegalArgumentException("Accomplishment must not be empty.");
         }
-        else if(dayRating > MAX_RATING) {
-            throw new IllegalArgumentException("Rating cannot be higher than " + MAX_RATING + ".");
+        else if(content.length() > MAX_CONTENT_LENGTH) {
+            throw new IllegalArgumentException("Accomplishment can not be longer than " + MAX_CONTENT_LENGTH + " characters.");
         }
     }
 
@@ -43,7 +40,7 @@ public class DayRating extends DatabaseObject {
             contentValues.put(DBConstants.COLUMN_DATE, simpleDateFormat.format(date));
         }
 
-        contentValues.put(DBConstants.COLUMN_RATING, dayRating);
+        contentValues.put(DBConstants.COLUMN_CONTENT, content);
 
         return contentValues;
     }
