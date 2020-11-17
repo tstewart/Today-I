@@ -9,6 +9,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.appcompat.widget.AlertDialogLayout;
 import io.github.tstewart.todayi.R;
 
 public class AccomplishmentDialog extends AlertDialog.Builder {
@@ -21,7 +22,7 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
     private Button buttonCancel;
     private Button buttonConfirm;
 
-    public AccomplishmentDialog(Context context, DialogType dialogType) {
+    public AccomplishmentDialog(Context context) {
         super(context);
 
         LayoutInflater inflater = LayoutInflater.from(getContext());
@@ -32,20 +33,6 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
         // Cancel button disabled at the moment
         //buttonCancel = view.findViewById(R.id.buttonCancel);
         buttonConfirm = view.findViewById(R.id.buttonConfirm);
-
-        if (dialogType == DialogType.NEW) {
-            this.setTitle(R.string.new_accomplishment_dialog_title);
-
-            if (buttonDelete != null) {
-                buttonDelete.setVisibility(View.GONE);
-            }
-        } else if (dialogType == DialogType.EDIT) {
-            this.setTitle(R.string.edit_accomplishment_dialog_title);
-
-            if (buttonDelete != null) {
-                buttonDelete.setVisibility(View.VISIBLE);
-            }
-        }
     }
 
     @Override
@@ -63,7 +50,24 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
         return dialog;
     }
 
-    public void setText(String content) {
+    public AccomplishmentDialog setDialogType(DialogType dialogType) {
+        if (dialogType == DialogType.NEW) {
+            this.setTitle(R.string.new_accomplishment_dialog_title);
+
+            if (buttonDelete != null) {
+                buttonDelete.setVisibility(View.GONE);
+            }
+        } else if (dialogType == DialogType.EDIT) {
+            this.setTitle(R.string.edit_accomplishment_dialog_title);
+
+            if (buttonDelete != null) {
+                buttonDelete.setVisibility(View.VISIBLE);
+            }
+        }
+        return this;
+    }
+
+    public AccomplishmentDialog setText(String content) {
         EditText editText = this.getView().findViewById(R.id.editTextAccomplishmentManage);
 
         if (editText != null) {
@@ -71,33 +75,37 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
             // Set cursor position to the end of the string
             editText.setSelection(content.length());
         }
+        return this;
     }
 
-    public void setConfirmClickListener(View.OnClickListener listener) {
+    public AccomplishmentDialog setConfirmClickListener(View.OnClickListener listener) {
         if (buttonConfirm != null) {
             buttonConfirm.setOnClickListener(v -> {
                 listener.onClick(v);
                 if (this.instance != null) instance.dismiss();
             });
         }
+        return this;
     }
 
-    public void setCancelButtonListener(View.OnClickListener listener) {
+    public AccomplishmentDialog setCancelButtonListener(View.OnClickListener listener) {
         if (buttonCancel != null) {
             buttonCancel.setOnClickListener(v -> {
                 listener.onClick(v);
                 if (this.instance != null) instance.dismiss();
             });
         }
+        return this;
     }
 
-    public void setDeleteButtonListener(View.OnClickListener listener) {
+    public AccomplishmentDialog setDeleteButtonListener(View.OnClickListener listener) {
         if (buttonDelete != null) {
             buttonDelete.setOnClickListener(v -> {
                 listener.onClick(v);
                 if (this.instance != null) instance.dismiss();
             });
         }
+        return this;
     }
 
     public View getView() {
