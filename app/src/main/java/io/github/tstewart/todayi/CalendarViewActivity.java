@@ -15,8 +15,10 @@ import com.github.sundeepk.compactcalendarview.domain.Event;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import androidx.annotation.NonNull;
@@ -86,10 +88,16 @@ public class CalendarViewActivity extends AppCompatActivity {
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        //TODO move to separate class
+        if(datePicker != null) datePicker.addEvents(getPostedDateEvents());
+    }
+
+    // Return a list of events matching dates that accomplishments have been posted on
+    private List<Event> getPostedDateEvents() {
 
         Database db = new Database(this);
         SQLiteDatabase sqlDb = db.getReadableDatabase();
+
+        List<Event> events = new ArrayList<>();
 
         Cursor cursor = sqlDb.rawQuery(DBConstants.ACCOMPLISHMENT_DATE_GROUP_QUERY, null);
 
@@ -100,9 +108,11 @@ public class CalendarViewActivity extends AppCompatActivity {
                 if (dateString != null) {
                     try {
                         Date date = new SimpleDateFormat(DBConstants.DATE_FORMAT, Locale.getDefault()).parse(dateString);
-                        if (datePicker != null && date != null) {
-                            datePicker.addEvent(new Event(Color.BLACK, date.getTime()));
+
+                        if(date != null) {
+                            events.add(new Event(Color.BLACK, date.getTime()));
                         }
+
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -111,6 +121,8 @@ public class CalendarViewActivity extends AppCompatActivity {
         }
 
         cursor.close();
+
+        return events;
     }
 
     private void onChangeMonthButtonClick(View view) {
