@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +20,16 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.ListFragment;
 import io.github.tstewart.todayi.AccomplishmentCursorLoader;
 import io.github.tstewart.todayi.R;
+import io.github.tstewart.todayi.object.Accomplishment;
 import io.github.tstewart.todayi.sql.DBConstants;
 import io.github.tstewart.todayi.sql.Database;
+import io.github.tstewart.todayi.sql.DatabaseTableHelper;
+import io.github.tstewart.todayi.sql.event.OnDatabaseInteracted;
+import io.github.tstewart.todayi.sql.event.OnDatabaseInteractionListener;
 import io.github.tstewart.todayi.ui.AccomplishmentCursorAdapter;
 import io.github.tstewart.todayi.ui.dialog.AccomplishmentDialog;
 
-public class AccomplishmentListFragment extends ListFragment {
+public class AccomplishmentListFragment extends ListFragment implements OnDatabaseInteractionListener {
 
     private AccomplishmentCursorAdapter adapter;
 
@@ -41,93 +46,104 @@ public class AccomplishmentListFragment extends ListFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        adapter = new AccomplishmentCursorAdapter(getActivity(), null);
+        // Add listener to notify fragment of database updates
+        OnDatabaseInteracted.addListener(this);
+
+        adapter = new AccomplishmentCursorAdapter(getContext(), null);
         setListAdapter(adapter);
         getListView().setOnItemClickListener(this::onListItemClick);
 
-        Button addNewAccomplishmentButton = new Button(getActivity());
-        addNewAccomplishmentButton.setText(getResources().getText(R.string.new_accomplishment));
-        addNewAccomplishmentButton.setOnClickListener(this::onButtonPressed);
-        getListView().addFooterView(addNewAccomplishmentButton);
+        Button newItemButton = new Button(getContext());
+        newItemButton.setText(getResources().getText(R.string.new_accomplishment));
+        newItemButton.setOnClickListener(this::onNewItemButtonPressed);
+        getListView().addFooterView(newItemButton);
     }
 
     private void onListItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        Object selectedItem = adapter.getItem(position);
+        if (adapter == null) {
+            Log.e(this.getClass().getName(), "List item click called before adapter initialised.");
+            return;
+        }
 
-        if (selectedItem instanceof Cursor) {
-            Cursor cursor = (Cursor) selectedItem;
-            SQLiteDatabase db = new Database(getContext()).getWritableDatabase();
+        Cursor cursor = (Cursor) adapter.getItem(position);
+        String itemContent = cursor.getString(cursor.getColumnIndex(DBConstants.COLUMN_CONTENT));
 
-            String content = cursor.getString(cursor.getColumnIndex(DBConstants.COLUMN_CONTENT));
+        new AccomplishmentDialog(this.getContext())
+                .setText(itemContent)
+                .setDialogType(AccomplishmentDialog.DialogType.EDIT)
+                .setConfirmClickListener((dialogView -> {
+                    EditText input = dialogView.getRootView().findViewById(R.id.editTextAccomplishmentManage);
 
-            AccomplishmentDialog dialog = new AccomplishmentDialog(this.getContext(), AccomplishmentDialog.DialogType.EDIT);
+                    if(input != null) {
+                        updateAccomplishment(input.getText().toString(), id);
+                    }
+                }))
+                .setDeleteButtonListener((dialogView -> {
+                    deleteAccomplishment(id);
+                }))
+                .create().show();
+    }
 
-            dialog.setConfirmClickListener((dialogView) -> {
-                EditText input = dialog.getView().findViewById(R.id.editTextAccomplishmentManage);
-                String newContent = input.getText().toString();
+    private void onNewItemButtonPressed(View view) {
+        new AccomplishmentDialog(getContext())
+                .setDialogType(AccomplishmentDialog.DialogType.NEW)
+                .setConfirmClickListener((dialogView) -> {
+                    EditText input = dialogView.getRootView().findViewById(R.id.editTextAccomplishmentManage);
 
-                if (content.length() >= 1 && content.length() <= 200) {
-                    ContentValues vars = new ContentValues();
+                    if(input != null) {
+                        addAccomplishment(input.getText().toString());
+                    }
+                })
+                .create().show();
+    }
 
-                    vars.put(DBConstants.COLUMN_CONTENT, newContent);
-                    db.update(DBConstants.ACCOMPLISHMENT_TABLE, vars, DBConstants.COLUMN_ID + "=?", new String[]{String.valueOf(id)});
+    /*
+    SQL item management for Accomplishments
+    TODO MOVE
+     */
 
-                    refreshCursor();
-                } else {
-                    Toast.makeText(this.getContext(), R.string.new_accomplishment_invalid_text, Toast.LENGTH_SHORT).show();
-                }
-            });
+    private void addAccomplishment(String content) {
+        Accomplishment newAccomplishment = new Accomplishment(selectedDate, content);
 
-            dialog.setDeleteButtonListener((dialogView) -> {
-                db.delete(DBConstants.ACCOMPLISHMENT_TABLE, DBConstants.COLUMN_ID + "=?", new String[]{String.valueOf(id)});
-                refreshCursor();
-            });
+        try {
+            DatabaseTableHelper databaseHelper = new DatabaseTableHelper(DBConstants.ACCOMPLISHMENT_TABLE);
 
-            dialog.setText(content);
+            newAccomplishment.validate();
 
-            dialog.create().show();
+            databaseHelper.insert(getContext(), newAccomplishment);
+        }
+        catch(IllegalArgumentException e) {
+            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void onButtonPressed(View view) {
-        AlertDialog dialog = getAccomplishmentDialog();
-        dialog.show();
+    private void updateAccomplishment(String content, long id) {
+        Accomplishment newAccomplishment = new Accomplishment(selectedDate, content);
+
+        try {
+            DatabaseTableHelper databaseHelper = new DatabaseTableHelper(DBConstants.ACCOMPLISHMENT_TABLE);
+
+            newAccomplishment.validate();
+
+            databaseHelper.update(getContext(), newAccomplishment, DBConstants.COLUMN_ID + "=? ", new String[]{String.valueOf(id)});
+        }
+        catch(IllegalArgumentException e) {
+            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
-    private AlertDialog getAccomplishmentDialog() {
-
-        AccomplishmentDialog dialog = new AccomplishmentDialog(this.getContext(), AccomplishmentDialog.DialogType.NEW);
-
-        dialog.setConfirmClickListener((dialogView) -> {
-            EditText input = dialog.getView().findViewById(R.id.editTextAccomplishmentManage);
-            String content = input.getText().toString();
-
-            if (content.length() >= 1 && content.length() <= 200) {
-                addAccomplishmentToDb(content);
-            } else {
-                Toast.makeText(this.getContext(), R.string.new_accomplishment_invalid_text, Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        return dialog.create();
+    private void deleteAccomplishment(long id) {
+        DatabaseTableHelper databaseHelper = new DatabaseTableHelper(DBConstants.ACCOMPLISHMENT_TABLE);
+        databaseHelper.delete(getContext(), DBConstants.COLUMN_ID + "=?", new String[]{String.valueOf(id)});
     }
 
-    private void addAccomplishmentToDb(String content) {
-        SQLiteDatabase db = new Database(getContext()).getWritableDatabase();
-        ContentValues cv = DBConstants.getContentValues(content, selectedDate);
-
-        db.insert(DBConstants.ACCOMPLISHMENT_TABLE, null, cv);
-
-        refreshCursor();
-    }
+    /*
+     * End of SQL item management
+     */
 
     public void updateDateAndFetch(Date selectedDate) {
-        setCurrentDate(selectedDate);
-        refreshCursor();
-    }
-
-    private void setCurrentDate(Date selectedDate) {
         this.selectedDate = selectedDate;
+        refreshCursor();
     }
 
     private void refreshCursor() {
@@ -146,4 +162,8 @@ public class AccomplishmentListFragment extends ListFragment {
         adapter.swapCursor(cursor);
     }
 
+    @Override
+    public void onDatabaseInteracted() {
+        refreshCursor();
+    }
 }
