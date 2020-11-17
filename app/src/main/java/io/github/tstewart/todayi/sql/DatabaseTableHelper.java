@@ -9,24 +9,38 @@ import io.github.tstewart.todayi.object.DatabaseObject;
 
 public class DatabaseTableHelper {
 
-    public SQLiteDatabase getWritableDatabase(Context context) {
-        return new Database(context).getWritableDatabase();
+    private String table;
+
+    public DatabaseTableHelper(@NonNull String table) {
+        this.table = table;
     }
 
-    public SQLiteDatabase getReadableDatabase(Context context) {
-        return new Database(context).getReadableDatabase();
-    }
-
-    public void insert(@NonNull Context context, @NonNull String table, @NonNull DatabaseObject object) {
-        SQLiteDatabase db = getWritableDatabase(context);
+    public void insert(@NonNull Context context, @NonNull DatabaseObject object) {
+        SQLiteDatabase db = getDatabase(context);
         ContentValues cv = object.createCV();
 
         if(cv != null) {
-            db.insert(table, null, cv);
+            db.insert(this.table, null, cv);
         }
 
         onEnd(db);
     }
+
+    public void update(@NonNull Context context, @NonNull DatabaseObject object, String whereClause, String[] whereArgs) {
+        SQLiteDatabase db = getDatabase(context);
+        ContentValues cv = object.createCV();
+
+        if(cv != null) {
+            db.update(this.table, cv, whereClause, whereArgs);
+        }
+
+        onEnd(db);
+    }
+
+    private SQLiteDatabase getDatabase(Context context) {
+        return new Database(context).getReadableDatabase();
+    }
+
 
     private void onEnd(SQLiteDatabase db) {
         db.close();

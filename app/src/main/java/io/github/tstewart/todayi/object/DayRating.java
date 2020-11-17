@@ -6,27 +6,32 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import androidx.annotation.NonNull;
 import io.github.tstewart.todayi.sql.DBConstants;
 
 // Track opinion of the day from 1-5
 // E.g. on a bad day you may vote the day a 1.
 public class DayRating extends DatabaseObject {
 
+    private final int MIN_RATING = 1;
+    private final int MAX_RATING = 5;
+
     private Date date;
     private int dayRating;
 
-    public DayRating(Date date, int dayRating) {
-
-        //Constrain values
-        if (dayRating < 1) this.dayRating = 1;
-        if (dayRating > 5) this.dayRating = 5;
-
+    public DayRating(@NonNull Date date, int dayRating) {
         this.date = date;
         this.dayRating = dayRating;
     }
 
-    public DayRating(int dayRating) {
-        this(new Date(), dayRating);
+    @Override
+    public void validate() throws IllegalArgumentException {
+        if(dayRating < MIN_RATING) {
+            throw new IllegalArgumentException("Rating cannot be lower than " + MIN_RATING + ".");
+        }
+        else if(dayRating > MAX_RATING) {
+            throw new IllegalArgumentException("Rating cannot be higher than " + MAX_RATING + ".");
+        }
     }
 
     @Override
