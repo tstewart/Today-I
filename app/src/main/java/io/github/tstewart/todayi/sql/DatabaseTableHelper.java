@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 
 import androidx.annotation.NonNull;
 import io.github.tstewart.todayi.object.DatabaseObject;
+import io.github.tstewart.todayi.sql.event.OnDatabaseInteracted;
+import io.github.tstewart.todayi.sql.event.OnDatabaseInteractionListener;
 
 public class DatabaseTableHelper {
 
@@ -37,6 +39,14 @@ public class DatabaseTableHelper {
         onEnd(db);
     }
 
+    public void delete(@NonNull Context context, String whereClause, String[] whereArgs) {
+        SQLiteDatabase db = getDatabase(context);
+
+        db.delete(this.table, whereClause, whereArgs);
+
+        onEnd(db);
+    }
+
     private SQLiteDatabase getDatabase(Context context) {
         return new Database(context).getReadableDatabase();
     }
@@ -44,6 +54,7 @@ public class DatabaseTableHelper {
 
     private void onEnd(SQLiteDatabase db) {
         db.close();
+        OnDatabaseInteracted.notifyDatabaseInteracted();
     }
 
 }

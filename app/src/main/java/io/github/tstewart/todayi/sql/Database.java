@@ -24,18 +24,6 @@ public class Database extends SQLiteOpenHelper {
             + DBConstants.COLUMN_RATING + " int not null check(" + DBConstants.COLUMN_RATING + ">=1 and "+ DBConstants.COLUMN_RATING + " <=5)"
             + ")";
 
-    public Database(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, name, factory, version);
-    }
-
-    public Database(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version, @Nullable DatabaseErrorHandler errorHandler) {
-        super(context, name, factory, version, errorHandler);
-    }
-
-    public Database(@Nullable Context context, @Nullable String name, int version, @NonNull SQLiteDatabase.OpenParams openParams) {
-        super(context, name, version, openParams);
-    }
-
     // Initialize db with default settings
     public Database(@Nullable Context context) {
         super(context, DBConstants.DB_NAME, null, DBConstants.DB_VERSION);
