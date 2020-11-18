@@ -116,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
                     selectedDate = date;
                     updateCurrentDayAccomplishments();
                 }
-
             }
         }
 
