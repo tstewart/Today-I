@@ -153,6 +153,10 @@ public class MainActivity extends AppCompatActivity {
 
         } else if (viewId == R.id.buttonToday) selectedDate = new Date();
         updateCurrentDayAccomplishments();
+
+        // Dismiss accomplishment fragment dialog if exists
+        if(listFragment != null) listFragment.dismissCurrentDialog();
+
     }
 
     // TODO: Move to seperate file, date will be tracked elsewhere
