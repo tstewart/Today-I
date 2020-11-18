@@ -11,7 +11,7 @@ import io.github.tstewart.todayi.sql.DBConstants;
 
 // Track opinion of the day from 1-5
 // E.g. on a bad day you may vote the day a 1.
-public class DayRating extends DatabaseObject {
+public class DayRating implements DatabaseObject {
 
     private final int MIN_RATING = 1;
     private final int MAX_RATING = 5;
