@@ -24,7 +24,7 @@ import io.github.tstewart.todayi.event.OnDateChangedListener;
 import io.github.tstewart.todayi.object.Accomplishment;
 import io.github.tstewart.todayi.sql.DBConstants;
 import io.github.tstewart.todayi.sql.Database;
-import io.github.tstewart.todayi.sql.DatabaseTableHelper;
+import io.github.tstewart.todayi.sql.DatabaseHelper;
 import io.github.tstewart.todayi.event.OnDatabaseInteracted;
 import io.github.tstewart.todayi.event.OnDatabaseInteractionListener;
 import io.github.tstewart.todayi.ui.AccomplishmentCursorAdapter;
@@ -129,7 +129,7 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
         Accomplishment newAccomplishment = new Accomplishment(selectedDate, content);
 
         try {
-            DatabaseTableHelper databaseHelper = new DatabaseTableHelper(DBConstants.ACCOMPLISHMENT_TABLE);
+            DatabaseHelper databaseHelper = new DatabaseHelper(DBConstants.ACCOMPLISHMENT_TABLE);
 
             newAccomplishment.validate();
 
@@ -144,7 +144,7 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
         Accomplishment newAccomplishment = new Accomplishment(selectedDate, content);
 
         try {
-            DatabaseTableHelper databaseHelper = new DatabaseTableHelper(DBConstants.ACCOMPLISHMENT_TABLE);
+            DatabaseHelper databaseHelper = new DatabaseHelper(DBConstants.ACCOMPLISHMENT_TABLE);
 
             newAccomplishment.validate();
 
@@ -156,7 +156,7 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
     }
 
     private void deleteAccomplishment(long id) {
-        DatabaseTableHelper databaseHelper = new DatabaseTableHelper(DBConstants.ACCOMPLISHMENT_TABLE);
+        DatabaseHelper databaseHelper = new DatabaseHelper(DBConstants.ACCOMPLISHMENT_TABLE);
         databaseHelper.delete(getContext(), DBConstants.COLUMN_ID + "=?", new String[]{String.valueOf(id)});
     }
 
