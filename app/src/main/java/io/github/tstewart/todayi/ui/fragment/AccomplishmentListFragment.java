@@ -1,7 +1,6 @@
 package io.github.tstewart.todayi.ui.fragment;
 
 import android.app.AlertDialog;
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -20,18 +19,23 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.ListFragment;
 import io.github.tstewart.todayi.AccomplishmentCursorLoader;
 import io.github.tstewart.todayi.R;
+import io.github.tstewart.todayi.event.OnDateChanged;
+import io.github.tstewart.todayi.event.OnDateChangedListener;
 import io.github.tstewart.todayi.object.Accomplishment;
 import io.github.tstewart.todayi.sql.DBConstants;
 import io.github.tstewart.todayi.sql.Database;
 import io.github.tstewart.todayi.sql.DatabaseTableHelper;
-import io.github.tstewart.todayi.sql.event.OnDatabaseInteracted;
-import io.github.tstewart.todayi.sql.event.OnDatabaseInteractionListener;
+import io.github.tstewart.todayi.event.OnDatabaseInteracted;
+import io.github.tstewart.todayi.event.OnDatabaseInteractionListener;
 import io.github.tstewart.todayi.ui.AccomplishmentCursorAdapter;
 import io.github.tstewart.todayi.ui.dialog.AccomplishmentDialog;
 
-public class AccomplishmentListFragment extends ListFragment implements OnDatabaseInteractionListener {
+public class AccomplishmentListFragment extends ListFragment implements OnDatabaseInteractionListener, OnDateChangedListener {
 
     private AccomplishmentCursorAdapter adapter;
+
+    // Current dialog, restricts multiple dialogs from opening at once
+    private AlertDialog dialog;
 
     private Date selectedDate = new Date();
 
@@ -48,6 +52,8 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
 
         // Add listener to notify fragment of database updates
         OnDatabaseInteracted.addListener(this);
+        // Add listener to notify fragment of date changes
+        OnDateChanged.addListener(this);
 
         adapter = new AccomplishmentCursorAdapter(getContext(), null);
         setListAdapter(adapter);
@@ -59,33 +65,48 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
         getListView().addFooterView(newItemButton);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Prevents dialogs remaining open if the user changes activities while a dialog is open
+        dismissCurrentDialog();
+    }
+
     private void onListItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         if (adapter == null) {
             Log.e(this.getClass().getName(), "List item click called before adapter initialised.");
             return;
         }
-
         Cursor cursor = (Cursor) adapter.getItem(position);
-        String itemContent = cursor.getString(cursor.getColumnIndex(DBConstants.COLUMN_CONTENT));
 
-        new AccomplishmentDialog(this.getContext())
-                .setText(itemContent)
-                .setDialogType(AccomplishmentDialog.DialogType.EDIT)
-                .setConfirmClickListener((dialogView -> {
-                    EditText input = dialogView.getRootView().findViewById(R.id.editTextAccomplishmentManage);
+        // Position of the item clicked must be less than the total number of rows in the cursor
+        if (cursor.getCount() > position) {
 
-                    if(input != null) {
-                        updateAccomplishment(input.getText().toString(), id);
-                    }
-                }))
-                .setDeleteButtonListener((dialogView -> {
-                    deleteAccomplishment(id);
-                }))
-                .create().show();
+            String itemContent = cursor.getString(cursor.getColumnIndex(DBConstants.COLUMN_CONTENT));
+            dismissCurrentDialog();
+            this.dialog = new AccomplishmentDialog(this.getContext())
+                    .setText(itemContent)
+                    .setDialogType(AccomplishmentDialog.DialogType.EDIT)
+                    .setConfirmClickListener((dialogView -> {
+                        EditText input = dialogView.getRootView().findViewById(R.id.editTextAccomplishmentManage);
+
+                        if (input != null) {
+                            updateAccomplishment(input.getText().toString(), id);
+                        }
+                    }))
+                    .setDeleteButtonListener((dialogView -> {
+                        deleteAccomplishment(id);
+                    }))
+                    .create();
+
+            this.dialog.show();
+         }
     }
 
     private void onNewItemButtonPressed(View view) {
-        new AccomplishmentDialog(getContext())
+
+        dismissCurrentDialog();
+        this.dialog = new AccomplishmentDialog(getContext())
                 .setDialogType(AccomplishmentDialog.DialogType.NEW)
                 .setConfirmClickListener((dialogView) -> {
                     EditText input = dialogView.getRootView().findViewById(R.id.editTextAccomplishmentManage);
@@ -94,7 +115,9 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
                         addAccomplishment(input.getText().toString());
                     }
                 })
-                .create().show();
+                .create();
+
+        this.dialog.show();
     }
 
     /*
@@ -141,11 +164,6 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
      * End of SQL item management
      */
 
-    public void updateDateAndFetch(Date selectedDate) {
-        this.selectedDate = selectedDate;
-        refreshCursor();
-    }
-
     private void refreshCursor() {
         setCursor(getNewCursor());
     }
@@ -162,8 +180,18 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
         adapter.swapCursor(cursor);
     }
 
+    public void dismissCurrentDialog() {
+        if(this.dialog != null) dialog.dismiss();
+    }
+
     @Override
     public void onDatabaseInteracted() {
+        refreshCursor();
+    }
+
+    @Override
+    public void onDateChanged(Date date) {
+        this.selectedDate = date;
         refreshCursor();
     }
 }

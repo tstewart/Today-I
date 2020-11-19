@@ -6,8 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import androidx.annotation.NonNull;
 import io.github.tstewart.todayi.object.DatabaseObject;
-import io.github.tstewart.todayi.sql.event.OnDatabaseInteracted;
-import io.github.tstewart.todayi.sql.event.OnDatabaseInteractionListener;
+import io.github.tstewart.todayi.event.OnDatabaseInteracted;
 
 public class DatabaseTableHelper {
 

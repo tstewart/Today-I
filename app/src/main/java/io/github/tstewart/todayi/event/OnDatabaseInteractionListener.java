@@ -1,4 +1,4 @@
-package io.github.tstewart.todayi.sql.event;
+package io.github.tstewart.todayi.event;
 
 public interface OnDatabaseInteractionListener {
     // TODO params?

@@ -11,7 +11,7 @@ import io.github.tstewart.todayi.sql.DBConstants;
 
 public class Accomplishment implements DatabaseObject {
 
-    private final int MAX_CONTENT_LENGTH = 100;
+    private final int MAX_CONTENT_LENGTH = 200;
 
     Date date;
     String content;
@@ -23,7 +23,7 @@ public class Accomplishment implements DatabaseObject {
 
     @Override
     public void validate() throws IllegalArgumentException {
-        if(content.isEmpty()) {
+        if(content.trim().isEmpty()) {
             throw new IllegalArgumentException("Accomplishment must not be empty.");
         }
         else if(content.length() > MAX_CONTENT_LENGTH) {
