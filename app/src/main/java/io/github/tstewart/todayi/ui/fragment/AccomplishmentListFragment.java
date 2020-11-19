@@ -19,16 +19,18 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.ListFragment;
 import io.github.tstewart.todayi.AccomplishmentCursorLoader;
 import io.github.tstewart.todayi.R;
+import io.github.tstewart.todayi.event.OnDateChanged;
+import io.github.tstewart.todayi.event.OnDateChangedListener;
 import io.github.tstewart.todayi.object.Accomplishment;
 import io.github.tstewart.todayi.sql.DBConstants;
 import io.github.tstewart.todayi.sql.Database;
 import io.github.tstewart.todayi.sql.DatabaseTableHelper;
-import io.github.tstewart.todayi.sql.event.OnDatabaseInteracted;
-import io.github.tstewart.todayi.sql.event.OnDatabaseInteractionListener;
+import io.github.tstewart.todayi.event.OnDatabaseInteracted;
+import io.github.tstewart.todayi.event.OnDatabaseInteractionListener;
 import io.github.tstewart.todayi.ui.AccomplishmentCursorAdapter;
 import io.github.tstewart.todayi.ui.dialog.AccomplishmentDialog;
 
-public class AccomplishmentListFragment extends ListFragment implements OnDatabaseInteractionListener {
+public class AccomplishmentListFragment extends ListFragment implements OnDatabaseInteractionListener, OnDateChangedListener {
 
     private AccomplishmentCursorAdapter adapter;
 
@@ -50,6 +52,8 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
 
         // Add listener to notify fragment of database updates
         OnDatabaseInteracted.addListener(this);
+        // Add listener to notify fragment of date changes
+        OnDateChanged.addListener(this);
 
         adapter = new AccomplishmentCursorAdapter(getContext(), null);
         setListAdapter(adapter);
@@ -160,11 +164,6 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
      * End of SQL item management
      */
 
-    public void updateDateAndFetch(Date selectedDate) {
-        this.selectedDate = selectedDate;
-        refreshCursor();
-    }
-
     private void refreshCursor() {
         setCursor(getNewCursor());
     }
@@ -187,6 +186,12 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
 
     @Override
     public void onDatabaseInteracted() {
+        refreshCursor();
+    }
+
+    @Override
+    public void onDateChanged(Date date) {
+        this.selectedDate = date;
         refreshCursor();
     }
 }
