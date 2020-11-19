@@ -73,31 +73,35 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
             Log.e(this.getClass().getName(), "List item click called before adapter initialised.");
             return;
         }
-
         Cursor cursor = (Cursor) adapter.getItem(position);
-        String itemContent = cursor.getString(cursor.getColumnIndex(DBConstants.COLUMN_CONTENT));
 
-        this.dialog = new AccomplishmentDialog(this.getContext())
-                .setText(itemContent)
-                .setDialogType(AccomplishmentDialog.DialogType.EDIT)
-                .setConfirmClickListener((dialogView -> {
-                    EditText input = dialogView.getRootView().findViewById(R.id.editTextAccomplishmentManage);
+        // Position of the item clicked must be less than the total number of rows in the cursor
+        if (cursor.getCount() > position) {
 
-                    if(input != null) {
-                        updateAccomplishment(input.getText().toString(), id);
-                    }
-                }))
-                .setDeleteButtonListener((dialogView -> {
-                    deleteAccomplishment(id);
-                }))
-                .create();
+            String itemContent = cursor.getString(cursor.getColumnIndex(DBConstants.COLUMN_CONTENT));
+            dismissCurrentDialog();
+            this.dialog = new AccomplishmentDialog(this.getContext())
+                    .setText(itemContent)
+                    .setDialogType(AccomplishmentDialog.DialogType.EDIT)
+                    .setConfirmClickListener((dialogView -> {
+                        EditText input = dialogView.getRootView().findViewById(R.id.editTextAccomplishmentManage);
 
-        dismissCurrentDialog();
-        this.dialog.show();
+                        if (input != null) {
+                            updateAccomplishment(input.getText().toString(), id);
+                        }
+                    }))
+                    .setDeleteButtonListener((dialogView -> {
+                        deleteAccomplishment(id);
+                    }))
+                    .create();
+
+            this.dialog.show();
+         }
     }
 
     private void onNewItemButtonPressed(View view) {
 
+        dismissCurrentDialog();
         this.dialog = new AccomplishmentDialog(getContext())
                 .setDialogType(AccomplishmentDialog.DialogType.NEW)
                 .setConfirmClickListener((dialogView) -> {
@@ -109,7 +113,6 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
                 })
                 .create();
 
-        dismissCurrentDialog();
         this.dialog.show();
     }
 
