@@ -6,9 +6,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
@@ -26,15 +28,24 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import io.github.tstewart.todayi.sql.DBConstants;
 import io.github.tstewart.todayi.sql.Database;
+import io.github.tstewart.todayi.sql.DatabaseHelper;
 
+import static com.github.sundeepk.compactcalendarview.CompactCalendarView.FILL_LARGE_INDICATOR;
+import static com.github.sundeepk.compactcalendarview.CompactCalendarView.SMALL_INDICATOR;
 import static java.util.Calendar.getInstance;
+import static com.github.sundeepk.compactcalendarview.CompactCalendarView.CompactCalendarViewListener;
 
 public class CalendarViewActivity extends AppCompatActivity {
 
     CompactCalendarView datePicker;
-    CompactCalendarView.CompactCalendarViewListener calendarEventListener;
+    CompactCalendarViewListener calendarEventListener;
+
+    List<Event> daysPostedOn = new ArrayList<>();
+    List<Event> daysRated = new ArrayList<>();
 
     Date selectedDate = new Date();
+
+    CalendarType calendarType = CalendarType.ACCOMPLISHMENTS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +86,7 @@ public class CalendarViewActivity extends AppCompatActivity {
 
         Button prevMonthButton = findViewById(R.id.buttonPrevMonth);
         Button nextMonthButton = findViewById(R.id.buttonNextMonth);
+        Button changeCalendarTypeButton = findViewById(R.id.buttonChangeCalendarType);
 
         if (prevMonthButton != null) {
             prevMonthButton.setOnClickListener(this::onChangeMonthButtonClick);
@@ -82,16 +94,26 @@ public class CalendarViewActivity extends AppCompatActivity {
         if (nextMonthButton != null) {
             nextMonthButton.setOnClickListener(this::onChangeMonthButtonClick);
         }
+        if(changeCalendarTypeButton != null) {
+            changeCalendarTypeButton.setOnClickListener(this::onChangeCalendarTypeButtonClick);
+        }
     }
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        if(datePicker != null) datePicker.addEvents(getPostedDateEvents());
+        daysPostedOn = getPostedDateEvents();
+        daysRated = getDaysRatedEvents();
+        if(datePicker != null) {
+            datePicker.setCurrentSelectedDayBackgroundColor(getColor(R.color.colorTransparent));
+            datePicker.setCurrentDayBackgroundColor(getColor(R.color.colorAccent));
+            datePicker.addEvents(getPostedDateEvents());
+        }
     }
 
     // Return a list of events matching dates that accomplishments have been posted on
+
     private List<Event> getPostedDateEvents() {
 
         Database db = new Database(this);
@@ -123,6 +145,86 @@ public class CalendarViewActivity extends AppCompatActivity {
         cursor.close();
 
         return events;
+    }
+
+    private List<Event> getDaysRatedEvents() {
+        SQLiteDatabase db = new DatabaseHelper(DBConstants.RATING_TABLE).getDatabase(getApplicationContext());
+
+        List<Event> events = new ArrayList<>();
+
+        Cursor cursor = db.rawQuery(DBConstants.DAY_RATING_ALL_RESULTS_QUERY, null);
+
+        if(cursor.moveToFirst()) {
+            do {
+                int rating = cursor.getInt(cursor.getColumnIndex(DBConstants.COLUMN_RATING));
+                String dateString = cursor.getString(cursor.getColumnIndex(DBConstants.COLUMN_DATE));
+
+                try {
+                    Date date = new SimpleDateFormat(DBConstants.DATE_FORMAT, Locale.getDefault()).parse(dateString);
+
+                    // Default value is transparent
+                    int color = getColor(R.color.colorTransparent);
+
+                    switch(rating) {
+                        case 1:
+                            color = getColor(R.color.colorRatingRed);
+                            break;
+                        case 2:
+                            color = getColor(R.color.colorRatingOrange);
+                            break;
+                        case 3:
+                            color = getColor(R.color.colorRatingYellow);
+                            break;
+                        case 4:
+                            color = getColor(R.color.colorRatingLightGreen);
+                            break;
+                        case 5:
+                            color = getColor(R.color.colorRatingGreen);
+                            break;
+                        default:
+                            break;
+                    }
+
+                    if(date != null) {
+                        Event event = new Event(color,date.getTime());
+                        events.add(event);
+                    }
+
+                } catch (ParseException e) {
+                    //TODO MANAGE
+                    e.printStackTrace();
+                }
+
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+
+        events.forEach(element -> {
+            Log.i("olo", element.toString());
+        });
+
+        return events;
+    }
+
+    private void onChangeCalendarTypeButtonClick(View view) {
+        if(datePicker != null) {
+            if (calendarType == CalendarType.ACCOMPLISHMENTS) {
+                calendarType = CalendarType.RATINGS;
+
+                datePicker.removeAllEvents();
+                datePicker.setEventIndicatorStyle(FILL_LARGE_INDICATOR);
+                datePicker.setCurrentDayIndicatorStyle(SMALL_INDICATOR);
+                datePicker.addEvents(daysRated);
+            } else {
+                calendarType = CalendarType.ACCOMPLISHMENTS;
+
+                datePicker.removeAllEvents();
+                datePicker.setEventIndicatorStyle(SMALL_INDICATOR);
+                datePicker.setCurrentDayIndicatorStyle(FILL_LARGE_INDICATOR);
+                datePicker.addEvents(daysPostedOn);
+            }
+        }
     }
 
     private void onChangeMonthButtonClick(View view) {
@@ -159,4 +261,9 @@ public class CalendarViewActivity extends AppCompatActivity {
         return sdf.format(date);
     }
 
+
+    private enum CalendarType {
+        ACCOMPLISHMENTS,
+        RATINGS
+    }
 }

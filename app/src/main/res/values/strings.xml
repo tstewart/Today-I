@@ -21,6 +21,7 @@
     <!-- Calendar Activity -->
     <string name="button_next_month">Next</string>
     <string name="button_prev_month">Previous</string>
+    <string name="button_change_calendar_type">Change calendar type</string>
 
     <!-- Other -->
     <string name="button_confirm">Confirm</string>
