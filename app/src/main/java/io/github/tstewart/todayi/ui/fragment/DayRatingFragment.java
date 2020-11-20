@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,6 +60,11 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
 
             ll.addView(buttons[i], layoutParams);
         }
+
+        int index = getIndexOfRating(new Date());
+
+        if(index >= 0) setSelectedButton(index);
+
     }
 
     @Override
@@ -75,24 +79,37 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
         if(buttons != null && context != null) {
             List<Button> buttonsList = Arrays.asList(buttons);
 
-            buttonsList.forEach(this::resetButtonBackground);
+            resetAllButtonBackgrounds();
 
             if (v instanceof Button) {
                 Button buttonClicked = (Button) v;
 
                 int index = Arrays.asList(buttons).indexOf(buttonClicked);
 
-                if (index >= 0 && index < colors.length) {
+                if (index >= 0) {
                     int color = colors[index];
                     setButtonBackground(buttonClicked, color);
 
-                    setDayRating(index+1);
+                    setSelectedButton(index);
+                    updateDayRatingOnDB(index+1);
                 }
             }
         }
     }
 
-    private void setDayRating(int index) {
+    private void setSelectedButton(int index) {
+        resetAllButtonBackgrounds();
+
+        if(index < colors.length) {
+
+            Button button = buttons[index];
+            int color = colors[index];
+
+            setButtonBackground(button,color);
+        }
+    }
+
+    private void updateDayRatingOnDB(int index) {
         DatabaseHelper helper = new DatabaseHelper(DBConstants.RATING_TABLE);
 
         if(selectedDate != null && getContext() != null) {
@@ -114,6 +131,10 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
         }
     }
 
+    private void resetAllButtonBackgrounds() {
+        if(buttons != null) Arrays.asList(buttons).forEach(this::resetButtonBackground);
+    }
+
     private void resetButtonBackground(Button button) {
         setButtonBackground(button, R.color.colorTransparent);
     }
@@ -125,13 +146,20 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
         }
     }
 
-    @Override
-    public void onDateChanged(Date date) {
+    private int getIndexOfRating(Date date) {
         if(getContext() != null) {
             SQLiteDatabase db = new Database(getContext()).getReadableDatabase();
             int index = new DayRatingTableHelper(getContext()).getRatingOrDefault(date);
+            return index-1;
         }
+        return -1;
+    }
 
+    @Override
+    public void onDateChanged(Date date) {
+        int index = getIndexOfRating(date);
+
+        if(index >= 0) setSelectedButton(index);
         this.selectedDate = date;
     }
 }
