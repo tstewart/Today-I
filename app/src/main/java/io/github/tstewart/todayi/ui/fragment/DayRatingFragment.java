@@ -86,7 +86,7 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
 
                 int index = Arrays.asList(buttons).indexOf(buttonClicked);
 
-                if (index >= 0) {
+                if (index >= 0 && index < buttons.length) {
                     int color = colors[index];
                     setButtonBackground(buttonClicked, color);
 
@@ -160,6 +160,8 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
         int index = getIndexOfRating(date);
 
         if(index >= 0) setSelectedButton(index);
+        else resetAllButtonBackgrounds();
+
         this.selectedDate = date;
     }
 }
