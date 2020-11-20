@@ -8,11 +8,11 @@ import androidx.annotation.NonNull;
 import io.github.tstewart.todayi.object.DatabaseObject;
 import io.github.tstewart.todayi.event.OnDatabaseInteracted;
 
-public class DatabaseTableHelper {
+public class DatabaseHelper {
 
     private String table;
 
-    public DatabaseTableHelper(@NonNull String table) {
+    public DatabaseHelper(@NonNull String table) {
         this.table = table;
     }
 
@@ -46,7 +46,7 @@ public class DatabaseTableHelper {
         onEnd(db);
     }
 
-    private SQLiteDatabase getDatabase(Context context) {
+    public SQLiteDatabase getDatabase(Context context) {
         return new Database(context).getReadableDatabase();
     }
 

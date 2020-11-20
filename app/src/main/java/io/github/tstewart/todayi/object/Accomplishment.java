@@ -9,7 +9,7 @@ import java.util.Locale;
 import androidx.annotation.NonNull;
 import io.github.tstewart.todayi.sql.DBConstants;
 
-public class Accomplishment extends DatabaseObject {
+public class Accomplishment implements DatabaseObject {
 
     private final int MAX_CONTENT_LENGTH = 200;
 

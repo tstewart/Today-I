@@ -64,6 +64,12 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:orientation="vertical">
+
+            <Button
+                android:id="@+id/buttonChangeCalendarType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/button_change_calendar_type" />
         </LinearLayout>
     </LinearLayout>
 

@@ -20,8 +20,8 @@ public class Database extends SQLiteOpenHelper {
     private final String CREATE_TABLE_RATINGS = "create table if not exists " + DBConstants.RATING_TABLE + " "
             + "("
             + DBConstants.COLUMN_ID + " integer primary key autoincrement, "
-            + DBConstants.COLUMN_DATE + " string not null, "
-            + DBConstants.COLUMN_RATING + " int not null check(" + DBConstants.COLUMN_RATING + ">=1 and "+ DBConstants.COLUMN_RATING + " <=5)"
+            + DBConstants.COLUMN_DATE + " string unique not null, "
+            + DBConstants.COLUMN_RATING + " int not null"
             + ")";
 
     // Initialize db with default settings
