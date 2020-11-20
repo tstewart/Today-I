@@ -1,7 +1,8 @@
 package io.github.tstewart.todayi.ui.fragment;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,19 +13,30 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import io.github.tstewart.todayi.R;
+import io.github.tstewart.todayi.event.OnDateChanged;
+import io.github.tstewart.todayi.event.OnDateChangedListener;
+import io.github.tstewart.todayi.object.DayRating;
+import io.github.tstewart.todayi.sql.DBConstants;
+import io.github.tstewart.todayi.sql.Database;
+import io.github.tstewart.todayi.sql.DatabaseHelper;
+import io.github.tstewart.todayi.sql.DayRatingTableHelper;
 
-public class DayRatingFragment extends Fragment {
+public class DayRatingFragment extends Fragment implements OnDateChangedListener {
 
-    private GradientDrawable buttonDrawable;
     Button[] buttons;
     int colors[] = new int[]{R.color.colorRatingRed, R.color.colorRatingOrange, R.color.colorRatingYellow, R.color.colorRatingLightGreen, R.color.colorRatingGreen};
 
+    Date selectedDate;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,6 +63,12 @@ public class DayRatingFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        OnDateChanged.addListener(this);
+    }
+
     private void onRatingButtonClicked(View v) {
         Context context = getContext();
 
@@ -67,8 +85,32 @@ public class DayRatingFragment extends Fragment {
                 if (index >= 0 && index < colors.length) {
                     int color = colors[index];
                     setButtonBackground(buttonClicked, color);
+
+                    setDayRating(index+1);
                 }
             }
+        }
+    }
+
+    private void setDayRating(int index) {
+        DatabaseHelper helper = new DatabaseHelper(DBConstants.RATING_TABLE);
+
+        if(selectedDate != null && getContext() != null) {
+            DayRating dayRating = new DayRating(selectedDate, index);
+            //TODO validate
+
+            SQLiteDatabase db = helper.getDatabase(getContext());
+            String dateFormatted = new SimpleDateFormat(DBConstants.DATE_FORMAT, Locale.getDefault()).format(selectedDate);
+            Cursor existingRowCheck = db.rawQuery(DBConstants.DAY_RATING_QUERY, new String[]{dateFormatted});
+
+            if(existingRowCheck.moveToFirst()) {
+                helper.update(getContext(),dayRating, DBConstants.COLUMN_DATE + "=?", new String[]{dateFormatted});
+            }
+            else {
+                helper.insert(getContext(), dayRating);
+            }
+
+            existingRowCheck.close();
         }
     }
 
@@ -81,5 +123,15 @@ public class DayRatingFragment extends Fragment {
             GradientDrawable drawable = (GradientDrawable) button.getBackground();
             drawable.setColor(ContextCompat.getColor(getContext(), color));
         }
+    }
+
+    @Override
+    public void onDateChanged(Date date) {
+        if(getContext() != null) {
+            SQLiteDatabase db = new Database(getContext()).getReadableDatabase();
+            int index = new DayRatingTableHelper(getContext()).getRatingOrDefault(date);
+        }
+
+        this.selectedDate = date;
     }
 }
