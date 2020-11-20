@@ -46,7 +46,7 @@ public class DatabaseHelper {
         onEnd(db);
     }
 
-    private SQLiteDatabase getDatabase(Context context) {
+    public SQLiteDatabase getDatabase(Context context) {
         return new Database(context).getReadableDatabase();
     }
 
