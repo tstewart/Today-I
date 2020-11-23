@@ -10,12 +10,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.ZoneOffset;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -27,8 +30,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import io.github.tstewart.todayi.sql.DBConstants;
 import io.github.tstewart.todayi.sql.Database;
 import io.github.tstewart.todayi.sql.DatabaseHelper;
-
-import static java.util.Calendar.getInstance;
 
 public class CalendarViewActivity extends AppCompatActivity {
 
@@ -53,6 +54,10 @@ public class CalendarViewActivity extends AppCompatActivity {
         }
 
         calendarView = findViewById(R.id.calendarView);
+
+        if(calendarView != null) {
+            calendarView.setOnDateChangedListener(this::onCalendarClick);
+        }
     }
 
     @Override
@@ -129,10 +134,14 @@ public class CalendarViewActivity extends AppCompatActivity {
         return ratings;
     }
 
-    private void onCalendarClick(Date date) {
+    private void onCalendarClick(MaterialCalendarView view, CalendarDay date, boolean b) {
+
+        LocalDate localDate = date.getDate();
+
+        long epochDay = localDate.toEpochDay();
 
         Intent returnIntent = new Intent();
-        returnIntent.putExtra("result", date.getTime());
+        returnIntent.putExtra("result", epochDay);
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
     }
