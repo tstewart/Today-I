@@ -11,66 +11,22 @@
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="match_parent">
+
+    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+            android:id="@+id/calendarView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:mcv_headerTextAppearance="@style/AppTheme.CalendarHeaderText"
+            app:mcv_dateTextAppearance="@style/AppTheme.CalendarDateText"
+            app:mcv_weekDayTextAppearance="@style/AppTheme.CalendarMonthLabelText"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1.5"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textViewSelectedMonth"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:textAlignment="center"
-                android:textSize="24sp" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/buttonPrevMonth"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    style="@style/Widget.AppCompat.Button.Borderless"
-                    android:drawableStart="@drawable/ic_arrow_back_black_24dp"
-                    android:text="@string/button_prev_month" />
-
-                <Button
-                    android:id="@+id/buttonNextMonth"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    style="@style/Widget.AppCompat.Button.Borderless"
-                    android:drawableEnd="@drawable/ic_arrow_forward_black_24dp"
-                    android:text="@string/button_next_month"/>
-            </LinearLayout>
-
-            <com.github.sundeepk.compactcalendarview.CompactCalendarView
-                android:id="@+id/calendarView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:compactCalendarTextSize="16dp" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <Button
-                android:id="@+id/buttonChangeCalendarType"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/button_change_calendar_type" />
-        </LinearLayout>
     </LinearLayout>
 
 </RelativeLayout>
