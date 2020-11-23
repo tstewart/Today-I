@@ -13,6 +13,7 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -115,10 +116,11 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
 
                 if (dateResult >= 0) {
 
-                    Date date = new Date();
-                    date.setTime(dateResult);
+                    Calendar c = new GregorianCalendar();
+                    c.setTime(new Date(0));
+                    c.add(Calendar.DAY_OF_YEAR, (int) dateResult);
 
-                    updateCurrentDate(date);
+                    updateCurrentDate(c.getTime());
                 }
             }
         }
