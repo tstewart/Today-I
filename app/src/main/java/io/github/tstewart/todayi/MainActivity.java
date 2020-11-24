@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import io.github.tstewart.todayi.event.OnDatabaseInteracted;
+import io.github.tstewart.todayi.event.OnDatabaseInteractionListener;
 import io.github.tstewart.todayi.ui.fragment.AccomplishmentListFragment;
 import io.github.tstewart.todayi.sql.Database;
 
@@ -11,6 +13,7 @@ import android.app.Activity;
 import android.content.Intent;
 
 import android.database.sqlite.SQLiteDatabase;
+import android.media.audiofx.Visualizer;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,11 +25,22 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import io.github.tstewart.todayi.event.OnDateChanged;
+import io.github.tstewart.todayi.event.OnDateChangedListener;
+import io.github.tstewart.todayi.sql.Database;
+import io.github.tstewart.todayi.ui.fragment.AccomplishmentListFragment;
 
 import static java.util.Calendar.getInstance;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnDateChangedListener {
 
     // Used to ensure the response from the calendar's selection matches the requested number
     private final int CALENDAR_ACTIVITY_REQUEST_CODE = 1;
@@ -51,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
         prevButton.setOnClickListener(this::onDayChangeButtonClicked);
         todayButton.setOnClickListener(this::onDayChangeButtonClicked);
         nextButton.setOnClickListener(this::onDayChangeButtonClicked);
+
+        OnDateChanged.addListener(this);
     }
 
     @Override
@@ -59,8 +75,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Set Accomplishment Fragment Date
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
-        for(Fragment fragment : fragments) {
-            if(fragment instanceof AccomplishmentListFragment) {
+        for (Fragment fragment : fragments) {
+            if (fragment instanceof AccomplishmentListFragment) {
                 this.listFragment = (AccomplishmentListFragment) fragment;
                 break;
             }
@@ -69,7 +85,8 @@ public class MainActivity extends AppCompatActivity {
         this.database = new Database(getApplicationContext());
         this.sqLiteDatabase = database.getReadableDatabase();
 
-        updateCurrentDayAccomplishments();
+        Date date = new Date();
+        updateCurrentDate(date);
     }
 
     @Override
@@ -84,10 +101,11 @@ public class MainActivity extends AppCompatActivity {
         Intent targetIntent = null;
         int requestCode = 0;
 
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.toolbar_calendar:
                 targetIntent = new Intent(this, CalendarViewActivity.class);
                 requestCode = CALENDAR_ACTIVITY_REQUEST_CODE;
+                targetIntent.putExtra("selectedDate", selectedDate.getTime());
                 break;
             case R.id.toolbar_settings:
                 targetIntent = new Intent(this, OptionsActivity.class);
@@ -105,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
         long dateResult = -1;
 
@@ -112,13 +131,12 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == Activity.RESULT_OK && data != null) {
                 dateResult = data.getLongExtra("result", -1);
 
-                if(dateResult>=0) {
+                if (dateResult >= 0) {
+                    Calendar c = new GregorianCalendar();
+                    c.setTime(new Date(0));
+                    c.add(Calendar.DAY_OF_YEAR, (int) dateResult);
 
-                    Date date = new Date();
-                    date.setTime(dateResult);
-
-                    //TODO change current date based on calendar click
-                    Toast.makeText(this, getDateFormatted("MMMM d y", date), Toast.LENGTH_SHORT).show();
+                    updateCurrentDate(c.getTime());
                 }
             }
         }
@@ -126,29 +144,20 @@ public class MainActivity extends AppCompatActivity {
             // On receive OK response, settings activity forces reset of accomplishments
             if (resultCode == Activity.RESULT_OK) {
                 if(this.listFragment != null) {
-                    listFragment.updateDateAndFetch(selectedDate);
+                    OnDatabaseInteracted.notifyDatabaseInteracted();
                 }
             }
         }
-
-
-
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
-    void updateCurrentDayAccomplishments() {
-        if(selectedDate == null) selectedDate = new Date();
-
-        if(listFragment != null && sqLiteDatabase != null) {
-            listFragment.updateDateAndFetch(selectedDate);
-        }
-
-        TextView dateLabel = findViewById(R.id.textViewCurrentDate);
-        dateLabel.setText(getDateFormatted("MMMM d Y", selectedDate));
+    void updateCurrentDate(@NonNull Date date) {
+        OnDateChanged.notifyDatabaseInteracted(date);
     }
 
     void onDayChangeButtonClicked(View view) {
         int viewId = view.getId();
+
+        Date newDate = selectedDate;
 
         if (viewId == R.id.buttonNextDay || viewId == R.id.buttonPrevDay) {
 
@@ -161,17 +170,27 @@ public class MainActivity extends AppCompatActivity {
                 calendar.add(Calendar.DAY_OF_MONTH, 1);
             }
 
-            selectedDate = calendar.getTime();
+            newDate = calendar.getTime();
 
-        }
-        else if(viewId == R.id.buttonToday) selectedDate = new Date();
-        updateCurrentDayAccomplishments();
+        } else if (viewId == R.id.buttonToday) newDate = new Date();
+        updateCurrentDate(newDate);
+
+        // Dismiss accomplishment fragment dialog if exists
+        if(listFragment != null) listFragment.dismissCurrentDialog();
+
     }
 
     // TODO: Move to seperate file, date will be tracked elsewhere
     public String getDateFormatted(String format, Date date) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.getDefault());
         return dateFormat.format(date);
     }
 
+    @Override
+    public void onDateChanged(Date date) {
+        this.selectedDate = date;
+
+        TextView dateLabel = findViewById(R.id.textViewCurrentDate);
+        dateLabel.setText(getDateFormatted("MMMM d yyyy", selectedDate));
+    }
 }

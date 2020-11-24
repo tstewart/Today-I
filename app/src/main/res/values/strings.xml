@@ -21,14 +21,20 @@
 
     <string name="button_export_data">Export data to device</string>
 
+    <!-- Calendar Activity -->
+    <string name="button_next_month">Next</string>
+    <string name="button_prev_month">Previous</string>
+    <string name="button_change_calendar_type">Change calendar type</string>
+
     <!-- Other -->
     <string name="button_confirm">Confirm</string>
     <string name="button_cancel">Cancel</string>
+    <string name="button_delete">Delete</string>
     <string name="button_yes">Yes</string>
     <string name="button_no">No</string>
     <string name="title_activity_calender_view">Calender</string>
     <string name="title_activity_options">Options</string>
     <string name="title_activity_splash_screen">Splash</string>
-    <string name="new_accomplishment_invalid_text">Your accomplishment must be between 0 and 100 characters.</string>
+    <string name="new_accomplishment_invalid_text">Your accomplishment must be between 1 and 200 characters.</string>
 
 </resources>

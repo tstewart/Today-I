@@ -6,58 +6,106 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.appcompat.widget.AlertDialogLayout;
 import io.github.tstewart.todayi.R;
 
 public class AccomplishmentDialog extends AlertDialog.Builder {
 
-    View view;
-    AlertDialog.OnClickListener positiveListener = null;
+    private View view;
 
-    public AccomplishmentDialog(Context context, DialogType dialogType) {
+    private AlertDialog instance;
+
+    private Button buttonDelete;
+    private Button buttonCancel;
+    private Button buttonConfirm;
+
+    public AccomplishmentDialog(Context context) {
         super(context);
 
         LayoutInflater inflater = LayoutInflater.from(getContext());
         View view = inflater.inflate(R.layout.dialog_accomplishment_manage, null);
         this.setView(view);
 
-        if(dialogType == DialogType.NEW) {
-            this.setTitle(R.string.new_accomplishment_dialog_title);
-        }
-        else if(dialogType == DialogType.EDIT) {
-            this.setTitle(R.string.edit_accomplishment_dialog_title);
-        }
+        buttonDelete = view.findViewById(R.id.buttonDelete);
+        // Cancel button disabled at the moment
+        //buttonCancel = view.findViewById(R.id.buttonCancel);
+        buttonConfirm = view.findViewById(R.id.buttonConfirm);
     }
 
     @Override
     public AlertDialog create() {
         AlertDialog dialog = super.create();
 
+        // Used for onclick control management
+        this.instance = dialog;
+
         Window window = dialog.getWindow();
-        if(window != null) {
-         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        if (window != null) {
+            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         }
 
         return dialog;
     }
 
-    public void setText(String content) {
-        EditText editText =  this.getView().findViewById(R.id.editTextAccomplishmentManage);
+    public AccomplishmentDialog setDialogType(DialogType dialogType) {
+        if (dialogType == DialogType.NEW) {
+            this.setTitle(R.string.new_accomplishment_dialog_title);
 
-        if(editText != null) {
-           editText.setText(content);
-           // Set cursor position to the end of the string
-           editText.setSelection(content.length());
+            if (buttonDelete != null) {
+                buttonDelete.setVisibility(View.GONE);
+            }
+        } else if (dialogType == DialogType.EDIT) {
+            this.setTitle(R.string.edit_accomplishment_dialog_title);
+
+            if (buttonDelete != null) {
+                buttonDelete.setVisibility(View.VISIBLE);
+            }
         }
+        return this;
     }
 
-    public void setPositiveClickListener(AlertDialog.OnClickListener listener) {
-        this.setPositiveButton(R.string.button_confirm, listener);
+    public AccomplishmentDialog setText(String content) {
+        EditText editText = this.getView().findViewById(R.id.editTextAccomplishmentManage);
+
+        if (editText != null) {
+            editText.setText(content);
+            // Set cursor position to the end of the string
+            editText.setSelection(content.length());
+        }
+        return this;
     }
 
-    public void setNegativeButton(AlertDialog.OnClickListener listener) {
-        this.setNegativeButton(R.string.button_cancel, listener);
+    public AccomplishmentDialog setConfirmClickListener(View.OnClickListener listener) {
+        if (buttonConfirm != null) {
+            buttonConfirm.setOnClickListener(v -> {
+                listener.onClick(v);
+                if (this.instance != null) instance.dismiss();
+            });
+        }
+        return this;
+    }
+
+    public AccomplishmentDialog setCancelButtonListener(View.OnClickListener listener) {
+        if (buttonCancel != null) {
+            buttonCancel.setOnClickListener(v -> {
+                listener.onClick(v);
+                if (this.instance != null) instance.dismiss();
+            });
+        }
+        return this;
+    }
+
+    public AccomplishmentDialog setDeleteButtonListener(View.OnClickListener listener) {
+        if (buttonDelete != null) {
+            buttonDelete.setOnClickListener(v -> {
+                listener.onClick(v);
+                if (this.instance != null) instance.dismiss();
+            });
+        }
+        return this;
     }
 
     public View getView() {

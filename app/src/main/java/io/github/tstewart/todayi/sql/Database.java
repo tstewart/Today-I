@@ -20,21 +20,9 @@ public class Database extends SQLiteOpenHelper {
     private final String CREATE_TABLE_RATINGS = "create table " + DBConstants.RATING_TABLE + " "
             + "("
             + DBConstants.COLUMN_ID + " integer primary key autoincrement, "
-            + DBConstants.COLUMN_DATE + " string not null, "
+            + DBConstants.COLUMN_DATE + " string unique not null, "
             + DBConstants.COLUMN_RATING + " int not null"
             + ")";
-
-    public Database(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, name, factory, version);
-    }
-
-    public Database(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version, @Nullable DatabaseErrorHandler errorHandler) {
-        super(context, name, factory, version, errorHandler);
-    }
-
-    public Database(@Nullable Context context, @Nullable String name, int version, @NonNull SQLiteDatabase.OpenParams openParams) {
-        super(context, name, version, openParams);
-    }
 
     // Initialize db with default settings
     public Database(@Nullable Context context) {

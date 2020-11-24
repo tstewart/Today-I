@@ -3,6 +3,17 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="colorWarning">#B33A3A</color>
 
     <color name="black_overlay">#66000000</color>
+
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="colorTransparent">#00000000</color>
+
+    <!-- Day Rating colors -->
+    <color name="colorRatingRed">#90FF0000</color>
+    <color name="colorRatingOrange">#90FF6600</color>
+    <color name="colorRatingYellow">#90FFFF00</color>
+    <color name="colorRatingLightGreen">#9099FF00</color>
+    <color name="colorRatingGreen">#9000FF00</color>
 </resources>
