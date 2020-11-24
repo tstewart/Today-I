@@ -3,17 +3,18 @@ package io.github.tstewart.todayi;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import androidx.annotation.NonNull;
+import io.github.tstewart.todayi.data.LocalDatabaseIO;
 import io.github.tstewart.todayi.sql.DBConstants;
 import io.github.tstewart.todayi.sql.DatabaseHelper;
-
-import static android.content.SharedPreferences.Editor;
 
 public class TodayI extends Application {
     private final String CLASS_LOG_TAG = this.getClass().getSimpleName();
@@ -55,6 +56,13 @@ public class TodayI extends Application {
             else {
                 Log.i(CLASS_LOG_TAG, "Application data did not need to backup.");
             }
+        }
+
+        LocalDatabaseIO.backup(this, DBConstants.DB_NAME);
+
+        File file = Environment.getDataDirectory();
+        if(new File(file, "backup_" + DBConstants.DB_NAME + ".db").exists()) {
+            Toast.makeText(this,"Backup successful!",Toast.LENGTH_SHORT).show();
         }
     }
 

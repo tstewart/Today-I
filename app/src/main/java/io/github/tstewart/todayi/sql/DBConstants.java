@@ -2,7 +2,7 @@ package io.github.tstewart.todayi.sql;
 
 public class DBConstants {
 
-    public static final String DB_NAME = "accomplishment_db";
+    public static final String DB_NAME = "todayi_db";
     public static final int DB_VERSION = 1;
 
     public static final String ACCOMPLISHMENT_TABLE = "accomplishments";
