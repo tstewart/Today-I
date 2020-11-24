@@ -51,6 +51,7 @@ public class OptionsActivity extends AppCompatActivity {
         EraseDataDialog dialog = new EraseDataDialog(this);
         dialog.setPositiveClickListener((dialogInterface, which) -> {
             database.eraseAllData(db, DBConstants.ACCOMPLISHMENT_TABLE);
+            database.eraseAllData(db, DBConstants.RATING_TABLE);
 
             Toast.makeText(this, R.string.erase_all_confirmed, Toast.LENGTH_LONG).show();
 
