@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import io.github.tstewart.todayi.data.LocalDatabaseIO;
 import io.github.tstewart.todayi.sql.DBConstants;
 import io.github.tstewart.todayi.sql.Database;
 import io.github.tstewart.todayi.ui.dialog.EraseDataDialog;
@@ -23,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class OptionsActivity extends AppCompatActivity {
 
+    Button forceBackupButton;
     Button exportDataButton;
     Button googleSignInButton;
     Button eraseAllDataButton;
@@ -34,11 +36,13 @@ public class OptionsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_options);
 
+        forceBackupButton = findViewById(R.id.buttonForceBackup);
         exportDataButton = findViewById(R.id.buttonExportData);
         googleSignInButton = findViewById(R.id.buttonGoogleSignIn);
         eraseAllDataButton = findViewById(R.id.buttonEraseAll);
         lastBackedUpTv = findViewById(R.id.textViewLastBackedUp);
 
+        if(forceBackupButton != null) forceBackupButton.setOnClickListener(this::onForceBackupButtonClicked);
         if(exportDataButton != null) exportDataButton.setOnClickListener(this::onExportDataButtonClicked);
         if(googleSignInButton != null) googleSignInButton.setOnClickListener(this::onGoogleSignInButtonClicked);
         if(eraseAllDataButton != null) eraseAllDataButton.setOnClickListener(this::eraseButtonClicked);
@@ -48,8 +52,12 @@ public class OptionsActivity extends AppCompatActivity {
     protected void onPostResume() {
         super.onPostResume();
         if(lastBackedUpTv != null) {
-            lastBackedUpTv.setText(String.format(getText(R.string.last_backed_up).toString(), getLastBackedUpRelativeString()));
+            setLastBackedUpText();
         }
+    }
+
+    private void setLastBackedUpText() {
+        lastBackedUpTv.setText(String.format(getText(R.string.last_backed_up).toString(), getLastBackedUpRelativeString()));
     }
 
     private String getLastBackedUpRelativeString() {
@@ -63,6 +71,17 @@ public class OptionsActivity extends AppCompatActivity {
         else {
             return "Unknown";
         }
+    }
+
+    private void onForceBackupButtonClicked(View view) {
+        LocalDatabaseIO.backup(this, DBConstants.DB_NAME);
+
+        getSharedPreferences(getString(R.string.user_prefs_file_location_key), MODE_PRIVATE)
+                .edit()
+                .putLong(getString(R.string.user_prefs_last_backed_up_key), System.currentTimeMillis())
+                .apply();
+
+        setLastBackedUpText();
     }
 
     private void onExportDataButtonClicked(View view) {
