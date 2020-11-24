@@ -17,7 +17,7 @@
     <string name="google_sign_in_button">Sign in</string>
     <string name="data_management">Data Management</string>
     <string name="restore_backup">Restore Backup</string>
-    <string name="last_backed_up">Last backed up: %s</string>
+    <string name="last_backed_up">Last backed up: %1$s</string>
     <string name="button_erase_all_data">Erase all data</string>
     <string name="button_import_data">Import</string>
     <string name="button_export_data">Export</string>
@@ -39,5 +39,9 @@
     <string name="title_activity_options">Options</string>
     <string name="title_activity_splash_screen">Splash</string>
     <string name="new_accomplishment_invalid_text">Your accomplishment must be between 1 and 200 characters.</string>
+
+    <!-- Files -->
+    <string name="user_prefs_file_location_key">io.github.tstewart.todayi.userprefs</string>
+    <string name="user_prefs_last_backed_up_key">last_backed_up</string>
 
 </resources>
