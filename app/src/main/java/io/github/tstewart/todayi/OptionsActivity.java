@@ -48,16 +48,16 @@ public class OptionsActivity extends AppCompatActivity {
         Database database = new Database(this);
         SQLiteDatabase db = database.getWritableDatabase();
 
-        EraseDataDialog dialog = new EraseDataDialog(this);
-        dialog.setPositiveClickListener((dialogInterface, which) -> {
-            database.eraseAllData(db, DBConstants.ACCOMPLISHMENT_TABLE);
-            database.eraseAllData(db, DBConstants.RATING_TABLE);
+        EraseDataDialog dialog = new EraseDataDialog(this)
+                .setPositiveClickListener((dialogInterface, which) -> {
+                    database.eraseAllData(db, DBConstants.ACCOMPLISHMENT_TABLE);
+                    database.eraseAllData(db, DBConstants.RATING_TABLE);
 
-            Toast.makeText(this, R.string.erase_all_confirmed, Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.erase_all_confirmed, Toast.LENGTH_LONG).show();
 
-            returnWithResponse(Activity.RESULT_OK);
-        });
-        dialog.setNegativeButton(null);
+                    returnWithResponse(Activity.RESULT_OK);
+                })
+                .setNegativeButton(null);
 
         dialog.create().show();
     }

@@ -18,11 +18,13 @@ public class EraseDataDialog extends AlertDialog.Builder {
         return dialog;
     }
 
-    public void setPositiveClickListener(AlertDialog.OnClickListener listener) {
+    public EraseDataDialog setPositiveClickListener(AlertDialog.OnClickListener listener) {
         this.setPositiveButton(R.string.button_yes, listener);
+        return this;
     }
 
-    public void setNegativeButton(AlertDialog.OnClickListener listener) {
+    public EraseDataDialog setNegativeButton(AlertDialog.OnClickListener listener) {
         this.setNegativeButton(R.string.button_no, listener);
+        return this;
     }
 }
