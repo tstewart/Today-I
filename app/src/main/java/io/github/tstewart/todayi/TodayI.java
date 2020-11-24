@@ -33,9 +33,12 @@ public class TodayI extends Application {
 
             if (sharedPrefs.contains(getString(R.string.user_prefs_last_backed_up_key))) {
                 long lastBackedUp = sharedPrefs.getLong(getString(R.string.user_prefs_last_backed_up_key), -1);
-                /* If the default value is selected, the app should attempt to backup data. */
-                /* Additionally, If the app hasn't backed up within the number of hours defined in BACKUP_EVERY_HOURS, the app should attempt to backup data */
-                if(lastBackedUp<=0 || hasNotBackedUpWithinHours(lastBackedUp)) shouldBackup = true;
+                /* If the default value is selected, the app should attempt to backup data.
+                If the last backup time is in the future (due to time modifications then we should backup anyway. (This may be changed)
+                Additionally, If the app hasn't backed up within the number of hours defined in BACKUP_EVERY_HOURS, the app should attempt to backup data */
+                if(lastBackedUp<=0
+                        || lastBackedUp > System.currentTimeMillis()
+                        || hasNotBackedUpWithinHours(lastBackedUp)) shouldBackup = true;
 
             /* If the key couldn't be found, a backup should be run if the app contains at least one database entry. */
             } else if(databasesEmpty(context)) {
