@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
@@ -26,6 +28,13 @@ import java.util.Objects;
 
 public class OptionsActivity extends AppCompatActivity {
 
+    // DEBUG ACTIVITY VARS
+    // Number of taps on the version TextView required to open debug menu
+    private final int DEBUG_ACTIVITY_TAP_REQUIREMENT = 5;
+    // Current tap count
+    private int current_count = 0;
+    //
+
     Button importDataButton;
     Button exportDataButton;
     Button restoreBackupButton;
@@ -34,6 +43,7 @@ public class OptionsActivity extends AppCompatActivity {
     Button eraseAllDataButton;
 
     TextView lastBackedUpTv;
+    TextView currentVersionTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +57,7 @@ public class OptionsActivity extends AppCompatActivity {
         googleSignInButton = findViewById(R.id.buttonGoogleSignIn);
         eraseAllDataButton = findViewById(R.id.buttonEraseAll);
         lastBackedUpTv = findViewById(R.id.textViewLastBackedUp);
+        currentVersionTv = findViewById(R.id.textViewAboutVersion);
 
         if(importDataButton != null) importDataButton.setOnClickListener(this::onImportDataButtonClicked);
         if(exportDataButton != null) exportDataButton.setOnClickListener(this::onExportDataButtonClicked);
@@ -54,6 +65,13 @@ public class OptionsActivity extends AppCompatActivity {
         if(forceBackupButton != null) forceBackupButton.setOnClickListener(this::onForceBackupButtonClicked);
         if(googleSignInButton != null) googleSignInButton.setOnClickListener(this::onGoogleSignInButtonClicked);
         if(eraseAllDataButton != null) eraseAllDataButton.setOnClickListener(this::eraseButtonClicked);
+        if(currentVersionTv != null) {
+            String currentVersion = getCurrentVersion();
+            currentVersionTv.setText(String.format(getString(R.string.about_version), currentVersion));
+
+            // Add onClick listener to access debug
+            currentVersionTv.setOnClickListener(this::OnDebugViewClickedListener);
+        }
     }
 
     @Override
@@ -62,6 +80,19 @@ public class OptionsActivity extends AppCompatActivity {
         if(lastBackedUpTv != null) {
             setLastBackedUpText();
         }
+    }
+
+    private String getCurrentVersion() {
+        Context appContext = getApplicationContext();
+        if(appContext != null) {
+            try {
+                PackageInfo pInfo = appContext.getPackageManager().getPackageInfo(appContext.getPackageName(), 0);
+                return pInfo.versionName;
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        return "Unknown";
     }
 
     private void setLastBackedUpText() {
@@ -78,6 +109,14 @@ public class OptionsActivity extends AppCompatActivity {
         }
         else {
             return "Unknown";
+        }
+    }
+
+    private void OnDebugViewClickedListener(View view) {
+        current_count++;
+
+        if(current_count >= DEBUG_ACTIVITY_TAP_REQUIREMENT) {
+            //DEBUG MENU ACCESS
         }
     }
 
