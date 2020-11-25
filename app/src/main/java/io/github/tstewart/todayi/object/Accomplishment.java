@@ -13,8 +13,8 @@ public class Accomplishment implements DatabaseObject {
 
     private final int MAX_CONTENT_LENGTH = 200;
 
-    Date date;
-    String content;
+    private Date date;
+    private String content;
 
     public Accomplishment(@NonNull Date date, @NonNull String content) {
         this.date = date;
@@ -44,4 +44,21 @@ public class Accomplishment implements DatabaseObject {
 
         return contentValues;
     }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
 }

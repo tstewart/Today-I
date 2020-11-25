@@ -1,13 +1,11 @@
 package io.github.tstewart.todayi.data;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -15,7 +13,6 @@ import java.nio.channels.FileChannel;
 
 import io.github.tstewart.todayi.error.ImportFailedException;
 import io.github.tstewart.todayi.event.OnDatabaseInteracted;
-import io.github.tstewart.todayi.sql.Database;
 
 /**
  * Local import/export of database information
@@ -39,7 +36,9 @@ public class LocalDatabaseIO {
                     writeToPath(databaseFile, backupFile);
                 } catch (IOException e) {
                     //TODO MANAGE
-                    Log.e(CLASS_LOG_TAG, e.getMessage());
+                    if(e.getMessage() != null) {
+                        Log.e(CLASS_LOG_TAG, e.getMessage());
+                    }
                 }
                 finally {
                     if(!backupFile.exists()) {
@@ -114,6 +113,7 @@ public class LocalDatabaseIO {
     /*
     https://stackoverflow.com/questions/39576646/android-check-if-a-file-is-a-valid-sqlite-database
     Author: Drilon Kurti
+    TODO implement
      */
     public static boolean isValidSQLite(String dbPath) {
         File file = new File(dbPath);

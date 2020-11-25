@@ -47,4 +47,20 @@ public class DayRating implements DatabaseObject {
 
         return contentValues;
     }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public int getDayRating() {
+        return dayRating;
+    }
+
+    public void setDayRating(int dayRating) {
+        this.dayRating = dayRating;
+    }
 }

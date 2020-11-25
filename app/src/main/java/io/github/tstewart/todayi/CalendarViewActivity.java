@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import com.prolificinteractive.materialcalendarview.CalendarDay;
-import com.prolificinteractive.materialcalendarview.DayViewDecorator;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 import org.threeten.bp.Instant;
@@ -22,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import io.github.tstewart.todayi.sql.DBConstants;
@@ -52,6 +50,7 @@ public class CalendarViewActivity extends AppCompatActivity {
             long time = extras.getLong("selectedDate");
             if (time > 0) {
                 selectedDate.setTime(time);
+                //TODO SHOW CURRENT SELECTED DATE
             }
         }
 
@@ -156,10 +155,5 @@ public class CalendarViewActivity extends AppCompatActivity {
         returnIntent.putExtra("result", epochDay);
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
-    }
-
-    private String getMonthYearFormatted(@NonNull Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat("MMMM YYYY", Locale.getDefault());
-        return sdf.format(date);
     }
 }

@@ -1,6 +1,7 @@
 package io.github.tstewart.todayi.ui.fragment;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -38,6 +39,8 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
     private AlertDialog dialog;
 
     private Date selectedDate = new Date();
+
+    private final Context context = getContext();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -94,9 +97,7 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
                             updateAccomplishment(input.getText().toString(), id);
                         }
                     }))
-                    .setDeleteButtonListener((dialogView -> {
-                        deleteAccomplishment(id);
-                    }))
+                    .setDeleteButtonListener((dialogView -> deleteAccomplishment(id)))
                     .create();
 
             this.dialog.show();
@@ -126,38 +127,45 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
      */
 
     private void addAccomplishment(String content) {
-        Accomplishment newAccomplishment = new Accomplishment(selectedDate, content);
+        DatabaseHelper databaseHelper = new DatabaseHelper(DBConstants.ACCOMPLISHMENT_TABLE);
 
-        try {
-            DatabaseHelper databaseHelper = new DatabaseHelper(DBConstants.ACCOMPLISHMENT_TABLE);
+        if(context != null) {
+            try {
+                Accomplishment accomplishment = getValidatedAccomplishment(selectedDate, content);
 
-            newAccomplishment.validate();
-
-            databaseHelper.insert(getContext(), newAccomplishment);
-        }
-        catch(IllegalArgumentException e) {
-            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                databaseHelper.insert(context, accomplishment);
+            } catch (IllegalArgumentException e) {
+                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
     private void updateAccomplishment(String content, long id) {
-        Accomplishment newAccomplishment = new Accomplishment(selectedDate, content);
+        DatabaseHelper databaseHelper = new DatabaseHelper(DBConstants.ACCOMPLISHMENT_TABLE);
 
-        try {
-            DatabaseHelper databaseHelper = new DatabaseHelper(DBConstants.ACCOMPLISHMENT_TABLE);
+        if(context != null) {
+            try {
+                Accomplishment accomplishment = getValidatedAccomplishment(selectedDate, content);
 
-            newAccomplishment.validate();
-
-            databaseHelper.update(getContext(), newAccomplishment, DBConstants.COLUMN_ID + "=? ", new String[]{String.valueOf(id)});
-        }
-        catch(IllegalArgumentException e) {
-            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                databaseHelper.update(context, accomplishment, DBConstants.COLUMN_ID + "=? ", new String[]{String.valueOf(id)});
+            } catch (IllegalArgumentException e) {
+                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
+    private Accomplishment getValidatedAccomplishment(Date date, String content) throws IllegalArgumentException {
+        Accomplishment accomplishment = new Accomplishment(date,content);
+        accomplishment.validate();
+
+        return accomplishment;
+    }
+
     private void deleteAccomplishment(long id) {
-        DatabaseHelper databaseHelper = new DatabaseHelper(DBConstants.ACCOMPLISHMENT_TABLE);
-        databaseHelper.delete(getContext(), DBConstants.COLUMN_ID + "=?", new String[]{String.valueOf(id)});
+        if(context != null) {
+            DatabaseHelper databaseHelper = new DatabaseHelper(DBConstants.ACCOMPLISHMENT_TABLE);
+            databaseHelper.delete(context, DBConstants.COLUMN_ID + "=?", new String[]{String.valueOf(id)});
+        }
     }
 
     /*

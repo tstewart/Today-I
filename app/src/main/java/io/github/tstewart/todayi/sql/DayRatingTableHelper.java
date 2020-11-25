@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 
 public class DayRatingTableHelper {
 
-    Context context;
+    final Context context;
 
     public DayRatingTableHelper(@NonNull Context context) {
         this.context = context;
@@ -20,7 +20,7 @@ public class DayRatingTableHelper {
 
     public int getRatingOrDefault(Date date) {
 
-        if(this.context != null && date != null) {
+        if(date != null) {
             SQLiteDatabase db = new Database(this.context).getReadableDatabase();
 
             String dateFormatted = new SimpleDateFormat(DBConstants.DATE_FORMAT, Locale.getDefault()).format(date);

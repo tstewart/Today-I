@@ -11,7 +11,7 @@ import io.github.tstewart.todayi.event.OnDatabaseInteracted;
 
 public class DatabaseHelper {
 
-    private String table;
+    private final String table;
 
     public DatabaseHelper(@NonNull String table) {
         this.table = table;

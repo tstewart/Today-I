@@ -11,7 +11,7 @@ import java.util.List;
 
 public class DayPostedDecorator implements DayViewDecorator {
 
-    List<CalendarDay> dates;
+    final List<CalendarDay> dates;
 
     public DayPostedDecorator(List<CalendarDay> dates) {
         this.dates = dates;

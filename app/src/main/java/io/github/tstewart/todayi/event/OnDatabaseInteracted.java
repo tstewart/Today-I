@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OnDatabaseInteracted {
-    private static List<OnDatabaseInteractionListener> listeners = new ArrayList<>();
+    private static final List<OnDatabaseInteractionListener> listeners = new ArrayList<>();
 
     public static void addListener(OnDatabaseInteractionListener listener) {
         listeners.add(listener);

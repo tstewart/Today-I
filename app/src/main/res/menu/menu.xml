@@ -4,11 +4,12 @@
     <item
         android:id="@+id/toolbar_calendar"
         android:icon="@drawable/ic_date_range_white_24dp"
-        android:title="Calendar"
+        android:title="@string/toolbar_tip_calendar"
         app:showAsAction="ifRoom" />
 
-    <item android:id="@+id/toolbar_settings"
+    <item
+        android:id="@+id/toolbar_settings"
         android:icon="@drawable/ic_settings_white_24dp"
-        app:showAsAction="ifRoom"
-        android:title="Settings" />
+        android:title="@string/toolbar_tip_settings"
+        app:showAsAction="ifRoom" />
 </menu>

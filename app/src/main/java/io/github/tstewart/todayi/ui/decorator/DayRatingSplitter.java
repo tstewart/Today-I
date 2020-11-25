@@ -1,29 +1,24 @@
 package io.github.tstewart.todayi.ui.decorator;
 
 import android.content.Context;
-import android.graphics.ColorFilter;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.ShapeDrawable;
 
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.BiConsumer;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
 import io.github.tstewart.todayi.R;
 
 // There is probably a much simpler way to do this, however the MaterialCalendarView api is pretty bad.
 // The only sensible way to decorate 5 different colors is to have 5 different decorators. Why? I don't know.
 public class DayRatingSplitter {
 
-    Context context;
+    final Context context;
 
     public DayRatingSplitter(@NonNull Context context) {
         this.context = context;

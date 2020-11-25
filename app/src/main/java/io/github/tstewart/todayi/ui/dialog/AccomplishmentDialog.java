@@ -9,7 +9,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 
-import androidx.appcompat.widget.AlertDialogLayout;
 import io.github.tstewart.todayi.R;
 
 public class AccomplishmentDialog extends AlertDialog.Builder {
@@ -18,9 +17,9 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
 
     private AlertDialog instance;
 
-    private Button buttonDelete;
-    private Button buttonCancel;
-    private Button buttonConfirm;
+    private final Button buttonDelete;
+    private final Button buttonCancel = null;
+    private final Button buttonConfirm;
 
     public AccomplishmentDialog(Context context) {
         super(context);
@@ -31,6 +30,7 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
 
         buttonDelete = view.findViewById(R.id.buttonDelete);
         // Cancel button disabled at the moment
+        // TODO REMOVE
         //buttonCancel = view.findViewById(R.id.buttonCancel);
         buttonConfirm = view.findViewById(R.id.buttonConfirm);
     }

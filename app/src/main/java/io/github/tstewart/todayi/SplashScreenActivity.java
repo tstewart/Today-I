@@ -14,7 +14,7 @@ public class SplashScreenActivity extends AppCompatActivity {
 
     final int SPLASH_DISPLAY_LENGTH_MILLIS = 3000;
 
-    Handler splashWaitHandler = new Handler();
+    final Handler splashWaitHandler = new Handler();
 
     View mainLayout;
 

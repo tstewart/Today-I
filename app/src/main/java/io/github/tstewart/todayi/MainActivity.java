@@ -1,26 +1,16 @@
 package io.github.tstewart.todayi;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import io.github.tstewart.todayi.event.OnDatabaseInteracted;
-import io.github.tstewart.todayi.event.OnDatabaseInteractionListener;
-import io.github.tstewart.todayi.ui.fragment.AccomplishmentListFragment;
-import io.github.tstewart.todayi.sql.Database;
 
 import android.app.Activity;
 import android.content.Intent;
 
-import android.database.sqlite.SQLiteDatabase;
-import android.media.audiofx.Visualizer;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -35,7 +25,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import io.github.tstewart.todayi.event.OnDateChanged;
 import io.github.tstewart.todayi.event.OnDateChangedListener;
-import io.github.tstewart.todayi.sql.Database;
 import io.github.tstewart.todayi.ui.fragment.AccomplishmentListFragment;
 
 import static java.util.Calendar.getInstance;
@@ -49,9 +38,6 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
     Date selectedDate;
 
     AccomplishmentListFragment listFragment;
-
-    Database database;
-    SQLiteDatabase sqLiteDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,9 +68,6 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
             }
         }
 
-        this.database = new Database(getApplicationContext());
-        this.sqLiteDatabase = database.getReadableDatabase();
-
         Date date = new Date();
         updateCurrentDate(date);
     }
@@ -97,25 +80,26 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
 
         Intent targetIntent = null;
         int requestCode = 0;
 
-        switch (item.getItemId()) {
-            case R.id.toolbar_calendar:
-                targetIntent = new Intent(this, CalendarViewActivity.class);
-                requestCode = CALENDAR_ACTIVITY_REQUEST_CODE;
-                targetIntent.putExtra("selectedDate", selectedDate.getTime());
-                break;
-            case R.id.toolbar_settings:
-                targetIntent = new Intent(this, OptionsActivity.class);
-                requestCode = OPTIONS_ACTIVITY_REQUEST_CODE;
-                break;
-            default:
-                break;
+        if(itemId == R.id.toolbar_calendar) {
+            targetIntent = new Intent(this, CalendarViewActivity.class);
+            requestCode = CALENDAR_ACTIVITY_REQUEST_CODE;
+            targetIntent.putExtra("selectedDate", selectedDate.getTime());
+        }
+        else if(itemId == R.id.toolbar_settings) {
+            targetIntent = new Intent(this, OptionsActivity.class);
+            requestCode = OPTIONS_ACTIVITY_REQUEST_CODE;
         }
 
-        // Await response from calendar option selected
+        /*
+         Start new activity and await response
+         Calendar will respond when a date is selected
+         Options will respond when an option causes a database refresh
+        */
         if(targetIntent != null) startActivityForResult(targetIntent, requestCode);
 
         return super.onOptionsItemSelected(item);
@@ -125,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        long dateResult = -1;
+        long dateResult;
 
         if (requestCode == CALENDAR_ACTIVITY_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK && data != null) {

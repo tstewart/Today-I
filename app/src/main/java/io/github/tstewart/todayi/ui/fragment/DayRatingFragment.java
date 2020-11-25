@@ -15,9 +15,9 @@ import android.widget.LinearLayout;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -26,14 +26,13 @@ import io.github.tstewart.todayi.event.OnDateChanged;
 import io.github.tstewart.todayi.event.OnDateChangedListener;
 import io.github.tstewart.todayi.object.DayRating;
 import io.github.tstewart.todayi.sql.DBConstants;
-import io.github.tstewart.todayi.sql.Database;
 import io.github.tstewart.todayi.sql.DatabaseHelper;
 import io.github.tstewart.todayi.sql.DayRatingTableHelper;
 
 public class DayRatingFragment extends Fragment implements OnDateChangedListener {
 
     Button[] buttons;
-    int colors[] = new int[]{R.color.colorRatingRed, R.color.colorRatingOrange, R.color.colorRatingYellow, R.color.colorRatingLightGreen, R.color.colorRatingGreen};
+    final int[] colors = new int[]{R.color.colorRatingRed, R.color.colorRatingOrange, R.color.colorRatingYellow, R.color.colorRatingLightGreen, R.color.colorRatingGreen};
 
     Date selectedDate;
 
@@ -44,7 +43,7 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         buttons = new Button[5];
@@ -77,7 +76,6 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
         Context context = getContext();
 
         if(buttons != null && context != null) {
-            List<Button> buttonsList = Arrays.asList(buttons);
 
             resetAllButtonBackgrounds();
 
@@ -147,11 +145,13 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
     }
 
     private int getIndexOfRating(Date date) {
-        if(getContext() != null) {
-            SQLiteDatabase db = new Database(getContext()).getReadableDatabase();
-            int index = new DayRatingTableHelper(getContext()).getRatingOrDefault(date);
+        Context context = getContext();
+
+        if(context != null) {
+            int index = new DayRatingTableHelper(context).getRatingOrDefault(date);
             return index-1;
         }
+
         return -1;
     }
 

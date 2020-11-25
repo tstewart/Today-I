@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 public class OnDateChanged {
-    public static List<OnDateChangedListener> listeners = new ArrayList<>();
+    public static final List<OnDateChangedListener> listeners = new ArrayList<>();
 
     public static void addListener(OnDateChangedListener listener) {
         listeners.add(listener);
