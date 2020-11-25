@@ -1,6 +1,9 @@
 package io.github.tstewart.todayi;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
@@ -83,18 +86,31 @@ public class OptionsActivity extends AppCompatActivity {
     }
 
     private void onRestoreBackupButtonClicked(View view) {
-        try {
-            LocalDatabaseIO.importBackup(this,DBConstants.DB_NAME);
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.button_restore_backup)
+                .setMessage(R.string.restore_backup_confirmation)
+                .setPositiveButton(R.string.button_yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Context context = getApplicationContext();
+                        try {
+                            LocalDatabaseIO.importBackup(context,DBConstants.DB_NAME);
 
-            //Exit options with result code.
-            returnWithResponse(Activity.RESULT_OK);
-            Toast.makeText(this,"Backup restored successfully!",Toast.LENGTH_SHORT).show();
+                            //Exit options with result code.
+                            returnWithResponse(Activity.RESULT_OK);
+                            Toast.makeText(context,"Backup restored successfully!",Toast.LENGTH_SHORT).show();
 
-        } catch (ImportFailedException e) {
-            Log.e(this.getClass().getSimpleName(), Objects.requireNonNull(e.getMessage()));
+                        } catch (ImportFailedException e) {
+                            Log.e(this.getClass().getSimpleName(), Objects.requireNonNull(e.getMessage()));
 
-            Toast.makeText(this,"Failed to import backup:" + e.getMessage(),Toast.LENGTH_SHORT).show();
-        }
+                            Toast.makeText(context,"Failed to import backup:" + e.getMessage(),Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                })
+                .setNegativeButton(R.string.button_no, null)
+                .create()
+                .show();
+
     }
 
     private void onForceBackupButtonClicked(View view) {
