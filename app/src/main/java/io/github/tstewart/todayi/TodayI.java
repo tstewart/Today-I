@@ -18,7 +18,7 @@ import io.github.tstewart.todayi.sql.DatabaseHelper;
 
 public class TodayI extends Application {
     private final String CLASS_LOG_TAG = this.getClass().getSimpleName();
-
+    
     private final int BACKUP_EVERY_HOURS = 24;
 
     @Override

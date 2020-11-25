@@ -8,24 +8,29 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import io.github.tstewart.todayi.data.LocalDatabaseIO;
+import io.github.tstewart.todayi.error.ImportFailedException;
 import io.github.tstewart.todayi.sql.DBConstants;
 import io.github.tstewart.todayi.sql.Database;
 import io.github.tstewart.todayi.ui.dialog.EraseDataDialog;
 
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Date;
+import java.util.Objects;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class OptionsActivity extends AppCompatActivity {
 
-    Button forceBackupButton;
+    Button importDataButton;
     Button exportDataButton;
+    Button restoreBackupButton;
+    Button forceBackupButton;
     Button googleSignInButton;
     Button eraseAllDataButton;
 
@@ -36,14 +41,18 @@ public class OptionsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_options);
 
-        forceBackupButton = findViewById(R.id.buttonForceBackup);
+        importDataButton = findViewById(R.id.buttonImportData);
         exportDataButton = findViewById(R.id.buttonExportData);
+        restoreBackupButton = findViewById(R.id.buttonRestoreBackup);
+        forceBackupButton = findViewById(R.id.buttonForceBackup);
         googleSignInButton = findViewById(R.id.buttonGoogleSignIn);
         eraseAllDataButton = findViewById(R.id.buttonEraseAll);
         lastBackedUpTv = findViewById(R.id.textViewLastBackedUp);
 
-        if(forceBackupButton != null) forceBackupButton.setOnClickListener(this::onForceBackupButtonClicked);
+        if(importDataButton != null) importDataButton.setOnClickListener(this::onImportDataButtonClicked);
         if(exportDataButton != null) exportDataButton.setOnClickListener(this::onExportDataButtonClicked);
+        if(restoreBackupButton != null) restoreBackupButton.setOnClickListener(this::onRestoreBackupButtonClicked);
+        if(forceBackupButton != null) forceBackupButton.setOnClickListener(this::onForceBackupButtonClicked);
         if(googleSignInButton != null) googleSignInButton.setOnClickListener(this::onGoogleSignInButtonClicked);
         if(eraseAllDataButton != null) eraseAllDataButton.setOnClickListener(this::eraseButtonClicked);
     }
@@ -73,6 +82,21 @@ public class OptionsActivity extends AppCompatActivity {
         }
     }
 
+    private void onRestoreBackupButtonClicked(View view) {
+        try {
+            LocalDatabaseIO.importBackup(this,DBConstants.DB_NAME);
+
+            //Exit options with result code.
+            returnWithResponse(Activity.RESULT_OK);
+            Toast.makeText(this,"Backup restored successfully!",Toast.LENGTH_SHORT).show();
+
+        } catch (ImportFailedException e) {
+            Log.e(this.getClass().getSimpleName(), Objects.requireNonNull(e.getMessage()));
+
+            Toast.makeText(this,"Failed to import backup:" + e.getMessage(),Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void onForceBackupButtonClicked(View view) {
         LocalDatabaseIO.backup(this, DBConstants.DB_NAME);
 
@@ -84,11 +108,18 @@ public class OptionsActivity extends AppCompatActivity {
         setLastBackedUpText();
     }
 
+    private void onImportDataButtonClicked(View view) {
+        Toast.makeText(this,"Coming soon!",Toast.LENGTH_SHORT).show();
+        //TODO
+    }
+
     private void onExportDataButtonClicked(View view) {
+        Toast.makeText(this,"Coming soon!",Toast.LENGTH_SHORT).show();
         //TODO
     }
 
     private void onGoogleSignInButtonClicked(View view) {
+        Toast.makeText(this,"Coming soon!",Toast.LENGTH_SHORT).show();
         //TODO
     }
 
