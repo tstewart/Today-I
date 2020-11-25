@@ -42,27 +42,23 @@ public class TodayI extends Application {
                         || hasNotBackedUpWithinHours(lastBackedUp)) shouldBackup = true;
 
             /* If the key couldn't be found, a backup should be run if the app contains at least one database entry. */
-            } else if(databasesEmpty(context)) {
+            } else if(!databasesEmpty(context)) {
                 shouldBackup = true;
             }
 
             if(shouldBackup) {
-                //TODO BACKUP
+
+                LocalDatabaseIO.backup(this, DBConstants.DB_NAME);
+
                 sharedPrefs.edit()
                         .putLong(getString(R.string.user_prefs_last_backed_up_key), System.currentTimeMillis())
                         .apply();
                 Log.i(CLASS_LOG_TAG, "Application data backed up!");
+
             }
             else {
                 Log.i(CLASS_LOG_TAG, "Application data did not need to backup.");
             }
-        }
-
-        LocalDatabaseIO.backup(this, DBConstants.DB_NAME);
-
-        File file = Environment.getDataDirectory();
-        if(new File(file, "backup_" + DBConstants.DB_NAME + ".db").exists()) {
-            Toast.makeText(this,"Backup successful!",Toast.LENGTH_SHORT).show();
         }
     }
 
