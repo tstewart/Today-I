@@ -10,6 +10,9 @@
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorTransparent">#00000000</color>
 
+    <!-- Theme colors -->
+    <color name="colorSplashBackground">#8F76BC</color>
+
     <!-- Day Rating colors -->
     <color name="colorRatingRed">#90FF0000</color>
     <color name="colorRatingOrange">#90FF6600</color>
