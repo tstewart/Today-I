@@ -2,6 +2,7 @@ package io.github.tstewart.todayi.sql;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import androidx.annotation.NonNull;
@@ -14,6 +15,17 @@ public class DatabaseHelper {
 
     public DatabaseHelper(@NonNull String table) {
         this.table = table;
+    }
+
+    public boolean isEmpty(@NonNull Context context) {
+        SQLiteDatabase db = getDatabase(context);
+
+        Cursor cursor = db.rawQuery("select ? from " + table, new String[]{DBConstants.COLUMN_ID});
+
+        int columnCount = cursor.getColumnCount();
+        cursor.close();
+
+        return columnCount == 0;
     }
 
     public void insert(@NonNull Context context, @NonNull DatabaseObject object) {
