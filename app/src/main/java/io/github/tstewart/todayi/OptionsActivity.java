@@ -14,7 +14,6 @@ import io.github.tstewart.todayi.data.LocalDatabaseIO;
 import io.github.tstewart.todayi.error.ImportFailedException;
 import io.github.tstewart.todayi.sql.DBConstants;
 import io.github.tstewart.todayi.sql.Database;
-import io.github.tstewart.todayi.ui.dialog.EraseDataDialog;
 
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -23,10 +22,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Date;
 import java.util.Objects;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 public class OptionsActivity extends AppCompatActivity {
 
@@ -143,8 +139,10 @@ public class OptionsActivity extends AppCompatActivity {
         Database database = new Database(this);
         SQLiteDatabase db = database.getWritableDatabase();
 
-        EraseDataDialog dialog = new EraseDataDialog(this)
-                .setPositiveClickListener((dialogInterface, which) -> {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.erase_all_warning_dialog_title)
+                .setMessage(R.string.erase_all_warning_dialog_message)
+                .setPositiveButton(R.string.button_yes, (dialogInterface, which) -> {
                     database.eraseAllData(db, DBConstants.ACCOMPLISHMENT_TABLE);
                     database.eraseAllData(db, DBConstants.RATING_TABLE);
 
@@ -152,9 +150,9 @@ public class OptionsActivity extends AppCompatActivity {
 
                     returnWithResponse(Activity.RESULT_OK);
                 })
-                .setNegativeButton(null);
-
-        dialog.create().show();
+                .setNegativeButton(R.string.button_no, null)
+                .create()
+                .show();
     }
 
     private void returnWithResponse(int response) {

@@ -23,8 +23,12 @@
     <string name="button_erase_all_data">Erase all data</string>
     <string name="button_import_data">Import</string>
     <string name="button_export_data">Export</string>
-    <string name="erase_all_warning_dialog">Erase all data? This cannot be undone.</string>
     <string name="erase_all_confirmed">All data erased.</string>
+
+    <!-- Options dialogs -->
+    <string name="erase_all_warning_dialog_title">Erase all data?</string>
+    <string name="erase_all_warning_dialog_message">This cannot be undone.</string>
+
 
     <!-- Calendar Activity -->
     <string name="button_next_month">Next</string>
