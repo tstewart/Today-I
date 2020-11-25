@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
     <color name="colorWarning">#B33A3A</color>
 
     <color name="black_overlay">#66000000</color>
 
+    <color name="colorBlack">#000000</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorTransparent">#00000000</color>
 
     <!-- Theme colors -->
     <color name="colorSplashBackground">#8F76BC</color>
+    <color name="colorPrimary">#5F35AA</color>
+    <color name="colorPrimaryDark">#45267C</color>
+    <color name="colorAccent">#578323</color>
+    <color name="colorAccentDark">#112300</color>
+    <color name="colorButtonBg">#DFDFDF</color>
+
+    <!-- Erase data warning color -->
+    <color name="colorWarningLight">#EB7777</color>
 
     <!-- Day Rating colors -->
     <color name="colorRatingRed">#90FF0000</color>

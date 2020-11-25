@@ -105,6 +105,7 @@
 
         <Button
             android:id="@+id/buttonEraseAll"
+            style="@style/AppTheme.ButtonDeleteData"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="#EB7777"
