@@ -32,7 +32,7 @@ public class OptionsActivity extends AppCompatActivity {
     // Number of taps on the version TextView required to open debug menu
     private final int DEBUG_ACTIVITY_TAP_REQUIREMENT = 5;
     // Current tap count
-    private int current_count = 0;
+    private int debug_activity_tap_count = 0;
     //
 
     Button importDataButton;
@@ -113,10 +113,13 @@ public class OptionsActivity extends AppCompatActivity {
     }
 
     private void OnDebugViewClickedListener(View view) {
-        current_count++;
+        debug_activity_tap_count++;
 
-        if(current_count >= DEBUG_ACTIVITY_TAP_REQUIREMENT) {
-            //DEBUG MENU ACCESS
+        if(debug_activity_tap_count >= DEBUG_ACTIVITY_TAP_REQUIREMENT) {
+            Intent intent = new Intent(this, DebugActivity.class);
+            startActivity(intent);
+
+            debug_activity_tap_count = 0;
         }
     }
 

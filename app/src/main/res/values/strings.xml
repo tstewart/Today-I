@@ -35,6 +35,10 @@
     <string name="erase_all_warning_dialog_title">Erase all data?</string>
     <string name="erase_all_warning_dialog_message">This cannot be undone.</string>
 
+    <!-- Debug Activity -->
+    <string name="debug_invalidate_backup">Invalidate backup</string>
+    <string name="debug_back">Back</string>
+
     <!-- Other -->
     <string name="button_confirm">Confirm</string>
     <string name="button_cancel">Cancel</string>
