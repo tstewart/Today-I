@@ -40,7 +40,7 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
 
     private Date selectedDate = new Date();
 
-    private final Context context = getContext();
+    private Context context;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,6 +52,7 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        context = getContext();
 
         // Add listener to notify fragment of database updates
         OnDatabaseInteracted.addListener(this);
