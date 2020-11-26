@@ -23,6 +23,7 @@ import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.event.OnDateChanged;
 import io.github.tstewart.todayi.event.OnDateChangedListener;
 import io.github.tstewart.todayi.object.Accomplishment;
+import io.github.tstewart.todayi.sql.AccomplishmentTableHelper;
 import io.github.tstewart.todayi.sql.DBConstants;
 import io.github.tstewart.todayi.sql.Database;
 import io.github.tstewart.todayi.sql.DatabaseHelper;
@@ -42,6 +43,8 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
 
     private Context context;
 
+    private AccomplishmentTableHelper helper;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -52,7 +55,9 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
         context = getContext();
+        this.helper = new AccomplishmentTableHelper(getContext());
 
         // Add listener to notify fragment of database updates
         OnDatabaseInteracted.addListener(this);
@@ -95,10 +100,17 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
                         EditText input = dialogView.getRootView().findViewById(R.id.editTextAccomplishmentManage);
 
                         if (input != null) {
-                            updateAccomplishment(input.getText().toString(), id);
+                            Accomplishment accomplishment = new Accomplishment(selectedDate, input.getText().toString());
+
+                            try {
+                                helper.update(accomplishment, id);
+                            }
+                            catch(IllegalArgumentException e) {
+                                Toast.makeText(getContext(),e.getMessage(),Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }))
-                    .setDeleteButtonListener((dialogView -> deleteAccomplishment(id)))
+                    .setDeleteButtonListener((dialogView -> helper.delete(id)))
                     .create();
 
             this.dialog.show();
@@ -114,64 +126,20 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
                     EditText input = dialogView.getRootView().findViewById(R.id.editTextAccomplishmentManage);
 
                     if(input != null) {
-                        addAccomplishment(input.getText().toString());
+                        Accomplishment accomplishment = new Accomplishment(selectedDate,input.getText().toString());
+
+                        try {
+                            helper.insert(accomplishment);
+                        }
+                        catch(IllegalArgumentException e) {
+                            Toast.makeText(getContext(),e.getMessage(),Toast.LENGTH_SHORT).show();
+                        }
                     }
                 })
                 .create();
 
         this.dialog.show();
     }
-
-    /*
-    SQL item management for Accomplishments
-    TODO MOVE
-     */
-
-    private void addAccomplishment(String content) {
-        DatabaseHelper databaseHelper = new DatabaseHelper(DBConstants.ACCOMPLISHMENT_TABLE);
-
-        if(context != null) {
-            try {
-                Accomplishment accomplishment = getValidatedAccomplishment(selectedDate, content);
-
-                databaseHelper.insert(context, accomplishment);
-            } catch (IllegalArgumentException e) {
-                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    private void updateAccomplishment(String content, long id) {
-        DatabaseHelper databaseHelper = new DatabaseHelper(DBConstants.ACCOMPLISHMENT_TABLE);
-
-        if(context != null) {
-            try {
-                Accomplishment accomplishment = getValidatedAccomplishment(selectedDate, content);
-
-                databaseHelper.update(context, accomplishment, DBConstants.COLUMN_ID + "=? ", new String[]{String.valueOf(id)});
-            } catch (IllegalArgumentException e) {
-                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    private Accomplishment getValidatedAccomplishment(Date date, String content) throws IllegalArgumentException {
-        Accomplishment accomplishment = new Accomplishment(date,content);
-        accomplishment.validate();
-
-        return accomplishment;
-    }
-
-    private void deleteAccomplishment(long id) {
-        if(context != null) {
-            DatabaseHelper databaseHelper = new DatabaseHelper(DBConstants.ACCOMPLISHMENT_TABLE);
-            databaseHelper.delete(context, DBConstants.COLUMN_ID + "=?", new String[]{String.valueOf(id)});
-        }
-    }
-
-    /*
-     * End of SQL item management
-     */
 
     private void refreshCursor() {
         setCursor(getNewCursor());

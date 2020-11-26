@@ -14,7 +14,6 @@ import android.widget.LinearLayout;
 
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,6 +34,8 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
     final int[] colors = new int[]{R.color.colorRatingRed, R.color.colorRatingOrange, R.color.colorRatingYellow, R.color.colorRatingLightGreen, R.color.colorRatingGreen};
 
     Date selectedDate;
+
+    DayRatingTableHelper tableHelper;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -69,6 +70,7 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        tableHelper = new DayRatingTableHelper(getContext());
         OnDateChanged.addListener(this);
     }
 
@@ -89,7 +91,10 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
                     setButtonBackground(buttonClicked, color);
 
                     setSelectedButton(index);
-                    updateDayRatingOnDB(index+1);
+
+                    if(tableHelper != null) {
+                        tableHelper.setRating(selectedDate,index+1);
+                    }
                 }
             }
         }
@@ -104,28 +109,6 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
             int color = colors[index];
 
             setButtonBackground(button,color);
-        }
-    }
-
-    private void updateDayRatingOnDB(int index) {
-        DatabaseHelper helper = new DatabaseHelper(DBConstants.RATING_TABLE);
-
-        if(selectedDate != null && getContext() != null) {
-            DayRating dayRating = new DayRating(selectedDate, index);
-            //TODO validate
-
-            SQLiteDatabase db = helper.getDatabase(getContext());
-            String dateFormatted = new DateFormatter(DBConstants.DATE_FORMAT).format(selectedDate);
-            Cursor existingRowCheck = db.rawQuery(DBConstants.DAY_RATING_QUERY, new String[]{dateFormatted});
-
-            if(existingRowCheck.moveToFirst()) {
-                helper.update(getContext(),dayRating, DBConstants.COLUMN_DATE + "=?", new String[]{dateFormatted});
-            }
-            else {
-                helper.insert(getContext(), dayRating);
-            }
-
-            existingRowCheck.close();
         }
     }
 
@@ -148,7 +131,7 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
         Context context = getContext();
 
         if(context != null) {
-            int index = new DayRatingTableHelper(context).getRatingOrDefault(date);
+            int index = new DayRatingTableHelper(context).getRating(date, -1);
             return index-1;
         }
 
