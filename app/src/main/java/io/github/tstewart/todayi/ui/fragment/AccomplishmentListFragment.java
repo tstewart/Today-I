@@ -83,7 +83,7 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
 
     private void onListItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         if (adapter == null) {
-            Log.e(this.getClass().getName(), "List item click called before adapter initialised.");
+            Log.w(this.getClass().getName(), "List item click called before adapter initialised.");
             return;
         }
         Cursor cursor = (Cursor) adapter.getItem(position);

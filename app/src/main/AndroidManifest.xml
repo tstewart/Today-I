@@ -15,7 +15,7 @@
         android:theme="@style/AppTheme"
         android:fullBackupContent="@xml/backup_descriptor">
         <activity
-            android:name=".CalendarViewActivity"
+            android:name=".CalendarActivity"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme">
             <meta-data

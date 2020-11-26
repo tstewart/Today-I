@@ -16,7 +16,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -74,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu, menu);
+        getMenuInflater().inflate(R.menu.menu_main_nav, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -86,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         int requestCode = 0;
 
         if(itemId == R.id.toolbar_calendar) {
-            targetIntent = new Intent(this, CalendarViewActivity.class);
+            targetIntent = new Intent(this, CalendarActivity.class);
             requestCode = CALENDAR_ACTIVITY_REQUEST_CODE;
             targetIntent.putExtra("selectedDate", selectedDate.getTime());
         }

@@ -115,7 +115,7 @@ public class OptionsActivity extends AppCompatActivity {
                             Toast.makeText(context,"Backup restored successfully!",Toast.LENGTH_SHORT).show();
 
                         } catch (ImportFailedException e) {
-                            Log.e(this.getClass().getSimpleName(), Objects.requireNonNull(e.getMessage()));
+                            Log.w(this.getClass().getSimpleName(), Objects.requireNonNull(e.getMessage()));
 
                             Toast.makeText(context,"Failed to import backup:" + e.getMessage(),Toast.LENGTH_SHORT).show();
                         }
@@ -131,7 +131,7 @@ public class OptionsActivity extends AppCompatActivity {
         try {
             LocalDatabaseIO.backup(this, DBConstants.DB_NAME);
         } catch (ExportFailedException e) {
-            Log.e(CLASS_LOG_TAG,e.getMessage(), e);
+            Log.w(CLASS_LOG_TAG,e.getMessage(), e);
             Toast.makeText(this,"Backup failed: " + e.getMessage(),Toast.LENGTH_LONG).show();
         }
 

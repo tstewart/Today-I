@@ -1,7 +1,6 @@
 package io.github.tstewart.todayi;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -19,17 +18,13 @@ import org.threeten.bp.ZoneId;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NavUtils;
 import io.github.tstewart.todayi.sql.DBConstants;
 import io.github.tstewart.todayi.sql.Database;
 import io.github.tstewart.todayi.sql.DatabaseHelper;
@@ -39,7 +34,7 @@ import io.github.tstewart.todayi.ui.decorator.DayRatingSplitter;
 import io.github.tstewart.todayi.utils.DateFormatter;
 
 
-public class CalendarViewActivity extends AppCompatActivity {
+public class CalendarActivity extends AppCompatActivity {
     private final String CLASS_LOG_TAG = this.getClass().getSimpleName();
 
     MaterialCalendarView calendarView;
@@ -52,7 +47,7 @@ public class CalendarViewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_calendar_view);
+        setContentView(R.layout.activity_calendar);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -125,7 +120,7 @@ public class CalendarViewActivity extends AppCompatActivity {
 
                     } catch (ParseException e) {
                         Toast.makeText(this,"Failed to gather dates posted on. Database may be corrupt.", Toast.LENGTH_LONG).show();
-                        Log.e(CLASS_LOG_TAG,e.getMessage(), e);
+                        Log.w(CLASS_LOG_TAG,e.getMessage(), e);
                     }
                 }
             } while (cursor.moveToNext());
@@ -160,7 +155,7 @@ public class CalendarViewActivity extends AppCompatActivity {
 
                 } catch (ParseException e) {
                     Toast.makeText(this,"Failed to gather ratings. Database may be corrupt.", Toast.LENGTH_LONG).show();
-                    Log.e(CLASS_LOG_TAG,e.getMessage(), e);
+                    Log.w(CLASS_LOG_TAG,e.getMessage(), e);
                 }
 
             } while (cursor.moveToNext());

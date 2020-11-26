@@ -61,7 +61,7 @@ public class TodayI extends Application {
         try {
             LocalDatabaseIO.backup(this, DBConstants.DB_NAME);
         } catch (ExportFailedException e) {
-            Log.e(CLASS_LOG_TAG,e.getMessage(), e);
+            Log.w(CLASS_LOG_TAG,e.getMessage(), e);
             Toast.makeText(this,"Automatic backup failed: " + e.getMessage(),Toast.LENGTH_LONG).show();
         }
 
