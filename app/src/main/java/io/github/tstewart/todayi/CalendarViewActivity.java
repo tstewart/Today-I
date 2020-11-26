@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -39,6 +40,7 @@ import io.github.tstewart.todayi.utils.DateFormatter;
 
 
 public class CalendarViewActivity extends AppCompatActivity {
+    private final String CLASS_LOG_TAG = this.getClass().getSimpleName();
 
     MaterialCalendarView calendarView;
 
@@ -57,7 +59,6 @@ public class CalendarViewActivity extends AppCompatActivity {
             long time = extras.getLong("selectedDate");
             if (time > 0) {
                 selectedDate.setTime(time);
-                //TODO SHOW CURRENT SELECTED DATE
             }
         }
 
@@ -65,6 +66,8 @@ public class CalendarViewActivity extends AppCompatActivity {
 
         if(calendarView != null) {
             calendarView.setOnDateChangedListener(this::onCalendarClick);
+            calendarView.setCurrentDate(getCalendarDayFromDate(selectedDate));
+            calendarView.setDateSelected(getCalendarDayFromDate(selectedDate), true);
         }
 
         if(getSupportActionBar() != null) getSupportActionBar().setTitle(R.string.activity_calendar);
@@ -113,13 +116,16 @@ public class CalendarViewActivity extends AppCompatActivity {
                         Date date = new DateFormatter(DBConstants.DATE_FORMAT).parse(dateString);
 
                         if(date != null) {
-                            LocalDate localDate = Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+                            CalendarDay calendarDay = getCalendarDayFromDate(date);
 
-                            dates.add(CalendarDay.from(localDate));
+                            if(calendarDay != null) {
+                                dates.add(calendarDay);
+                            }
                         }
 
                     } catch (ParseException e) {
-                        e.printStackTrace();
+                        Toast.makeText(this,"Failed to gather dates posted on. Database may be corrupt.", Toast.LENGTH_LONG).show();
+                        Log.e(CLASS_LOG_TAG,e.getMessage(), e);
                     }
                 }
             } while (cursor.moveToNext());
@@ -145,14 +151,16 @@ public class CalendarViewActivity extends AppCompatActivity {
                 try {
                     Date date = new DateFormatter(DBConstants.DATE_FORMAT).parse(dateString);
                     if(date != null) {
-                        LocalDate localDate = Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+                        CalendarDay calendarDay = getCalendarDayFromDate(date);
 
-                        ratings.put(CalendarDay.from(localDate),rating);
+                        if(calendarDay != null) {
+                            ratings.put(calendarDay, rating);
+                        }
                     }
 
                 } catch (ParseException e) {
-                    //TODO MANAGE
-                    e.printStackTrace();
+                    Toast.makeText(this,"Failed to gather ratings. Database may be corrupt.", Toast.LENGTH_LONG).show();
+                    Log.e(CLASS_LOG_TAG,e.getMessage(), e);
                 }
 
             } while (cursor.moveToNext());
@@ -161,6 +169,15 @@ public class CalendarViewActivity extends AppCompatActivity {
         cursor.close();
 
         return ratings;
+    }
+
+    private CalendarDay getCalendarDayFromDate(Date date) {
+        if(date != null) {
+            LocalDate localDate = Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+
+            return CalendarDay.from(localDate);
+        }
+        return null;
     }
 
     private void onCalendarClick(MaterialCalendarView view, CalendarDay date, boolean b) {
