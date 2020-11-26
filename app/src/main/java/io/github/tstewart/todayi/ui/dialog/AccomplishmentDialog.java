@@ -18,7 +18,6 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
     private AlertDialog instance;
 
     private final Button buttonDelete;
-    private final Button buttonCancel = null;
     private final Button buttonConfirm;
 
     public AccomplishmentDialog(Context context) {
@@ -29,9 +28,6 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
         this.setView(view);
 
         buttonDelete = view.findViewById(R.id.buttonDelete);
-        // Cancel button disabled at the moment
-        // TODO REMOVE
-        //buttonCancel = view.findViewById(R.id.buttonCancel);
         buttonConfirm = view.findViewById(R.id.buttonConfirm);
     }
 
@@ -81,16 +77,6 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
     public AccomplishmentDialog setConfirmClickListener(View.OnClickListener listener) {
         if (buttonConfirm != null) {
             buttonConfirm.setOnClickListener(v -> {
-                listener.onClick(v);
-                if (this.instance != null) instance.dismiss();
-            });
-        }
-        return this;
-    }
-
-    public AccomplishmentDialog setCancelButtonListener(View.OnClickListener listener) {
-        if (buttonCancel != null) {
-            buttonCancel.setOnClickListener(v -> {
                 listener.onClick(v);
                 if (this.instance != null) instance.dismiss();
             });
