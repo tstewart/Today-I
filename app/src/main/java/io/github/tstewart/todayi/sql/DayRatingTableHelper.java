@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.Date;
-import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import io.github.tstewart.todayi.object.DayRating;
@@ -13,12 +12,12 @@ import io.github.tstewart.todayi.utils.DateFormatter;
 
 public class DayRatingTableHelper {
 
-    final Context context;
-    final DatabaseHelper helper;
+    final Context mContext;
+    final DatabaseHelper mHelper;
 
     public DayRatingTableHelper(@NonNull Context context) {
-        this.context = context;
-        this.helper = new DatabaseHelper(DBConstants.RATING_TABLE);
+        this.mContext = context;
+        this.mHelper = new DatabaseHelper(DBConstants.RATING_TABLE);
     }
 
     public void setRating(Date date, int rating) throws IllegalArgumentException {
@@ -27,15 +26,15 @@ public class DayRatingTableHelper {
 
             dayRating.validate();
 
-            SQLiteDatabase db = helper.getDatabase(this.context);
+            SQLiteDatabase db = mHelper.getDatabase(this.mContext);
             String dateFormatted = new DateFormatter(DBConstants.DATE_FORMAT).format(date);
             Cursor existingRowCheck = db.rawQuery(DBConstants.DAY_RATING_QUERY, new String[]{dateFormatted});
 
             if(existingRowCheck.moveToFirst()) {
-                helper.update(this.context, dayRating, DBConstants.COLUMN_DATE + "=?", new String[]{dateFormatted});
+                mHelper.update(this.mContext, dayRating, DBConstants.COLUMN_DATE + "=?", new String[]{dateFormatted});
             }
             else {
-                helper.insert(this.context, dayRating);
+                mHelper.insert(this.mContext, dayRating);
             }
 
             existingRowCheck.close();
@@ -45,7 +44,7 @@ public class DayRatingTableHelper {
     public int getRating(Date date, int defaultValue) {
 
         if(date != null) {
-            SQLiteDatabase db = new Database(this.context).getReadableDatabase();
+            SQLiteDatabase db = new Database(this.mContext).getReadableDatabase();
 
             String dateFormatted = new DateFormatter(DBConstants.DATE_FORMAT).format(date);
             Cursor cursor = db.rawQuery( DBConstants.DAY_RATING_QUERY, new String[]{dateFormatted});

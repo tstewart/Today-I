@@ -10,20 +10,20 @@ import java.util.List;
 
 public class DayRatedDecorator implements DayViewDecorator {
 
-    final List<CalendarDay> dates;
-    final Drawable drawable;
+    final List<CalendarDay> mDates;
+    final Drawable mDrawable;
 
     public DayRatedDecorator(List<CalendarDay> dates, Drawable drawable) {
-        this.dates = dates;
-        this.drawable = drawable;
+        this.mDates = dates;
+        this.mDrawable = drawable;
     }
     @Override
     public boolean shouldDecorate(CalendarDay day) {
-        return dates.contains(day);
+        return mDates.contains(day);
     }
 
     @Override
     public void decorate(DayViewFacade view) {
-        view.setBackgroundDrawable(drawable);
+        view.setBackgroundDrawable(mDrawable);
     }
 }

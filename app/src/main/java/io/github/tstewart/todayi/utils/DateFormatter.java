@@ -10,23 +10,23 @@ import java.util.Locale;
 // TODO In later vesions, SimpleDateFormat should be replaced app wide with DateTimeFormatter
 public class DateFormatter {
 
-    private SimpleDateFormat dateFormatter;
+    private SimpleDateFormat mDateFormatter;
 
     private DateFormatter(){}
 
     public DateFormatter(String dateFormat) {
-        this.dateFormatter = new SimpleDateFormat(dateFormat, Locale.getDefault());
+        this.mDateFormatter = new SimpleDateFormat(dateFormat, Locale.getDefault());
     }
 
     public String format(Date date) {
-        return dateFormatter.format(date);
+        return mDateFormatter.format(date);
     }
 
     // Formats the date, returning days with day indicators attached (1st, 2nd, 3rd, etc)
     public String formatWithDayIndicators(Date date) {
-        SimpleDateFormat indicatorDateFormatter = dateFormatter;
+        SimpleDateFormat indicatorDateFormatter = mDateFormatter;
 
-        String dateFormat = dateFormatter.toPattern();
+        String dateFormat = mDateFormatter.toPattern();
         int indicatorPosition = dateFormat.indexOf("d ");
 
         if(indicatorPosition>=0) {
@@ -45,14 +45,13 @@ public class DateFormatter {
     }
 
     public Date parse(String dateString) throws ParseException {
-        return dateFormatter.parse(dateString);
+        return mDateFormatter.parse(dateString);
     }
 
     /*
         Author: Bohemian
         https://stackoverflow.com/a/6810409
      */
-
     private String getOrdinal(int i) {
         String[] sufixes = new String[] { "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th" };
         switch (i % 100) {

@@ -34,9 +34,9 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
     private final int CALENDAR_ACTIVITY_REQUEST_CODE = 1;
     private final int OPTIONS_ACTIVITY_REQUEST_CODE = 2;
 
-    Date selectedDate;
+    Date mSelectedDate;
 
-    AccomplishmentListFragment listFragment;
+    AccomplishmentListFragment mListFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,13 +62,12 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
         for (Fragment fragment : fragments) {
             if (fragment instanceof AccomplishmentListFragment) {
-                this.listFragment = (AccomplishmentListFragment) fragment;
+                this.mListFragment = (AccomplishmentListFragment) fragment;
                 break;
             }
         }
 
-        Date date = new Date();
-        updateCurrentDate(date);
+        updateCurrentDate(new Date());
     }
 
     @Override
@@ -87,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         if(itemId == R.id.toolbar_calendar) {
             targetIntent = new Intent(this, CalendarActivity.class);
             requestCode = CALENDAR_ACTIVITY_REQUEST_CODE;
-            targetIntent.putExtra("selectedDate", selectedDate.getTime());
+            targetIntent.putExtra("selectedDate", mSelectedDate.getTime());
         }
         else if(itemId == R.id.toolbar_settings) {
             targetIntent = new Intent(this, OptionsActivity.class);
@@ -126,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         else if (requestCode == OPTIONS_ACTIVITY_REQUEST_CODE) {
             // On receive OK response, settings activity forces reset of accomplishments
             if (resultCode == Activity.RESULT_OK) {
-                if(this.listFragment != null) {
+                if(this.mListFragment != null) {
                     OnDatabaseInteracted.notifyDatabaseInteracted();
                 }
             }
@@ -140,12 +139,12 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
     void onDayChangeButtonClicked(View view) {
         int viewId = view.getId();
 
-        Date newDate = selectedDate;
+        Date newDate = mSelectedDate;
 
         if (viewId == R.id.buttonNextDay || viewId == R.id.buttonPrevDay) {
 
             Calendar calendar = getInstance();
-            calendar.setTime(selectedDate);
+            calendar.setTime(mSelectedDate);
 
             if (viewId == R.id.buttonPrevDay) {
                 calendar.add(Calendar.DAY_OF_MONTH, -1);
@@ -159,15 +158,15 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         updateCurrentDate(newDate);
 
         // Dismiss accomplishment fragment dialog if exists
-        if(listFragment != null) listFragment.dismissCurrentDialog();
+        if(mListFragment != null) mListFragment.dismissCurrentDialog();
 
     }
 
     @Override
     public void onDateChanged(Date date) {
-        this.selectedDate = date;
+        this.mSelectedDate = date;
 
         TextView dateLabel = findViewById(R.id.textViewCurrentDate);
-        dateLabel.setText(new DateFormatter("MMMM d yyyy").formatWithDayIndicators(selectedDate));
+        dateLabel.setText(new DateFormatter("MMMM d yyyy").formatWithDayIndicators(mSelectedDate));
     }
 }

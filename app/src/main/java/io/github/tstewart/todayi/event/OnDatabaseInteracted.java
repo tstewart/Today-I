@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OnDatabaseInteracted {
-    private static final List<OnDatabaseInteractionListener> listeners = new ArrayList<>();
+    private static final List<OnDatabaseInteractionListener> sListeners = new ArrayList<>();
 
     public static void addListener(OnDatabaseInteractionListener listener) {
-        listeners.add(listener);
+        sListeners.add(listener);
     }
 
     public static void notifyDatabaseInteracted() {
-        listeners.forEach(OnDatabaseInteractionListener::onDatabaseInteracted);
+        sListeners.forEach(OnDatabaseInteractionListener::onDatabaseInteracted);
     }
 }

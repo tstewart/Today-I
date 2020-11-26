@@ -12,23 +12,23 @@ import io.github.tstewart.todayi.utils.DateFormatter;
 // E.g. on a bad day you may vote the day a 1.
 public class DayRating implements DatabaseObject {
 
-    private final int MIN_RATING = 1;
-    private final int MAX_RATING = 5;
+    private static final int MIN_RATING = 1;
+    private static final int MAX_RATING = 5;
 
-    private Date date;
-    private int dayRating;
+    private Date mDate;
+    private int mDayRating;
 
     public DayRating(@NonNull Date date, int dayRating) {
-        this.date = date;
-        this.dayRating = dayRating;
+        this.mDate = date;
+        this.mDayRating = dayRating;
     }
 
     @Override
     public void validate() throws IllegalArgumentException {
-        if(dayRating < MIN_RATING) {
+        if(mDayRating < MIN_RATING) {
             throw new IllegalArgumentException("Rating cannot be lower than " + MIN_RATING + ".");
         }
-        else if(dayRating > MAX_RATING) {
+        else if(mDayRating > MAX_RATING) {
             throw new IllegalArgumentException("Rating cannot be higher than " + MAX_RATING + ".");
         }
     }
@@ -38,28 +38,28 @@ public class DayRating implements DatabaseObject {
         ContentValues contentValues = new ContentValues();
         DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT);
 
-        if(date != null) {
-            contentValues.put(DBConstants.COLUMN_DATE, dateFormatter.format(date));
+        if(mDate != null) {
+            contentValues.put(DBConstants.COLUMN_DATE, dateFormatter.format(mDate));
         }
 
-        contentValues.put(DBConstants.COLUMN_RATING, dayRating);
+        contentValues.put(DBConstants.COLUMN_RATING, mDayRating);
 
         return contentValues;
     }
 
     public Date getDate() {
-        return date;
+        return mDate;
     }
 
     public void setDate(Date date) {
-        this.date = date;
+        this.mDate = date;
     }
 
     public int getDayRating() {
-        return dayRating;
+        return mDayRating;
     }
 
     public void setDayRating(int dayRating) {
-        this.dayRating = dayRating;
+        this.mDayRating = dayRating;
     }
 }

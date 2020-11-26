@@ -5,13 +5,13 @@ import java.util.Date;
 import java.util.List;
 
 public class OnDateChanged {
-    public static final List<OnDateChangedListener> listeners = new ArrayList<>();
+    public static final List<OnDateChangedListener> sListeners = new ArrayList<>();
 
     public static void addListener(OnDateChangedListener listener) {
-        listeners.add(listener);
+        sListeners.add(listener);
     }
 
     public static void notifyDatabaseInteracted(Date date) {
-        listeners.forEach(listener -> listener.onDateChanged(date));
+        sListeners.forEach(listener -> listener.onDateChanged(date));
     }
 }

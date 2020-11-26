@@ -18,10 +18,10 @@ import io.github.tstewart.todayi.R;
 // The only sensible way to decorate 5 different colors is to have 5 different decorators. Why? I don't know.
 public class DayRatingSplitter {
 
-    final Context context;
+    final Context mContext;
 
     public DayRatingSplitter(@NonNull Context context) {
-        this.context = context;
+        this.mContext = context;
     }
 
     public List<DayRatedDecorator> getDayRatingDecorators(HashMap<CalendarDay, Integer> ratings) {
@@ -51,7 +51,7 @@ public class DayRatingSplitter {
     }
 
     private Drawable getRatingDrawable(int color) {
-        GradientDrawable drawable = (GradientDrawable) ContextCompat.getDrawable(context, R.drawable.calendar_rated_circle);
+        GradientDrawable drawable = (GradientDrawable) ContextCompat.getDrawable(mContext, R.drawable.calendar_rated_circle);
 
         if (drawable != null) {
             // Make a clone, to ensure updating the color doesn't break every other instance
@@ -63,19 +63,26 @@ public class DayRatingSplitter {
     }
 
     public int getColorAtIndex(int index) {
+        int colorResourceId;
         switch(index) {
             case 1:
-                return ContextCompat.getColor(context, R.color.colorRatingRed);
+                colorResourceId = R.color.colorRatingRed;
+                break;
             case 2:
-                return ContextCompat.getColor(context, R.color.colorRatingOrange);
+                colorResourceId = R.color.colorRatingOrange;
+                break;
             case 3:
-                return ContextCompat.getColor(context, R.color.colorRatingYellow);
+                colorResourceId = R.color.colorRatingYellow;
+                break;
             case 4:
-                return ContextCompat.getColor(context, R.color.colorRatingLightGreen);
+                colorResourceId = R.color.colorRatingLightGreen;
+                break;
             case 5:
-                return ContextCompat.getColor(context, R.color.colorRatingGreen);
+                colorResourceId = R.color.colorRatingGreen;
+                break;
             default:
-                return ContextCompat.getColor(context, R.color.colorTransparent);
+                colorResourceId = R.color.colorTransparent;
         }
+        return ContextCompat.getColor(mContext,colorResourceId);
     }
 }

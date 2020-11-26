@@ -8,14 +8,14 @@ import androidx.annotation.Nullable;
 
 public class Database extends SQLiteOpenHelper {
 
-    private final String CREATE_TABLE_ACCOMPLISHMENT = "create table " + DBConstants.ACCOMPLISHMENT_TABLE + " "
+    private static final String CREATE_TABLE_ACCOMPLISHMENT = "create table " + DBConstants.ACCOMPLISHMENT_TABLE + " "
             + "("
             + DBConstants.COLUMN_ID + " integer primary key autoincrement, "
             + DBConstants.COLUMN_DATE + " string not null, "
             + DBConstants.COLUMN_CONTENT + " text not null"
             + ")";
 
-    private final String CREATE_TABLE_RATINGS = "create table " + DBConstants.RATING_TABLE + " "
+    private static final String CREATE_TABLE_RATINGS = "create table " + DBConstants.RATING_TABLE + " "
             + "("
             + DBConstants.COLUMN_ID + " integer primary key autoincrement, "
             + DBConstants.COLUMN_DATE + " string unique not null, "
@@ -28,10 +28,6 @@ public class Database extends SQLiteOpenHelper {
     }
 
 
-    public void eraseAllData(SQLiteDatabase db, String table) {
-        db.delete(table, null, null);
-    }
-
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TABLE_ACCOMPLISHMENT);
@@ -41,5 +37,9 @@ public class Database extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
+    }
+
+    public void eraseAllData(SQLiteDatabase db, String table) {
+        db.delete(table, null, null);
     }
 }

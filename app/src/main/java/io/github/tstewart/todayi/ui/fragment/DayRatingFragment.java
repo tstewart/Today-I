@@ -1,8 +1,6 @@
 package io.github.tstewart.todayi.ui.fragment;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.ContextThemeWrapper;
@@ -22,20 +20,17 @@ import androidx.fragment.app.Fragment;
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.event.OnDateChanged;
 import io.github.tstewart.todayi.event.OnDateChangedListener;
-import io.github.tstewart.todayi.object.DayRating;
-import io.github.tstewart.todayi.sql.DBConstants;
-import io.github.tstewart.todayi.sql.DatabaseHelper;
 import io.github.tstewart.todayi.sql.DayRatingTableHelper;
-import io.github.tstewart.todayi.utils.DateFormatter;
 
 public class DayRatingFragment extends Fragment implements OnDateChangedListener {
 
-    Button[] buttons;
-    final int[] colors = new int[]{R.color.colorRatingRed, R.color.colorRatingOrange, R.color.colorRatingYellow, R.color.colorRatingLightGreen, R.color.colorRatingGreen};
+    Button[] mButtons;
 
-    Date selectedDate;
+    final int[] mColors = new int[]{R.color.colorRatingRed, R.color.colorRatingOrange, R.color.colorRatingYellow, R.color.colorRatingLightGreen, R.color.colorRatingGreen};
 
-    DayRatingTableHelper tableHelper;
+    Date mSelectedDate;
+
+    DayRatingTableHelper mTableHelper;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,18 +42,18 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        buttons = new Button[5];
+        mButtons = new Button[5];
         LinearLayout ll = view.findViewById(R.id.linearLayoutDayRating);
 
         for (int i = 0; i < 5; i++) {
 
-            buttons[i] = new Button(new ContextThemeWrapper(getContext(), R.style.AppTheme_DayRatingButton), null, R.style.Widget_AppCompat_Button_Borderless);
-            buttons[i].setText(String.valueOf(i+1));
-            buttons[i].setOnClickListener(this::onRatingButtonClicked);
+            mButtons[i] = new Button(new ContextThemeWrapper(getContext(), R.style.AppTheme_DayRatingButton), null, R.style.Widget_AppCompat_Button_Borderless);
+            mButtons[i].setText(String.valueOf(i+1));
+            mButtons[i].setOnClickListener(this::onRatingButtonClicked);
 
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
 
-            ll.addView(buttons[i], layoutParams);
+            ll.addView(mButtons[i], layoutParams);
         }
 
         int index = getIndexOfRating(new Date());
@@ -70,30 +65,30 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        tableHelper = new DayRatingTableHelper(getContext());
+        mTableHelper = new DayRatingTableHelper(getContext());
         OnDateChanged.addListener(this);
     }
 
     private void onRatingButtonClicked(View v) {
         Context context = getContext();
 
-        if(buttons != null && context != null) {
+        if(mButtons != null && context != null) {
 
             resetAllButtonBackgrounds();
 
             if (v instanceof Button) {
                 Button buttonClicked = (Button) v;
 
-                int index = Arrays.asList(buttons).indexOf(buttonClicked);
+                int index = Arrays.asList(mButtons).indexOf(buttonClicked);
 
-                if (index >= 0 && index < buttons.length) {
-                    int color = colors[index];
+                if (index >= 0 && index < mButtons.length) {
+                    int color = mColors[index];
                     setButtonBackground(buttonClicked, color);
 
                     setSelectedButton(index);
 
-                    if(tableHelper != null) {
-                        tableHelper.setRating(selectedDate,index+1);
+                    if(mTableHelper != null) {
+                        mTableHelper.setRating(mSelectedDate,index+1);
                     }
                 }
             }
@@ -103,17 +98,17 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
     private void setSelectedButton(int index) {
         resetAllButtonBackgrounds();
 
-        if(index < colors.length) {
+        if(index < mColors.length) {
 
-            Button button = buttons[index];
-            int color = colors[index];
+            Button button = mButtons[index];
+            int color = mColors[index];
 
             setButtonBackground(button,color);
         }
     }
 
     private void resetAllButtonBackgrounds() {
-        if(buttons != null) Arrays.asList(buttons).forEach(this::resetButtonBackground);
+        if(mButtons != null) Arrays.asList(mButtons).forEach(this::resetButtonBackground);
     }
 
     private void resetButtonBackground(Button button) {
@@ -145,6 +140,6 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
         if(index >= 0) setSelectedButton(index);
         else resetAllButtonBackgrounds();
 
-        this.selectedDate = date;
+        this.mSelectedDate = date;
     }
 }

@@ -21,27 +21,28 @@ import io.github.tstewart.todayi.event.OnDatabaseInteracted;
  */
 public class LocalDatabaseIO {
     private static final String CLASS_LOG_TAG = LocalDatabaseIO.class.getSimpleName();
+    private static final String DATABASE_BACKUP_DEFAULT_LOCATION = Environment.DIRECTORY_DOCUMENTS;
 
     private LocalDatabaseIO(){}
 
     public static void export(Context context, String databaseName, String newFileName) throws ExportFailedException {
 
-        File storage = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+        File databaseBackupFolder = context.getExternalFilesDir(DATABASE_BACKUP_DEFAULT_LOCATION);
 
-        if(storage.canWrite()) {
-            File databaseFile = context.getDatabasePath(databaseName);
+        if(databaseBackupFolder.canWrite()) {
+            File currentDatabaseFile = context.getDatabasePath(databaseName);
 
-            if(databaseFile.exists()) {
-                File backupFile = new File(storage, newFileName);
+            if(currentDatabaseFile.exists()) {
+                File databaseBackupFile = new File(databaseBackupFolder, newFileName);
 
                 try {
-                    writeToPath(databaseFile, backupFile);
+                    writeToPath(currentDatabaseFile, databaseBackupFile);
 
-                    if(!backupFile.exists()) {
+                    if(!databaseBackupFile.exists()) {
                         throw new ExportFailedException("Potential backup failure? File does not exist.");
                     }
                     else {
-                        Log.i(CLASS_LOG_TAG,"Database backed up at " + backupFile.getAbsolutePath());
+                        Log.i(CLASS_LOG_TAG,"Database backed up at " + databaseBackupFile.getAbsolutePath());
                     }
                 } catch (IOException e) {
                     throw new ExportFailedException(e.getMessage());
@@ -62,23 +63,23 @@ public class LocalDatabaseIO {
     }
 
     public static void importBackup(Context context, String databaseName) throws ImportFailedException {
-        File dbBackupLocation = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+        File databaseBackupFolder = context.getExternalFilesDir(DATABASE_BACKUP_DEFAULT_LOCATION);
 
-        if(dbBackupLocation.canRead()) {
-            File dbBackup = new File(dbBackupLocation, "backup_"+databaseName);
+        if(databaseBackupFolder.canRead()) {
+            File databaseBackupFile = new File(databaseBackupFolder, "backup_"+databaseName);
 
-            if(dbBackup.exists() && dbBackup.canRead()) {
+            if(databaseBackupFile.exists() && databaseBackupFile.canRead()) {
 
-                File existingDBLocation = context.getDatabasePath(databaseName);
+                File currentDatabaseFile = context.getDatabasePath(databaseName);
 
-                if(existingDBLocation.canWrite()) {
-                    if (isValidSQLite(dbBackup.getPath())) {
+                if(currentDatabaseFile.canWrite()) {
+                    if (isValidSQLite(databaseBackupFile.getPath())) {
                         try {
-                            writeToPath(dbBackup, existingDBLocation);
+                            writeToPath(databaseBackupFile, currentDatabaseFile);
                             //Notify activities that the existing database has been replaced
                             OnDatabaseInteracted.notifyDatabaseInteracted();
 
-                            Log.i(CLASS_LOG_TAG, "Database restored from " + dbBackup.getAbsolutePath());
+                            Log.i(CLASS_LOG_TAG, "Database restored from " + databaseBackupFile.getAbsolutePath());
                         } catch (IOException e) {
                             throw new ImportFailedException(e.getMessage());
                         }
@@ -116,14 +117,14 @@ public class LocalDatabaseIO {
     TODO implement
      */
     public static boolean isValidSQLite(String dbPath) {
-        File file = new File(dbPath);
+        File databaseFile = new File(dbPath);
 
-        if (!file.exists() || !file.canRead()) {
+        if (!databaseFile.exists() || !databaseFile.canRead()) {
             return false;
         }
 
         try {
-            FileReader fr = new FileReader(file);
+            FileReader fr = new FileReader(databaseFile);
             char[] buffer = new char[16];
 
             int bytesRead = fr.read(buffer, 0, 16);

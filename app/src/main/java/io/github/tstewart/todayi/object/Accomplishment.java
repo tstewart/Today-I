@@ -3,7 +3,6 @@ package io.github.tstewart.todayi.object;
 import android.content.ContentValues;
 
 import java.util.Date;
-import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import io.github.tstewart.todayi.sql.DBConstants;
@@ -11,22 +10,22 @@ import io.github.tstewart.todayi.utils.DateFormatter;
 
 public class Accomplishment implements DatabaseObject {
 
-    private final int MAX_CONTENT_LENGTH = 200;
+    private static final int MAX_CONTENT_LENGTH = 200;
 
-    private Date date;
-    private String content;
+    private Date mDate;
+    private String mContent;
 
-    public Accomplishment(@NonNull Date date, @NonNull String content) {
-        this.date = date;
-        this.content = content;
+    public Accomplishment(@NonNull Date mDate, @NonNull String content) {
+        this.mDate = mDate;
+        this.mContent = content;
     }
 
     @Override
     public void validate() throws IllegalArgumentException {
-        if(content.trim().isEmpty()) {
+        if(mContent.trim().isEmpty()) {
             throw new IllegalArgumentException("Accomplishment must not be empty.");
         }
-        else if(content.length() > MAX_CONTENT_LENGTH) {
+        else if(mContent.length() > MAX_CONTENT_LENGTH) {
             throw new IllegalArgumentException("Accomplishment can not be longer than " + MAX_CONTENT_LENGTH + " characters.");
         }
     }
@@ -36,29 +35,29 @@ public class Accomplishment implements DatabaseObject {
         ContentValues contentValues = new ContentValues();
         DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT);
 
-        if(date != null) {
-            contentValues.put(DBConstants.COLUMN_DATE, dateFormatter.format(date));
+        if(mDate != null) {
+            contentValues.put(DBConstants.COLUMN_DATE, dateFormatter.format(mDate));
         }
 
-        contentValues.put(DBConstants.COLUMN_CONTENT, content);
+        contentValues.put(DBConstants.COLUMN_CONTENT, mContent);
 
         return contentValues;
     }
 
     public Date getDate() {
-        return date;
+        return mDate;
     }
 
     public void setDate(Date date) {
-        this.date = date;
+        this.mDate = date;
     }
 
     public String getContent() {
-        return content;
+        return mContent;
     }
 
     public void setContent(String content) {
-        this.content = content;
+        this.mContent = content;
     }
 
 }

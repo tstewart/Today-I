@@ -11,15 +11,15 @@ import java.util.List;
 
 public class DayPostedDecorator implements DayViewDecorator {
 
-    final List<CalendarDay> dates;
+    final List<CalendarDay> mDates;
 
     public DayPostedDecorator(List<CalendarDay> dates) {
-        this.dates = dates;
+        this.mDates = dates;
     }
 
     @Override
     public boolean shouldDecorate(CalendarDay day) {
-        return dates.contains(day);
+        return mDates.contains(day);
     }
 
     @Override

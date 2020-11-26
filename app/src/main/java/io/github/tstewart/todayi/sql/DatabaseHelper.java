@@ -11,16 +11,17 @@ import io.github.tstewart.todayi.event.OnDatabaseInteracted;
 
 public class DatabaseHelper {
 
-    private final String table;
+    private final String mTable;
+    private SQLiteDatabase mDb;
 
     public DatabaseHelper(@NonNull String table) {
-        this.table = table;
+        this.mTable = table;
     }
 
     public boolean isEmpty(@NonNull Context context) {
-        SQLiteDatabase db = getDatabase(context);
+        mDb = getDatabase(context);
 
-        Cursor cursor = db.rawQuery("select ? from " + table, new String[]{DBConstants.COLUMN_ID});
+        Cursor cursor = mDb.rawQuery("select ? from " + mTable, new String[]{DBConstants.COLUMN_ID});
 
         int columnCount = cursor.getColumnCount();
         cursor.close();
@@ -29,33 +30,33 @@ public class DatabaseHelper {
     }
 
     public void insert(@NonNull Context context, @NonNull DatabaseObject object) {
-        SQLiteDatabase db = getDatabase(context);
+        mDb = getDatabase(context);
         ContentValues cv = object.createCV();
 
         if(cv != null) {
-            db.insert(this.table, null, cv);
+            mDb.insert(this.mTable, null, cv);
         }
 
-        onEnd(db);
+        onEnd(mDb);
     }
 
     public void update(@NonNull Context context, @NonNull DatabaseObject object, String whereClause, String[] whereArgs) {
-        SQLiteDatabase db = getDatabase(context);
+        mDb = getDatabase(context);
         ContentValues cv = object.createCV();
 
         if(cv != null) {
-            db.update(this.table, cv, whereClause, whereArgs);
+            mDb.update(this.mTable, cv, whereClause, whereArgs);
         }
 
-        onEnd(db);
+        onEnd(mDb);
     }
 
     public void delete(@NonNull Context context, String whereClause, String[] whereArgs) {
-        SQLiteDatabase db = getDatabase(context);
+        mDb = getDatabase(context);
 
-        db.delete(this.table, whereClause, whereArgs);
+        mDb.delete(this.mTable, whereClause, whereArgs);
 
-        onEnd(db);
+        onEnd(mDb);
     }
 
     public SQLiteDatabase getDatabase(Context context) {
@@ -64,7 +65,9 @@ public class DatabaseHelper {
 
 
     private void onEnd(SQLiteDatabase db) {
-        db.close();
+        if(db != null && db.isOpen()) {
+            db.close();
+        }
         OnDatabaseInteracted.notifyDatabaseInteracted();
     }
 

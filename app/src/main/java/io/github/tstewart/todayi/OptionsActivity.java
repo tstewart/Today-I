@@ -10,9 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import io.github.tstewart.todayi.data.LocalDatabaseIO;
 import io.github.tstewart.todayi.error.ExportFailedException;
 import io.github.tstewart.todayi.error.ImportFailedException;
@@ -33,29 +31,22 @@ public class OptionsActivity extends AppCompatActivity {
 
     private final String CLASS_LOG_TAG = this.getClass().getSimpleName();
 
-    Button importDataButton;
-    Button exportDataButton;
-    Button restoreBackupButton;
-    Button forceBackupButton;
-    Button googleSignInButton;
-    Button eraseAllDataButton;
-
-    TextView lastBackedUpTv;
+    TextView mLastBackedUpTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_options);
 
-        importDataButton = findViewById(R.id.buttonImportData);
-        exportDataButton = findViewById(R.id.buttonExportData);
-        restoreBackupButton = findViewById(R.id.buttonRestoreBackup);
-        forceBackupButton = findViewById(R.id.buttonForceBackup);
-        googleSignInButton = findViewById(R.id.buttonGoogleSignIn);
-        eraseAllDataButton = findViewById(R.id.buttonEraseAll);
-        lastBackedUpTv = findViewById(R.id.textViewLastBackedUp);
+        Button mImportDataButton = findViewById(R.id.buttonImportData);
+        Button exportDataButton = findViewById(R.id.buttonExportData);
+        Button restoreBackupButton = findViewById(R.id.buttonRestoreBackup);
+        Button forceBackupButton = findViewById(R.id.buttonForceBackup);
+        Button googleSignInButton = findViewById(R.id.buttonGoogleSignIn);
+        Button eraseAllDataButton = findViewById(R.id.buttonEraseAll);
+        mLastBackedUpTv = findViewById(R.id.textViewLastBackedUp);
 
-        if(importDataButton != null) importDataButton.setOnClickListener(this::onImportDataButtonClicked);
+        if(mImportDataButton != null) mImportDataButton.setOnClickListener(this::onImportDataButtonClicked);
         if(exportDataButton != null) exportDataButton.setOnClickListener(this::onExportDataButtonClicked);
         if(restoreBackupButton != null) restoreBackupButton.setOnClickListener(this::onRestoreBackupButtonClicked);
         if(forceBackupButton != null) forceBackupButton.setOnClickListener(this::onForceBackupButtonClicked);
@@ -68,7 +59,7 @@ public class OptionsActivity extends AppCompatActivity {
     @Override
     protected void onPostResume() {
         super.onPostResume();
-        if(lastBackedUpTv != null) {
+        if(mLastBackedUpTv != null) {
             setLastBackedUpText();
         }
     }
@@ -83,7 +74,7 @@ public class OptionsActivity extends AppCompatActivity {
     }
 
     private void setLastBackedUpText() {
-        lastBackedUpTv.setText(String.format(getText(R.string.last_backed_up).toString(), getLastBackedUpRelativeString()));
+        mLastBackedUpTv.setText(String.format(getText(R.string.last_backed_up).toString(), getLastBackedUpRelativeString()));
     }
 
     private String getLastBackedUpRelativeString() {

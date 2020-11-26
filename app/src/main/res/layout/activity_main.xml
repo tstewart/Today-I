@@ -13,7 +13,6 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:paddingBottom="16dp"
-        android:text="@string/current_date"
         android:textAlignment="center"
         android:textSize="24sp"
         android:textStyle="bold" />

@@ -24,6 +24,7 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import io.github.tstewart.todayi.sql.DBConstants;
 import io.github.tstewart.todayi.sql.Database;
@@ -37,12 +38,12 @@ import io.github.tstewart.todayi.utils.DateFormatter;
 public class CalendarActivity extends AppCompatActivity {
     private final String CLASS_LOG_TAG = this.getClass().getSimpleName();
 
-    MaterialCalendarView calendarView;
+    MaterialCalendarView mCalendarView;
 
-    Date selectedDate = new Date();
+    Date mSelectedDate = new Date();
 
-    List<CalendarDay> daysPostedOn;
-    HashMap<CalendarDay, Integer> ratings;
+    List<CalendarDay> mDaysPostedOn;
+    HashMap<CalendarDay, Integer> mRatings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,33 +54,34 @@ public class CalendarActivity extends AppCompatActivity {
         if (extras != null) {
             long time = extras.getLong("selectedDate");
             if (time > 0) {
-                selectedDate.setTime(time);
+                mSelectedDate.setTime(time);
             }
         }
 
-        calendarView = findViewById(R.id.calendarView);
+        mCalendarView = findViewById(R.id.calendarView);
 
-        if(calendarView != null) {
-            calendarView.setOnDateChangedListener(this::onCalendarClick);
-            calendarView.setCurrentDate(getCalendarDayFromDate(selectedDate));
-            calendarView.setDateSelected(getCalendarDayFromDate(selectedDate), true);
+        if(mCalendarView != null) {
+            mCalendarView.setOnDateChangedListener(this::onCalendarClick);
+            mCalendarView.setCurrentDate(getCalendarDayFromDate(mSelectedDate));
+            mCalendarView.setDateSelected(getCalendarDayFromDate(mSelectedDate), true);
         }
 
-        if(getSupportActionBar() != null) getSupportActionBar().setTitle(R.string.activity_calendar);
+        ActionBar supportBar = getSupportActionBar();
+        if(supportBar != null) supportBar.setTitle(R.string.activity_calendar);
     }
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        daysPostedOn = getPostedDates();
-        ratings = getDaysRated();
+        mDaysPostedOn = getPostedDates();
+        mRatings = getDaysRated();
 
-        DayPostedDecorator daysPostedDecorator = new DayPostedDecorator(daysPostedOn);
-        List<DayRatedDecorator> dayRatedDecorators = new DayRatingSplitter(this).getDayRatingDecorators(ratings);
+        DayPostedDecorator daysPostedDecorator = new DayPostedDecorator(mDaysPostedOn);
+        List<DayRatedDecorator> dayRatedDecorators = new DayRatingSplitter(this).getDayRatingDecorators(mRatings);
 
-        calendarView.addDecorator(daysPostedDecorator);
-        calendarView.addDecorators(dayRatedDecorators);
+        mCalendarView.addDecorator(daysPostedDecorator);
+        mCalendarView.addDecorators(dayRatedDecorators);
     }
 
     @Override

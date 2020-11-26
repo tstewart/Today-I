@@ -1,7 +1,6 @@
 package io.github.tstewart.todayi.ui.fragment;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -26,7 +25,6 @@ import io.github.tstewart.todayi.object.Accomplishment;
 import io.github.tstewart.todayi.sql.AccomplishmentTableHelper;
 import io.github.tstewart.todayi.sql.DBConstants;
 import io.github.tstewart.todayi.sql.Database;
-import io.github.tstewart.todayi.sql.DatabaseHelper;
 import io.github.tstewart.todayi.event.OnDatabaseInteracted;
 import io.github.tstewart.todayi.event.OnDatabaseInteractionListener;
 import io.github.tstewart.todayi.ui.AccomplishmentCursorAdapter;
@@ -34,16 +32,14 @@ import io.github.tstewart.todayi.ui.dialog.AccomplishmentDialog;
 
 public class AccomplishmentListFragment extends ListFragment implements OnDatabaseInteractionListener, OnDateChangedListener {
 
-    private AccomplishmentCursorAdapter adapter;
+    private AccomplishmentCursorAdapter mAdapter;
 
     // Current dialog, restricts multiple dialogs from opening at once
-    private AlertDialog dialog;
+    private AlertDialog mDialog;
 
-    private Date selectedDate = new Date();
+    private Date mSelectedDate = new Date();
 
-    private Context context;
-
-    private AccomplishmentTableHelper helper;
+    private AccomplishmentTableHelper mTableHelper;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,22 +52,21 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        context = getContext();
-        this.helper = new AccomplishmentTableHelper(getContext());
+        this.mTableHelper = new AccomplishmentTableHelper(getContext());
+        this.mAdapter = new AccomplishmentCursorAdapter(getContext(), null);
 
-        // Add listener to notify fragment of database updates
-        OnDatabaseInteracted.addListener(this);
-        // Add listener to notify fragment of date changes
-        OnDateChanged.addListener(this);
-
-        adapter = new AccomplishmentCursorAdapter(getContext(), null);
-        setListAdapter(adapter);
+        setListAdapter(mAdapter);
         getListView().setOnItemClickListener(this::onListItemClick);
 
         Button newItemButton = new Button(getContext());
         newItemButton.setText(getResources().getText(R.string.new_accomplishment));
         newItemButton.setOnClickListener(this::onNewItemButtonPressed);
         getListView().addFooterView(newItemButton);
+
+        // Add listener to notify fragment of database updates
+        OnDatabaseInteracted.addListener(this);
+        // Add listener to notify fragment of date changes
+        OnDateChanged.addListener(this);
     }
 
     @Override
@@ -82,54 +77,55 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
     }
 
     private void onListItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        if (adapter == null) {
+        if (mAdapter == null) {
             Log.w(this.getClass().getName(), "List item click called before adapter initialised.");
             return;
         }
-        Cursor cursor = (Cursor) adapter.getItem(position);
+
+        Cursor cursor = (Cursor) mAdapter.getItem(position);
 
         // Position of the item clicked must be less than the total number of rows in the cursor
         if (cursor.getCount() > position) {
 
             String itemContent = cursor.getString(cursor.getColumnIndex(DBConstants.COLUMN_CONTENT));
             dismissCurrentDialog();
-            this.dialog = new AccomplishmentDialog(this.getContext())
+            this.mDialog = new AccomplishmentDialog(this.getContext())
                     .setText(itemContent)
                     .setDialogType(AccomplishmentDialog.DialogType.EDIT)
                     .setConfirmClickListener((dialogView -> {
                         EditText input = dialogView.getRootView().findViewById(R.id.editTextAccomplishmentManage);
 
                         if (input != null) {
-                            Accomplishment accomplishment = new Accomplishment(selectedDate, input.getText().toString());
+                            Accomplishment accomplishment = new Accomplishment(mSelectedDate, input.getText().toString());
 
                             try {
-                                helper.update(accomplishment, id);
+                                mTableHelper.update(accomplishment, id);
                             }
                             catch(IllegalArgumentException e) {
                                 Toast.makeText(getContext(),e.getMessage(),Toast.LENGTH_SHORT).show();
                             }
                         }
                     }))
-                    .setDeleteButtonListener((dialogView -> helper.delete(id)))
+                    .setDeleteButtonListener((dialogView -> mTableHelper.delete(id)))
                     .create();
 
-            this.dialog.show();
+            this.mDialog.show();
          }
     }
 
     private void onNewItemButtonPressed(View view) {
 
         dismissCurrentDialog();
-        this.dialog = new AccomplishmentDialog(getContext())
+        this.mDialog = new AccomplishmentDialog(getContext())
                 .setDialogType(AccomplishmentDialog.DialogType.NEW)
                 .setConfirmClickListener((dialogView) -> {
                     EditText input = dialogView.getRootView().findViewById(R.id.editTextAccomplishmentManage);
 
                     if(input != null) {
-                        Accomplishment accomplishment = new Accomplishment(selectedDate,input.getText().toString());
+                        Accomplishment accomplishment = new Accomplishment(mSelectedDate,input.getText().toString());
 
                         try {
-                            helper.insert(accomplishment);
+                            mTableHelper.insert(accomplishment);
                         }
                         catch(IllegalArgumentException e) {
                             Toast.makeText(getContext(),e.getMessage(),Toast.LENGTH_SHORT).show();
@@ -138,7 +134,7 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
                 })
                 .create();
 
-        this.dialog.show();
+        this.mDialog.show();
     }
 
     private void refreshCursor() {
@@ -147,18 +143,18 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
 
     private Cursor getNewCursor() {
         SQLiteDatabase db = new Database(getContext()).getWritableDatabase();
-        return AccomplishmentCursorLoader.getCursor(db, DBConstants.ACCOMPLISHMENT_QUERY, selectedDate);
+        return AccomplishmentCursorLoader.getCursor(db, DBConstants.ACCOMPLISHMENT_QUERY, mSelectedDate);
     }
 
     private void setCursor(Cursor cursor) {
-        Cursor currentCursor = adapter.getCursor();
+        Cursor currentCursor = mAdapter.getCursor();
         if (currentCursor != null) currentCursor.close();
 
-        adapter.swapCursor(cursor);
+        mAdapter.swapCursor(cursor);
     }
 
     public void dismissCurrentDialog() {
-        if(this.dialog != null) dialog.dismiss();
+        if(this.mDialog != null) mDialog.dismiss();
     }
 
     @Override
@@ -168,7 +164,7 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
 
     @Override
     public void onDateChanged(Date date) {
-        this.selectedDate = date;
+        this.mSelectedDate = date;
         refreshCursor();
     }
 }
