@@ -47,7 +47,6 @@ public class TodayI extends Application {
             }
 
             if(shouldBackup) {
-                //TODO BACKUP
                 sharedPrefs.edit()
                         .putLong(getString(R.string.user_prefs_last_backed_up_key), System.currentTimeMillis())
                         .apply();

@@ -137,17 +137,14 @@ public class OptionsActivity extends AppCompatActivity {
 
     private void onImportDataButtonClicked(View view) {
         Toast.makeText(this,"Coming soon!",Toast.LENGTH_SHORT).show();
-        //TODO
     }
 
     private void onExportDataButtonClicked(View view) {
         Toast.makeText(this,"Coming soon!",Toast.LENGTH_SHORT).show();
-        //TODO
     }
 
     private void onGoogleSignInButtonClicked(View view) {
         Toast.makeText(this,"Coming soon!",Toast.LENGTH_SHORT).show();
-        //TODO
     }
 
     private void eraseButtonClicked(View view) {

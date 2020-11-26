@@ -26,6 +26,7 @@ import androidx.fragment.app.Fragment;
 import io.github.tstewart.todayi.event.OnDateChanged;
 import io.github.tstewart.todayi.event.OnDateChangedListener;
 import io.github.tstewart.todayi.ui.fragment.AccomplishmentListFragment;
+import io.github.tstewart.todayi.utils.DateFormatter;
 
 import static java.util.Calendar.getInstance;
 
@@ -166,8 +167,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
 
     // TODO: Move to seperate file, date will be tracked elsewhere
     public String getDateFormatted(String format, Date date) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.getDefault());
-        return dateFormat.format(date);
+        return new DateFormatter(format).formatWithDayIndicators(date);
     }
 
     @Override

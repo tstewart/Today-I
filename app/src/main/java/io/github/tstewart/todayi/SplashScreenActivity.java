@@ -10,8 +10,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
-    //TODO add smooth transition between this activity and main
-
     final int SPLASH_DISPLAY_LENGTH_MILLIS = 3000;
 
     final Handler splashWaitHandler = new Handler();
