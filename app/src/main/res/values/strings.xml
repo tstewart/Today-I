@@ -2,8 +2,8 @@
     <string name="app_name">Today I</string>
 
     <!-- Menu toolbar -->
-    <string name="toolbar_tip_calendar">Calendar</string>
-    <string name="toolbar_tip_settings">Settings</string>
+    <string name="activity_calendar">Calendar</string>
+    <string name="activity_settings">Settings</string>
 
     <!-- Main Activity -->
     <string name="current_date" />

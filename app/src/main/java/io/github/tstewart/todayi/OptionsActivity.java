@@ -9,7 +9,10 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import io.github.tstewart.todayi.data.LocalDatabaseIO;
 import io.github.tstewart.todayi.error.ImportFailedException;
 import io.github.tstewart.todayi.sql.DBConstants;
@@ -17,6 +20,7 @@ import io.github.tstewart.todayi.sql.Database;
 
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -54,6 +58,8 @@ public class OptionsActivity extends AppCompatActivity {
         if(forceBackupButton != null) forceBackupButton.setOnClickListener(this::onForceBackupButtonClicked);
         if(googleSignInButton != null) googleSignInButton.setOnClickListener(this::onGoogleSignInButtonClicked);
         if(eraseAllDataButton != null) eraseAllDataButton.setOnClickListener(this::eraseButtonClicked);
+
+        if(getSupportActionBar() != null) getSupportActionBar().setTitle(R.string.activity_settings);
     }
 
     @Override
@@ -62,6 +68,15 @@ public class OptionsActivity extends AppCompatActivity {
         if(lastBackedUpTv != null) {
             setLastBackedUpText();
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == android.R.id.home) {
+            returnWithResponse(Activity.RESULT_CANCELED);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void setLastBackedUpText() {

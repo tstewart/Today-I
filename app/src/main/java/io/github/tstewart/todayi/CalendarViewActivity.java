@@ -1,10 +1,13 @@
 package io.github.tstewart.todayi;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
@@ -16,13 +19,17 @@ import org.threeten.bp.ZoneId;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NavUtils;
 import io.github.tstewart.todayi.sql.DBConstants;
 import io.github.tstewart.todayi.sql.Database;
 import io.github.tstewart.todayi.sql.DatabaseHelper;
@@ -59,6 +66,8 @@ public class CalendarViewActivity extends AppCompatActivity {
         if(calendarView != null) {
             calendarView.setOnDateChangedListener(this::onCalendarClick);
         }
+
+        if(getSupportActionBar() != null) getSupportActionBar().setTitle(R.string.activity_calendar);
     }
 
     @Override
@@ -73,6 +82,15 @@ public class CalendarViewActivity extends AppCompatActivity {
 
         calendarView.addDecorator(daysPostedDecorator);
         calendarView.addDecorators(dayRatedDecorators);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == android.R.id.home) {
+            returnResponseCancelled();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     // Return a list of events matching dates that accomplishments have been posted on
@@ -154,6 +172,12 @@ public class CalendarViewActivity extends AppCompatActivity {
         Intent returnIntent = new Intent();
         returnIntent.putExtra("result", epochDay);
         setResult(Activity.RESULT_OK, returnIntent);
+        finish();
+    }
+
+    private void returnResponseCancelled() {
+        Intent returnIntent = new Intent();
+        setResult(Activity.RESULT_CANCELED,returnIntent);
         finish();
     }
 }
