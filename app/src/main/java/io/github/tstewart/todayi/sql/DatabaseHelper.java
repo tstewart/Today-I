@@ -6,8 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import androidx.annotation.NonNull;
-import io.github.tstewart.todayi.object.DatabaseObject;
 import io.github.tstewart.todayi.event.OnDatabaseInteracted;
+import io.github.tstewart.todayi.object.DatabaseObject;
 
 public class DatabaseHelper {
 
@@ -33,7 +33,7 @@ public class DatabaseHelper {
         mDb = getDatabase(context);
         ContentValues cv = object.createCV();
 
-        if(cv != null) {
+        if (cv != null) {
             mDb.insert(this.mTable, null, cv);
         }
 
@@ -44,7 +44,7 @@ public class DatabaseHelper {
         mDb = getDatabase(context);
         ContentValues cv = object.createCV();
 
-        if(cv != null) {
+        if (cv != null) {
             mDb.update(this.mTable, cv, whereClause, whereArgs);
         }
 
@@ -65,7 +65,7 @@ public class DatabaseHelper {
 
 
     private void onEnd(SQLiteDatabase db) {
-        if(db != null && db.isOpen()) {
+        if (db != null && db.isOpen()) {
             db.close();
         }
         OnDatabaseInteracted.notifyDatabaseInteracted();

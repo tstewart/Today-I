@@ -17,6 +17,7 @@ public class DayRatedDecorator implements DayViewDecorator {
         this.mDates = dates;
         this.mDrawable = drawable;
     }
+
     @Override
     public boolean shouldDecorate(CalendarDay day) {
         return mDates.contains(day);

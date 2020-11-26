@@ -13,12 +13,10 @@ import io.github.tstewart.todayi.R;
 
 public class AccomplishmentDialog extends AlertDialog.Builder {
 
-    private View view;
-
-    private AlertDialog instance;
-
     private final Button buttonDelete;
     private final Button buttonConfirm;
+    private View view;
+    private AlertDialog instance;
 
     public AccomplishmentDialog(Context context) {
         super(context);

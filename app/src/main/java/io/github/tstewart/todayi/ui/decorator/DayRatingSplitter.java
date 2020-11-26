@@ -34,7 +34,7 @@ public class DayRatingSplitter {
             List<CalendarDay> daysMatchingRating = new ArrayList<>();
 
             ratings.forEach((calendarDay, rating) -> {
-                if(rating == index) {
+                if (rating == index) {
                     daysMatchingRating.add(calendarDay);
                 }
             });
@@ -43,7 +43,7 @@ public class DayRatingSplitter {
 
             Drawable ratingDrawable = getRatingDrawable(color);
 
-            decorators.add(new DayRatedDecorator(daysMatchingRating,ratingDrawable));
+            decorators.add(new DayRatedDecorator(daysMatchingRating, ratingDrawable));
         }
 
         //May god have mercy on me
@@ -64,7 +64,7 @@ public class DayRatingSplitter {
 
     public int getColorAtIndex(int index) {
         int colorResourceId;
-        switch(index) {
+        switch (index) {
             case 1:
                 colorResourceId = R.color.colorRatingRed;
                 break;
@@ -83,6 +83,6 @@ public class DayRatingSplitter {
             default:
                 colorResourceId = R.color.colorTransparent;
         }
-        return ContextCompat.getColor(mContext,colorResourceId);
+        return ContextCompat.getColor(mContext, colorResourceId);
     }
 }

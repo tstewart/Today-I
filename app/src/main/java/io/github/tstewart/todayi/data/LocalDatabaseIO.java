@@ -3,7 +3,6 @@ package io.github.tstewart.todayi.data;
 import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,56 +22,54 @@ public class LocalDatabaseIO {
     private static final String CLASS_LOG_TAG = LocalDatabaseIO.class.getSimpleName();
     private static final String DATABASE_BACKUP_DEFAULT_LOCATION = Environment.DIRECTORY_DOCUMENTS;
 
-    private LocalDatabaseIO(){}
+    private LocalDatabaseIO() {
+    }
 
     public static void export(Context context, String databaseName, String newFileName) throws ExportFailedException {
 
         File databaseBackupFolder = context.getExternalFilesDir(DATABASE_BACKUP_DEFAULT_LOCATION);
 
-        if(databaseBackupFolder.canWrite()) {
+        if (databaseBackupFolder.canWrite()) {
             File currentDatabaseFile = context.getDatabasePath(databaseName);
 
-            if(currentDatabaseFile.exists()) {
+            if (currentDatabaseFile.exists()) {
                 File databaseBackupFile = new File(databaseBackupFolder, newFileName);
 
                 try {
                     writeToPath(currentDatabaseFile, databaseBackupFile);
 
-                    if(!databaseBackupFile.exists()) {
+                    if (!databaseBackupFile.exists()) {
                         throw new ExportFailedException("Potential backup failure? File does not exist.");
-                    }
-                    else {
-                        Log.i(CLASS_LOG_TAG,"Database backed up at " + databaseBackupFile.getAbsolutePath());
+                    } else {
+                        Log.i(CLASS_LOG_TAG, "Database backed up at " + databaseBackupFile.getAbsolutePath());
                     }
                 } catch (IOException e) {
                     throw new ExportFailedException(e.getMessage());
                 }
-            }
-            else {
+            } else {
                 throw new ExportFailedException("Backup failed. Database file to copy does not exist.");
             }
-        }
-        else {
+        } else {
             throw new ExportFailedException("Backup failed. Cannot write to internal storage.");
         }
 
     }
 
     public static void backup(Context context, String databaseName) throws ExportFailedException {
-        export(context, databaseName, "backup_"+databaseName);
+        export(context, databaseName, "backup_" + databaseName);
     }
 
     public static void importBackup(Context context, String databaseName) throws ImportFailedException {
         File databaseBackupFolder = context.getExternalFilesDir(DATABASE_BACKUP_DEFAULT_LOCATION);
 
-        if(databaseBackupFolder.canRead()) {
-            File databaseBackupFile = new File(databaseBackupFolder, "backup_"+databaseName);
+        if (databaseBackupFolder.canRead()) {
+            File databaseBackupFile = new File(databaseBackupFolder, "backup_" + databaseName);
 
-            if(databaseBackupFile.exists() && databaseBackupFile.canRead()) {
+            if (databaseBackupFile.exists() && databaseBackupFile.canRead()) {
 
                 File currentDatabaseFile = context.getDatabasePath(databaseName);
 
-                if(currentDatabaseFile.canWrite()) {
+                if (currentDatabaseFile.canWrite()) {
                     if (isValidSQLite(databaseBackupFile.getPath())) {
                         try {
                             writeToPath(databaseBackupFile, currentDatabaseFile);
@@ -83,20 +80,16 @@ public class LocalDatabaseIO {
                         } catch (IOException e) {
                             throw new ImportFailedException(e.getMessage());
                         }
-                    }
-                    else {
+                    } else {
                         throw new ImportFailedException("Backup was corrupt or invalid.");
                     }
-                }
-                else {
+                } else {
                     throw new ImportFailedException("Could not write to existing database.");
                 }
-            }
-            else {
+            } else {
                 throw new ImportFailedException("Database to import does not exist or could not be read.");
             }
-        }
-        else {
+        } else {
             throw new ImportFailedException("Database import location could not be read.");
         }
     }
@@ -105,7 +98,7 @@ public class LocalDatabaseIO {
         FileChannel input = new FileInputStream(inputPath).getChannel();
         FileChannel output = new FileOutputStream(outputPath).getChannel();
 
-        output.transferFrom(input,0,input.size());
+        output.transferFrom(input, 0, input.size());
 
         input.close();
         output.close();

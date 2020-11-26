@@ -19,14 +19,14 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.ListFragment;
 import io.github.tstewart.todayi.AccomplishmentCursorLoader;
 import io.github.tstewart.todayi.R;
+import io.github.tstewart.todayi.event.OnDatabaseInteracted;
+import io.github.tstewart.todayi.event.OnDatabaseInteractionListener;
 import io.github.tstewart.todayi.event.OnDateChanged;
 import io.github.tstewart.todayi.event.OnDateChangedListener;
 import io.github.tstewart.todayi.object.Accomplishment;
 import io.github.tstewart.todayi.sql.AccomplishmentTableHelper;
 import io.github.tstewart.todayi.sql.DBConstants;
 import io.github.tstewart.todayi.sql.Database;
-import io.github.tstewart.todayi.event.OnDatabaseInteracted;
-import io.github.tstewart.todayi.event.OnDatabaseInteractionListener;
 import io.github.tstewart.todayi.ui.AccomplishmentCursorAdapter;
 import io.github.tstewart.todayi.ui.dialog.AccomplishmentDialog;
 
@@ -100,9 +100,8 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
 
                             try {
                                 mTableHelper.update(accomplishment, id);
-                            }
-                            catch(IllegalArgumentException e) {
-                                Toast.makeText(getContext(),e.getMessage(),Toast.LENGTH_SHORT).show();
+                            } catch (IllegalArgumentException e) {
+                                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }
                     }))
@@ -110,7 +109,7 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
                     .create();
 
             this.mDialog.show();
-         }
+        }
     }
 
     private void onNewItemButtonPressed(View view) {
@@ -121,14 +120,13 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
                 .setConfirmClickListener((dialogView) -> {
                     EditText input = dialogView.getRootView().findViewById(R.id.editTextAccomplishmentManage);
 
-                    if(input != null) {
-                        Accomplishment accomplishment = new Accomplishment(mSelectedDate,input.getText().toString());
+                    if (input != null) {
+                        Accomplishment accomplishment = new Accomplishment(mSelectedDate, input.getText().toString());
 
                         try {
                             mTableHelper.insert(accomplishment);
-                        }
-                        catch(IllegalArgumentException e) {
-                            Toast.makeText(getContext(),e.getMessage(),Toast.LENGTH_SHORT).show();
+                        } catch (IllegalArgumentException e) {
+                            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 })
@@ -154,7 +152,7 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
     }
 
     public void dismissCurrentDialog() {
-        if(this.mDialog != null) mDialog.dismiss();
+        if (this.mDialog != null) mDialog.dismiss();
     }
 
     @Override

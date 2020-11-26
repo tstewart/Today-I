@@ -22,10 +22,9 @@ public class Accomplishment implements DatabaseObject {
 
     @Override
     public void validate() throws IllegalArgumentException {
-        if(mContent.trim().isEmpty()) {
+        if (mContent.trim().isEmpty()) {
             throw new IllegalArgumentException("Accomplishment must not be empty.");
-        }
-        else if(mContent.length() > MAX_CONTENT_LENGTH) {
+        } else if (mContent.length() > MAX_CONTENT_LENGTH) {
             throw new IllegalArgumentException("Accomplishment can not be longer than " + MAX_CONTENT_LENGTH + " characters.");
         }
     }
@@ -35,7 +34,7 @@ public class Accomplishment implements DatabaseObject {
         ContentValues contentValues = new ContentValues();
         DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT);
 
-        if(mDate != null) {
+        if (mDate != null) {
             contentValues.put(DBConstants.COLUMN_DATE, dateFormatter.format(mDate));
         }
 

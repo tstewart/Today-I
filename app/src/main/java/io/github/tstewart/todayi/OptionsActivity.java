@@ -8,15 +8,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import io.github.tstewart.todayi.data.LocalDatabaseIO;
-import io.github.tstewart.todayi.error.ExportFailedException;
-import io.github.tstewart.todayi.error.ImportFailedException;
-import io.github.tstewart.todayi.sql.DBConstants;
-import io.github.tstewart.todayi.sql.Database;
-
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.MenuItem;
@@ -26,6 +17,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Objects;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import io.github.tstewart.todayi.data.LocalDatabaseIO;
+import io.github.tstewart.todayi.error.ExportFailedException;
+import io.github.tstewart.todayi.error.ImportFailedException;
+import io.github.tstewart.todayi.sql.DBConstants;
+import io.github.tstewart.todayi.sql.Database;
 
 public class OptionsActivity extends AppCompatActivity {
 
@@ -46,27 +45,34 @@ public class OptionsActivity extends AppCompatActivity {
         Button eraseAllDataButton = findViewById(R.id.buttonEraseAll);
         mLastBackedUpTv = findViewById(R.id.textViewLastBackedUp);
 
-        if(mImportDataButton != null) mImportDataButton.setOnClickListener(this::onImportDataButtonClicked);
-        if(exportDataButton != null) exportDataButton.setOnClickListener(this::onExportDataButtonClicked);
-        if(restoreBackupButton != null) restoreBackupButton.setOnClickListener(this::onRestoreBackupButtonClicked);
-        if(forceBackupButton != null) forceBackupButton.setOnClickListener(this::onForceBackupButtonClicked);
-        if(googleSignInButton != null) googleSignInButton.setOnClickListener(this::onGoogleSignInButtonClicked);
-        if(eraseAllDataButton != null) eraseAllDataButton.setOnClickListener(this::eraseButtonClicked);
+        if (mImportDataButton != null)
+            mImportDataButton.setOnClickListener(this::onImportDataButtonClicked);
+        if (exportDataButton != null)
+            exportDataButton.setOnClickListener(this::onExportDataButtonClicked);
+        if (restoreBackupButton != null)
+            restoreBackupButton.setOnClickListener(this::onRestoreBackupButtonClicked);
+        if (forceBackupButton != null)
+            forceBackupButton.setOnClickListener(this::onForceBackupButtonClicked);
+        if (googleSignInButton != null)
+            googleSignInButton.setOnClickListener(this::onGoogleSignInButtonClicked);
+        if (eraseAllDataButton != null)
+            eraseAllDataButton.setOnClickListener(this::eraseButtonClicked);
 
-        if(getSupportActionBar() != null) getSupportActionBar().setTitle(R.string.activity_settings);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setTitle(R.string.activity_settings);
     }
 
     @Override
     protected void onPostResume() {
         super.onPostResume();
-        if(mLastBackedUpTv != null) {
+        if (mLastBackedUpTv != null) {
             setLastBackedUpText();
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(item.getItemId() == android.R.id.home) {
+        if (item.getItemId() == android.R.id.home) {
             returnWithResponse(Activity.RESULT_CANCELED);
             return true;
         }
@@ -82,10 +88,9 @@ public class OptionsActivity extends AppCompatActivity {
 
         long lastBackedUp = prefs.getLong(getString(R.string.user_prefs_last_backed_up_key), -1);
 
-        if(lastBackedUp > 0) {
+        if (lastBackedUp > 0) {
             return DateUtils.getRelativeTimeSpanString(lastBackedUp).toString();
-        }
-        else {
+        } else {
             return "Unknown";
         }
     }
@@ -99,16 +104,16 @@ public class OptionsActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         Context context = getApplicationContext();
                         try {
-                            LocalDatabaseIO.importBackup(context,DBConstants.DB_NAME);
+                            LocalDatabaseIO.importBackup(context, DBConstants.DB_NAME);
 
                             //Exit options with result code.
                             returnWithResponse(Activity.RESULT_OK);
-                            Toast.makeText(context,"Backup restored successfully!",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "Backup restored successfully!", Toast.LENGTH_SHORT).show();
 
                         } catch (ImportFailedException e) {
                             Log.w(this.getClass().getSimpleName(), Objects.requireNonNull(e.getMessage()));
 
-                            Toast.makeText(context,"Failed to import backup:" + e.getMessage(),Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "Failed to import backup:" + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 })
@@ -122,8 +127,8 @@ public class OptionsActivity extends AppCompatActivity {
         try {
             LocalDatabaseIO.backup(this, DBConstants.DB_NAME);
         } catch (ExportFailedException e) {
-            Log.w(CLASS_LOG_TAG,e.getMessage(), e);
-            Toast.makeText(this,"Backup failed: " + e.getMessage(),Toast.LENGTH_LONG).show();
+            Log.w(CLASS_LOG_TAG, e.getMessage(), e);
+            Toast.makeText(this, "Backup failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
 
         getSharedPreferences(getString(R.string.user_prefs_file_location_key), MODE_PRIVATE)
@@ -135,15 +140,15 @@ public class OptionsActivity extends AppCompatActivity {
     }
 
     private void onImportDataButtonClicked(View view) {
-        Toast.makeText(this,"Coming soon!",Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Coming soon!", Toast.LENGTH_SHORT).show();
     }
 
     private void onExportDataButtonClicked(View view) {
-        Toast.makeText(this,"Coming soon!",Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Coming soon!", Toast.LENGTH_SHORT).show();
     }
 
     private void onGoogleSignInButtonClicked(View view) {
-        Toast.makeText(this,"Coming soon!",Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Coming soon!", Toast.LENGTH_SHORT).show();
     }
 
     private void eraseButtonClicked(View view) {
@@ -168,7 +173,7 @@ public class OptionsActivity extends AppCompatActivity {
 
     private void returnWithResponse(int response) {
         Intent returnIntent = new Intent();
-        setResult(response,returnIntent);
+        setResult(response, returnIntent);
         finish();
     }
 

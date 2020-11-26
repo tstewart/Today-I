@@ -25,10 +25,9 @@ public class DayRating implements DatabaseObject {
 
     @Override
     public void validate() throws IllegalArgumentException {
-        if(mDayRating < MIN_RATING) {
+        if (mDayRating < MIN_RATING) {
             throw new IllegalArgumentException("Rating cannot be lower than " + MIN_RATING + ".");
-        }
-        else if(mDayRating > MAX_RATING) {
+        } else if (mDayRating > MAX_RATING) {
             throw new IllegalArgumentException("Rating cannot be higher than " + MAX_RATING + ".");
         }
     }
@@ -38,7 +37,7 @@ public class DayRating implements DatabaseObject {
         ContentValues contentValues = new ContentValues();
         DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT);
 
-        if(mDate != null) {
+        if (mDate != null) {
             contentValues.put(DBConstants.COLUMN_DATE, dateFormatter.format(mDate));
         }
 

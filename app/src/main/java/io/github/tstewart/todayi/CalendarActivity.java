@@ -60,14 +60,14 @@ public class CalendarActivity extends AppCompatActivity {
 
         mCalendarView = findViewById(R.id.calendarView);
 
-        if(mCalendarView != null) {
+        if (mCalendarView != null) {
             mCalendarView.setOnDateChangedListener(this::onCalendarClick);
             mCalendarView.setCurrentDate(getCalendarDayFromDate(mSelectedDate));
             mCalendarView.setDateSelected(getCalendarDayFromDate(mSelectedDate), true);
         }
 
         ActionBar supportBar = getSupportActionBar();
-        if(supportBar != null) supportBar.setTitle(R.string.activity_calendar);
+        if (supportBar != null) supportBar.setTitle(R.string.activity_calendar);
     }
 
     @Override
@@ -86,7 +86,7 @@ public class CalendarActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(item.getItemId() == android.R.id.home) {
+        if (item.getItemId() == android.R.id.home) {
             returnResponseCancelled();
             return true;
         }
@@ -112,17 +112,17 @@ public class CalendarActivity extends AppCompatActivity {
                     try {
                         Date date = new DateFormatter(DBConstants.DATE_FORMAT).parse(dateString);
 
-                        if(date != null) {
+                        if (date != null) {
                             CalendarDay calendarDay = getCalendarDayFromDate(date);
 
-                            if(calendarDay != null) {
+                            if (calendarDay != null) {
                                 dates.add(calendarDay);
                             }
                         }
 
                     } catch (ParseException e) {
-                        Toast.makeText(this,"Failed to gather dates posted on. Database may be corrupt.", Toast.LENGTH_LONG).show();
-                        Log.w(CLASS_LOG_TAG,e.getMessage(), e);
+                        Toast.makeText(this, "Failed to gather dates posted on. Database may be corrupt.", Toast.LENGTH_LONG).show();
+                        Log.w(CLASS_LOG_TAG, e.getMessage(), e);
                     }
                 }
             } while (cursor.moveToNext());
@@ -140,24 +140,24 @@ public class CalendarActivity extends AppCompatActivity {
 
         Cursor cursor = db.rawQuery(DBConstants.DAY_RATING_ALL_RESULTS_QUERY, null);
 
-        if(cursor.moveToFirst()) {
+        if (cursor.moveToFirst()) {
             do {
                 int rating = cursor.getInt(cursor.getColumnIndex(DBConstants.COLUMN_RATING));
                 String dateString = cursor.getString(cursor.getColumnIndex(DBConstants.COLUMN_DATE));
 
                 try {
                     Date date = new DateFormatter(DBConstants.DATE_FORMAT).parse(dateString);
-                    if(date != null) {
+                    if (date != null) {
                         CalendarDay calendarDay = getCalendarDayFromDate(date);
 
-                        if(calendarDay != null) {
+                        if (calendarDay != null) {
                             ratings.put(calendarDay, rating);
                         }
                     }
 
                 } catch (ParseException e) {
-                    Toast.makeText(this,"Failed to gather ratings. Database may be corrupt.", Toast.LENGTH_LONG).show();
-                    Log.w(CLASS_LOG_TAG,e.getMessage(), e);
+                    Toast.makeText(this, "Failed to gather ratings. Database may be corrupt.", Toast.LENGTH_LONG).show();
+                    Log.w(CLASS_LOG_TAG, e.getMessage(), e);
                 }
 
             } while (cursor.moveToNext());
@@ -169,7 +169,7 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     private CalendarDay getCalendarDayFromDate(Date date) {
-        if(date != null) {
+        if (date != null) {
             LocalDate localDate = Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
 
             return CalendarDay.from(localDate);
@@ -191,7 +191,7 @@ public class CalendarActivity extends AppCompatActivity {
 
     private void returnResponseCancelled() {
         Intent returnIntent = new Intent();
-        setResult(Activity.RESULT_CANCELED,returnIntent);
+        setResult(Activity.RESULT_CANCELED, returnIntent);
         finish();
     }
 }

@@ -1,10 +1,7 @@
 package io.github.tstewart.todayi;
 
-import io.github.tstewart.todayi.event.OnDatabaseInteracted;
-
 import android.app.Activity;
 import android.content.Intent;
-
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import io.github.tstewart.todayi.event.OnDatabaseInteracted;
 import io.github.tstewart.todayi.event.OnDateChanged;
 import io.github.tstewart.todayi.event.OnDateChangedListener;
 import io.github.tstewart.todayi.ui.fragment.AccomplishmentListFragment;
@@ -83,12 +81,11 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         Intent targetIntent = null;
         int requestCode = 0;
 
-        if(itemId == R.id.toolbar_calendar) {
+        if (itemId == R.id.toolbar_calendar) {
             targetIntent = new Intent(this, CalendarActivity.class);
             requestCode = CALENDAR_ACTIVITY_REQUEST_CODE;
             targetIntent.putExtra("selectedDate", mSelectedDate.getTime());
-        }
-        else if(itemId == R.id.toolbar_settings) {
+        } else if (itemId == R.id.toolbar_settings) {
             targetIntent = new Intent(this, OptionsActivity.class);
             requestCode = OPTIONS_ACTIVITY_REQUEST_CODE;
         }
@@ -98,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
          Calendar will respond when a date is selected
          Options will respond when an option causes a database refresh
         */
-        if(targetIntent != null) startActivityForResult(targetIntent, requestCode);
+        if (targetIntent != null) startActivityForResult(targetIntent, requestCode);
 
         return super.onOptionsItemSelected(item);
     }
@@ -121,11 +118,10 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
                     updateCurrentDate(c.getTime());
                 }
             }
-        }
-        else if (requestCode == OPTIONS_ACTIVITY_REQUEST_CODE) {
+        } else if (requestCode == OPTIONS_ACTIVITY_REQUEST_CODE) {
             // On receive OK response, settings activity forces reset of accomplishments
             if (resultCode == Activity.RESULT_OK) {
-                if(this.mListFragment != null) {
+                if (this.mListFragment != null) {
                     OnDatabaseInteracted.notifyDatabaseInteracted();
                 }
             }
@@ -158,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         updateCurrentDate(newDate);
 
         // Dismiss accomplishment fragment dialog if exists
-        if(mListFragment != null) mListFragment.dismissCurrentDialog();
+        if (mListFragment != null) mListFragment.dismissCurrentDialog();
 
     }
 

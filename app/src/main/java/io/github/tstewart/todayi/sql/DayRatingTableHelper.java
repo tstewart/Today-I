@@ -21,7 +21,7 @@ public class DayRatingTableHelper {
     }
 
     public void setRating(Date date, int rating) throws IllegalArgumentException {
-        if(date != null) {
+        if (date != null) {
             DayRating dayRating = new DayRating(date, rating);
 
             dayRating.validate();
@@ -30,10 +30,9 @@ public class DayRatingTableHelper {
             String dateFormatted = new DateFormatter(DBConstants.DATE_FORMAT).format(date);
             Cursor existingRowCheck = db.rawQuery(DBConstants.DAY_RATING_QUERY, new String[]{dateFormatted});
 
-            if(existingRowCheck.moveToFirst()) {
+            if (existingRowCheck.moveToFirst()) {
                 mHelper.update(this.mContext, dayRating, DBConstants.COLUMN_DATE + "=?", new String[]{dateFormatted});
-            }
-            else {
+            } else {
                 mHelper.insert(this.mContext, dayRating);
             }
 
@@ -43,13 +42,13 @@ public class DayRatingTableHelper {
 
     public int getRating(Date date, int defaultValue) {
 
-        if(date != null) {
+        if (date != null) {
             SQLiteDatabase db = new Database(this.mContext).getReadableDatabase();
 
             String dateFormatted = new DateFormatter(DBConstants.DATE_FORMAT).format(date);
-            Cursor cursor = db.rawQuery( DBConstants.DAY_RATING_QUERY, new String[]{dateFormatted});
+            Cursor cursor = db.rawQuery(DBConstants.DAY_RATING_QUERY, new String[]{dateFormatted});
 
-            if(cursor.moveToFirst()) {
+            if (cursor.moveToFirst()) {
                 return cursor.getInt(cursor.getColumnIndex(DBConstants.COLUMN_RATING));
             }
 

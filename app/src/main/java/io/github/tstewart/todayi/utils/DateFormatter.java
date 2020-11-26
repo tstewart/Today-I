@@ -12,7 +12,8 @@ public class DateFormatter {
 
     private SimpleDateFormat mDateFormatter;
 
-    private DateFormatter(){}
+    private DateFormatter() {
+    }
 
     public DateFormatter(String dateFormat) {
         this.mDateFormatter = new SimpleDateFormat(dateFormat, Locale.getDefault());
@@ -29,15 +30,15 @@ public class DateFormatter {
         String dateFormat = mDateFormatter.toPattern();
         int indicatorPosition = dateFormat.indexOf("d ");
 
-        if(indicatorPosition>=0) {
+        if (indicatorPosition >= 0) {
 
             int day = getDayOfMonth(date);
 
-            dateFormat = dateFormat.substring(0,indicatorPosition)
+            dateFormat = dateFormat.substring(0, indicatorPosition)
                     + "'"
                     + getOrdinal(day)
                     + "'"
-                    + dateFormat.substring(indicatorPosition+1);
+                    + dateFormat.substring(indicatorPosition + 1);
         }
 
         indicatorDateFormatter.applyPattern(dateFormat);
@@ -53,7 +54,7 @@ public class DateFormatter {
         https://stackoverflow.com/a/6810409
      */
     private String getOrdinal(int i) {
-        String[] sufixes = new String[] { "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th" };
+        String[] sufixes = new String[]{"th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th"};
         switch (i % 100) {
             case 11:
             case 12:

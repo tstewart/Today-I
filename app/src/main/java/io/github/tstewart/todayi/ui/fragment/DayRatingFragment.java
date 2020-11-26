@@ -24,10 +24,8 @@ import io.github.tstewart.todayi.sql.DayRatingTableHelper;
 
 public class DayRatingFragment extends Fragment implements OnDateChangedListener {
 
-    Button[] mButtons;
-
     final int[] mColors = new int[]{R.color.colorRatingRed, R.color.colorRatingOrange, R.color.colorRatingYellow, R.color.colorRatingLightGreen, R.color.colorRatingGreen};
-
+    Button[] mButtons;
     Date mSelectedDate;
 
     DayRatingTableHelper mTableHelper;
@@ -48,7 +46,7 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
         for (int i = 0; i < 5; i++) {
 
             mButtons[i] = new Button(new ContextThemeWrapper(getContext(), R.style.AppTheme_DayRatingButton), null, R.style.Widget_AppCompat_Button_Borderless);
-            mButtons[i].setText(String.valueOf(i+1));
+            mButtons[i].setText(String.valueOf(i + 1));
             mButtons[i].setOnClickListener(this::onRatingButtonClicked);
 
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
@@ -58,7 +56,7 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
 
         int index = getIndexOfRating(new Date());
 
-        if(index >= 0) setSelectedButton(index);
+        if (index >= 0) setSelectedButton(index);
 
     }
 
@@ -72,7 +70,7 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
     private void onRatingButtonClicked(View v) {
         Context context = getContext();
 
-        if(mButtons != null && context != null) {
+        if (mButtons != null && context != null) {
 
             resetAllButtonBackgrounds();
 
@@ -87,8 +85,8 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
 
                     setSelectedButton(index);
 
-                    if(mTableHelper != null) {
-                        mTableHelper.setRating(mSelectedDate,index+1);
+                    if (mTableHelper != null) {
+                        mTableHelper.setRating(mSelectedDate, index + 1);
                     }
                 }
             }
@@ -98,17 +96,17 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
     private void setSelectedButton(int index) {
         resetAllButtonBackgrounds();
 
-        if(index < mColors.length) {
+        if (index < mColors.length) {
 
             Button button = mButtons[index];
             int color = mColors[index];
 
-            setButtonBackground(button,color);
+            setButtonBackground(button, color);
         }
     }
 
     private void resetAllButtonBackgrounds() {
-        if(mButtons != null) Arrays.asList(mButtons).forEach(this::resetButtonBackground);
+        if (mButtons != null) Arrays.asList(mButtons).forEach(this::resetButtonBackground);
     }
 
     private void resetButtonBackground(Button button) {
@@ -116,7 +114,7 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
     }
 
     private void setButtonBackground(Button button, int color) {
-        if(getContext() != null && button != null) {
+        if (getContext() != null && button != null) {
             GradientDrawable drawable = (GradientDrawable) button.getBackground();
             drawable.setColor(ContextCompat.getColor(getContext(), color));
         }
@@ -125,9 +123,9 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
     private int getIndexOfRating(Date date) {
         Context context = getContext();
 
-        if(context != null) {
+        if (context != null) {
             int index = new DayRatingTableHelper(context).getRating(date, -1);
-            return index-1;
+            return index - 1;
         }
 
         return -1;
@@ -137,7 +135,7 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
     public void onDateChanged(Date date) {
         int index = getIndexOfRating(date);
 
-        if(index >= 0) setSelectedButton(index);
+        if (index >= 0) setSelectedButton(index);
         else resetAllButtonBackgrounds();
 
         this.mSelectedDate = date;
