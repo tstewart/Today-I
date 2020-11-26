@@ -17,7 +17,6 @@ import org.threeten.bp.LocalDate;
 import org.threeten.bp.ZoneId;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -36,6 +35,7 @@ import io.github.tstewart.todayi.sql.DatabaseHelper;
 import io.github.tstewart.todayi.ui.decorator.DayPostedDecorator;
 import io.github.tstewart.todayi.ui.decorator.DayRatedDecorator;
 import io.github.tstewart.todayi.ui.decorator.DayRatingSplitter;
+import io.github.tstewart.todayi.utils.DateFormatter;
 
 
 public class CalendarViewActivity extends AppCompatActivity {
@@ -110,7 +110,7 @@ public class CalendarViewActivity extends AppCompatActivity {
 
                 if (dateString != null) {
                     try {
-                        Date date = new SimpleDateFormat(DBConstants.DATE_FORMAT, Locale.getDefault()).parse(dateString);
+                        Date date = new DateFormatter(DBConstants.DATE_FORMAT).parse(dateString);
 
                         if(date != null) {
                             LocalDate localDate = Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
@@ -143,7 +143,7 @@ public class CalendarViewActivity extends AppCompatActivity {
                 String dateString = cursor.getString(cursor.getColumnIndex(DBConstants.COLUMN_DATE));
 
                 try {
-                    Date date = new SimpleDateFormat(DBConstants.DATE_FORMAT, Locale.getDefault()).parse(dateString);
+                    Date date = new DateFormatter(DBConstants.DATE_FORMAT).parse(dateString);
                     if(date != null) {
                         LocalDate localDate = Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
 

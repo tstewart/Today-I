@@ -12,7 +12,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -165,16 +164,11 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
 
     }
 
-    // TODO: Move to seperate file, date will be tracked elsewhere
-    public String getDateFormatted(String format, Date date) {
-        return new DateFormatter(format).formatWithDayIndicators(date);
-    }
-
     @Override
     public void onDateChanged(Date date) {
         this.selectedDate = date;
 
         TextView dateLabel = findViewById(R.id.textViewCurrentDate);
-        dateLabel.setText(getDateFormatted("MMMM d yyyy", selectedDate));
+        dateLabel.setText(new DateFormatter("MMMM d yyyy").formatWithDayIndicators(selectedDate));
     }
 }

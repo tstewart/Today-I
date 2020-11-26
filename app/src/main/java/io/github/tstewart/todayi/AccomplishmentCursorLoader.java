@@ -3,16 +3,15 @@ package io.github.tstewart.todayi;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 import io.github.tstewart.todayi.sql.DBConstants;
+import io.github.tstewart.todayi.utils.DateFormatter;
 
 public class AccomplishmentCursorLoader {
 
     public static Cursor getCursor(SQLiteDatabase db, String query, Date date) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(DBConstants.DATE_FORMAT, Locale.getDefault());
+        DateFormatter dateFormat = new DateFormatter(DBConstants.DATE_FORMAT);
         String dateQuery = "";
 
         if (date != null) {

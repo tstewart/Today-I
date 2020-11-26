@@ -4,11 +4,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 import androidx.annotation.NonNull;
+import io.github.tstewart.todayi.utils.DateFormatter;
 
 public class DayRatingTableHelper {
 
@@ -23,7 +23,7 @@ public class DayRatingTableHelper {
         if(date != null) {
             SQLiteDatabase db = new Database(this.context).getReadableDatabase();
 
-            String dateFormatted = new SimpleDateFormat(DBConstants.DATE_FORMAT, Locale.getDefault()).format(date);
+            String dateFormatted = new DateFormatter(DBConstants.DATE_FORMAT).format(date);
             Cursor cursor = db.rawQuery( DBConstants.DAY_RATING_QUERY, new String[]{dateFormatted});
 
             if(cursor.moveToFirst()) {

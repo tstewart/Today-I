@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
@@ -28,6 +27,7 @@ import io.github.tstewart.todayi.object.DayRating;
 import io.github.tstewart.todayi.sql.DBConstants;
 import io.github.tstewart.todayi.sql.DatabaseHelper;
 import io.github.tstewart.todayi.sql.DayRatingTableHelper;
+import io.github.tstewart.todayi.utils.DateFormatter;
 
 public class DayRatingFragment extends Fragment implements OnDateChangedListener {
 
@@ -115,7 +115,7 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
             //TODO validate
 
             SQLiteDatabase db = helper.getDatabase(getContext());
-            String dateFormatted = new SimpleDateFormat(DBConstants.DATE_FORMAT, Locale.getDefault()).format(selectedDate);
+            String dateFormatted = new DateFormatter(DBConstants.DATE_FORMAT).format(selectedDate);
             Cursor existingRowCheck = db.rawQuery(DBConstants.DAY_RATING_QUERY, new String[]{dateFormatted});
 
             if(existingRowCheck.moveToFirst()) {

@@ -1,5 +1,6 @@
 package io.github.tstewart.todayi.utils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -43,6 +44,10 @@ public class DateFormatter {
         return indicatorDateFormatter.format(date);
     }
 
+    public Date parse(String dateString) throws ParseException {
+        return dateFormatter.parse(dateString);
+    }
+
     /*
         Author: Bohemian
         https://stackoverflow.com/a/6810409
@@ -66,5 +71,4 @@ public class DateFormatter {
         c.setTime(date);
         return c.get(Calendar.DAY_OF_MONTH);
     }
-
 }
