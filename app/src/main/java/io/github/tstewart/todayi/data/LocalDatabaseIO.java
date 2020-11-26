@@ -3,6 +3,7 @@ package io.github.tstewart.todayi.data;
 import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,6 +12,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 
+import io.github.tstewart.todayi.error.ExportFailedException;
 import io.github.tstewart.todayi.error.ImportFailedException;
 import io.github.tstewart.todayi.event.OnDatabaseInteracted;
 
@@ -22,7 +24,7 @@ public class LocalDatabaseIO {
 
     private LocalDatabaseIO(){}
 
-    public static void export(Context context, String databaseName, String newFileName)  {
+    public static void export(Context context, String databaseName, String newFileName) throws ExportFailedException {
 
         File storage = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
 
@@ -34,35 +36,28 @@ public class LocalDatabaseIO {
 
                 try {
                     writeToPath(databaseFile, backupFile);
-                } catch (IOException e) {
-                    //TODO MANAGE
-                    if(e.getMessage() != null) {
-                        Log.e(CLASS_LOG_TAG, e.getMessage());
-                    }
-                }
-                finally {
+
                     if(!backupFile.exists()) {
-                        Log.e(CLASS_LOG_TAG,"Potential backup failure? File does not exist.");
+                        throw new ExportFailedException("Potential backup failure? File does not exist.");
                     }
                     else {
                         Log.i(CLASS_LOG_TAG,"Database backed up at " + backupFile.getAbsolutePath());
                     }
+                } catch (IOException e) {
+                    throw new ExportFailedException(e.getMessage());
                 }
             }
             else {
-                Log.e(CLASS_LOG_TAG, "Backup failed. Database file to copy does not exist.");
+                throw new ExportFailedException("Backup failed. Database file to copy does not exist.");
             }
         }
         else {
-            Log.e(CLASS_LOG_TAG, "Backup failed. Cannot write to internal storage.");
+            throw new ExportFailedException("Backup failed. Cannot write to internal storage.");
         }
 
     }
 
-    public static void backup(Context context, String databaseName) {
-        //Append .db if the string doesn't contain it already.
-        //if(!databaseName.endsWith(".db")) databaseName += ".db";
-
+    public static void backup(Context context, String databaseName) throws ExportFailedException {
         export(context, databaseName, "backup_"+databaseName);
     }
 
@@ -77,14 +72,19 @@ public class LocalDatabaseIO {
                 File existingDBLocation = context.getDatabasePath(databaseName);
 
                 if(existingDBLocation.canWrite()) {
-                    try {
-                        writeToPath(dbBackup, existingDBLocation);
-                        //Notify activities that the existing database has been replaced
-                        OnDatabaseInteracted.notifyDatabaseInteracted();
+                    if (isValidSQLite(dbBackup.getPath())) {
+                        try {
+                            writeToPath(dbBackup, existingDBLocation);
+                            //Notify activities that the existing database has been replaced
+                            OnDatabaseInteracted.notifyDatabaseInteracted();
 
-                        Log.i(CLASS_LOG_TAG,"Database restored from " + dbBackup.getAbsolutePath());
-                    } catch (IOException e) {
-                        throw new ImportFailedException(e.getMessage());
+                            Log.i(CLASS_LOG_TAG, "Database restored from " + dbBackup.getAbsolutePath());
+                        } catch (IOException e) {
+                            throw new ImportFailedException(e.getMessage());
+                        }
+                    }
+                    else {
+                        throw new ImportFailedException("Backup was corrupt or invalid.");
                     }
                 }
                 else {

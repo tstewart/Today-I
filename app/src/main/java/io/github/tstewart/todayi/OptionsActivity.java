@@ -14,6 +14,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import io.github.tstewart.todayi.data.LocalDatabaseIO;
+import io.github.tstewart.todayi.error.ExportFailedException;
 import io.github.tstewart.todayi.error.ImportFailedException;
 import io.github.tstewart.todayi.sql.DBConstants;
 import io.github.tstewart.todayi.sql.Database;
@@ -29,6 +30,8 @@ import android.widget.Toast;
 import java.util.Objects;
 
 public class OptionsActivity extends AppCompatActivity {
+
+    private final String CLASS_LOG_TAG = this.getClass().getSimpleName();
 
     Button importDataButton;
     Button exportDataButton;
@@ -125,7 +128,12 @@ public class OptionsActivity extends AppCompatActivity {
     }
 
     private void onForceBackupButtonClicked(View view) {
-        LocalDatabaseIO.backup(this, DBConstants.DB_NAME);
+        try {
+            LocalDatabaseIO.backup(this, DBConstants.DB_NAME);
+        } catch (ExportFailedException e) {
+            Log.e(CLASS_LOG_TAG,e.getMessage(), e);
+            Toast.makeText(this,"Backup failed: " + e.getMessage(),Toast.LENGTH_LONG).show();
+        }
 
         getSharedPreferences(getString(R.string.user_prefs_file_location_key), MODE_PRIVATE)
                 .edit()

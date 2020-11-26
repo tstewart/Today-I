@@ -13,6 +13,7 @@ import java.util.GregorianCalendar;
 
 import androidx.annotation.NonNull;
 import io.github.tstewart.todayi.data.LocalDatabaseIO;
+import io.github.tstewart.todayi.error.ExportFailedException;
 import io.github.tstewart.todayi.sql.DBConstants;
 import io.github.tstewart.todayi.sql.DatabaseHelper;
 
@@ -57,7 +58,12 @@ public class TodayI extends Application {
             }
         }
 
-        LocalDatabaseIO.backup(this, DBConstants.DB_NAME);
+        try {
+            LocalDatabaseIO.backup(this, DBConstants.DB_NAME);
+        } catch (ExportFailedException e) {
+            Log.e(CLASS_LOG_TAG,e.getMessage(), e);
+            Toast.makeText(this,"Automatic backup failed: " + e.getMessage(),Toast.LENGTH_LONG).show();
+        }
 
         File file = Environment.getDataDirectory();
         if(new File(file, "backup_" + DBConstants.DB_NAME + ".db").exists()) {
