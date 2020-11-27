@@ -1,7 +1,5 @@
 package io.github.tstewart.todayi;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -12,6 +10,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Random;
 
+import androidx.appcompat.app.AppCompatActivity;
 import io.github.tstewart.todayi.object.Accomplishment;
 import io.github.tstewart.todayi.sql.DBConstants;
 import io.github.tstewart.todayi.sql.DatabaseHelper;
@@ -27,11 +26,19 @@ public class DebugActivity extends AppCompatActivity {
 
         Button invalidateBackupButton = findViewById(R.id.debugInvalidateBackupTime);
         Button populateAccomplishmentsButton = findViewById(R.id.debug_populate_accomplishments);
+        Button getAccomplishmentsButton = findViewById(R.id.debug_get_accomplishments);
+        Button getRatingsButton = findViewById(R.id.debug_get_ratings);
         Button backButton = findViewById(R.id.debugBack);
 
-        if(invalidateBackupButton != null) invalidateBackupButton.setOnClickListener(this::onInvalidateBackupButtonClicked);
-        if(populateAccomplishmentsButton != null) populateAccomplishmentsButton.setOnClickListener(this::onPopulateAccomplishmentsButtonClicked);
-        if(backButton != null) backButton.setOnClickListener(view -> {
+        if (invalidateBackupButton != null)
+            invalidateBackupButton.setOnClickListener(this::onInvalidateBackupButtonClicked);
+        if (populateAccomplishmentsButton != null)
+            populateAccomplishmentsButton.setOnClickListener(this::onPopulateAccomplishmentsButtonClicked);
+        if (getAccomplishmentsButton != null)
+            getAccomplishmentsButton.setOnClickListener(this::onGetAccomplishmentsButtonClicked);
+        if (getRatingsButton != null)
+            getRatingsButton.setOnClickListener(this::onGetRatingsButtonClicked);
+        if (backButton != null) backButton.setOnClickListener(view -> {
             this.finish();
         });
     }
@@ -45,8 +52,7 @@ public class DebugActivity extends AppCompatActivity {
                     .apply();
 
             Toast.makeText(this, "Invalidated time since last backup.", Toast.LENGTH_SHORT).show();
-        }
-        catch(NullPointerException e) {
+        } catch (NullPointerException e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
@@ -58,7 +64,7 @@ public class DebugActivity extends AppCompatActivity {
 
         DatabaseHelper helper = new DatabaseHelper(DBConstants.ACCOMPLISHMENT_TABLE);
 
-        while(currentDate.before(targetDate)) {
+        while (currentDate.before(targetDate)) {
             int numPosts = random.nextInt(5);
 
             for (int i = 0; i < numPosts; i++) {
@@ -68,6 +74,12 @@ public class DebugActivity extends AppCompatActivity {
 
             currentDate = addDay(currentDate);
         }
+    }
+
+    private void onGetAccomplishmentsButtonClicked(View view) {
+    }
+
+    private void onGetRatingsButtonClicked(View view) {
     }
 
     private Date addDay(Date currentDate) {

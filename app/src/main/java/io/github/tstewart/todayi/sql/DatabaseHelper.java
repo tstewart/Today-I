@@ -29,6 +29,10 @@ public class DatabaseHelper {
         return columnCount == 0;
     }
 
+    public Cursor getAll(@NonNull Context context) {
+        return getDatabase(context).rawQuery("select * from " + mTable, null);
+    }
+
     public void insert(@NonNull Context context, @NonNull DatabaseObject object) {
         mDb = getDatabase(context);
         ContentValues cv = object.createCV();

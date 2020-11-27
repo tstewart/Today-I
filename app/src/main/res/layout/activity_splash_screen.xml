@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/splashScreenLayout"
     android:layout_width="match_parent"
@@ -27,10 +26,10 @@
         android:orientation="vertical">
 
         <ImageView
-                android:id="@+id/imageViewLogo"
-                android:layout_width="250dp"
-                android:layout_height="250dp"
-                android:contentDescription="@string/application_logo_description" />
+            android:id="@+id/imageViewLogo"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:contentDescription="@string/application_logo_description" />
 
         <TextView
             android:id="@+id/textViewAppTitle"

@@ -33,16 +33,13 @@ public class OptionsActivity extends AppCompatActivity {
     // DEBUG ACTIVITY VARS
     // Number of taps on the version TextView required to open debug menu
     private static final int DEBUG_ACTIVITY_TAP_REQUIREMENT = 6;
+    private final String CLASS_LOG_TAG = this.getClass().getSimpleName();
+    TextView mCurrentVersionTv;
+    //
+    TextView mLastBackedUpTv;
     // Current tap count
     private int mDebugActivityTapCount = 0;
     private Toast mClicksToDebugToast;
-    //
-
-    private final String CLASS_LOG_TAG = this.getClass().getSimpleName();
-
-
-    TextView mCurrentVersionTv;
-    TextView mLastBackedUpTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +55,7 @@ public class OptionsActivity extends AppCompatActivity {
         mLastBackedUpTv = findViewById(R.id.textViewLastBackedUp);
         mCurrentVersionTv = findViewById(R.id.textViewAboutVersion);
 
-        if(mCurrentVersionTv != null) {
+        if (mCurrentVersionTv != null) {
             String currentVersion = getCurrentVersion();
             mCurrentVersionTv.setText(String.format(getString(R.string.about_version), currentVersion));
 
@@ -92,7 +89,7 @@ public class OptionsActivity extends AppCompatActivity {
 
     private String getCurrentVersion() {
         Context appContext = getApplicationContext();
-        if(appContext != null) {
+        if (appContext != null) {
             try {
                 PackageInfo pInfo = appContext.getPackageManager().getPackageInfo(appContext.getPackageName(), 0);
                 return pInfo.versionName;
@@ -131,20 +128,19 @@ public class OptionsActivity extends AppCompatActivity {
     private void OnDebugViewClickedListener(View view) {
         mDebugActivityTapCount++;
 
-        if(mDebugActivityTapCount >= DEBUG_ACTIVITY_TAP_REQUIREMENT) {
+        if (mDebugActivityTapCount >= DEBUG_ACTIVITY_TAP_REQUIREMENT) {
             Intent intent = new Intent(this, DebugActivity.class);
             startActivity(intent);
 
             mDebugActivityTapCount = 0;
-        }
-        else {
-            int tapsToDebugMenu = DEBUG_ACTIVITY_TAP_REQUIREMENT-mDebugActivityTapCount;
+        } else {
+            int tapsToDebugMenu = DEBUG_ACTIVITY_TAP_REQUIREMENT - mDebugActivityTapCount;
             String clicksToDebugMenu = getResources().getQuantityString(R.plurals.clicks_to_debug_menu,
                     tapsToDebugMenu, tapsToDebugMenu);
 
-            if(mClicksToDebugToast != null) mClicksToDebugToast.cancel();
+            if (mClicksToDebugToast != null) mClicksToDebugToast.cancel();
 
-            mClicksToDebugToast = Toast.makeText(this,clicksToDebugMenu,Toast.LENGTH_SHORT);
+            mClicksToDebugToast = Toast.makeText(this, clicksToDebugMenu, Toast.LENGTH_SHORT);
             mClicksToDebugToast.show();
         }
     }
