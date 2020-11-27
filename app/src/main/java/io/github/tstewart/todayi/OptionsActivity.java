@@ -32,12 +32,14 @@ public class OptionsActivity extends AppCompatActivity {
 
     // DEBUG ACTIVITY VARS
     // Number of taps on the version TextView required to open debug menu
-    private final int DEBUG_ACTIVITY_TAP_REQUIREMENT = 5;
+    private static final int DEBUG_ACTIVITY_TAP_REQUIREMENT = 6;
     // Current tap count
-    private int debug_activity_tap_count = 0;
+    private int mDebugActivityTapCount = 0;
+    private Toast mClicksToDebugToast;
     //
 
     private final String CLASS_LOG_TAG = this.getClass().getSimpleName();
+
 
     TextView mCurrentVersionTv;
     TextView mLastBackedUpTv;
@@ -127,13 +129,23 @@ public class OptionsActivity extends AppCompatActivity {
     }
 
     private void OnDebugViewClickedListener(View view) {
-        debug_activity_tap_count++;
+        mDebugActivityTapCount++;
 
-        if(debug_activity_tap_count >= DEBUG_ACTIVITY_TAP_REQUIREMENT) {
+        if(mDebugActivityTapCount >= DEBUG_ACTIVITY_TAP_REQUIREMENT) {
             Intent intent = new Intent(this, DebugActivity.class);
             startActivity(intent);
 
-            debug_activity_tap_count = 0;
+            mDebugActivityTapCount = 0;
+        }
+        else {
+            int tapsToDebugMenu = DEBUG_ACTIVITY_TAP_REQUIREMENT-mDebugActivityTapCount;
+            String clicksToDebugMenu = getResources().getQuantityString(R.plurals.clicks_to_debug_menu,
+                    tapsToDebugMenu, tapsToDebugMenu);
+
+            if(mClicksToDebugToast != null) mClicksToDebugToast.cancel();
+
+            mClicksToDebugToast = Toast.makeText(this,clicksToDebugMenu,Toast.LENGTH_SHORT);
+            mClicksToDebugToast.show();
         }
     }
 

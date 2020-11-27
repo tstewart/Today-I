@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="clicks_to_debug_menu">
+        <item quantity="one">
+            You are %1$d click away from entering the debug menu!
+        </item>
+        <item quantity="other">
+            You are %1$d clicks away from entering the debug menu!
+        </item>
+    </plurals>
+</resources>
