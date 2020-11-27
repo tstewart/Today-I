@@ -42,12 +42,14 @@ public class TodayI extends Application {
                         || lastBackedUp > System.currentTimeMillis()
                         || hasNotBackedUpWithinHours(lastBackedUp)) shouldBackup = true;
 
-                /* If the key couldn't be found, a backup should be run if the app contains at least one database entry. */
-            } else if (databasesEmpty(context)) {
+            /* If the key couldn't be found, a backup should be run if the app contains at least one database entry. */
+            } else if(!databasesEmpty(context)) {
                 shouldBackup = true;
             }
 
             if (shouldBackup) {
+                LocalDatabaseIO.backup(this, DBConstants.DB_NAME);
+
                 sharedPrefs.edit()
                         .putLong(getString(R.string.user_prefs_last_backed_up_key), System.currentTimeMillis())
                         .apply();

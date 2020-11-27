@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.format.DateUtils;
@@ -20,16 +22,19 @@ import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import io.github.tstewart.todayi.data.LocalDatabaseIO;
-import io.github.tstewart.todayi.error.ExportFailedException;
-import io.github.tstewart.todayi.error.ImportFailedException;
-import io.github.tstewart.todayi.sql.DBConstants;
-import io.github.tstewart.todayi.sql.Database;
 
 public class OptionsActivity extends AppCompatActivity {
 
+    // DEBUG ACTIVITY VARS
+    // Number of taps on the version TextView required to open debug menu
+    private final int DEBUG_ACTIVITY_TAP_REQUIREMENT = 5;
+    // Current tap count
+    private int debug_activity_tap_count = 0;
+    //
+
     private final String CLASS_LOG_TAG = this.getClass().getSimpleName();
 
+    TextView mCurrentVersionTv;
     TextView mLastBackedUpTv;
 
     @Override
@@ -37,6 +42,7 @@ public class OptionsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_options);
 
+        Button mCurrentVersionTv = findViewById(R.id.textViewAboutVersion);
         Button mImportDataButton = findViewById(R.id.buttonImportData);
         Button exportDataButton = findViewById(R.id.buttonExportData);
         Button restoreBackupButton = findViewById(R.id.buttonRestoreBackup);
@@ -45,6 +51,13 @@ public class OptionsActivity extends AppCompatActivity {
         Button eraseAllDataButton = findViewById(R.id.buttonEraseAll);
         mLastBackedUpTv = findViewById(R.id.textViewLastBackedUp);
 
+        if(mCurrentVersionTv != null) {
+            String currentVersion = getCurrentVersion();
+            mCurrentVersionTv.setText(String.format(getString(R.string.about_version), currentVersion));
+
+            // Add onClick listener to access debug
+            mCurrentVersionTv.setOnClickListener(this::OnDebugViewClickedListener);
+        }
         if (mImportDataButton != null)
             mImportDataButton.setOnClickListener(this::onImportDataButtonClicked);
         if (exportDataButton != null)
@@ -70,6 +83,19 @@ public class OptionsActivity extends AppCompatActivity {
         }
     }
 
+    private String getCurrentVersion() {
+        Context appContext = getApplicationContext();
+        if(appContext != null) {
+            try {
+                PackageInfo pInfo = appContext.getPackageManager().getPackageInfo(appContext.getPackageName(), 0);
+                return pInfo.versionName;
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        return "Unknown";
+    }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -92,6 +118,17 @@ public class OptionsActivity extends AppCompatActivity {
             return DateUtils.getRelativeTimeSpanString(lastBackedUp).toString();
         } else {
             return "Unknown";
+        }
+    }
+
+    private void OnDebugViewClickedListener(View view) {
+        debug_activity_tap_count++;
+
+        if(debug_activity_tap_count >= DEBUG_ACTIVITY_TAP_REQUIREMENT) {
+            Intent intent = new Intent(this, DebugActivity.class);
+            startActivity(intent);
+
+            debug_activity_tap_count = 0;
         }
     }
 
