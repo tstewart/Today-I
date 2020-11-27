@@ -15,31 +15,31 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".DebugActivity"
-            android:parentActivityName=".OptionsActivity"
+            android:name=".ui.activities.DebugActivity"
+            android:parentActivityName=".ui.activities.OptionsActivity"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="io.github.tstewart.todayi.OptionsActivity" />
+                android:value=".ui.activities.OptionsActivity" />
         </activity>
         <activity
-            android:name=".CalendarActivity"
-            android:parentActivityName=".MainActivity"
+            android:name=".ui.activities.CalendarActivity"
+            android:parentActivityName=".ui.activities.MainActivity"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="io.github.tstewart.todayi.MainActivity" />
+                android:value=".ui.activities.MainActivity" />
         </activity>
         <activity
-            android:name=".OptionsActivity"
-            android:parentActivityName=".MainActivity"
+            android:name=".ui.activities.OptionsActivity"
+            android:parentActivityName=".ui.activities.MainActivity"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="io.github.tstewart.todayi.MainActivity" />
+                android:value=".ui.activities.MainActivity" />
         </activity>
         <activity
-            android:name=".SplashScreenActivity"
+            android:name=".ui.activities.SplashScreenActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@style/AppTheme.SplashScreen">
             <intent-filter>
@@ -48,7 +48,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity">
+        <activity android:name=".ui.activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>

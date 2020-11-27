@@ -13,9 +13,9 @@ import java.util.GregorianCalendar;
 
 import androidx.annotation.NonNull;
 import io.github.tstewart.todayi.data.LocalDatabaseIO;
-import io.github.tstewart.todayi.error.ExportFailedException;
-import io.github.tstewart.todayi.sql.DBConstants;
-import io.github.tstewart.todayi.sql.DatabaseHelper;
+import io.github.tstewart.todayi.errors.ExportFailedException;
+import io.github.tstewart.todayi.data.DBConstants;
+import io.github.tstewart.todayi.helpers.DatabaseHelper;
 
 public class TodayI extends Application {
     private final String CLASS_LOG_TAG = this.getClass().getSimpleName();

@@ -11,9 +11,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 
-import io.github.tstewart.todayi.error.ExportFailedException;
-import io.github.tstewart.todayi.error.ImportFailedException;
-import io.github.tstewart.todayi.event.OnDatabaseInteracted;
+import io.github.tstewart.todayi.errors.ExportFailedException;
+import io.github.tstewart.todayi.errors.ImportFailedException;
+import io.github.tstewart.todayi.events.OnDatabaseInteracted;
 
 /**
  * Local import/export of database information

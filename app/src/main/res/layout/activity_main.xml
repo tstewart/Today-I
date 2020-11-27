@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingTop="16dp"
-    tools:context=".MainActivity">
+    tools:context=".ui.activities.MainActivity">
 
     <TextView
         android:id="@+id/textViewCurrentDate"
@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/listFragment"
-        android:name="io.github.tstewart.todayi.ui.fragment.AccomplishmentListFragment"
+        android:name="io.github.tstewart.todayi.ui.fragments.AccomplishmentListFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
@@ -53,7 +53,7 @@
 
     <fragment
         android:id="@+id/fragment"
-        android:name="io.github.tstewart.todayi.ui.fragment.DayRatingFragment"
+        android:name="io.github.tstewart.todayi.ui.fragments.DayRatingFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
