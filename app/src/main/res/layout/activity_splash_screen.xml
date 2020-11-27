@@ -29,7 +29,8 @@
             android:id="@+id/imageViewLogo"
             android:layout_width="250dp"
             android:layout_height="250dp"
-            android:contentDescription="@string/application_logo_description" />
+            android:contentDescription="@string/application_logo_description"
+            android:background="@drawable/splash_logo" />
 
         <TextView
             android:id="@+id/textViewAppTitle"
@@ -41,6 +42,7 @@
             android:textSize="30sp"
             android:textStyle="bold"
             android:typeface="sans" />
+
     </LinearLayout>
 
     <!-- This FrameLayout insets its children based on system windows using
