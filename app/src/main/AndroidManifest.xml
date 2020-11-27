@@ -14,7 +14,13 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-        <activity android:name=".DebugActivity"></activity>
+        <activity android:name=".DebugActivity"
+            android:parentActivityName=".OptionsActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="io.github.tstewart.todayi.OptionsActivity" />
+        </activity>
         <activity
             android:name=".CalendarActivity"
             android:parentActivityName=".MainActivity"

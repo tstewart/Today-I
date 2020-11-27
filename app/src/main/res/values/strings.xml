@@ -28,8 +28,8 @@
     <string name="button_import_data">Import</string>
     <string name="button_export_data">Export</string>
     <string name="erase_all_confirmed">All data erased.</string>
-    <string name="about_created_by">Created by Thomas Stewart</string>
-    <string name="about_version">Version %1$s</string>
+    <string name="about_created_by">Created by: Thomas Stewart</string>
+    <string name="about_version">Version: %1$s</string>
 
     <!-- Options dialogs -->
     <string name="erase_all_warning_dialog_title">Erase all data?</string>
@@ -37,6 +37,9 @@
 
     <!-- Debug Activity -->
     <string name="debug_invalidate_backup">Invalidate backup</string>
+    <string name="debug_populate_accomplishments">Populate Accomplishments</string>
+    <string name="debug_get_accomplishments">Get all Accomplishments</string>
+    <string name="debug_get_ratings">Get all Ratings</string>
     <string name="debug_back">Back</string>
 
     <!-- Other -->
