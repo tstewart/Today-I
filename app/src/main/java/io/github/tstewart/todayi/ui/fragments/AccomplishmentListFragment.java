@@ -17,7 +17,7 @@ import java.util.Date;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.ListFragment;
-import io.github.tstewart.todayi.helpers.AccomplishmentCursorLoader;
+import io.github.tstewart.todayi.helpers.CursorLoader;
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.events.OnDatabaseInteracted;
 import io.github.tstewart.todayi.interfaces.OnDatabaseInteractionListener;
@@ -141,7 +141,7 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
 
     private Cursor getNewCursor() {
         SQLiteDatabase db = new Database(getContext()).getWritableDatabase();
-        return AccomplishmentCursorLoader.getCursor(db, DBConstants.ACCOMPLISHMENT_QUERY, mSelectedDate);
+        return CursorLoader.getCursorForDateQuery(db, DBConstants.ACCOMPLISHMENT_QUERY, mSelectedDate);
     }
 
     private void setCursor(Cursor cursor) {

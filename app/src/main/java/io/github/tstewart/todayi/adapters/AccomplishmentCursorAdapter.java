@@ -11,6 +11,9 @@ import android.widget.TextView;
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.DBConstants;
 
+/**
+ * Pulls data from the Accomplishments table of the database, and converts it's data into a ListItem
+ */
 public class AccomplishmentCursorAdapter extends CursorAdapter {
 
     public AccomplishmentCursorAdapter(Context context, Cursor c) {
@@ -24,8 +27,9 @@ public class AccomplishmentCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
+        // Get content TextView from layout
         TextView contentView = view.findViewById(R.id.textViewContent);
-
+        // Get the content of the next item in the Accomplishment table
         String content = cursor.getString(cursor.getColumnIndexOrThrow(DBConstants.COLUMN_CONTENT));
 
         contentView.setText(content);

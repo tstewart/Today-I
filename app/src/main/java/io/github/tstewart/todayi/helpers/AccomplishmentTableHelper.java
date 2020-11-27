@@ -6,29 +6,55 @@ import androidx.annotation.NonNull;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.models.Accomplishment;
 
+/**
+ * Helper class. Provides functionality to insert, update, and remove accomplishments from the database
+ * TODO provide interface to generify this and DayRatingTableHelper or combine them both.
+ */
 public class AccomplishmentTableHelper {
 
+    // Application environment context
     final Context mContext;
+    // Database Helper, provides functions for generic database access
     final DatabaseHelper mHelper;
 
     public AccomplishmentTableHelper(@NonNull Context context) {
         this.mContext = context;
+        // Default to generating a DatabaseHelper for the Accomplishment table
         this.mHelper = new DatabaseHelper(DBConstants.ACCOMPLISHMENT_TABLE);
     }
 
+    /**
+     * Insert an accomplishment into the Accomplishment table.
+     * @param accomplishment Accomplishment to be added.
+     * @throws IllegalArgumentException Thrown if the accomplishment object was not valid
+     */
     public void insert(Accomplishment accomplishment) throws IllegalArgumentException {
+        // Validate accomplishment
         accomplishment.validate();
 
+        // Insert into database
         mHelper.insert(mContext, accomplishment);
     }
 
+    /**
+     * Update an existing accomplishment in the Accomplishment table
+     * @param accomplishment Details of new accomplishment
+     * @param id Identifier number of existing accomplishment to be replaced
+     * @throws IllegalArgumentException Thrown if the new accomplishment object was not valid
+     */
     public void update(Accomplishment accomplishment, long id) throws IllegalArgumentException {
+        // Validate new accomplishment
         accomplishment.validate();
 
+        // Insert into database, overwriting existing
         mHelper.update(mContext, accomplishment, DBConstants.COLUMN_ID + "=? ", new String[]{String.valueOf(id)});
     }
 
-    public void delete(long id) throws IllegalArgumentException {
+    /**
+     * Deletes an existing accomplishment from the Accomplishment table
+     * @param id Identifier number of accomplishment to be removed
+     */
+    public void delete(long id) {
         mHelper.delete(mContext, DBConstants.COLUMN_ID + "=?", new String[]{String.valueOf(id)});
     }
 }

@@ -155,7 +155,7 @@ public class OptionsActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         Context context = getApplicationContext();
                         try {
-                            LocalDatabaseIO.importBackup(context, DBConstants.DB_NAME);
+                            LocalDatabaseIO.importBackupDb(context, DBConstants.DB_NAME);
 
                             //Exit options with result code.
                             returnWithResponse(Activity.RESULT_OK);
@@ -176,7 +176,7 @@ public class OptionsActivity extends AppCompatActivity {
 
     private void onForceBackupButtonClicked(View view) {
         try {
-            LocalDatabaseIO.backup(this, DBConstants.DB_NAME);
+            LocalDatabaseIO.backupDb(this, DBConstants.DB_NAME);
         } catch (ExportFailedException e) {
             Log.w(CLASS_LOG_TAG, e.getMessage(), e);
             Toast.makeText(this, "Backup failed: " + e.getMessage(), Toast.LENGTH_LONG).show();

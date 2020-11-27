@@ -50,7 +50,7 @@ public class TodayI extends Application {
             if (shouldBackup) {
 
                 try {
-                    LocalDatabaseIO.backup(this, DBConstants.DB_NAME);
+                    LocalDatabaseIO.backupDb(this, DBConstants.DB_NAME);
 
                     sharedPrefs.edit()
                             .putLong(getString(R.string.user_prefs_last_backed_up_key), System.currentTimeMillis())
