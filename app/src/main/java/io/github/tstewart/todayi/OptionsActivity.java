@@ -22,6 +22,11 @@ import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import io.github.tstewart.todayi.data.LocalDatabaseIO;
+import io.github.tstewart.todayi.error.ExportFailedException;
+import io.github.tstewart.todayi.error.ImportFailedException;
+import io.github.tstewart.todayi.sql.DBConstants;
+import io.github.tstewart.todayi.sql.Database;
 
 public class OptionsActivity extends AppCompatActivity {
 
@@ -42,7 +47,6 @@ public class OptionsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_options);
 
-        Button mCurrentVersionTv = findViewById(R.id.textViewAboutVersion);
         Button mImportDataButton = findViewById(R.id.buttonImportData);
         Button exportDataButton = findViewById(R.id.buttonExportData);
         Button restoreBackupButton = findViewById(R.id.buttonRestoreBackup);
@@ -50,6 +54,7 @@ public class OptionsActivity extends AppCompatActivity {
         Button googleSignInButton = findViewById(R.id.buttonGoogleSignIn);
         Button eraseAllDataButton = findViewById(R.id.buttonEraseAll);
         mLastBackedUpTv = findViewById(R.id.textViewLastBackedUp);
+        mCurrentVersionTv = findViewById(R.id.textViewAboutVersion);
 
         if(mCurrentVersionTv != null) {
             String currentVersion = getCurrentVersion();

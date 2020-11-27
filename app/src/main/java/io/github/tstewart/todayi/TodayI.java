@@ -48,23 +48,24 @@ public class TodayI extends Application {
             }
 
             if (shouldBackup) {
-                LocalDatabaseIO.backup(this, DBConstants.DB_NAME);
 
-                sharedPrefs.edit()
-                        .putLong(getString(R.string.user_prefs_last_backed_up_key), System.currentTimeMillis())
-                        .apply();
-                Log.i(CLASS_LOG_TAG, "Application data backed up!");
+                try {
+                    LocalDatabaseIO.backup(this, DBConstants.DB_NAME);
+
+                    sharedPrefs.edit()
+                            .putLong(getString(R.string.user_prefs_last_backed_up_key), System.currentTimeMillis())
+                            .apply();
+                    Log.i(CLASS_LOG_TAG, "Application data backed up!");
+
+                } catch (ExportFailedException e) {
+                    Log.w(CLASS_LOG_TAG, e.getMessage(), e);
+                    Toast.makeText(this, "Automatic backup failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
             } else {
                 Log.i(CLASS_LOG_TAG, "Application data did not need to backup.");
             }
         }
 
-        try {
-            LocalDatabaseIO.backup(this, DBConstants.DB_NAME);
-        } catch (ExportFailedException e) {
-            Log.w(CLASS_LOG_TAG, e.getMessage(), e);
-            Toast.makeText(this, "Automatic backup failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
-        }
 
         File file = Environment.getDataDirectory();
         if (new File(file, "backup_" + DBConstants.DB_NAME + ".db").exists()) {
