@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         Button prevButton = findViewById(R.id.buttonPrevDay);
         Button todayButton = findViewById(R.id.buttonToday);
         Button nextButton = findViewById(R.id.buttonNextDay);
-        TextView mDayLabel = findViewById(R.id.textViewCurrentDate);
+        mDayLabel = findViewById(R.id.textViewCurrentDate);
 
         /* Set functionality of bottom bar buttons */
         prevButton.setOnClickListener(this::onDayChangeButtonClicked);
