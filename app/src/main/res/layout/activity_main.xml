@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingTop="16dp"
-    tools:context=".MainActivity">
+    tools:context=".ui.activities.MainActivity">
 
     <TextView
         android:id="@+id/textViewCurrentDate"
@@ -14,54 +13,47 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:paddingBottom="16dp"
-        android:text="@string/current_date"
         android:textAlignment="center"
         android:textSize="24sp"
         android:textStyle="bold" />
 
     <fragment
         android:id="@+id/listFragment"
-        android:name="io.github.tstewart.todayi.ui.fragment.AccomplishmentListFragment"
+        android:name="io.github.tstewart.todayi.ui.fragments.AccomplishmentListFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp">
+        android:paddingTop="16dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/buttonPrevDay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/button_prev_day" />
 
-            <Button
-                android:id="@+id/buttonPrevDay"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/button_prev_day" />
+        <Button
+            android:id="@+id/buttonToday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/button_today" />
 
-            <Button
-                android:id="@+id/buttonToday"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/button_today" />
-
-            <Button
-                android:id="@+id/buttonNextDay"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/button_next_day" />
-        </LinearLayout>
-    </FrameLayout>
+        <Button
+            android:id="@+id/buttonNextDay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/button_next_day" />
+    </LinearLayout>
 
     <fragment
         android:id="@+id/fragment"
-        android:name="io.github.tstewart.todayi.ui.fragment.DayRatingFragment"
+        android:name="io.github.tstewart.todayi.ui.fragments.DayRatingFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

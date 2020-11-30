@@ -1,15 +1,13 @@
- <RelativeLayout android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:id="@+id/linearLayoutDayRating"
-            android:weightSum="5"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </LinearLayout>
+    <LinearLayout
+        android:id="@+id/linearLayoutDayRating"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="5"></LinearLayout>
 
- </RelativeLayout>
+</RelativeLayout>
 

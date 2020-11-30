@@ -1,8 +1,12 @@
 <resources>
     <string name="app_name">Today I</string>
 
+    <!-- Menu toolbar -->
+    <string name="activity_calendar">Calendar</string>
+    <string name="activity_settings">Settings</string>
+
     <!-- Main Activity -->
-    <string name="current_date"></string>
+    <string name="current_date" />
     <string name="new_accomplishment">New…</string>
     <string name="button_next_day">Next</string>
     <string name="button_today">Today</string>
@@ -23,27 +27,34 @@
     <string name="button_erase_all_data">Erase all data</string>
     <string name="button_import_data">Import</string>
     <string name="button_export_data">Export</string>
-    <string name="erase_all_warning_dialog">Erase all data? This cannot be undone.</string>
     <string name="erase_all_confirmed">All data erased.</string>
+    <string name="about_created_by">Created by: Thomas Stewart</string>
+    <string name="about_version">Version: %1$s</string>
 
-    <!-- Calendar Activity -->
-    <string name="button_next_month">Next</string>
-    <string name="button_prev_month">Previous</string>
-    <string name="button_change_calendar_type">Change calendar type</string>
+    <!-- Options dialogs -->
+    <string name="erase_all_warning_dialog_title">Erase all data?</string>
+    <string name="erase_all_warning_dialog_message">This cannot be undone.</string>
+
+    <!-- Debug Activity -->
+    <string name="debug_invalidate_backup">Invalidate backup</string>
+    <string name="debug_populate_accomplishments">Populate Accomplishments</string>
+    <string name="debug_get_accomplishments">Get all Accomplishments</string>
+    <string name="debug_get_ratings">Get all Ratings</string>
+    <string name="debug_back">Back</string>
 
     <!-- Other -->
     <string name="button_confirm">Confirm</string>
-    <string name="button_cancel">Cancel</string>
     <string name="button_delete">Delete</string>
     <string name="button_yes">Yes</string>
     <string name="button_no">No</string>
-    <string name="title_activity_calender_view">Calender</string>
-    <string name="title_activity_options">Options</string>
-    <string name="title_activity_splash_screen">Splash</string>
     <string name="new_accomplishment_invalid_text">Your accomplishment must be between 1 and 200 characters.</string>
 
     <!-- Files -->
     <string name="user_prefs_file_location_key">io.github.tstewart.todayi.userprefs</string>
     <string name="user_prefs_last_backed_up_key">last_backed_up</string>
+
+
+    <!-- Accessibility -->
+    <string name="application_logo_description">Application logo</string>
 
 </resources>

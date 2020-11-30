@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:buttonStyle">@style/AppTheme.ButtonTheme</item>
     </style>
 
     <style name="FullscreenTheme" parent="AppTheme">
@@ -29,18 +30,41 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="AppTheme.ListItemText" parent="Widget.AppCompat.ListView">
+        <item name="android:textColor">@color/colorBlack</item>
+    </style>
+
+    <style name="AppTheme.SplashScreen" parent="AppTheme.NoActionBar">
+        <item name="android:background">@color/colorSplashBackground</item>
+    </style>
+
+    <!-- Button primary theme -->
+    <style name="AppTheme.ButtonTheme" parent="Widget.AppCompat.Button">
+        <item name="android:backgroundTint">@color/colorButtonBg</item>
+    </style>
+
+    <!-- Button delete data theme -->
+    <style name="AppTheme.ButtonDeleteData" parent="Widget.AppCompat.Button">
+        <item name="android:foreground">@drawable/ripple</item>
+        <item name="android:background">@color/colorWarning</item>
+    </style>
+
+    <!-- Day rating fragment -->
     <style name="AppTheme.DayRatingButton" parent="Widget.AppCompat.Button.Borderless">
         <item name="android:foreground">@drawable/ripple</item>
         <item name="android:background">@drawable/rounded_shape</item>
     </style>
 
+    <!-- Calendar activity -->
     <style name="AppTheme.CalendarDateText">
         <item name="android:textSize">16sp</item>
     </style>
+
     <style name="AppTheme.CalendarHeaderText">
         <item name="android:textSize">20sp</item>
         <item name="android:textStyle">bold</item>
     </style>
+
     <style name="AppTheme.CalendarMonthLabelText">
         <item name="android:textSize">16sp</item>
     </style>

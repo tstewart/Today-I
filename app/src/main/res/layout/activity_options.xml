@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingTop="16dp"
-    tools:context=".MainActivity">
+    tools:context=".ui.activities.MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="0.1"
         android:orientation="vertical"
-        android:paddingBottom="16dp">
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/textViewGoogleSignInTitle"
@@ -33,7 +32,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="0.1"
         android:orientation="vertical">
 
         <TextView
@@ -48,7 +47,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <Button
                 android:id="@+id/buttonImportData"
@@ -99,16 +99,49 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="bottom"
+        android:layout_weight="0.1"
+        android:gravity="top"
         android:orientation="vertical">
 
         <Button
             android:id="@+id/buttonEraseAll"
+            style="@style/AppTheme.ButtonDeleteData"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="#EB7777"
             android:text="@string/button_erase_all_data" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.4"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textViewAboutAppTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/app_name"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textViewAboutCreatedBy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/about_created_by"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/textViewAboutVersion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/about_version"
+            android:textSize="18sp" />
     </LinearLayout>
 
 </LinearLayout>

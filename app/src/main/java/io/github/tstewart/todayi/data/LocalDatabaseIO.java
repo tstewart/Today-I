@@ -1,135 +1,182 @@
 package io.github.tstewart.todayi.data;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 
-import io.github.tstewart.todayi.error.ImportFailedException;
-import io.github.tstewart.todayi.event.OnDatabaseInteracted;
-import io.github.tstewart.todayi.sql.Database;
+import io.github.tstewart.todayi.errors.ExportFailedException;
+import io.github.tstewart.todayi.errors.ImportFailedException;
+import io.github.tstewart.todayi.events.OnDatabaseInteracted;
 
 /**
  * Local import/export of database information
  */
 public class LocalDatabaseIO {
+    /*
+     Log tag, used for Logging
+     Represents class name
+    */
     private static final String CLASS_LOG_TAG = LocalDatabaseIO.class.getSimpleName();
+    /* Default backup location for the database file */
+    private static final String DATABASE_BACKUP_DEFAULT_LOCATION = Environment.DIRECTORY_DOCUMENTS;
 
-    private LocalDatabaseIO(){}
+    /* Private constructor prevents initialisation of helper class */
+    private LocalDatabaseIO() {
+    }
 
-    public static void export(Context context, String databaseName, String newFileName)  {
+    public static void backupDb(Context context, String databaseName) throws ExportFailedException {
+        /* Runs export function, but enforces standard backup file name */
+        exportDb(context, databaseName, "backup_" + databaseName);
+    }
 
-        File storage = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+    /**
+     * Exports the provided database to the application's default backup location
+     * @param context Environment context, provides the location of objects at runtime
+     * @param databaseName Name of the database to be backed up
+     * @param newFileName Name of the new backup file
+     * @throws ExportFailedException If the export process was interrupted (e.g. If the database could not be read)
+     */
+    public static void exportDb(Context context, String databaseName, String newFileName) throws ExportFailedException {
 
-        if(storage.canWrite()) {
-            File databaseFile = context.getDatabasePath(databaseName);
+        /* Location of folder to write backup file to */
+        File databaseBackupFolder = context.getExternalFilesDir(DATABASE_BACKUP_DEFAULT_LOCATION);
 
-            if(databaseFile.exists()) {
-                File backupFile = new File(storage, newFileName);
+        /* If it is possible to write to the backup folder */
+        if (databaseBackupFolder.canWrite()) {
+            /* Location of existing database file */
+            File currentDatabaseFile = context.getDatabasePath(databaseName);
+
+            /* If the existing database file exists */
+            if (currentDatabaseFile.exists()) {
+                /* Location to write backup database to */
+                File databaseBackupFile = new File(databaseBackupFolder, newFileName);
 
                 try {
-                    writeToPath(databaseFile, backupFile);
+                    /* Try and write existing database file to backup location */
+                    writeToPath(currentDatabaseFile, databaseBackupFile);
+
+                    /* If, after the write process is complete the file does not exist in the new location */
+                    if (!databaseBackupFile.exists()) {
+                        throw new ExportFailedException("Potential backup failure? File does not exist.");
+                    } else {
+                        /* If the file does exist, backup was successful */
+                        Log.i(CLASS_LOG_TAG, "Database backed up at " + databaseBackupFile.getAbsolutePath());
+                    }
                 } catch (IOException e) {
-                    //TODO MANAGE
-                    Log.e(CLASS_LOG_TAG, e.getMessage());
+                    /* Catch IOException, caused by an error in writing the file */
+                    throw new ExportFailedException(e.getMessage());
                 }
-                finally {
-                    if(!backupFile.exists()) {
-                        Log.e(CLASS_LOG_TAG,"Potential backup failure? File does not exist.");
-                    }
-                    else {
-                        Log.i(CLASS_LOG_TAG,"Database backed up at " + backupFile.getAbsolutePath());
-                    }
-                }
+            } else {
+                throw new ExportFailedException("Backup failed. Database file to copy does not exist.");
             }
-            else {
-                Log.e(CLASS_LOG_TAG, "Backup failed. Database file to copy does not exist.");
-            }
-        }
-        else {
-            Log.e(CLASS_LOG_TAG, "Backup failed. Cannot write to internal storage.");
+        } else {
+            throw new ExportFailedException("Backup failed. Cannot write to internal storage.");
         }
 
     }
 
-    public static void backup(Context context, String databaseName) {
-        //Append .db if the string doesn't contain it already.
-        //if(!databaseName.endsWith(".db")) databaseName += ".db";
-
-        export(context, databaseName, "backup_"+databaseName);
+    public static void importBackupDb(Context context, String databaseName) throws ImportFailedException {
+        /* Runs import function, but enforces standard backup file name */
+        importDb(context, databaseName, "backup_" + databaseName);
     }
 
-    public static void importBackup(Context context, String databaseName) throws ImportFailedException {
-        File dbBackupLocation = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+    public static void importDb(Context context, String databaseName, String backupFileName) throws ImportFailedException {
+        /* Location of folder containing the backup file */
+        File databaseBackupFolder = context.getExternalFilesDir(DATABASE_BACKUP_DEFAULT_LOCATION);
 
-        if(dbBackupLocation.canRead()) {
-            File dbBackup = new File(dbBackupLocation, "backup_"+databaseName);
+        /* If it is possible to read the backup folder */
+        if (databaseBackupFolder.canRead()) {
+            /* Location of the backup file */
+            File databaseBackupFile = new File(databaseBackupFolder, backupFileName);
 
-            if(dbBackup.exists() && dbBackup.canRead()) {
+            /* If the backup file exists and can be read */
+            if (databaseBackupFile.exists() && databaseBackupFile.canRead()) {
 
-                File existingDBLocation = context.getDatabasePath(databaseName);
+                /* Location of the existing database file */
+                File currentDatabaseFile = context.getDatabasePath(databaseName);
 
-                if(existingDBLocation.canWrite()) {
-                    try {
-                        writeToPath(dbBackup, existingDBLocation);
-                        //Notify activities that the existing database has been replaced
-                        OnDatabaseInteracted.notifyDatabaseInteracted();
+                /* If the existing database file can be written to */
+                if (currentDatabaseFile.canWrite()) {
 
-                        Log.i(CLASS_LOG_TAG,"Database restored from " + dbBackup.getAbsolutePath());
-                    } catch (IOException e) {
-                        throw new ImportFailedException(e.getMessage());
+                    /* If the backup file is a valid SQLite database */
+                    if (isValidSQLite(databaseBackupFile.getPath())) {
+                        try {
+                            /* Replace existing database with backup database */
+                            writeToPath(databaseBackupFile, currentDatabaseFile);
+                            /* Notify activities that the existing database has been replaced */
+                            OnDatabaseInteracted.notifyDatabaseInteracted();
+
+                            /* Backup replaced successfully */
+                            Log.i(CLASS_LOG_TAG, "Database restored from " + databaseBackupFile.getAbsolutePath());
+                        } catch (IOException e) {
+                            /* Catch IOException, caused by an error in writing the file */
+                            throw new ImportFailedException(e.getMessage());
+                        }
+                    } else {
+                        throw new ImportFailedException("Backup was corrupt or invalid.");
                     }
-                }
-                else {
+                } else {
                     throw new ImportFailedException("Could not write to existing database.");
                 }
-            }
-            else {
+            } else {
                 throw new ImportFailedException("Database to import does not exist or could not be read.");
             }
-        }
-        else {
+        } else {
             throw new ImportFailedException("Database import location could not be read.");
         }
     }
 
+    /**
+     * Write file to output path
+     * @param inputPath File to read from
+     * @param outputPath File to write to
+     * @throws IOException If an error occurred in writing the file
+     */
     private static void writeToPath(File inputPath, File outputPath) throws IOException {
         FileChannel input = new FileInputStream(inputPath).getChannel();
         FileChannel output = new FileOutputStream(outputPath).getChannel();
 
-        output.transferFrom(input,0,input.size());
+        /* Transfer entire file to output */
+        output.transferFrom(input, 0, input.size());
 
+        /* Close channels to free up memory */
         input.close();
         output.close();
     }
 
-    /*
-    https://stackoverflow.com/questions/39576646/android-check-if-a-file-is-a-valid-sqlite-database
-    Author: Drilon Kurti
+    /**
+     * isValidSQLite provided by:
+     * https://stackoverflow.com/questions/39576646/android-check-if-a-file-is-a-valid-sqlite-database
+     *
+     * Checks if the file at the provided path is a valid SQLite database or not.
+     * @param dbPath Path of file to check
+     * @return True if the file is a valid SQLite database, false if not.
      */
     public static boolean isValidSQLite(String dbPath) {
-        File file = new File(dbPath);
+        File databaseFile = new File(dbPath);
 
-        if (!file.exists() || !file.canRead()) {
+        /* If the file doesn't exist or can't be read, then don't check it */
+        if (!databaseFile.exists() || !databaseFile.canRead()) {
             return false;
         }
 
         try {
-            FileReader fr = new FileReader(file);
+            FileReader fr = new FileReader(databaseFile);
             char[] buffer = new char[16];
 
+            /* Read the first 16 chars of the file */
             int bytesRead = fr.read(buffer, 0, 16);
             String str = String.valueOf(buffer);
             fr.close();
 
+            /* If the first 16 chars equal the SQLite header, it is most likely a SQLite db. */
             return str.equals("SQLite format 3\u0000");
 
         } catch (Exception e) {
