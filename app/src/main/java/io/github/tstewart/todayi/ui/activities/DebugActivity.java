@@ -16,6 +16,9 @@ import io.github.tstewart.todayi.models.Accomplishment;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.helpers.DatabaseHelper;
 
+/*
+Debug Activity is disabled for now.
+ */
 public class DebugActivity extends AppCompatActivity {
 
     @Override

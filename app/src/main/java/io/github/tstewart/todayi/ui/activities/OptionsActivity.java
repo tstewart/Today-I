@@ -30,24 +30,26 @@ import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
 
 public class OptionsActivity extends AppCompatActivity {
+    private final String CLASS_LOG_TAG = this.getClass().getSimpleName();
 
-    // DEBUG ACTIVITY VARS
     // Number of taps on the version TextView required to open debug menu
     private static final int DEBUG_ACTIVITY_TAP_REQUIREMENT = 6;
-    private final String CLASS_LOG_TAG = this.getClass().getSimpleName();
-    TextView mCurrentVersionTv;
-    //
-    TextView mLastBackedUpTv;
+    private static final boolean DEBUG_ENABLED = false;
     // Current tap count
     private int mDebugActivityTapCount = 0;
     private Toast mClicksToDebugToast;
+    //
+
+    TextView mLastBackedUpTv;
+    TextView mCurrentVersionTv;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_options);
 
-        Button mImportDataButton = findViewById(R.id.buttonImportData);
+        Button importDataButton = findViewById(R.id.buttonImportData);
         Button exportDataButton = findViewById(R.id.buttonExportData);
         Button restoreBackupButton = findViewById(R.id.buttonRestoreBackup);
         Button forceBackupButton = findViewById(R.id.buttonForceBackup);
@@ -61,10 +63,11 @@ public class OptionsActivity extends AppCompatActivity {
             mCurrentVersionTv.setText(String.format(getString(R.string.about_version), currentVersion));
 
             // Add onClick listener to access debug
-            mCurrentVersionTv.setOnClickListener(this::OnDebugViewClickedListener);
+            if(DEBUG_ENABLED)
+                mCurrentVersionTv.setOnClickListener(this::OnDebugViewClickedListener);
         }
-        if (mImportDataButton != null)
-            mImportDataButton.setOnClickListener(this::onImportDataButtonClicked);
+        if (importDataButton != null)
+            importDataButton.setOnClickListener(this::onImportDataButtonClicked);
         if (exportDataButton != null)
             exportDataButton.setOnClickListener(this::onExportDataButtonClicked);
         if (restoreBackupButton != null)
