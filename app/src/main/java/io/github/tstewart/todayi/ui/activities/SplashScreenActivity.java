@@ -11,30 +11,36 @@ import io.github.tstewart.todayi.R;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
+    // Time in milliseconds to display this Activity for
     final int SPLASH_DISPLAY_LENGTH_MILLIS = 3000;
 
+    // Handles wait time
     final Handler mSplashWaitHandler = new Handler();
 
-    View mMainLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
-        mMainLayout = findViewById(R.id.splashScreenLayout);
-        mMainLayout.setOnClickListener(v -> {
+        View mainLayout = findViewById(R.id.splashScreenLayout);
+        mainLayout.setOnClickListener(v -> {
             // Ends splash screen on click
             mSplashWaitHandler.removeCallbacksAndMessages(null);
             endSplashToMainActivity();
         });
 
+        // Add delayed function call to close splash screen after SPLASH_DISPLAY_LENGTH_MILLIS elapses
         mSplashWaitHandler.postDelayed(this::endSplashToMainActivity, SPLASH_DISPLAY_LENGTH_MILLIS);
     }
 
+    /**
+     * Ends this Activity and opens MainActivity
+     */
     void endSplashToMainActivity() {
         Intent mainIntent = new Intent(this, MainActivity.class);
         startActivity(mainIntent);
+        // Transition with a fade out animation
         overridePendingTransition(0, R.anim.fade_out);
         finish();
     }

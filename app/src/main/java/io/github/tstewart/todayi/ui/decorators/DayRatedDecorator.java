@@ -8,6 +8,10 @@ import com.prolificinteractive.materialcalendarview.DayViewFacade;
 
 import java.util.List;
 
+/*
+Decorates day views from MaterialCalendarView
+Sets day background to the provided Drawable
+ */
 public class DayRatedDecorator implements DayViewDecorator {
 
     final List<CalendarDay> mDates;
@@ -18,6 +22,7 @@ public class DayRatedDecorator implements DayViewDecorator {
         this.mDrawable = drawable;
     }
 
+    // In what cases should this decoration be drawn
     @Override
     public boolean shouldDecorate(CalendarDay day) {
         return mDates.contains(day);

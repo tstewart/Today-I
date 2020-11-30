@@ -11,16 +11,24 @@ import android.widget.EditText;
 
 import io.github.tstewart.todayi.R;
 
+/*
+Dialog for adding and editing Accomplishments
+ */
 public class AccomplishmentDialog extends AlertDialog.Builder {
 
+    // Delete button
     private final Button buttonDelete;
+    // Confirm button
     private final Button buttonConfirm;
+    // This dialog's view
     private View view;
+    // This dialog's instance. Set when create is called
     private AlertDialog instance;
 
     public AccomplishmentDialog(Context context) {
         super(context);
 
+        // Inflate dialog layout
         LayoutInflater inflater = LayoutInflater.from(getContext());
         View view = inflater.inflate(R.layout.dialog_accomplishment_manage, null);
         this.setView(view);
@@ -38,6 +46,7 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
 
         Window window = dialog.getWindow();
         if (window != null) {
+            // Set input mode to auto open keyboard on dialog open
             window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         }
 
@@ -45,22 +54,28 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
     }
 
     public AccomplishmentDialog setDialogType(DialogType dialogType) {
+        // If dialog type is new, set dialog to create a new Accomplishment
         if (dialogType == DialogType.NEW) {
             this.setTitle(R.string.new_accomplishment_dialog_title);
 
             if (buttonDelete != null) {
+                // Hide delete button when creating an Accomplishment
                 buttonDelete.setVisibility(View.GONE);
             }
-        } else if (dialogType == DialogType.EDIT) {
+        }
+        // If dialog type is edit, set dialog to edit an existing Accomplishment
+        else if (dialogType == DialogType.EDIT) {
             this.setTitle(R.string.edit_accomplishment_dialog_title);
 
             if (buttonDelete != null) {
+                // Show delete button when creating an Accomplishment
                 buttonDelete.setVisibility(View.VISIBLE);
             }
         }
         return this;
     }
 
+    // Set EditText view to provided string
     public AccomplishmentDialog setText(String content) {
         EditText editText = this.getView().findViewById(R.id.editTextAccomplishmentManage);
 
@@ -104,6 +119,9 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
         return this;
     }
 
+    /**
+     * Type of current dialog
+     */
     public enum DialogType {
         NEW,
         EDIT

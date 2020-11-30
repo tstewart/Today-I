@@ -17,9 +17,16 @@ import io.github.tstewart.todayi.errors.ExportFailedException;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.helpers.DatabaseHelper;
 
+/*
+ * Application class, called on application start
+ * Manages automatic backup
+ */
 public class TodayI extends Application {
+    // Log tag, used for Logging
+    // Represents class name
     private final String CLASS_LOG_TAG = this.getClass().getSimpleName();
 
+    // Backup Database every x hours
     private final int BACKUP_EVERY_HOURS = 24;
 
     @Override
@@ -47,11 +54,13 @@ public class TodayI extends Application {
                 shouldBackup = true;
             }
 
+            // If there was a reason to backup
             if (shouldBackup) {
-
                 try {
+                    // Backup to local storage
                     LocalDatabaseIO.backupDb(this, DBConstants.DB_NAME);
 
+                    // Set last time backed up
                     sharedPrefs.edit()
                             .putLong(getString(R.string.user_prefs_last_backed_up_key), System.currentTimeMillis())
                             .apply();
@@ -65,14 +74,13 @@ public class TodayI extends Application {
                 Log.i(CLASS_LOG_TAG, "Application data did not need to backup.");
             }
         }
-
-
-        File file = Environment.getDataDirectory();
-        if (new File(file, "backup_" + DBConstants.DB_NAME + ".db").exists()) {
-            Toast.makeText(this, "Backup successful!", Toast.LENGTH_SHORT).show();
-        }
     }
 
+    /**
+     * If there are no entries in either table of the database
+     * @param context Application context
+     * @return True if tables are empty
+     */
     private boolean databasesEmpty(@NonNull Context context) {
         DatabaseHelper accomplishmentHelper = new DatabaseHelper(DBConstants.ACCOMPLISHMENT_TABLE);
         DatabaseHelper ratingHelper = new DatabaseHelper(DBConstants.RATING_TABLE);
@@ -80,6 +88,12 @@ public class TodayI extends Application {
         return accomplishmentHelper.isEmpty(context) && ratingHelper.isEmpty(context);
     }
 
+    /**
+     * If the difference between the current date and the date last backed up
+     * is greater than the time required between backups, return true
+     * @param lastBackedUp Time last backed up
+     * @return True if the time between backups is greater than BACKUP_EVERY_HOURS
+     */
     private boolean hasNotBackedUpWithinHours(long lastBackedUp) {
         Calendar c = new GregorianCalendar();
         c.setTimeInMillis(System.currentTimeMillis());

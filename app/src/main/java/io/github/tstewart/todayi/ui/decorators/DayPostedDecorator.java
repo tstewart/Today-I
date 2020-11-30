@@ -9,6 +9,10 @@ import com.prolificinteractive.materialcalendarview.spans.DotSpan;
 
 import java.util.List;
 
+/*
+Decorates day views from MaterialCalendarView
+Decorates all days with a black dot under the day view
+ */
 public class DayPostedDecorator implements DayViewDecorator {
 
     final List<CalendarDay> mDates;
@@ -17,6 +21,7 @@ public class DayPostedDecorator implements DayViewDecorator {
         this.mDates = dates;
     }
 
+    // In what cases should this decoration be drawn
     @Override
     public boolean shouldDecorate(CalendarDay day) {
         return mDates.contains(day);
