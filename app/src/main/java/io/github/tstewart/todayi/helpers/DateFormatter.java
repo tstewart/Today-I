@@ -7,22 +7,25 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-// TODO In later versions, SimpleDateFormat should be replaced app wide with DateTimeFormatter
-// TODO replace Date object support?
+/*
+ TODO In later versions, SimpleDateFormat should be replaced app wide with DateTimeFormatter
+ TODO replace Date object support?
+*/
+
 /**
  * Helper class. Format Date object to formatted date, or vice versa
  */
 public class DateFormatter {
 
-    // Date formatter
+    /* Date formatter */
     private SimpleDateFormat mDateFormatter;
 
-    // Private constructor prevents initialisation
+    /* Private constructor prevents initialisation */
     private DateFormatter() {
     }
 
     public DateFormatter(String dateFormat) {
-        // Initialise date formatter with default locale
+        /* Initialise date formatter with default locale */
         this.mDateFormatter = new SimpleDateFormat(dateFormat, Locale.getDefault());
     }
 
@@ -41,23 +44,25 @@ public class DateFormatter {
      * @return Formatted date with day indicators
      */
     public String formatWithDayIndicators(Date date) {
-        // Initialise indicator formatter as a copy of the original formatter
+        /* Initialise indicator formatter as a copy of the original formatter */
         SimpleDateFormat indicatorDateFormatter = mDateFormatter;
 
-        // Get date format pattern
+        /* Get date format pattern */
         String dateFormat = mDateFormatter.toPattern();
-        // Get the position of the date option in the formatter pattern
+        /* Get the position of the date option in the formatter pattern */
         int indicatorPosition = dateFormat.indexOf("d ");
 
-        // If the date option exists
+        /* If the date option exists */
         if (indicatorPosition >= 0) {
 
-            // Get this date's day of the month
+            /* Get this date's day of the month */
             int day = getDayOfMonth(date);
 
-            // Append ordinal (number indicator) to after the date option in the format pattern
-            // E.g. The pattern MM/dd with a date of the 1st April becomes MM/dd'st'
-            // The ordinal is placed in quotes so it is not treated as a format option
+            /*
+             Append ordinal (number indicator) to after the date option in the format pattern
+             E.g. The pattern MM/dd with a date of the 1st April becomes MM/dd'st'
+             The ordinal is placed in quotes so it is not treated as a format option
+            */
             dateFormat = dateFormat.substring(0, indicatorPosition)
                     + "'"
                     + getOrdinal(day)
@@ -65,9 +70,9 @@ public class DateFormatter {
                     + dateFormat.substring(indicatorPosition + 1);
         }
 
-        // Apply pattern to formatter
+        /* Apply pattern to formatter */
         indicatorDateFormatter.applyPattern(dateFormat);
-        // Format date
+        /* Format date */
         return indicatorDateFormatter.format(date);
     }
 
@@ -95,7 +100,7 @@ public class DateFormatter {
             case 11:
             case 12:
             case 13:
-                // 11th, 12th and 13th are edge cases, but the default should work for other numbers
+                /* 11th, 12th and 13th are edge cases, but the default should work for other numbers */
                 return i + "th";
             default:
                 return i + sufixes[i % 10];

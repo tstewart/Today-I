@@ -15,13 +15,13 @@ import io.github.tstewart.todayi.helpers.DateFormatter;
  */
 public class DayRating implements DatabaseObject {
 
-    // Minimum accepted day rating
+    /* Minimum accepted day rating */
     private static final int MIN_RATING = 1;
-    // Maximum accepted day rating
+    /* Maximum accepted day rating */
     private static final int MAX_RATING = 5;
-    // Day rated
+    /* Day rated */
     private Date mDate;
-    // Rating
+    /* Rating */
     private int mDayRating;
 
     public DayRating(@NonNull Date date, int dayRating) {
@@ -35,10 +35,10 @@ public class DayRating implements DatabaseObject {
      */
     @Override
     public void validate() throws IllegalArgumentException {
-        // If rating is less than the minimum accepted
+        /* If rating is less than the minimum accepted */
         if (mDayRating < MIN_RATING) {
             throw new IllegalArgumentException("Rating cannot be lower than " + MIN_RATING + ".");
-        // If rating is more than the maximum accepted
+            /* If rating is more than the maximum accepted */
         } else if (mDayRating > MAX_RATING) {
             throw new IllegalArgumentException("Rating cannot be higher than " + MAX_RATING + ".");
         }
@@ -51,10 +51,10 @@ public class DayRating implements DatabaseObject {
     @Override
     public ContentValues createCV() {
         ContentValues contentValues = new ContentValues();
-        // Get date formatter with settings that match the database date format
+        /* Get date formatter with settings that match the database date format */
         DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT);
 
-        // Format date and add to content values if not null
+        /* Format date and add to content values if not null */
         if (mDate != null) {
             contentValues.put(DBConstants.COLUMN_DATE, dateFormatter.format(mDate));
         }

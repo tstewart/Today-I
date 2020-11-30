@@ -25,7 +25,7 @@ public class CursorLoader {
         DateFormatter dateFormat = new DateFormatter(DBConstants.DATE_FORMAT);
         String dateQuery = "";
 
-        // If the date is not null, format it to the default database format
+        /* If the date is not null, format it to the default database format */
         if (date != null) {
             dateQuery = dateFormat.format(date);
         }

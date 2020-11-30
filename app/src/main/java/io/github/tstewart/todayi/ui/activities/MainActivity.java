@@ -37,13 +37,13 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
     /* Used when requesting a response from OptionsActivity */
     private final int OPTIONS_ACTIVITY_REQUEST_CODE = 2;
 
-    // Currently selected date (Application-wide, controlled by OnDateChangedListener)
+    /* Currently selected date (Application-wide, controlled by OnDateChangedListener) */
     Date mSelectedDate;
 
-    // Fragment that contains functionality for viewing, creating, editing, and deleting Accomplishments
+    /* Fragment that contains functionality for viewing, creating, editing, and deleting Accomplishments */
     AccomplishmentListFragment mListFragment;
 
-    // Text label, shows current date formatted
+    /* Text label, shows current date formatted */
     TextView mDayLabel;
 
     @Override
@@ -51,13 +51,13 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Get bottom bar buttons for controlling date
+        /* Get bottom bar buttons for controlling date */
         Button prevButton = findViewById(R.id.buttonPrevDay);
         Button todayButton = findViewById(R.id.buttonToday);
         Button nextButton = findViewById(R.id.buttonNextDay);
         TextView mDayLabel = findViewById(R.id.textViewCurrentDate);
 
-        // Set functionality of bottom bar buttons
+        /* Set functionality of bottom bar buttons */
         prevButton.setOnClickListener(this::onDayChangeButtonClicked);
         todayButton.setOnClickListener(this::onDayChangeButtonClicked);
         nextButton.setOnClickListener(this::onDayChangeButtonClicked);
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        // Search currently registered fragments on this Activity for instance of AccomplishmentListFragment
+        /* Search currently registered fragments on this Activity for instance of AccomplishmentListFragment */
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
         for (Fragment fragment : fragments) {
             if (fragment instanceof AccomplishmentListFragment) {
@@ -79,18 +79,18 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
             }
         }
 
-        // Set current date to System's current date
+        /* Set current date to System's current date */
         updateCurrentDate(new Date());
     }
 
-    // Inflate Main Activity's top bar
+    /* Inflate Main Activity's top bar */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main_nav, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
-    // If an item on the top bar is selected
+    /* If an item on the top bar is selected */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
@@ -98,12 +98,14 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         Intent targetIntent = null;
         int requestCode = 0;
 
-        // Depending on the selected item, set the Intent Activity, and the request code
-        // Request code will be used later on to determine the response from the Activity
+        /*
+         Depending on the selected item, set the Intent Activity, and the request code
+         Request code will be used later on to determine the response from the Activity
+        */
         if (itemId == R.id.toolbar_calendar) {
             targetIntent = new Intent(this, CalendarActivity.class);
             requestCode = CALENDAR_ACTIVITY_REQUEST_CODE;
-            // CalendarView is initialised with the current selected date as an argument
+            /* CalendarView is initialised with the current selected date as an argument */
             targetIntent.putExtra("selectedDate", mSelectedDate.getTime());
 
         } else if (itemId == R.id.toolbar_settings) {
@@ -121,22 +123,24 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         return super.onOptionsItemSelected(item);
     }
 
-    // On receiving a response from an Activity
+    /* On receiving a response from an Activity */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // If the calendar was the Activity that responded
+        /* If the calendar was the Activity that responded */
         if (requestCode == CALENDAR_ACTIVITY_REQUEST_CODE) {
-            // If the response was Ok, and data was provided with the response
+            /* If the response was Ok, and data was provided with the response */
             if (resultCode == Activity.RESULT_OK && data != null) {
                 long dateResult = data.getLongExtra("result", -1);
 
-                // If the date result was not the default value (-1)
+                /* If the date result was not the default value (-1) */
                 if (dateResult >= 0) {
 
-                    // TODO simplify this
-                    // Set the current selected day to the provided result
+                    /*
+                     TODO simplify this
+                     Set the current selected day to the provided result
+                    */
                     Calendar c = new GregorianCalendar();
                     c.setTime(new Date(0));
                     c.add(Calendar.DAY_OF_YEAR, (int) dateResult);
@@ -145,12 +149,14 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
                 }
             }
         } else if (requestCode == OPTIONS_ACTIVITY_REQUEST_CODE) {
-            // If the response was Ok, settings activity forces reset of accomplishments
+            /* If the response was Ok, settings activity forces reset of accomplishments */
             if (resultCode == Activity.RESULT_OK) {
                 if (this.mListFragment != null) {
-                    // Options Activities responses trigger Database interaction notification
-                    // For example, when Erase Data is called from Options, the database must now refresh,
-                    // as data has been cleared
+                    /*
+                     Options Activities responses trigger Database interaction notification
+                     For example, when Erase Data is called from Options, the database must now refresh,
+                     as data has been cleared
+                    */
                     OnDatabaseInteracted.notifyDatabaseInteracted();
                 }
             }
@@ -172,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
 
         Date newDate = mSelectedDate;
 
-        // If selected button was Next or Previous, add or subtract one day from current
+        /* If selected button was Next or Previous, add or subtract one day from current */
         if (viewId == R.id.buttonNextDay || viewId == R.id.buttonPrevDay) {
 
             Calendar calendar = getInstance();
@@ -187,11 +193,11 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
             newDate = calendar.getTime();
 
         }
-        // If the selected button was Today, reset the currently selected day to System's current day
+        /* If the selected button was Today, reset the currently selected day to System's current day */
         else if (viewId == R.id.buttonToday) newDate = new Date();
         updateCurrentDate(newDate);
 
-        // Dismiss accomplishment fragment dialog if exists
+        /* Dismiss accomplishment fragment dialog if exists */
         if (mListFragment != null) mListFragment.dismissCurrentDialog();
 
     }
@@ -200,8 +206,10 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
     public void onDateChanged(Date date) {
         this.mSelectedDate = date;
 
-        // Update date label to currently selected date
-        // Include day indicators (i.e. 1st, 2nd, 3rd)
+        /*
+         Update date label to currently selected date
+         Include day indicators (i.e. 1st, 2nd, 3rd)
+        */
         if(mDayLabel != null)
             mDayLabel.setText(new DateFormatter("MMMM d yyyy").formatWithDayIndicators(mSelectedDate));
     }

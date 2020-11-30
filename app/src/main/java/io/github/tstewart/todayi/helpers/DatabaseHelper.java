@@ -16,9 +16,9 @@ import io.github.tstewart.todayi.interfaces.DatabaseObject;
  */
 public class DatabaseHelper {
 
-    // Table of database to read/write data from
+    /* Table of database to read/write data from */
     private final String mTable;
-    // Database to read/write data from
+    /* Database to read/write data from */
     private SQLiteDatabase mDb;
 
     public DatabaseHelper(@NonNull String table) {
@@ -33,14 +33,14 @@ public class DatabaseHelper {
     public boolean isEmpty(@NonNull Context context) {
         mDb = getDatabase(context);
 
-        // Get a cursor with the provided SQL query.
+        /* Get a cursor with the provided SQL query. */
         Cursor cursor = mDb.rawQuery("select ? from " + mTable, new String[]{DBConstants.COLUMN_ID});
 
-        // Get the number of returned records.
+        /* Get the number of returned records. */
         int columnCount = cursor.getColumnCount();
         cursor.close();
 
-        // If the number of records is none, the table is empty
+        /* If the number of records is none, the table is empty */
         return columnCount == 0;
     }
 
@@ -60,15 +60,15 @@ public class DatabaseHelper {
      */
     public void insert(@NonNull Context context, @NonNull DatabaseObject object) {
         mDb = getDatabase(context);
-        // Generate ContentValues from the object's variables
+        /* Generate ContentValues from the object's variables */
         ContentValues cv = object.createCV();
 
-        // If the ContentValues were generated successfully, insert into table
+        /* If the ContentValues were generated successfully, insert into table */
         if (cv != null) {
             mDb.insert(this.mTable, null, cv);
         }
 
-        // Close database connection on end.
+        /* Close database connection on end. */
         onEnd(mDb);
     }
 
@@ -83,12 +83,12 @@ public class DatabaseHelper {
         mDb = getDatabase(context);
         ContentValues cv = object.createCV();
 
-        // If the ContentValues were generated successfully, update record
+        /* If the ContentValues were generated successfully, update record */
         if (cv != null) {
             mDb.update(this.mTable, cv, whereClause, whereArgs);
         }
 
-        // Close database connection on end.
+        /* Close database connection on end. */
         onEnd(mDb);
     }
 
@@ -103,7 +103,7 @@ public class DatabaseHelper {
 
         mDb.delete(this.mTable, whereClause, whereArgs);
 
-        // Close database connection on end.
+        /* Close database connection on end. */
         onEnd(mDb);
     }
 
@@ -122,11 +122,11 @@ public class DatabaseHelper {
      * @param db Database to be closed
      */
     private void onEnd(SQLiteDatabase db) {
-        // If database is open, close it.
+        /* If database is open, close it. */
         if (db != null && db.isOpen()) {
             db.close();
         }
-        // Notify event listeners that the database was interacted with
+        /* Notify event listeners that the database was interacted with */
         OnDatabaseInteracted.notifyDatabaseInteracted();
     }
 

@@ -21,7 +21,7 @@ public class DayPostedDecorator implements DayViewDecorator {
         this.mDates = dates;
     }
 
-    // In what cases should this decoration be drawn
+    /* In what cases should this decoration be drawn */
     @Override
     public boolean shouldDecorate(CalendarDay day) {
         return mDates.contains(day);

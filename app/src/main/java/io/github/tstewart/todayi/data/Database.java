@@ -11,7 +11,7 @@ import androidx.annotation.Nullable;
  */
 public class Database extends SQLiteOpenHelper {
 
-    // SQL command to create Accomplishment table
+    /* SQL command to create Accomplishment table */
     private static final String CREATE_TABLE_ACCOMPLISHMENT = "create table " + DBConstants.ACCOMPLISHMENT_TABLE + " "
             + "("
             + DBConstants.COLUMN_ID + " integer primary key autoincrement, "
@@ -19,15 +19,15 @@ public class Database extends SQLiteOpenHelper {
             + DBConstants.COLUMN_CONTENT + " text not null"
             + ")";
 
-    // SQL command to create Ratings table
+    /* SQL command to create Ratings table */
     private static final String CREATE_TABLE_RATINGS = "create table " + DBConstants.RATING_TABLE + " "
             + "("
             + DBConstants.COLUMN_ID + " integer primary key autoincrement, "
-            + DBConstants.COLUMN_DATE + " string unique not null, " // Date must be unique, as only one rating can represent a date
+            + DBConstants.COLUMN_DATE + " string unique not null, " /* Date must be unique, as only one rating can represent a date */
             + DBConstants.COLUMN_RATING + " int not null"
             + ")";
 
-    // Initialize database with default settings
+    /* Initialize database with default settings */
     public Database(@Nullable Context context) {
         super(context, DBConstants.DB_NAME, null, DBConstants.DB_VERSION);
     }

@@ -17,14 +17,14 @@ import io.github.tstewart.todayi.models.DayRating;
  */
 public class DayRatingTableHelper {
 
-    // Application environment context
+    /* Application environment context */
     final Context mContext;
-    // Database Helper, provides functions for generic database access
+    /* Database Helper, provides functions for generic database access */
     final DatabaseHelper mHelper;
 
     public DayRatingTableHelper(@NonNull Context context) {
         this.mContext = context;
-        // Default to generating a DatabaseHelper for the Ratings table
+        /* Default to generating a DatabaseHelper for the Ratings table */
         this.mHelper = new DatabaseHelper(DBConstants.RATING_TABLE);
     }
 
@@ -38,21 +38,21 @@ public class DayRatingTableHelper {
         if (date != null) {
             DayRating dayRating = new DayRating(date, rating);
 
-            // Validate the day rating object, to check the variables for invalid values
+            /* Validate the day rating object, to check the variables for invalid values */
             dayRating.validate();
 
             SQLiteDatabase db = mHelper.getDatabase(this.mContext);
-            // Format the date to database requirements
+            /* Format the date to database requirements */
             String dateFormatted = new DateFormatter(DBConstants.DATE_FORMAT).format(date);
-            // Get a cursor with the provided date, to check if the Ratings table already contains a value for this date
+            /* Get a cursor with the provided date, to check if the Ratings table already contains a value for this date */
             Cursor existingRowCheck = db.rawQuery(DBConstants.DAY_RATING_QUERY, new String[]{dateFormatted});
 
-            // If the cursor is able to move to a record for this date, then a record already exists
+            /* If the cursor is able to move to a record for this date, then a record already exists */
             if (existingRowCheck.moveToFirst()) {
-                // Update the existing record
+                /* Update the existing record */
                 mHelper.update(this.mContext, dayRating, DBConstants.COLUMN_DATE + "=?", new String[]{dateFormatted});
             } else {
-                // Insert a new record for this date
+                /* Insert a new record for this date */
                 mHelper.insert(this.mContext, dayRating);
             }
 
@@ -70,20 +70,20 @@ public class DayRatingTableHelper {
         if (date != null) {
             SQLiteDatabase db = new Database(this.mContext).getReadableDatabase();
 
-            // Format the date to database requirements
+            /* Format the date to database requirements */
             String dateFormatted = new DateFormatter(DBConstants.DATE_FORMAT).format(date);
-            // Get a cursor with the provided date, to check if the Ratings table contains a value for this date
+            /* Get a cursor with the provided date, to check if the Ratings table contains a value for this date */
             Cursor cursor = db.rawQuery(DBConstants.DAY_RATING_QUERY, new String[]{dateFormatted});
 
-            // If the cursor is able to move to a record for this date, then the record exists
+            /* If the cursor is able to move to a record for this date, then the record exists */
             if (cursor.moveToFirst()) {
-                // Get and return the rating for this date
+                /* Get and return the rating for this date */
                 return cursor.getInt(cursor.getColumnIndex(DBConstants.COLUMN_RATING));
             }
 
             cursor.close();
         }
-        // If a value was not returned, return the default value
+        /* If a value was not returned, return the default value */
         return defaultValue;
     }
 

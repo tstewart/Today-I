@@ -22,18 +22,20 @@ import io.github.tstewart.todayi.helpers.DatabaseHelper;
  * Manages automatic backup
  */
 public class TodayI extends Application {
-    // Log tag, used for Logging
-    // Represents class name
+    /*
+     Log tag, used for Logging
+     Represents class name
+    */
     private final String CLASS_LOG_TAG = this.getClass().getSimpleName();
 
-    // Backup Database every x hours
+    /* Backup Database every x hours */
     private final int BACKUP_EVERY_HOURS = 24;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        // Database auto backup management
+        /* Database auto backup management */
         Context context = getApplicationContext();
         boolean shouldBackup = false;
 
@@ -54,13 +56,13 @@ public class TodayI extends Application {
                 shouldBackup = true;
             }
 
-            // If there was a reason to backup
+            /* If there was a reason to backup */
             if (shouldBackup) {
                 try {
-                    // Backup to local storage
+                    /* Backup to local storage */
                     LocalDatabaseIO.backupDb(this, DBConstants.DB_NAME);
 
-                    // Set last time backed up
+                    /* Set last time backed up */
                     sharedPrefs.edit()
                             .putLong(getString(R.string.user_prefs_last_backed_up_key), System.currentTimeMillis())
                             .apply();

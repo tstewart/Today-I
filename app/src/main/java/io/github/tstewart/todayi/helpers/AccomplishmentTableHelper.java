@@ -12,14 +12,14 @@ import io.github.tstewart.todayi.models.Accomplishment;
  */
 public class AccomplishmentTableHelper {
 
-    // Application environment context
+    /* Application environment context */
     final Context mContext;
-    // Database Helper, provides functions for generic database access
+    /* Database Helper, provides functions for generic database access */
     final DatabaseHelper mHelper;
 
     public AccomplishmentTableHelper(@NonNull Context context) {
         this.mContext = context;
-        // Default to generating a DatabaseHelper for the Accomplishment table
+        /* Default to generating a DatabaseHelper for the Accomplishment table */
         this.mHelper = new DatabaseHelper(DBConstants.ACCOMPLISHMENT_TABLE);
     }
 
@@ -29,10 +29,10 @@ public class AccomplishmentTableHelper {
      * @throws IllegalArgumentException Thrown if the accomplishment object was not valid
      */
     public void insert(Accomplishment accomplishment) throws IllegalArgumentException {
-        // Validate accomplishment
+        /* Validate accomplishment */
         accomplishment.validate();
 
-        // Insert into database
+        /* Insert into database */
         mHelper.insert(mContext, accomplishment);
     }
 
@@ -43,10 +43,10 @@ public class AccomplishmentTableHelper {
      * @throws IllegalArgumentException Thrown if the new accomplishment object was not valid
      */
     public void update(Accomplishment accomplishment, long id) throws IllegalArgumentException {
-        // Validate new accomplishment
+        /* Validate new accomplishment */
         accomplishment.validate();
 
-        // Insert into database, overwriting existing
+        /* Insert into database, overwriting existing */
         mHelper.update(mContext, accomplishment, DBConstants.COLUMN_ID + "=? ", new String[]{String.valueOf(id)});
     }
 

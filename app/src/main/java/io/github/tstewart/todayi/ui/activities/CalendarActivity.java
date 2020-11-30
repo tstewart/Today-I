@@ -40,19 +40,21 @@ import io.github.tstewart.todayi.helpers.DateFormatter;
     Also provides an overview of days that Accomplishments were posted on and days rated
  */
 public class CalendarActivity extends AppCompatActivity {
-    // Log tag, used for Logging
-    // Represents class name
+    /*
+     Log tag, used for Logging
+     Represents class name
+    */
     private final String CLASS_LOG_TAG = this.getClass().getSimpleName();
 
-    // Calendar view
+    /* Calendar view */
     MaterialCalendarView mCalendarView;
 
-    // Currently selected date (Application-wide, controlled by OnDateChangedListener)
+    /* Currently selected date (Application-wide, controlled by OnDateChangedListener) */
     Date mSelectedDate = new Date();
 
-    // List of days posted on
+    /* List of days posted on */
     List<CalendarDay> mDaysPostedOn;
-    // HashMap of days rated and their respective rating
+    /* HashMap of days rated and their respective rating */
     HashMap<CalendarDay, Integer> mRatings;
 
     @Override
@@ -60,9 +62,11 @@ public class CalendarActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
 
-        // Check if this Activity was instantiated with a selected date
-        // If it was, set the current date to the provided date
-        // This will be instantiated with the calendar view later, so that the calendar view automatically scrolls to the current month
+        /*
+         Check if this Activity was instantiated with a selected date
+         If it was, set the current date to the provided date
+         This will be instantiated with the calendar view later, so that the calendar view automatically scrolls to the current month
+        */
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             long time = extras.getLong("selectedDate");
@@ -70,25 +74,27 @@ public class CalendarActivity extends AppCompatActivity {
                 mSelectedDate.setTime(time);
             }
         }
-        // If no date was provided with the Activity launch, set the current date to the System's time
+        /* If no date was provided with the Activity launch, set the current date to the System's time */
         else {
             mSelectedDate.setTime(System.currentTimeMillis());
         }
 
-        // Get calendar view from Layout
+        /* Get calendar view from Layout */
         mCalendarView = findViewById(R.id.calendarView);
 
         if (mCalendarView != null) {
-            // Set action when a date is selected on the calendar view
+            /* Set action when a date is selected on the calendar view */
             mCalendarView.setOnDateChangedListener(this::onCalendarClick);
-            // Set current date to the selected date
-            // This defaults to the System's time if no date was provided as an argument when the Activity was created
+            /*
+             Set current date to the selected date
+             This defaults to the System's time if no date was provided as an argument when the Activity was created
+            */
             mCalendarView.setCurrentDate(getCalendarDayFromDate(mSelectedDate));
-            // Draws a circle around the selected date
+            /* Draws a circle around the selected date */
             mCalendarView.setDateSelected(getCalendarDayFromDate(mSelectedDate), true);
         }
 
-        // Get the top bar, and set it's title correctly
+        /* Get the top bar, and set it's title correctly */
         ActionBar supportBar = getSupportActionBar();
         if (supportBar != null) supportBar.setTitle(R.string.activity_calendar);
     }
@@ -97,9 +103,9 @@ public class CalendarActivity extends AppCompatActivity {
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        // Get a list of days that Accomplishments were posted on from the Database
+        /* Get a list of days that Accomplishments were posted on from the Database */
         mDaysPostedOn = getPostedDates();
-        // Get a HashMap of days rated and their ratings from the Database.
+        /* Get a HashMap of days rated and their ratings from the Database. */
         mRatings = getDaysRated();
 
         /*
@@ -110,12 +116,12 @@ public class CalendarActivity extends AppCompatActivity {
         This is done to ensure that every day view in the calendar is colored to match it's respective rating (e.g. 1 = red, 5 = green etc.)
          */
 
-        // Get decorator for days posted
+        /* Get decorator for days posted */
         DayPostedDecorator daysPostedDecorator = new DayPostedDecorator(mDaysPostedOn);
-        // Get list of decorators for every rating
+        /* Get list of decorators for every rating */
         List<DayRatedDecorator> dayRatedDecorators = new DayRatingSplitter(this).getDayRatingDecorators(mRatings);
 
-        // Set decorators
+        /* Set decorators */
         mCalendarView.addDecorator(daysPostedDecorator);
         mCalendarView.addDecorators(dayRatedDecorators);
     }

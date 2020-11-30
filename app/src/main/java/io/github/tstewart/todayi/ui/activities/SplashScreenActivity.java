@@ -25,12 +25,12 @@ public class SplashScreenActivity extends AppCompatActivity {
 
         View mainLayout = findViewById(R.id.splashScreenLayout);
         mainLayout.setOnClickListener(v -> {
-            // Ends splash screen on click
+            /* Ends splash screen on click */
             mSplashWaitHandler.removeCallbacksAndMessages(null);
             endSplashToMainActivity();
         });
 
-        // Add delayed function call to close splash screen after SPLASH_DISPLAY_LENGTH_MILLIS elapses
+        /* Add delayed function call to close splash screen after SPLASH_DISPLAY_LENGTH_MILLIS elapses */
         mSplashWaitHandler.postDelayed(this::endSplashToMainActivity, SPLASH_DISPLAY_LENGTH_MILLIS);
     }
 
@@ -40,7 +40,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     void endSplashToMainActivity() {
         Intent mainIntent = new Intent(this, MainActivity.class);
         startActivity(mainIntent);
-        // Transition with a fade out animation
+        /* Transition with a fade out animation */
         overridePendingTransition(0, R.anim.fade_out);
         finish();
     }

@@ -27,14 +27,16 @@ import io.github.tstewart.todayi.helpers.DayRatingTableHelper;
  */
 public class DayRatingFragment extends Fragment implements OnDateChangedListener {
 
-    // Colors for individual day rating
-    // TODO move to constant
+    /*
+     Colors for individual day rating
+     TODO move to constant
+    */
     final int[] mColors = new int[]{R.color.colorRatingRed, R.color.colorRatingOrange, R.color.colorRatingYellow, R.color.colorRatingLightGreen, R.color.colorRatingGreen};
-    // List of day rating buttons
+    /* List of day rating buttons */
     Button[] mButtons;
-    // Current date (Application-wide)
+    /* Current date (Application-wide) */
     Date mSelectedDate;
-    // Database table helper, assists with Database interaction
+    /* Database table helper, assists with Database interaction */
     DayRatingTableHelper mTableHelper;
 
     @Override
@@ -50,26 +52,26 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
         mButtons = new Button[5];
         LinearLayout ll = view.findViewById(R.id.linearLayoutDayRating);
 
-        // Create 5 buttons to make up the selectable day ratings
+        /* Create 5 buttons to make up the selectable day ratings */
         for (int i = 0; i < 5; i++) {
 
-            // Set button theme
+            /* Set button theme */
             mButtons[i] = new Button(new ContextThemeWrapper(getContext(), R.style.AppTheme_DayRatingButton), null, R.style.Widget_AppCompat_Button_Borderless);
-            // Set text to current index
+            /* Set text to current index */
             mButtons[i].setText(String.valueOf(i + 1));
             mButtons[i].setOnClickListener(this::onRatingButtonClicked);
 
-            // Set button layout
+            /* Set button layout */
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
 
-            // Add button to layout
+            /* Add button to layout */
             ll.addView(mButtons[i], layoutParams);
         }
 
-        // Get rating for current date
+        /* Get rating for current date */
         int index = getIndexOfRating(new Date());
 
-        // Set currently selected button to rating of current day (if exists)
+        /* Set currently selected button to rating of current day (if exists) */
         if (index >= 0) setSelectedButton(index);
 
     }
@@ -87,22 +89,22 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
 
         if (mButtons != null && context != null) {
 
-            // Set all button backgrounds to transparent
+            /* Set all button backgrounds to transparent */
             resetAllButtonBackgrounds();
 
             if (v instanceof Button) {
                 Button buttonClicked = (Button) v;
 
-                // Index of selected button in List of buttons
+                /* Index of selected button in List of buttons */
                 int index = Arrays.asList(mButtons).indexOf(buttonClicked);
 
-                // If the selected button is within the bounds of buttons (0 - buttons array length)
+                /* If the selected button is within the bounds of buttons (0 - buttons array length) */
                 if (index >= 0 && index < mButtons.length) {
 
-                    // Set background color for selected button
+                    /* Set background color for selected button */
                     setSelectedButton(index);
 
-                    // Set rating for this day in Database
+                    /* Set rating for this day in Database */
                     if (mTableHelper != null) {
                         mTableHelper.setRating(mSelectedDate, index + 1);
                     }
@@ -118,13 +120,13 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
     private void setSelectedButton(int index) {
         resetAllButtonBackgrounds();
 
-        // If index is not out of range of colors array
+        /* If index is not out of range of colors array */
         if (index < mColors.length) {
 
             Button button = mButtons[index];
             int color = mColors[index];
 
-            // Set background color of this button
+            /* Set background color of this button */
             setButtonBackground(button, color);
         }
     }
@@ -160,7 +162,7 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
         Context context = getContext();
 
         if (context != null) {
-            // Get rating from Database for provided date
+            /* Get rating from Database for provided date */
             int index = new DayRatingTableHelper(context).getRating(date, -1);
             return index - 1;
         }
@@ -170,12 +172,12 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
 
     @Override
     public void onDateChanged(Date date) {
-        // Get Array index of rating for current date
+        /* Get Array index of rating for current date */
         int index = getIndexOfRating(date);
 
-        // If index is valid, set background color for Button
+        /* If index is valid, set background color for Button */
         if (index >= 0) setSelectedButton(index);
-        // If index is invalid, reset background color for all buttons
+            /* If index is invalid, reset background color for all buttons */
         else resetAllButtonBackgrounds();
 
         this.mSelectedDate = date;

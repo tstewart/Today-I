@@ -38,22 +38,22 @@ public class DayRatingSplitter {
         List<DayRatedDecorator> decorators = new ArrayList<>();
 
         for (int i = 1; i <= 5; i++) {
-            // variables inside lambda must be final, so the current for index is assigned again.
+            /* variables inside lambda must be final, so the current for index is assigned again. */
             final int index = i;
-            // List of days that match the rating we are currently looking for
+            /* List of days that match the rating we are currently looking for */
             List<CalendarDay> daysMatchingRating = new ArrayList<>();
 
             ratings.forEach((calendarDay, rating) -> {
-                // If rating in the HashMap matches the current for index, add it to current list of CalendarDays
+                /* If rating in the HashMap matches the current for index, add it to current list of CalendarDays */
                 if (rating == index) {
                     daysMatchingRating.add(calendarDay);
                 }
             });
 
-            // Get color correlated to this current index
+            /* Get color correlated to this current index */
             int color = getColorAtIndex(index);
 
-            // Get drawable to add to DayRatedDecorator with the provided color
+            /* Get drawable to add to DayRatedDecorator with the provided color */
             Drawable ratingDrawable = getRatingDrawable(color);
 
             decorators.add(new DayRatedDecorator(daysMatchingRating, ratingDrawable));
@@ -70,7 +70,7 @@ public class DayRatingSplitter {
         GradientDrawable drawable = (GradientDrawable) ContextCompat.getDrawable(mContext, R.drawable.calendar_rated_circle);
 
         if (drawable != null) {
-            // Make a clone, to ensure updating the color doesn't break every other instance
+            /* Make a clone, to ensure updating the color doesn't break every other instance */
             drawable = (GradientDrawable) drawable.mutate();
             drawable.setColor(color);
         }
@@ -102,7 +102,7 @@ public class DayRatingSplitter {
                 colorResourceId = R.color.colorRatingGreen;
                 break;
             default:
-                // Default to a transparent color
+                /* Default to a transparent color */
                 colorResourceId = R.color.colorTransparent;
         }
         return ContextCompat.getColor(mContext, colorResourceId);

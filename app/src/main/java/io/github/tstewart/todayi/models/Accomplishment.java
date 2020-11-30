@@ -15,12 +15,12 @@ import io.github.tstewart.todayi.helpers.DateFormatter;
  */
 public class Accomplishment implements DatabaseObject {
 
-    // Maximum length of an Accomplishment body
+    /* Maximum length of an Accomplishment body */
     private static final int MAX_CONTENT_LENGTH = 200;
 
-    // Date Accomplishment was created on
+    /* Date Accomplishment was created on */
     private Date mDate;
-    // Content of Accomplishment
+    /* Content of Accomplishment */
     private String mContent;
 
     public Accomplishment(@NonNull Date mDate, @NonNull String content) {
@@ -35,10 +35,10 @@ public class Accomplishment implements DatabaseObject {
      */
     @Override
     public void validate() throws IllegalArgumentException {
-        // If the content string is empty with spaces removed
+        /* If the content string is empty with spaces removed */
         if (mContent.trim().isEmpty()) {
             throw new IllegalArgumentException("Accomplishment must not be empty.");
-        // If the content string is larger than the maximum content length
+            /* If the content string is larger than the maximum content length */
         } else if (mContent.length() > MAX_CONTENT_LENGTH) {
             throw new IllegalArgumentException("Accomplishment can not be longer than " + MAX_CONTENT_LENGTH + " characters.");
         }
@@ -51,10 +51,10 @@ public class Accomplishment implements DatabaseObject {
     @Override
     public ContentValues createCV() {
         ContentValues contentValues = new ContentValues();
-        // Get date formatter with settings that match the database date format
+        /* Get date formatter with settings that match the database date format */
         DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT);
 
-        // Format date and add to content values if not null
+        /* Format date and add to content values if not null */
         if (mDate != null) {
             contentValues.put(DBConstants.COLUMN_DATE, dateFormatter.format(mDate));
         }
