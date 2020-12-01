@@ -68,7 +68,7 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
             this.setTitle(R.string.edit_accomplishment_dialog_title);
 
             if (buttonDelete != null) {
-                // Show delete button when creating an Accomplishment
+                /* Show delete button when creating an Accomplishment */
                 buttonDelete.setVisibility(View.VISIBLE);
             }
         }

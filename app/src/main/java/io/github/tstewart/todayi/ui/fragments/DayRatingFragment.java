@@ -81,7 +81,7 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mTableHelper = new DayRatingTableHelper(getContext());
-        // Register OnDateChanged to set current day rating
+        /* Register OnDateChanged to set current day rating */
         OnDateChanged.addListener(this);
     }
 

@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         todayButton.setOnClickListener(this::onDayChangeButtonClicked);
         nextButton.setOnClickListener(this::onDayChangeButtonClicked);
 
-        // Register for date changed events
+        /* Register for date changed events */
         OnDateChanged.addListener(this);
     }
 

@@ -37,16 +37,16 @@ import io.github.tstewart.todayi.ui.dialogs.AccomplishmentDialog;
  */
 public class AccomplishmentListFragment extends ListFragment implements OnDatabaseInteractionListener, OnDateChangedListener {
 
-    // Cursor adapter, loads posts to ListView with provided Cursor
+    /* Cursor adapter, loads posts to ListView with provided Cursor */
     private AccomplishmentCursorAdapter mAdapter;
 
-    // Current dialog, restricts multiple dialogs from opening at once
+    /* Current dialog, restricts multiple dialogs from opening at once */
     private AlertDialog mDialog;
 
-    // Currently selected date (Application-wide)
+    /* Currently selected date (Application-wide) */
     private Date mSelectedDate = new Date();
 
-    // Database table helper, assists with Database interaction
+    /* Database table helper, assists with Database interaction */
     private AccomplishmentTableHelper mTableHelper;
 
     @Override
@@ -66,22 +66,22 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
         setListAdapter(mAdapter);
         getListView().setOnItemClickListener(this::onListItemClick);
 
-        // Append New button to end of ListView
+        /* Append New button to end of ListView */
         Button newItemButton = new Button(getContext());
         newItemButton.setText(getResources().getText(R.string.new_accomplishment));
         newItemButton.setOnClickListener(this::onNewItemButtonPressed);
         getListView().addFooterView(newItemButton);
 
-        // Add listener to notify fragment of database updates
+        /* Add listener to notify fragment of database updates */
         OnDatabaseInteracted.addListener(this);
-        // Add listener to notify fragment of date changes
+        /* Add listener to notify fragment of date changes */
         OnDateChanged.addListener(this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        // Prevents dialogs remaining open if the user changes activities while a dialog is open
+        /* Prevents dialogs remaining open if the user changes activities while a dialog is open */
         dismissCurrentDialog();
     }
 
@@ -91,17 +91,19 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
             return;
         }
 
-        // Get cursor for currently selected Accomplishment
+        /* Get cursor for currently selected Accomplishment */
         Cursor cursor = (Cursor) mAdapter.getItem(position);
 
-        // Position of the item clicked must be less than the total number of rows in the cursor
+        /* Position of the item clicked must be less than the total number of rows in the cursor */
         if (cursor.getCount() > position) {
 
-            // Get content of the currently selected Accomplishment
+            /* Get content of the currently selected Accomplishment */
             String itemContent = cursor.getString(cursor.getColumnIndex(DBConstants.COLUMN_CONTENT));
 
-            // Dismiss current dialog if one is currently open
-            // Prevents multiple dialogs from opening
+            /*
+             Dismiss current dialog if one is currently open
+             Prevents multiple dialogs from opening
+            */
             dismissCurrentDialog();
 
             this.mDialog = new AccomplishmentDialog(this.getContext())
@@ -111,11 +113,11 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
                         EditText input = dialogView.getRootView().findViewById(R.id.editTextAccomplishmentManage);
 
                         if (input != null) {
-                            // Create Accomplishment object from new values
+                            /* Create Accomplishment object from new values */
                             Accomplishment accomplishment = new Accomplishment(mSelectedDate, input.getText().toString());
 
                             try {
-                                // Update Database entry with new content
+                                /* Update Database entry with new content */
                                 mTableHelper.update(accomplishment, id);
                             } catch (IllegalArgumentException e) {
                                 Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -131,8 +133,10 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
 
     private void onNewItemButtonPressed(View view) {
 
-        // Dismiss current dialog if one is currently open
-        // Prevents multiple dialogs from opening
+        /*
+         Dismiss current dialog if one is currently open
+         Prevents multiple dialogs from opening
+        */
         dismissCurrentDialog();
 
         this.mDialog = new AccomplishmentDialog(getContext())
@@ -141,11 +145,11 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
                     EditText input = dialogView.getRootView().findViewById(R.id.editTextAccomplishmentManage);
 
                     if (input != null) {
-                        // Create Accomplishment object from new values
+                        /* Create Accomplishment object from new values */
                         Accomplishment accomplishment = new Accomplishment(mSelectedDate, input.getText().toString());
 
                         try {
-                            // Insert Accomplishment into Database
+                            /* Insert Accomplishment into Database */
                             mTableHelper.insert(accomplishment);
                         } catch (IllegalArgumentException e) {
                             Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -196,7 +200,7 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
 
     @Override
     public void onDatabaseInteracted() {
-        // Search Database again for posts
+        /* Search Database again for posts */
         refreshCursor();
     }
 
