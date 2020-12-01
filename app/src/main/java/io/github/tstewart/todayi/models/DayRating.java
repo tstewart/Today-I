@@ -6,6 +6,7 @@ import java.util.Date;
 
 import androidx.annotation.NonNull;
 import io.github.tstewart.todayi.data.DBConstants;
+import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.interfaces.DatabaseObject;
 import io.github.tstewart.todayi.helpers.DateFormatter;
 
@@ -34,13 +35,13 @@ public class DayRating implements DatabaseObject {
      * @throws IllegalArgumentException If the validation failed for any reason (e.g. Rating was outside bounds)
      */
     @Override
-    public void validate() throws IllegalArgumentException {
+    public void validate() throws ValidationFailedException {
         /* If rating is less than the minimum accepted */
         if (mDayRating < MIN_RATING) {
-            throw new IllegalArgumentException("Rating cannot be lower than " + MIN_RATING + ".");
+            throw new ValidationFailedException("Rating cannot be lower than " + MIN_RATING + ".");
             /* If rating is more than the maximum accepted */
         } else if (mDayRating > MAX_RATING) {
-            throw new IllegalArgumentException("Rating cannot be higher than " + MAX_RATING + ".");
+            throw new ValidationFailedException("Rating cannot be higher than " + MAX_RATING + ".");
         }
     }
 

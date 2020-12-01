@@ -4,6 +4,7 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 import io.github.tstewart.todayi.data.DBConstants;
+import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.models.Accomplishment;
 
 /**
@@ -28,7 +29,7 @@ public class AccomplishmentTableHelper {
      * @param accomplishment Accomplishment to be added.
      * @throws IllegalArgumentException Thrown if the accomplishment object was not valid
      */
-    public void insert(Accomplishment accomplishment) throws IllegalArgumentException {
+    public void insert(Accomplishment accomplishment) throws ValidationFailedException {
         /* Validate accomplishment */
         accomplishment.validate();
 
@@ -42,7 +43,7 @@ public class AccomplishmentTableHelper {
      * @param id Identifier number of existing accomplishment to be replaced
      * @throws IllegalArgumentException Thrown if the new accomplishment object was not valid
      */
-    public void update(Accomplishment accomplishment, long id) throws IllegalArgumentException {
+    public void update(Accomplishment accomplishment, long id) throws ValidationFailedException {
         /* Validate new accomplishment */
         accomplishment.validate();
 

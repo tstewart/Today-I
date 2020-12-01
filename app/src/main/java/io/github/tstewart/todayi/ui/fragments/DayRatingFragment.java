@@ -4,12 +4,14 @@ import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -19,6 +21,8 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import io.github.tstewart.todayi.R;
+import io.github.tstewart.todayi.data.LocalDatabaseIO;
+import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.events.OnDateChanged;
 import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
 import io.github.tstewart.todayi.helpers.DayRatingTableHelper;
@@ -27,6 +31,12 @@ import io.github.tstewart.todayi.helpers.DayRatingTableHelper;
  * Fragment for editing day ratings
  */
 public class DayRatingFragment extends Fragment implements OnDateChangedListener {
+
+    /*
+     Log tag, used for Logging
+     Represents class name
+    */
+    private static final String CLASS_LOG_TAG = DayRatingFragment.class.getSimpleName();
 
     /*
      Colors for individual day rating
@@ -107,7 +117,12 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
 
                     /* Set rating for this day in Database */
                     if (mTableHelper != null) {
-                        mTableHelper.setRating(mSelectedDate, index + 1);
+                        try {
+                            mTableHelper.setRating(mSelectedDate, index + 1);
+                        } catch (ValidationFailedException e) {
+                            Log.w(CLASS_LOG_TAG,e.getMessage(), e);
+                            Toast.makeText(getContext(),"Failed to set rating, validation of rating value failed!", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             }

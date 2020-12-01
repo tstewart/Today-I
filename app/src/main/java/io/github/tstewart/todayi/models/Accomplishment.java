@@ -6,6 +6,7 @@ import java.util.Date;
 
 import androidx.annotation.NonNull;
 import io.github.tstewart.todayi.data.DBConstants;
+import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.interfaces.DatabaseObject;
 import io.github.tstewart.todayi.helpers.DateFormatter;
 
@@ -34,13 +35,13 @@ public class Accomplishment implements DatabaseObject {
      * @throws IllegalArgumentException If the validation failed for any reason (e.g. Length was longer than MAX_CONTENT_LENGTH)
      */
     @Override
-    public void validate() throws IllegalArgumentException {
+    public void validate() throws ValidationFailedException {
         /* If the content string is empty with spaces removed */
         if (mContent.trim().isEmpty()) {
-            throw new IllegalArgumentException("Accomplishment must not be empty.");
+            throw new ValidationFailedException("Accomplishment must not be empty.");
             /* If the content string is larger than the maximum content length */
         } else if (mContent.length() > MAX_CONTENT_LENGTH) {
-            throw new IllegalArgumentException("Accomplishment can not be longer than " + MAX_CONTENT_LENGTH + " characters.");
+            throw new ValidationFailedException("Accomplishment can not be longer than " + MAX_CONTENT_LENGTH + " characters.");
         }
     }
 

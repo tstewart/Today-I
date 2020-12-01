@@ -40,7 +40,7 @@ public class OptionsActivity extends AppCompatActivity {
     private final String CLASS_LOG_TAG = this.getClass().getSimpleName();
 
     /* Is Debug Activity access enabled */
-    private static final boolean DEBUG_ENABLED = false;
+    private static final boolean DEBUG_ENABLED = true;
     /* Number of taps on the version TextView required to open debug menu */
     private static final int DEBUG_ACTIVITY_TAP_REQUIREMENT = 6;
     /* Current tap count */

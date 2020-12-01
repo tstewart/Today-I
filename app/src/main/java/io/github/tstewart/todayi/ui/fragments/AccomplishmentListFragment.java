@@ -18,6 +18,7 @@ import java.util.Date;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.ListFragment;
+import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.helpers.CursorLoader;
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.events.OnDatabaseInteracted;
@@ -119,7 +120,7 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
                             try {
                                 /* Update Database entry with new content */
                                 mTableHelper.update(accomplishment, id);
-                            } catch (IllegalArgumentException e) {
+                            } catch (ValidationFailedException e) {
                                 Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -151,7 +152,7 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
                         try {
                             /* Insert Accomplishment into Database */
                             mTableHelper.insert(accomplishment);
-                        } catch (IllegalArgumentException e) {
+                        } catch (ValidationFailedException e) {
                             Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
