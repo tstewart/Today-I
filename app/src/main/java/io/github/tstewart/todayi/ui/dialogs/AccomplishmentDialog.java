@@ -2,6 +2,7 @@ package io.github.tstewart.todayi.ui.dialogs;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -17,13 +18,13 @@ Dialog for adding and editing Accomplishments
 public class AccomplishmentDialog extends AlertDialog.Builder {
 
     /* Delete button */
-    private final Button buttonDelete;
+    private final Button mButtonDelete;
     /* Confirm button */
-    private final Button buttonConfirm;
+    private final Button mButtonConfirm;
     /* This dialog's view */
-    private View view;
+    private View mView;
     /* This dialog's instance. Set when create is called */
-    private AlertDialog instance;
+    private AlertDialog mInstance;
 
     public AccomplishmentDialog(Context context) {
         super(context);
@@ -33,8 +34,13 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
         View view = inflater.inflate(R.layout.dialog_accomplishment_manage, null);
         this.setView(view);
 
-        buttonDelete = view.findViewById(R.id.buttonDelete);
-        buttonConfirm = view.findViewById(R.id.buttonConfirm);
+        mButtonDelete = view.findViewById(R.id.buttonDelete);
+        mButtonConfirm = view.findViewById(R.id.buttonConfirm);
+
+        EditText editTextContent = view.findViewById(R.id.editTextAccomplishmentManage);
+        if(editTextContent != null)
+            /* Set input type to force capitalisation when the EditText is focused on */
+            editTextContent.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
     }
 
     @Override
@@ -42,7 +48,7 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
         AlertDialog dialog = super.create();
 
         /* Used for onclick control management */
-        this.instance = dialog;
+        this.mInstance = dialog;
 
         Window window = dialog.getWindow();
         if (window != null) {
@@ -58,18 +64,18 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
         if (dialogType == DialogType.NEW) {
             this.setTitle(R.string.new_accomplishment_dialog_title);
 
-            if (buttonDelete != null) {
+            if (mButtonDelete != null) {
                 /* Hide delete button when creating an Accomplishment */
-                buttonDelete.setVisibility(View.GONE);
+                mButtonDelete.setVisibility(View.GONE);
             }
         }
         /* If dialog type is edit, set dialog to edit an existing Accomplishment */
         else if (dialogType == DialogType.EDIT) {
             this.setTitle(R.string.edit_accomplishment_dialog_title);
 
-            if (buttonDelete != null) {
+            if (mButtonDelete != null) {
                 /* Show delete button when creating an Accomplishment */
-                buttonDelete.setVisibility(View.VISIBLE);
+                mButtonDelete.setVisibility(View.VISIBLE);
             }
         }
         return this;
@@ -88,33 +94,33 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
     }
 
     public AccomplishmentDialog setConfirmClickListener(View.OnClickListener listener) {
-        if (buttonConfirm != null) {
-            buttonConfirm.setOnClickListener(v -> {
+        if (mButtonConfirm != null) {
+            mButtonConfirm.setOnClickListener(v -> {
                 listener.onClick(v);
-                if (this.instance != null) instance.dismiss();
+                if (this.mInstance != null) mInstance.dismiss();
             });
         }
         return this;
     }
 
     public AccomplishmentDialog setDeleteButtonListener(View.OnClickListener listener) {
-        if (buttonDelete != null) {
-            buttonDelete.setOnClickListener(v -> {
+        if (mButtonDelete != null) {
+            mButtonDelete.setOnClickListener(v -> {
                 listener.onClick(v);
-                if (this.instance != null) instance.dismiss();
+                if (this.mInstance != null) mInstance.dismiss();
             });
         }
         return this;
     }
 
     public View getView() {
-        return this.view;
+        return this.mView;
     }
 
     @Override
     public AlertDialog.Builder setView(View view) {
         super.setView(view);
-        this.view = view;
+        this.mView = view;
 
         return this;
     }
