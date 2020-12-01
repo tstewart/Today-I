@@ -38,7 +38,7 @@ import io.github.tstewart.todayi.ui.dialogs.AccomplishmentDialog;
 public class AccomplishmentListFragment extends ListFragment implements OnDatabaseInteractionListener, OnDateChangedListener {
 
     /* Cursor adapter, loads posts to ListView with provided Cursor */
-    private AccomplishmentCursorAdapter mAdapter;
+    private AccomplishmentCursorAdapter mCursorAdapter;
 
     /* Current dialog, restricts multiple dialogs from opening at once */
     private AlertDialog mDialog;
@@ -62,9 +62,9 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
 
         this.mTableHelper = new AccomplishmentTableHelper(getContext());
 
-        this.mAdapter = new AccomplishmentCursorAdapter(getContext(), null);
+        this.mCursorAdapter = new AccomplishmentCursorAdapter(getContext(), null);
 
-        setListAdapter(mAdapter);
+        setListAdapter(mCursorAdapter);
         getListView().setOnItemClickListener(this::onListItemClick);
 
         /* Append New button to end of ListView */
@@ -87,13 +87,13 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
     }
 
     private void onListItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        if (mAdapter == null) {
+        if (mCursorAdapter == null) {
             Log.w(this.getClass().getName(), "List item click called before adapter initialised.");
             return;
         }
 
         /* Get cursor for currently selected Accomplishment */
-        Cursor cursor = (Cursor) mAdapter.getItem(position);
+        Cursor cursor = (Cursor) mCursorAdapter.getItem(position);
 
         /* Position of the item clicked must be less than the total number of rows in the cursor */
         if (cursor.getCount() > position) {
@@ -142,7 +142,7 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
 
         this.mDialog = new AccomplishmentDialog(getContext())
                 .setDialogType(AccomplishmentDialog.DialogType.NEW)
-                .setConfirmClickListener((dialogView) -> {
+                .setConfirmClickListener(dialogView -> {
                     EditText input = dialogView.getRootView().findViewById(R.id.editTextAccomplishmentManage);
 
                     if (input != null) {
@@ -190,10 +190,10 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
        Set cursor to new cursor, closing current cursor
      */
     private void setCursor(Cursor cursor) {
-        Cursor currentCursor = mAdapter.getCursor();
+        Cursor currentCursor = mCursorAdapter.getCursor();
         if (currentCursor != null) currentCursor.close();
 
-        mAdapter.swapCursor(cursor);
+        mCursorAdapter.swapCursor(cursor);
     }
 
     /**

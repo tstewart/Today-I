@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -16,6 +15,7 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import org.threeten.bp.Instant;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.ZoneId;
+import org.threeten.bp.ZoneOffset;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public class CalendarActivity extends AppCompatActivity {
      Log tag, used for Logging
      Represents class name
     */
-    private final String CLASS_LOG_TAG = this.getClass().getSimpleName();
+    private static final String CLASS_LOG_TAG = CalendarActivity.class.getSimpleName();
 
     /* Calendar view */
     MaterialCalendarView mCalendarView;
@@ -165,27 +165,25 @@ public class CalendarActivity extends AppCompatActivity {
                 */
                 String dateString = cursor.getString(cursor.getColumnIndex(DBConstants.COLUMN_DATE));
 
-                if (dateString != null) {
-                    try {
-                        /* Try and parse the date string from Database format to a Date object */
-                        Date date = new DateFormatter(DBConstants.DATE_FORMAT).parse(dateString);
+                try {
+                    /* Try and parse the date string from Database format to a Date object */
+                    Date date = new DateFormatter(DBConstants.DATE_FORMAT).parse(dateString);
 
-                        /* If successful, the Date object must be converted to an object that MaterialCalendarView understands */
-                        if (date != null) {
-                            /* Convert Date to CalendarDay */
-                            CalendarDay calendarDay = getCalendarDayFromDate(date);
+                    /* If successful, the Date object must be converted to an object that MaterialCalendarView understands */
+                    if (date != null) {
+                        /* Convert Date to CalendarDay */
+                        CalendarDay calendarDay = getCalendarDayFromDate(date);
 
-                            /* If successful, add to list of days posted on */
-                            if (calendarDay != null) {
-                                dates.add(calendarDay);
-                            }
+                        /* If successful, add to list of days posted on */
+                        if (calendarDay != null) {
+                            dates.add(calendarDay);
                         }
-
-                    } catch (ParseException e) {
-                        /* Alert the user that date information may be corrupt in the Database */
-                        Toast.makeText(this, "Failed to gather dates posted on. Database may be corrupt.", Toast.LENGTH_LONG).show();
-                        Log.w(CLASS_LOG_TAG, e.getMessage(), e);
                     }
+
+                } catch (ParseException e) {
+                    /* Alert the user that date information may be corrupt in the Database */
+                    Toast.makeText(this, "Failed to gather dates posted on. Database may be corrupt.", Toast.LENGTH_LONG).show();
+                    Log.w(CLASS_LOG_TAG, e.getMessage(), e);
                 }
             }
             /* Keep getting responses while it is possible to do so. */

@@ -2,7 +2,6 @@ package io.github.tstewart.todayi.ui.fragments;
 
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
@@ -21,11 +20,12 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import io.github.tstewart.todayi.R;
-import io.github.tstewart.todayi.data.LocalDatabaseIO;
 import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.events.OnDateChanged;
 import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
 import io.github.tstewart.todayi.helpers.DayRatingTableHelper;
+
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 /*
  * Fragment for editing day ratings
@@ -73,7 +73,7 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
             mButtons[i].setOnClickListener(this::onRatingButtonClicked);
 
             /* Set button layout */
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, WRAP_CONTENT, 1);
 
             /* Add button to layout */
             ll.addView(mButtons[i], layoutParams);
@@ -98,12 +98,13 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
     private void onRatingButtonClicked(View v) {
         Context context = getContext();
 
-        if (mButtons != null && context != null) {
+        /* If list of buttons initialised and the item clicked was a Button */
+        if (mButtons != null && context != null
+                && v instanceof Button) {
 
             /* Set all button backgrounds to transparent */
             resetAllButtonBackgrounds();
 
-            if (v instanceof Button) {
                 Button buttonClicked = (Button) v;
 
                 /* Index of selected button in List of buttons */
@@ -125,7 +126,6 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
                         }
                     }
                 }
-            }
         }
     }
 

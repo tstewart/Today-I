@@ -1,7 +1,5 @@
 package io.github.tstewart.todayi.events;
 
-import android.os.Build;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,7 +11,12 @@ Event class. To be called when the current selected date is changed.
 The current date selected is controlled by MainActivity.
  */
 public class OnDateChanged {
-    public static final List<OnDateChangedListener> sListeners = new ArrayList<>();
+    /* List of listeners registered to this event */
+    private static final List<OnDateChangedListener> sListeners = new ArrayList<>();
+
+    /* Private constructor prevents initialisation of event class */
+    private OnDateChanged() {
+    }
 
     /*
     Add listener to list of listeners waiting for event.

@@ -3,7 +3,6 @@ package io.github.tstewart.todayi.ui.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,9 +33,9 @@ Main Activity of the application (obviously), handles AccomplishmentListFragment
 public class MainActivity extends AppCompatActivity implements OnDateChangedListener {
 
     /* Used when requesting a response from CalendarActivity */
-    private final int CALENDAR_ACTIVITY_REQUEST_CODE = 1;
+    private static final int CALENDAR_ACTIVITY_REQUEST_CODE = 1;
     /* Used when requesting a response from OptionsActivity */
-    private final int OPTIONS_ACTIVITY_REQUEST_CODE = 2;
+    private static final int OPTIONS_ACTIVITY_REQUEST_CODE = 2;
 
     /* Currently selected date (Application-wide, controlled by OnDateChangedListener) */
     Date mSelectedDate;
@@ -149,18 +148,15 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
                     updateCurrentDate(c.getTime());
                 }
             }
-        } else if (requestCode == OPTIONS_ACTIVITY_REQUEST_CODE) {
-            /* If the response was Ok, settings activity forces reset of accomplishments */
-            if (resultCode == Activity.RESULT_OK) {
-                if (this.mListFragment != null) {
-                    /*
-                     Options Activities responses trigger Database interaction notification
-                     For example, when Erase Data is called from Options, the database must now refresh,
-                     as data has been cleared
-                    */
-                    OnDatabaseInteracted.notifyDatabaseInteracted();
-                }
-            }
+        }
+        /* If the response was Ok, settings activity forces reset of accomplishments */
+        else if (requestCode == OPTIONS_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            /*
+             Options Activities responses trigger Database interaction notification
+             For example, when Erase Data is called from Options, the database must now refresh,
+             as data has been cleared
+            */
+            OnDatabaseInteracted.notifyDatabaseInteracted();
         }
     }
 

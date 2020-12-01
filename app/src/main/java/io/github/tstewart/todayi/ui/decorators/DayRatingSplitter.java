@@ -9,7 +9,7 @@ import com.prolificinteractive.materialcalendarview.CalendarDay;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -35,7 +35,7 @@ public class DayRatingSplitter {
         this.mContext = context;
     }
 
-    public List<DayRatedDecorator> getDayRatingDecorators(HashMap<CalendarDay, Integer> ratings) {
+    public List<DayRatedDecorator> getDayRatingDecorators(Map<CalendarDay, Integer> ratings) {
 
         List<DayRatedDecorator> decorators = new ArrayList<>();
 
@@ -43,11 +43,11 @@ public class DayRatingSplitter {
             /* List of days that match the rating we are currently looking for */
             List<CalendarDay> daysMatchingRating = new ArrayList<>();
 
-            /* Iterate over Key values in Ratings */
-            for(CalendarDay key : ratings.keySet()) {
+            /* Iterate over entries in ratings */
+            for(Map.Entry<CalendarDay, Integer> entry : ratings.entrySet()) {
                 /* If key's value equals index, add it to the list of CalendarDays that match this rating */
-                if(ratings.get(key) == i) {
-                    daysMatchingRating.add(key);
+                if(entry.getValue() == i) {
+                    daysMatchingRating.add(entry.getKey());
                 }
             }
 

@@ -19,6 +19,10 @@ public class Accomplishment implements DatabaseObject {
     /* Maximum length of an Accomplishment body */
     private static final int MAX_CONTENT_LENGTH = 200;
 
+    /* If empty lines should be removed when creating Accomplishments */
+    /* TODO make this toggleable via settings */
+    private static final boolean REMOVE_EMPTY_LINES = true;
+
     /* Date Accomplishment was created on */
     private Date mDate;
     /* Content of Accomplishment */
@@ -26,16 +30,21 @@ public class Accomplishment implements DatabaseObject {
 
     public Accomplishment(@NonNull Date mDate, @NonNull String content) {
         this.mDate = mDate;
-        this.mContent = content;
+        setContent(content);
     }
 
     /**
      * Validates the Accomplishment to Database standards.
-     * TODO Null checking
      * @throws IllegalArgumentException If the validation failed for any reason (e.g. Length was longer than MAX_CONTENT_LENGTH)
      */
     @Override
     public void validate() throws ValidationFailedException {
+
+        /* If the content has been assigned as null (through setContent) */
+        if(mContent == null) {
+            throw new ValidationFailedException("Content cannot be null.");
+        }
+
         /* If the content string is empty with spaces removed */
         if (mContent.trim().isEmpty()) {
             throw new ValidationFailedException("Accomplishment must not be empty.");
@@ -78,6 +87,9 @@ public class Accomplishment implements DatabaseObject {
     }
 
     public void setContent(String content) {
+        if(content != null && REMOVE_EMPTY_LINES) {
+            content = content.replaceAll("(?m)^[ \t]*\r?\n", "");
+        }
         this.mContent = content;
     }
 
