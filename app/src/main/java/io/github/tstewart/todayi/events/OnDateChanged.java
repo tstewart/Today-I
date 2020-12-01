@@ -1,5 +1,7 @@
 package io.github.tstewart.todayi.events;
 
+import android.os.Build;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,6 +26,9 @@ public class OnDateChanged {
     Alert all listeners that the event has been called
     */
     public static void notifyDatabaseInteracted(Date date) {
-        sListeners.forEach(listener -> listener.onDateChanged(date));
+        for (OnDateChangedListener listener :
+             sListeners) {
+            listener.onDateChanged(date);
+        }
     }
 }

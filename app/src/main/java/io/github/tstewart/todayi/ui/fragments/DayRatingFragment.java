@@ -2,6 +2,7 @@ package io.github.tstewart.todayi.ui.fragments;
 
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -135,7 +136,10 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
     Remove color from all button backgrounds
      */
     private void resetAllButtonBackgrounds() {
-        if (mButtons != null) Arrays.asList(mButtons).forEach(this::resetButtonBackground);
+        for (Button button:
+             mButtons) {
+            resetButtonBackground(button);
+        }
     }
 
     /*

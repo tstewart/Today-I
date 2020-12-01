@@ -9,6 +9,7 @@ import com.prolificinteractive.materialcalendarview.CalendarDay;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -24,6 +25,7 @@ import io.github.tstewart.todayi.R;
 /*
  TODO Remove restriction of this class (only accepts 1-5)
  TODO Ratings and their respective colors should be stored in a constant
+ TODO This should really be done with database interactions instead of passing a HashMap
 */
 public class DayRatingSplitter {
 
@@ -38,20 +40,19 @@ public class DayRatingSplitter {
         List<DayRatedDecorator> decorators = new ArrayList<>();
 
         for (int i = 1; i <= 5; i++) {
-            /* variables inside lambda must be final, so the current for index is assigned again. */
-            final int index = i;
             /* List of days that match the rating we are currently looking for */
             List<CalendarDay> daysMatchingRating = new ArrayList<>();
 
-            ratings.forEach((calendarDay, rating) -> {
-                /* If rating in the HashMap matches the current for index, add it to current list of CalendarDays */
-                if (rating == index) {
-                    daysMatchingRating.add(calendarDay);
+            /* Iterate over Key values in Ratings */
+            for(CalendarDay key : ratings.keySet()) {
+                /* If key's value equals index, add it to the list of CalendarDays that match this rating */
+                if(ratings.get(key) == i) {
+                    daysMatchingRating.add(key);
                 }
-            });
+            }
 
             /* Get color correlated to this current index */
-            int color = getColorAtIndex(index);
+            int color = getColorAtIndex(i);
 
             /* Get drawable to add to DayRatedDecorator with the provided color */
             Drawable ratingDrawable = getRatingDrawable(color);
