@@ -113,7 +113,7 @@ public class DatabaseHelper {
      * @return Returns a SQLiteDatabase instance
      */
     public SQLiteDatabase getDatabase(Context context) {
-        return new Database(context).getReadableDatabase();
+        return Database.getInstance(context).getReadableDatabase();
     }
 
 

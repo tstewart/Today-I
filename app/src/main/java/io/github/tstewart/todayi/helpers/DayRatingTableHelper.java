@@ -68,7 +68,7 @@ public class DayRatingTableHelper {
      */
     public int getRating(Date date, int defaultValue) {
         if (date != null) {
-            SQLiteDatabase db = new Database(this.mContext).getReadableDatabase();
+            SQLiteDatabase db = Database.getInstance(this.mContext).getReadableDatabase();
 
             /* Format the date to database requirements */
             String dateFormatted = new DateFormatter(DBConstants.DATE_FORMAT).format(date);

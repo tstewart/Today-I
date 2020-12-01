@@ -266,7 +266,7 @@ public class OptionsActivity extends AppCompatActivity {
                 .setTitle(R.string.erase_all_warning_dialog_title)
                 .setMessage(R.string.erase_all_warning_dialog_message)
                 .setPositiveButton(R.string.button_yes, (dialogInterface, which) -> {
-                    Database database = new Database(this);
+                    Database database = Database.getInstance(this);
                     SQLiteDatabase db = database.getWritableDatabase();
 
                     /* Delete data from both tables */

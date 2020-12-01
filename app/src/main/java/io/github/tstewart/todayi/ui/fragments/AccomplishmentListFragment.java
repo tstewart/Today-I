@@ -1,6 +1,7 @@
 package io.github.tstewart.todayi.ui.fragments;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -168,8 +169,12 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
      * Get new cursor by checking Database for Accomplishments on selected date
      */
     private Cursor getNewCursor() {
-        SQLiteDatabase db = new Database(getContext()).getWritableDatabase();
-        return CursorLoader.getCursorForDateQuery(db, DBConstants.ACCOMPLISHMENT_QUERY, mSelectedDate);
+        Context context = getContext();
+        if(context != null) {
+            SQLiteDatabase db = Database.getInstance(getContext()).getWritableDatabase();
+            return CursorLoader.getCursorForDateQuery(db, DBConstants.ACCOMPLISHMENT_QUERY, mSelectedDate);
+        }
+        return null;
     }
 
     /*

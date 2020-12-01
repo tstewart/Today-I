@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -144,7 +145,7 @@ public class CalendarActivity extends AppCompatActivity {
      */
     private List<CalendarDay> getPostedDates() {
 
-        Database db = new Database(this);
+        Database db = Database.getInstance(this);
         SQLiteDatabase sqlDb = db.getReadableDatabase();
 
         List<CalendarDay> dates = new ArrayList<>();
