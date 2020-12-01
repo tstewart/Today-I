@@ -9,7 +9,6 @@ import io.github.tstewart.todayi.models.Accomplishment;
 
 /**
  * Helper class. Provides functionality to insert, update, and remove accomplishments from the database
- * TODO provide interface to generify this and DayRatingTableHelper or combine them both.
  */
 public class AccomplishmentTableHelper {
 
@@ -57,5 +56,9 @@ public class AccomplishmentTableHelper {
      */
     public void delete(long id) {
         mHelper.delete(mContext, DBConstants.COLUMN_ID + "=?", new String[]{String.valueOf(id)});
+    }
+
+    public DatabaseHelper getDatabaseHelper() {
+        return mHelper;
     }
 }

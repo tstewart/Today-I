@@ -21,7 +21,6 @@ import androidx.fragment.app.ListFragment;
 import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.events.OnDatabaseInteracted;
-import io.github.tstewart.todayi.helpers.DatabaseHelper;
 import io.github.tstewart.todayi.interfaces.OnDatabaseInteractionListener;
 import io.github.tstewart.todayi.events.OnDateChanged;
 import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
@@ -50,9 +49,6 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
     /* Database table helper, assists with Database interaction */
     private AccomplishmentTableHelper mTableHelper;
 
-    /* Database helper, assists with Database interaction */
-    private DatabaseHelper mDatabaseHelper;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -65,7 +61,6 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
         super.onActivityCreated(savedInstanceState);
 
         this.mTableHelper = new AccomplishmentTableHelper(getContext());
-        this.mDatabaseHelper = new DatabaseHelper(DBConstants.ACCOMPLISHMENT_TABLE);
 
         this.mAdapter = new AccomplishmentCursorAdapter(getContext(), null);
 
@@ -184,7 +179,7 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
             SQLiteDatabase db = Database.getInstance(getContext()).getWritableDatabase();
 
             /* Format current date to database format */
-            String dateFormatted = mDatabaseHelper.getDateAsDatabaseFormat(mSelectedDate);
+            String dateFormatted = mTableHelper.getDatabaseHelper().getDateAsDatabaseFormat(mSelectedDate);
 
             return db.rawQuery(DBConstants.ACCOMPLISHMENT_QUERY,new String[]{dateFormatted});
         }

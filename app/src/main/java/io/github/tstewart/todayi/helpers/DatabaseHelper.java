@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.util.Date;
+
 import androidx.annotation.NonNull;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
@@ -114,6 +116,18 @@ public class DatabaseHelper {
      */
     public SQLiteDatabase getDatabase(Context context) {
         return Database.getInstance(context).getReadableDatabase();
+    }
+
+    /**
+     *
+     */
+    public String getDateAsDatabaseFormat(Date date) {
+        DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT);
+
+        if(date != null) {
+            return dateFormatter.format(date);
+        }
+        return null;
     }
 
 

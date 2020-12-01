@@ -14,7 +14,6 @@ import io.github.tstewart.todayi.models.DayRating;
 
 /**
  * Helper class. Provides functionality to insert, update, and remove ratings from the database
- * TODO provide interface to generify this and DayRatingTableHelper or combine them both.
  */
 public class DayRatingTableHelper {
 
