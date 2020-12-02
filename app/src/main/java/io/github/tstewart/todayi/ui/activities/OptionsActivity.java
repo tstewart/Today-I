@@ -40,9 +40,9 @@ public class OptionsActivity extends AppCompatActivity {
     private final String CLASS_LOG_TAG = this.getClass().getSimpleName();
 
     /* Is Debug Activity access enabled */
-    private static final boolean DEBUG_ENABLED = false;
+    private static final boolean DEBUG_ENABLED = true;
     /* Number of taps on the version TextView required to open debug menu */
-    private static final int DEBUG_ACTIVITY_TAP_REQUIREMENT = 6;
+    private static final int DEBUG_ACTIVITY_TAP_REQUIREMENT = 1;
     /* Current tap count */
     private int mDebugActivityTapCount = 0;
     /* Toast alerts user how many clicks they need to access debug menu */
@@ -80,7 +80,7 @@ public class OptionsActivity extends AppCompatActivity {
 
             /* Add onClick listener to access debug, if this functionality is enabled */
             if(DEBUG_ENABLED)
-                mCurrentVersionTv.setOnClickListener(this::OnDebugViewClickedListener);
+                mCurrentVersionTv.setOnClickListener(this::onDebugViewClickedListener);
         }
         /* Set appropriate onClickListener for each button, if the button could be found */
         if (importDataButton != null)
@@ -168,7 +168,7 @@ public class OptionsActivity extends AppCompatActivity {
         }
     }
 
-    private void OnDebugViewClickedListener(View view) {
+    private void onDebugViewClickedListener(View view) {
         /* Increment count of how many times the version TextView has been clicked so far */
         mDebugActivityTapCount++;
 
@@ -266,7 +266,7 @@ public class OptionsActivity extends AppCompatActivity {
                 .setTitle(R.string.erase_all_warning_dialog_title)
                 .setMessage(R.string.erase_all_warning_dialog_message)
                 .setPositiveButton(R.string.button_yes, (dialogInterface, which) -> {
-                    Database database = new Database(this);
+                    Database database = Database.getInstance(this);
                     SQLiteDatabase db = database.getWritableDatabase();
 
                     /* Delete data from both tables */

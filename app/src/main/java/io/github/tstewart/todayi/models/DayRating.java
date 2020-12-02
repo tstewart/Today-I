@@ -6,8 +6,10 @@ import java.util.Date;
 
 import androidx.annotation.NonNull;
 import io.github.tstewart.todayi.data.DBConstants;
+import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.interfaces.DatabaseObject;
 import io.github.tstewart.todayi.helpers.DateFormatter;
+import io.github.tstewart.todayi.ui.fragments.DayRatingFragment;
 
 /*
  * Object to store day rating data for a selected date
@@ -18,7 +20,8 @@ public class DayRating implements DatabaseObject {
     /* Minimum accepted day rating */
     private static final int MIN_RATING = 1;
     /* Maximum accepted day rating */
-    private static final int MAX_RATING = 5;
+    // TODO this, with DayRatingSplitter and DayRatingFragment needs to be moved to a constant field inside user params
+    private static final int MAX_RATING = DayRatingFragment.MAX_RATING;
     /* Day rated */
     private Date mDate;
     /* Rating */
@@ -34,13 +37,13 @@ public class DayRating implements DatabaseObject {
      * @throws IllegalArgumentException If the validation failed for any reason (e.g. Rating was outside bounds)
      */
     @Override
-    public void validate() throws IllegalArgumentException {
+    public void validate() throws ValidationFailedException {
         /* If rating is less than the minimum accepted */
         if (mDayRating < MIN_RATING) {
-            throw new IllegalArgumentException("Rating cannot be lower than " + MIN_RATING + ".");
+            throw new ValidationFailedException("Rating cannot be lower than " + MIN_RATING + ".");
             /* If rating is more than the maximum accepted */
         } else if (mDayRating > MAX_RATING) {
-            throw new IllegalArgumentException("Rating cannot be higher than " + MAX_RATING + ".");
+            throw new ValidationFailedException("Rating cannot be higher than " + MAX_RATING + ".");
         }
     }
 

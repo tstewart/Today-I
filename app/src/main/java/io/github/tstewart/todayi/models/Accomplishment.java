@@ -6,6 +6,8 @@ import java.util.Date;
 
 import androidx.annotation.NonNull;
 import io.github.tstewart.todayi.data.DBConstants;
+import io.github.tstewart.todayi.data.UserPreferences;
+import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.interfaces.DatabaseObject;
 import io.github.tstewart.todayi.helpers.DateFormatter;
 
@@ -18,6 +20,9 @@ public class Accomplishment implements DatabaseObject {
     /* Maximum length of an Accomplishment body */
     private static final int MAX_CONTENT_LENGTH = 200;
 
+    /* If empty lines should be removed when creating Accomplishments */
+    private static final boolean REMOVE_EMPTY_LINES = UserPreferences.shouldRemoveEmptyLines();
+
     /* Date Accomplishment was created on */
     private Date mDate;
     /* Content of Accomplishment */
@@ -25,22 +30,27 @@ public class Accomplishment implements DatabaseObject {
 
     public Accomplishment(@NonNull Date mDate, @NonNull String content) {
         this.mDate = mDate;
-        this.mContent = content;
+        setContent(content);
     }
 
     /**
      * Validates the Accomplishment to Database standards.
-     * TODO Null checking
      * @throws IllegalArgumentException If the validation failed for any reason (e.g. Length was longer than MAX_CONTENT_LENGTH)
      */
     @Override
-    public void validate() throws IllegalArgumentException {
+    public void validate() throws ValidationFailedException {
+
+        /* If the content has been assigned as null (through setContent) */
+        if(mContent == null) {
+            throw new ValidationFailedException("Content cannot be null.");
+        }
+
         /* If the content string is empty with spaces removed */
         if (mContent.trim().isEmpty()) {
-            throw new IllegalArgumentException("Accomplishment must not be empty.");
+            throw new ValidationFailedException("Accomplishment must not be empty.");
             /* If the content string is larger than the maximum content length */
         } else if (mContent.length() > MAX_CONTENT_LENGTH) {
-            throw new IllegalArgumentException("Accomplishment can not be longer than " + MAX_CONTENT_LENGTH + " characters.");
+            throw new ValidationFailedException("Accomplishment can not be longer than " + MAX_CONTENT_LENGTH + " characters.");
         }
     }
 
@@ -77,6 +87,9 @@ public class Accomplishment implements DatabaseObject {
     }
 
     public void setContent(String content) {
+        if(content != null && REMOVE_EMPTY_LINES) {
+            content = content.replaceAll("(?m)^[ \t]*\r?\n", "");
+        }
         this.mContent = content;
     }
 

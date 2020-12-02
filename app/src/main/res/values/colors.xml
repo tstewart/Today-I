@@ -21,8 +21,5 @@
 
     <!-- Day Rating colors -->
     <color name="colorRatingRed">#90FF0000</color>
-    <color name="colorRatingOrange">#90FF6600</color>
-    <color name="colorRatingYellow">#90FFFF00</color>
-    <color name="colorRatingLightGreen">#9099FF00</color>
     <color name="colorRatingGreen">#9000FF00</color>
 </resources>

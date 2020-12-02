@@ -9,11 +9,11 @@ import java.util.Date;
 import androidx.annotation.NonNull;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
+import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.models.DayRating;
 
 /**
  * Helper class. Provides functionality to insert, update, and remove ratings from the database
- * TODO provide interface to generify this and DayRatingTableHelper or combine them both.
  */
 public class DayRatingTableHelper {
 
@@ -34,7 +34,7 @@ public class DayRatingTableHelper {
      * @param rating Rating to set for provided date
      * @throws IllegalArgumentException If the rating is invalid (e.g. the rating is outside the provided bounds)
      */
-    public void setRating(Date date, int rating) throws IllegalArgumentException {
+    public void setRating(Date date, int rating) throws ValidationFailedException {
         if (date != null) {
             DayRating dayRating = new DayRating(date, rating);
 
@@ -68,7 +68,7 @@ public class DayRatingTableHelper {
      */
     public int getRating(Date date, int defaultValue) {
         if (date != null) {
-            SQLiteDatabase db = new Database(this.mContext).getReadableDatabase();
+            SQLiteDatabase db = Database.getInstance(this.mContext).getReadableDatabase();
 
             /* Format the date to database requirements */
             String dateFormatted = new DateFormatter(DBConstants.DATE_FORMAT).format(date);

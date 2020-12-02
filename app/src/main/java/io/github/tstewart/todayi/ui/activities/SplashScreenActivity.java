@@ -11,10 +11,10 @@ import io.github.tstewart.todayi.R;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
-    // Time in milliseconds to display this Activity for
-    final int SPLASH_DISPLAY_LENGTH_MILLIS = 3000;
+    /* Time in milliseconds to display this Activity for */
+    static final int SPLASH_DISPLAY_LENGTH_MILLIS = 3000;
 
-    // Handles wait time
+    /* Handles wait time */
     final Handler mSplashWaitHandler = new Handler();
 
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /*
@@ -27,11 +28,19 @@ public class Database extends SQLiteOpenHelper {
             + DBConstants.COLUMN_RATING + " int not null"
             + ")";
 
-    /* Initialize database with default settings */
-    public Database(@Nullable Context context) {
-        super(context, DBConstants.DB_NAME, null, DBConstants.DB_VERSION);
+    private static Database mInstance = null;
+
+    public static Database getInstance(@NonNull Context context) {
+        if(mInstance == null) {
+            mInstance = new Database(context.getApplicationContext());
+        }
+        return mInstance;
     }
 
+    /* Initialize database with default settings */
+    private Database(@Nullable Context context) {
+        super(context, DBConstants.DB_NAME, null, DBConstants.DB_VERSION);
+    }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -41,7 +50,7 @@ public class Database extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        // TODO purge existing database and backup
     }
 
     /**

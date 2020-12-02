@@ -47,39 +47,36 @@ public class LocalDatabaseIO {
 
         /* Location of folder to write backup file to */
         File databaseBackupFolder = context.getExternalFilesDir(DATABASE_BACKUP_DEFAULT_LOCATION);
+        /* Location of existing database file */
+        File currentDatabaseFile = context.getDatabasePath(databaseName);
+        /* Location to write backup database to */
+        File databaseBackupFile = new File(databaseBackupFolder, newFileName);
 
-        /* If it is possible to write to the backup folder */
-        if (databaseBackupFolder.canWrite()) {
-            /* Location of existing database file */
-            File currentDatabaseFile = context.getDatabasePath(databaseName);
-
-            /* If the existing database file exists */
-            if (currentDatabaseFile.exists()) {
-                /* Location to write backup database to */
-                File databaseBackupFile = new File(databaseBackupFolder, newFileName);
-
-                try {
-                    /* Try and write existing database file to backup location */
-                    writeToPath(currentDatabaseFile, databaseBackupFile);
-
-                    /* If, after the write process is complete the file does not exist in the new location */
-                    if (!databaseBackupFile.exists()) {
-                        throw new ExportFailedException("Potential backup failure? File does not exist.");
-                    } else {
-                        /* If the file does exist, backup was successful */
-                        Log.i(CLASS_LOG_TAG, "Database backed up at " + databaseBackupFile.getAbsolutePath());
-                    }
-                } catch (IOException e) {
-                    /* Catch IOException, caused by an error in writing the file */
-                    throw new ExportFailedException(e.getMessage());
-                }
-            } else {
-                throw new ExportFailedException("Backup failed. Database file to copy does not exist.");
-            }
-        } else {
+        /* Check if it is possible to write to the backup folder */
+        if (!databaseBackupFolder.canWrite()) {
             throw new ExportFailedException("Backup failed. Cannot write to internal storage.");
         }
 
+        /* If the existing database file exists */
+        if (!currentDatabaseFile.exists()) {
+            throw new ExportFailedException("Backup failed. Database file to copy does not exist.");
+        }
+
+        try {
+            /* Try and write existing database file to backup location */
+            writeToPath(currentDatabaseFile, databaseBackupFile);
+
+            /* If, after the write process is complete the file does not exist in the new location */
+            if (!databaseBackupFile.exists()) {
+                throw new ExportFailedException("Potential backup failure? File does not exist.");
+            } else {
+                /* If the file does exist, backup was successful */
+                Log.i(CLASS_LOG_TAG, "Database backed up at " + databaseBackupFile.getAbsolutePath());
+            }
+        } catch (IOException e) {
+            /* Catch IOException, caused by an error in writing the file */
+            throw new ExportFailedException(e.getMessage());
+        }
     }
 
     public static void importBackupDb(Context context, String databaseName) throws ImportFailedException {
@@ -90,46 +87,38 @@ public class LocalDatabaseIO {
     public static void importDb(Context context, String databaseName, String backupFileName) throws ImportFailedException {
         /* Location of folder containing the backup file */
         File databaseBackupFolder = context.getExternalFilesDir(DATABASE_BACKUP_DEFAULT_LOCATION);
+        /* Location of the backup file */
+        File databaseBackupFile = new File(databaseBackupFolder, backupFileName);
+        /* Location of the existing database file */
+        File currentDatabaseFile = context.getDatabasePath(databaseName);
 
-        /* If it is possible to read the backup folder */
-        if (databaseBackupFolder.canRead()) {
-            /* Location of the backup file */
-            File databaseBackupFile = new File(databaseBackupFolder, backupFileName);
+        /* Check if the database backup file can be read */
+        if (!databaseBackupFile.canRead()) {
+            throw new ImportFailedException("Database to import does not exist or could not be read.");
+        }
 
-            /* If the backup file exists and can be read */
-            if (databaseBackupFile.exists() && databaseBackupFile.canRead()) {
+        /* Check if the existing database file can be written */
+        if (!currentDatabaseFile.canWrite()) {
+            throw new ImportFailedException("Could not write to existing database.");
+        }
 
-                /* Location of the existing database file */
-                File currentDatabaseFile = context.getDatabasePath(databaseName);
+        /* Check if the backup file to load is a valid SQLite database */
+        if (isValidSQLite(databaseBackupFile.getPath())) {
+            throw new ImportFailedException("Backup was corrupt or invalid.");
+        }
 
-                /* If the existing database file can be written to */
-                if (currentDatabaseFile.canWrite()) {
+        /* If the database and backup file was valid, attempt backup */
+        try {
+            /* Replace existing database with backup database */
+            writeToPath(databaseBackupFile, currentDatabaseFile);
+            /* Notify activities that the existing database has been replaced */
+            OnDatabaseInteracted.notifyDatabaseInteracted();
 
-                    /* If the backup file is a valid SQLite database */
-                    if (isValidSQLite(databaseBackupFile.getPath())) {
-                        try {
-                            /* Replace existing database with backup database */
-                            writeToPath(databaseBackupFile, currentDatabaseFile);
-                            /* Notify activities that the existing database has been replaced */
-                            OnDatabaseInteracted.notifyDatabaseInteracted();
-
-                            /* Backup replaced successfully */
-                            Log.i(CLASS_LOG_TAG, "Database restored from " + databaseBackupFile.getAbsolutePath());
-                        } catch (IOException e) {
-                            /* Catch IOException, caused by an error in writing the file */
-                            throw new ImportFailedException(e.getMessage());
-                        }
-                    } else {
-                        throw new ImportFailedException("Backup was corrupt or invalid.");
-                    }
-                } else {
-                    throw new ImportFailedException("Could not write to existing database.");
-                }
-            } else {
-                throw new ImportFailedException("Database to import does not exist or could not be read.");
-            }
-        } else {
-            throw new ImportFailedException("Database import location could not be read.");
+            /* Backup replaced successfully */
+            Log.i(CLASS_LOG_TAG, "Database restored from " + databaseBackupFile.getAbsolutePath());
+        } catch (IOException e) {
+            /* Catch IOException, caused by an error in writing the file */
+            throw new ImportFailedException(e.getMessage());
         }
     }
 
@@ -140,15 +129,15 @@ public class LocalDatabaseIO {
      * @throws IOException If an error occurred in writing the file
      */
     private static void writeToPath(File inputPath, File outputPath) throws IOException {
-        FileChannel input = new FileInputStream(inputPath).getChannel();
-        FileChannel output = new FileOutputStream(outputPath).getChannel();
 
-        /* Transfer entire file to output */
-        output.transferFrom(input, 0, input.size());
+        /* Use try with resources to auto close input and output stream */
+        try (FileChannel input = new FileInputStream(inputPath).getChannel();
+             FileChannel output = new FileOutputStream(outputPath).getChannel()) {
 
-        /* Close channels to free up memory */
-        input.close();
-        output.close();
+            /* Transfer entire file to output */
+            output.transferFrom(input, 0, input.size());
+        }
+        /* Exceptions are not caught as they are thrown in method signature */
     }
 
     /**
@@ -167,21 +156,25 @@ public class LocalDatabaseIO {
             return false;
         }
 
-        try {
-            FileReader fr = new FileReader(databaseFile);
+        /* Use try with resources to auto close FileReader */
+        try (FileReader fr = new FileReader(databaseFile)) {
             char[] buffer = new char[16];
 
             /* Read the first 16 chars of the file */
             int bytesRead = fr.read(buffer, 0, 16);
-            String str = String.valueOf(buffer);
-            fr.close();
 
-            /* If the first 16 chars equal the SQLite header, it is most likely a SQLite db. */
-            return str.equals("SQLite format 3\u0000");
+            /* If 16 bytes could be read */
+            if(bytesRead >= 16) {
+                String str = String.valueOf(buffer);
 
+                /* If the first 16 chars equal the SQLite header, it is most likely a SQLite db. */
+                return str.equals("SQLite format 3\u0000");
+            }
         } catch (Exception e) {
             e.printStackTrace();
+            /* If an exception occurred, we can assume the file is invalid */
             return false;
         }
+        return false;
     }
 }

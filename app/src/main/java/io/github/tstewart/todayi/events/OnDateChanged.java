@@ -11,7 +11,12 @@ Event class. To be called when the current selected date is changed.
 The current date selected is controlled by MainActivity.
  */
 public class OnDateChanged {
-    public static final List<OnDateChangedListener> sListeners = new ArrayList<>();
+    /* List of listeners registered to this event */
+    private static final List<OnDateChangedListener> sListeners = new ArrayList<>();
+
+    /* Private constructor prevents initialisation of event class */
+    private OnDateChanged() {
+    }
 
     /*
     Add listener to list of listeners waiting for event.
@@ -24,6 +29,9 @@ public class OnDateChanged {
     Alert all listeners that the event has been called
     */
     public static void notifyDatabaseInteracted(Date date) {
-        sListeners.forEach(listener -> listener.onDateChanged(date));
+        for (OnDateChangedListener listener :
+             sListeners) {
+            listener.onDateChanged(date);
+        }
     }
 }

@@ -1,6 +1,7 @@
 package io.github.tstewart.todayi.ui.fragments;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -17,7 +18,7 @@ import java.util.Date;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.ListFragment;
-import io.github.tstewart.todayi.helpers.CursorLoader;
+import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.events.OnDatabaseInteracted;
 import io.github.tstewart.todayi.interfaces.OnDatabaseInteractionListener;
@@ -36,16 +37,16 @@ import io.github.tstewart.todayi.ui.dialogs.AccomplishmentDialog;
  */
 public class AccomplishmentListFragment extends ListFragment implements OnDatabaseInteractionListener, OnDateChangedListener {
 
-    // Cursor adapter, loads posts to ListView with provided Cursor
-    private AccomplishmentCursorAdapter mAdapter;
+    /* Cursor adapter, loads posts to ListView with provided Cursor */
+    private AccomplishmentCursorAdapter mCursorAdapter;
 
-    // Current dialog, restricts multiple dialogs from opening at once
+    /* Current dialog, restricts multiple dialogs from opening at once */
     private AlertDialog mDialog;
 
-    // Currently selected date (Application-wide)
+    /* Currently selected date (Application-wide) */
     private Date mSelectedDate = new Date();
 
-    // Database table helper, assists with Database interaction
+    /* Database table helper, assists with Database interaction */
     private AccomplishmentTableHelper mTableHelper;
 
     @Override
@@ -60,47 +61,50 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
         super.onActivityCreated(savedInstanceState);
 
         this.mTableHelper = new AccomplishmentTableHelper(getContext());
-        this.mAdapter = new AccomplishmentCursorAdapter(getContext(), null);
 
-        setListAdapter(mAdapter);
+        this.mCursorAdapter = new AccomplishmentCursorAdapter(getContext(), null);
+
+        setListAdapter(mCursorAdapter);
         getListView().setOnItemClickListener(this::onListItemClick);
 
-        // Append New button to end of ListView
+        /* Append New button to end of ListView */
         Button newItemButton = new Button(getContext());
         newItemButton.setText(getResources().getText(R.string.new_accomplishment));
         newItemButton.setOnClickListener(this::onNewItemButtonPressed);
         getListView().addFooterView(newItemButton);
 
-        // Add listener to notify fragment of database updates
+        /* Add listener to notify fragment of database updates */
         OnDatabaseInteracted.addListener(this);
-        // Add listener to notify fragment of date changes
+        /* Add listener to notify fragment of date changes */
         OnDateChanged.addListener(this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        // Prevents dialogs remaining open if the user changes activities while a dialog is open
+        /* Prevents dialogs remaining open if the user changes activities while a dialog is open */
         dismissCurrentDialog();
     }
 
     private void onListItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        if (mAdapter == null) {
+        if (mCursorAdapter == null) {
             Log.w(this.getClass().getName(), "List item click called before adapter initialised.");
             return;
         }
 
-        // Get cursor for currently selected Accomplishment
-        Cursor cursor = (Cursor) mAdapter.getItem(position);
+        /* Get cursor for currently selected Accomplishment */
+        Cursor cursor = (Cursor) mCursorAdapter.getItem(position);
 
-        // Position of the item clicked must be less than the total number of rows in the cursor
+        /* Position of the item clicked must be less than the total number of rows in the cursor */
         if (cursor.getCount() > position) {
 
-            // Get content of the currently selected Accomplishment
+            /* Get content of the currently selected Accomplishment */
             String itemContent = cursor.getString(cursor.getColumnIndex(DBConstants.COLUMN_CONTENT));
 
-            // Dismiss current dialog if one is currently open
-            // Prevents multiple dialogs from opening
+            /*
+             Dismiss current dialog if one is currently open
+             Prevents multiple dialogs from opening
+            */
             dismissCurrentDialog();
 
             this.mDialog = new AccomplishmentDialog(this.getContext())
@@ -110,13 +114,13 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
                         EditText input = dialogView.getRootView().findViewById(R.id.editTextAccomplishmentManage);
 
                         if (input != null) {
-                            // Create Accomplishment object from new values
+                            /* Create Accomplishment object from new values */
                             Accomplishment accomplishment = new Accomplishment(mSelectedDate, input.getText().toString());
 
                             try {
-                                // Update Database entry with new content
+                                /* Update Database entry with new content */
                                 mTableHelper.update(accomplishment, id);
-                            } catch (IllegalArgumentException e) {
+                            } catch (ValidationFailedException e) {
                                 Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -130,23 +134,25 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
 
     private void onNewItemButtonPressed(View view) {
 
-        // Dismiss current dialog if one is currently open
-        // Prevents multiple dialogs from opening
+        /*
+         Dismiss current dialog if one is currently open
+         Prevents multiple dialogs from opening
+        */
         dismissCurrentDialog();
 
         this.mDialog = new AccomplishmentDialog(getContext())
                 .setDialogType(AccomplishmentDialog.DialogType.NEW)
-                .setConfirmClickListener((dialogView) -> {
+                .setConfirmClickListener(dialogView -> {
                     EditText input = dialogView.getRootView().findViewById(R.id.editTextAccomplishmentManage);
 
                     if (input != null) {
-                        // Create Accomplishment object from new values
+                        /* Create Accomplishment object from new values */
                         Accomplishment accomplishment = new Accomplishment(mSelectedDate, input.getText().toString());
 
                         try {
-                            // Insert Accomplishment into Database
+                            /* Insert Accomplishment into Database */
                             mTableHelper.insert(accomplishment);
-                        } catch (IllegalArgumentException e) {
+                        } catch (ValidationFailedException e) {
                             Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -168,18 +174,26 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
      * Get new cursor by checking Database for Accomplishments on selected date
      */
     private Cursor getNewCursor() {
-        SQLiteDatabase db = new Database(getContext()).getWritableDatabase();
-        return CursorLoader.getCursorForDateQuery(db, DBConstants.ACCOMPLISHMENT_QUERY, mSelectedDate);
+        Context context = getContext();
+        if(context != null) {
+            SQLiteDatabase db = Database.getInstance(getContext()).getWritableDatabase();
+
+            /* Format current date to database format */
+            String dateFormatted = mTableHelper.getDatabaseHelper().getDateAsDatabaseFormat(mSelectedDate);
+
+            return db.rawQuery(DBConstants.ACCOMPLISHMENT_QUERY,new String[]{dateFormatted});
+        }
+        return null;
     }
 
     /*
        Set cursor to new cursor, closing current cursor
      */
     private void setCursor(Cursor cursor) {
-        Cursor currentCursor = mAdapter.getCursor();
+        Cursor currentCursor = mCursorAdapter.getCursor();
         if (currentCursor != null) currentCursor.close();
 
-        mAdapter.swapCursor(cursor);
+        mCursorAdapter.swapCursor(cursor);
     }
 
     /**
@@ -191,7 +205,7 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
 
     @Override
     public void onDatabaseInteracted() {
-        // Search Database again for posts
+        /* Search Database again for posts */
         refreshCursor();
     }
 

@@ -4,11 +4,11 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 import io.github.tstewart.todayi.data.DBConstants;
+import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.models.Accomplishment;
 
 /**
  * Helper class. Provides functionality to insert, update, and remove accomplishments from the database
- * TODO provide interface to generify this and DayRatingTableHelper or combine them both.
  */
 public class AccomplishmentTableHelper {
 
@@ -28,7 +28,7 @@ public class AccomplishmentTableHelper {
      * @param accomplishment Accomplishment to be added.
      * @throws IllegalArgumentException Thrown if the accomplishment object was not valid
      */
-    public void insert(Accomplishment accomplishment) throws IllegalArgumentException {
+    public void insert(Accomplishment accomplishment) throws ValidationFailedException {
         /* Validate accomplishment */
         accomplishment.validate();
 
@@ -42,7 +42,7 @@ public class AccomplishmentTableHelper {
      * @param id Identifier number of existing accomplishment to be replaced
      * @throws IllegalArgumentException Thrown if the new accomplishment object was not valid
      */
-    public void update(Accomplishment accomplishment, long id) throws IllegalArgumentException {
+    public void update(Accomplishment accomplishment, long id) throws ValidationFailedException {
         /* Validate new accomplishment */
         accomplishment.validate();
 
@@ -56,5 +56,9 @@ public class AccomplishmentTableHelper {
      */
     public void delete(long id) {
         mHelper.delete(mContext, DBConstants.COLUMN_ID + "=?", new String[]{String.valueOf(id)});
+    }
+
+    public DatabaseHelper getDatabaseHelper() {
+        return mHelper;
     }
 }

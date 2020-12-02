@@ -1,8 +1,19 @@
 package io.github.tstewart.todayi.ui.activities;
 
+import android.app.ActionBar;
+import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.ContextThemeWrapper;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.NumberPicker;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Calendar;
@@ -10,16 +21,22 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Random;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.ColorUtils;
+import androidx.vectordrawable.graphics.drawable.ArgbEvaluator;
 import io.github.tstewart.todayi.R;
+import io.github.tstewart.todayi.helpers.ColorBlendHelper;
 import io.github.tstewart.todayi.models.Accomplishment;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.helpers.DatabaseHelper;
 
 /*
-Debug Activity is disabled for now.
+Debug functions for messing with the internals of the app
  */
 public class DebugActivity extends AppCompatActivity {
+
+    Button mGetColorPercentageTest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,21 +49,23 @@ public class DebugActivity extends AppCompatActivity {
         Button populateAccomplishmentsButton = findViewById(R.id.debug_populate_accomplishments);
         Button getAccomplishmentsButton = findViewById(R.id.debug_get_accomplishments);
         Button getRatingsButton = findViewById(R.id.debug_get_ratings);
+        mGetColorPercentageTest = findViewById(R.id.debug_color_test);
         Button backButton = findViewById(R.id.debugBack);
 
         if (invalidateBackupButton != null)
             invalidateBackupButton.setOnClickListener(this::onInvalidateBackupButtonClicked);
         if (populateAccomplishmentsButton != null)
-            populateAccomplishmentsButton.setOnClickListener(this::onPopulateAccomplishmentsButtonClicked);
+           // populateAccomplishmentsButton.setOnClickListener(this::onPopulateAccomplishmentsButtonClicked);
         if (getAccomplishmentsButton != null)
             getAccomplishmentsButton.setOnClickListener(this::onGetAccomplishmentsButtonClicked);
         if (getRatingsButton != null)
             getRatingsButton.setOnClickListener(this::onGetRatingsButtonClicked);
+        if (mGetColorPercentageTest != null)
+            mGetColorPercentageTest.setOnClickListener(this::onColorTestButtonClicked);
         if (backButton != null) backButton.setOnClickListener(view -> {
             this.finish();
         });
     }
-
 
     private void onInvalidateBackupButtonClicked(View view) {
         try {
@@ -84,6 +103,44 @@ public class DebugActivity extends AppCompatActivity {
     }
 
     private void onGetRatingsButtonClicked(View view) {
+    }
+
+    public void onColorTestButtonClicked(View view) {
+
+        final NumberPicker numberPicker = new NumberPicker(this);
+        numberPicker.setMaxValue(0);
+        numberPicker.setMaxValue(100);
+
+        new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AppTheme))
+                .setView(numberPicker)
+                .setPositiveButton("Ok", (dialog, which) -> {
+                    int numSelection = numberPicker.getValue();
+
+                    int[] colors = new ColorBlendHelper(numSelection, Color.RED, Color.GREEN).generateColors();
+
+                    LinearLayout resultView = new LinearLayout(this);
+                    resultView.setOrientation(LinearLayout.VERTICAL);
+
+                    ScrollView scrollView = new ScrollView(this);
+                    scrollView.setLayoutParams(new LinearLayout.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                    scrollView.addView(resultView);
+
+                    for (int i = 0; i < colors.length; i++) {
+                        TextView colorView = new TextView(this);
+                        colorView.setText("\n");
+                        colorView.setBackgroundColor(colors[i]);
+
+                        resultView.addView(colorView);
+                    }
+
+                    new AlertDialog.Builder(this)
+                            .setView(scrollView)
+                            .create()
+                            .show();
+
+                })
+                .create()
+                .show();
     }
 
     private Date addDay(Date currentDate) {

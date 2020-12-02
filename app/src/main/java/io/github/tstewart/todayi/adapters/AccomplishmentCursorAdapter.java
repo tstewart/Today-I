@@ -16,6 +16,7 @@ import io.github.tstewart.todayi.data.DBConstants;
  */
 public class AccomplishmentCursorAdapter extends CursorAdapter {
 
+    /* Flags for CursorAdapter constructor are set to 0 to prevent use of Deprecated constructor that utilises AUTO_QUERY */
     public AccomplishmentCursorAdapter(Context context, Cursor c) {
         super(context, c, 0);
     }

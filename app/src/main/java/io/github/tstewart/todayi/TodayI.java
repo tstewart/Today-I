@@ -3,11 +3,9 @@ package io.github.tstewart.todayi;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.io.File;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -29,7 +27,7 @@ public class TodayI extends Application {
     private final String CLASS_LOG_TAG = this.getClass().getSimpleName();
 
     /* Backup Database every x hours */
-    private final int BACKUP_EVERY_HOURS = 24;
+    private static final int BACKUP_EVERY_HOURS = 24;
 
     @Override
     public void onCreate() {
