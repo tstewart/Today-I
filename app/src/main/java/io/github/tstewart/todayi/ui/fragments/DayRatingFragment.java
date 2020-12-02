@@ -20,6 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import io.github.tstewart.todayi.R;
+import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.events.OnDateChanged;
 import io.github.tstewart.todayi.helpers.ColorBlendHelper;
@@ -30,7 +31,6 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 /*
  * Fragment for editing day ratings
- * TODO in future, max ratings will be changeable in user settings
  */
 public class DayRatingFragment extends Fragment implements OnDateChangedListener {
 
@@ -44,7 +44,7 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
     Maximum selectable rating
     Public for now as there is no place for this constant yet
      */
-    public static final int MAX_RATING = 5;
+    public static final int MAX_RATING = UserPreferences.getMaxDayRating();
 
     /* Colors for individual day rating */
     int[] mColors;

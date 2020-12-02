@@ -14,6 +14,7 @@ import java.util.Map;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import io.github.tstewart.todayi.R;
+import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.helpers.ColorBlendHelper;
 import io.github.tstewart.todayi.ui.fragments.DayRatingFragment;
 
@@ -31,9 +32,8 @@ public class DayRatingSplitter {
 
     /*
      Maximum selectable rating
-     Currently points to DayRatingFragment, TODO move
      */
-    static final int MAX_RATING = DayRatingFragment.MAX_RATING;
+    static final int MAX_RATING = UserPreferences.getMaxDayRating();
 
     /* Array of colors to assign to rating */
     int[] mColors;

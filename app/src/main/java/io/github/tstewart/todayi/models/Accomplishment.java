@@ -6,6 +6,7 @@ import java.util.Date;
 
 import androidx.annotation.NonNull;
 import io.github.tstewart.todayi.data.DBConstants;
+import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.interfaces.DatabaseObject;
 import io.github.tstewart.todayi.helpers.DateFormatter;
@@ -20,8 +21,7 @@ public class Accomplishment implements DatabaseObject {
     private static final int MAX_CONTENT_LENGTH = 200;
 
     /* If empty lines should be removed when creating Accomplishments */
-    /* TODO make this toggleable via settings */
-    private static final boolean REMOVE_EMPTY_LINES = true;
+    private static final boolean REMOVE_EMPTY_LINES = UserPreferences.shouldRemoveEmptyLines();
 
     /* Date Accomplishment was created on */
     private Date mDate;
