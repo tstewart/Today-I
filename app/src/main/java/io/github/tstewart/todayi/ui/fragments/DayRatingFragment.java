@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment;
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.events.OnDateChanged;
+import io.github.tstewart.todayi.helpers.ColorBlendHelper;
 import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
 import io.github.tstewart.todayi.helpers.DayRatingTableHelper;
 
@@ -29,6 +30,7 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 /*
  * Fragment for editing day ratings
+ * TODO in future, max ratings will be changeable in user settings
  */
 public class DayRatingFragment extends Fragment implements OnDateChangedListener {
 
@@ -39,10 +41,13 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
     private static final String CLASS_LOG_TAG = DayRatingFragment.class.getSimpleName();
 
     /*
-     Colors for individual day rating
-     TODO move to constant
-    */
-    final int[] mColors = new int[]{R.color.colorRatingRed, R.color.colorRatingOrange, R.color.colorRatingYellow, R.color.colorRatingLightGreen, R.color.colorRatingGreen};
+    Maximum selectable rating
+    Public for now as there is no place for this constant yet
+     */
+    public static final int MAX_RATING = 5;
+
+    /* Colors for individual day rating */
+    int[] mColors;
     /* List of day rating buttons */
     Button[] mButtons;
     /* Current date (Application-wide) */
@@ -60,11 +65,13 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mButtons = new Button[5];
+        mColors = new int[MAX_RATING];
+        mButtons = new Button[MAX_RATING];
+
         LinearLayout ll = view.findViewById(R.id.linearLayoutDayRating);
 
         /* Create 5 buttons to make up the selectable day ratings */
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < MAX_RATING; i++) {
 
             /* Set button theme */
             mButtons[i] = new Button(new ContextThemeWrapper(getContext(), R.style.AppTheme_DayRatingButton), null, R.style.Widget_AppCompat_Button_Borderless);
@@ -78,6 +85,15 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
             /* Add button to layout */
             ll.addView(mButtons[i], layoutParams);
         }
+        /* Set weight of individual buttons in the fragment
+        * E.g. A weight of 5 means each button takes up 20% of the parent layout */
+        ll.setWeightSum(MAX_RATING);
+
+        /* Set gradient of colors up to MAX_RATING */
+        int colorStart = ContextCompat.getColor(getContext(),R.color.colorRatingRed);
+        int colorEnd = ContextCompat.getColor(getContext(),R.color.colorRatingGreen);
+
+        mColors = new ColorBlendHelper(mColors.length, colorStart, colorEnd).generateColors();
 
         /* Get rating for current date */
         int index = getIndexOfRating(new Date());
@@ -161,7 +177,8 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
     Reset background color for provided button
      */
     private void resetButtonBackground(Button button) {
-        setButtonBackground(button, R.color.colorTransparent);
+        int colorTransparent = ContextCompat.getColor(getContext(),R.color.colorTransparent);
+        setButtonBackground(button, colorTransparent);
     }
 
     /*
@@ -170,7 +187,7 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
     private void setButtonBackground(Button button, int color) {
         if (getContext() != null && button != null) {
             GradientDrawable drawable = (GradientDrawable) button.getBackground();
-            drawable.setColor(ContextCompat.getColor(getContext(), color));
+            drawable.setColor(color);
         }
     }
 

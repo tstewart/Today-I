@@ -9,6 +9,7 @@ import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.interfaces.DatabaseObject;
 import io.github.tstewart.todayi.helpers.DateFormatter;
+import io.github.tstewart.todayi.ui.fragments.DayRatingFragment;
 
 /*
  * Object to store day rating data for a selected date
@@ -19,7 +20,8 @@ public class DayRating implements DatabaseObject {
     /* Minimum accepted day rating */
     private static final int MIN_RATING = 1;
     /* Maximum accepted day rating */
-    private static final int MAX_RATING = 5;
+    // TODO this, with DayRatingSplitter and DayRatingFragment needs to be moved to a constant field inside user params
+    private static final int MAX_RATING = DayRatingFragment.MAX_RATING;
     /* Day rated */
     private Date mDate;
     /* Rating */

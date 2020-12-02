@@ -14,6 +14,8 @@ import java.util.Map;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import io.github.tstewart.todayi.R;
+import io.github.tstewart.todayi.helpers.ColorBlendHelper;
+import io.github.tstewart.todayi.ui.fragments.DayRatingFragment;
 
 /*
  Splits a HashMap of CalendarDays and Integers into a list of DayRatedDecorators
@@ -23,23 +25,37 @@ import io.github.tstewart.todayi.R;
  The only sensible way to decorate 5 different colors is to have 5 different decorators. Why? I don't know.
 */
 /*
- TODO Remove restriction of this class (only accepts 1-5)
- TODO Ratings and their respective colors should be stored in a constant
  TODO This should really be done with database interactions instead of passing a HashMap
 */
 public class DayRatingSplitter {
 
+    /*
+     Maximum selectable rating
+     Currently points to DayRatingFragment, TODO move
+     */
+    static final int MAX_RATING = DayRatingFragment.MAX_RATING;
+
+    /* Array of colors to assign to rating */
+    int[] mColors;
+
     final Context mContext;
+
 
     public DayRatingSplitter(@NonNull Context context) {
         this.mContext = context;
+
+        /* Generate colors to assign to ratings */
+        int colorStart = context.getColor(R.color.colorRatingRed);
+        int colorEnd = context.getColor(R.color.colorRatingGreen);
+
+        mColors = new ColorBlendHelper(MAX_RATING, colorStart, colorEnd).generateColors();
     }
 
     public List<DayRatedDecorator> getDayRatingDecorators(Map<CalendarDay, Integer> ratings) {
 
         List<DayRatedDecorator> decorators = new ArrayList<>();
 
-        for (int i = 1; i <= 5; i++) {
+        for (int i = 1; i <= MAX_RATING; i++) {
             /* List of days that match the rating we are currently looking for */
             List<CalendarDay> daysMatchingRating = new ArrayList<>();
 
@@ -52,7 +68,7 @@ public class DayRatingSplitter {
             }
 
             /* Get color correlated to this current index */
-            int color = getColorAtIndex(i);
+            int color = getColorAtIndex(i-1);
 
             /* Get drawable to add to DayRatedDecorator with the provided color */
             Drawable ratingDrawable = getRatingDrawable(color);
@@ -85,27 +101,9 @@ public class DayRatingSplitter {
      * @return Color that matches this index
      */
     public int getColorAtIndex(int index) {
-        int colorResourceId;
-        switch (index) {
-            case 1:
-                colorResourceId = R.color.colorRatingRed;
-                break;
-            case 2:
-                colorResourceId = R.color.colorRatingOrange;
-                break;
-            case 3:
-                colorResourceId = R.color.colorRatingYellow;
-                break;
-            case 4:
-                colorResourceId = R.color.colorRatingLightGreen;
-                break;
-            case 5:
-                colorResourceId = R.color.colorRatingGreen;
-                break;
-            default:
-                /* Default to a transparent color */
-                colorResourceId = R.color.colorTransparent;
+        if(index < 0 || index >= mColors.length) {
+            return mContext.getColor(R.color.colorTransparent);
         }
-        return ContextCompat.getColor(mContext, colorResourceId);
+        return mColors[index];
     }
 }
