@@ -1,6 +1,8 @@
 package io.github.tstewart.todayi.ui.fragments;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -42,9 +44,13 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
 
     /*
     Maximum selectable rating
-    Public for now as there is no place for this constant yet
      */
-    public static final int MAX_RATING = UserPreferences.getMaxDayRating();
+    private static final int MAX_RATING = UserPreferences.getMaxDayRating();
+
+
+    /* Default colors to use in gradient, if color could not be retrieved from Context */
+    private static final int DEFAULT_COLOR_START = Color.RED;
+    private static final int DEFAULT_COLOR_END = Color.GREEN;
 
     /* Colors for individual day rating */
     int[] mColors;
@@ -90,8 +96,19 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
         ll.setWeightSum(MAX_RATING);
 
         /* Set gradient of colors up to MAX_RATING */
-        int colorStart = ContextCompat.getColor(getContext(),R.color.colorRatingRed);
-        int colorEnd = ContextCompat.getColor(getContext(),R.color.colorRatingGreen);
+        Context context = getContext();
+
+        int colorStart;
+        int colorEnd;
+
+        if(context != null) {
+            colorStart = ContextCompat.getColor(getContext(), R.color.colorRatingRed);
+            colorEnd = ContextCompat.getColor(getContext(), R.color.colorRatingGreen);
+        }
+        else {
+            colorStart = DEFAULT_COLOR_START;
+            colorEnd = DEFAULT_COLOR_END;
+        }
 
         mColors = new ColorBlendHelper(mColors.length, colorStart, colorEnd).generateColors();
 
@@ -106,7 +123,21 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mTableHelper = new DayRatingTableHelper(getContext());
+
+        Context context = getContext();
+
+        /* If this fragment's context is valid */
+        if(context != null) {
+            mTableHelper = new DayRatingTableHelper(getContext());
+        }
+        else {
+            /* Try and establish a database connection with the parent activity, if exists */
+            Activity parent = getActivity();
+            if(parent != null) {
+                mTableHelper = new DayRatingTableHelper(parent.getApplicationContext());
+            }
+        }
+
         /* Register OnDateChanged to set current day rating */
         OnDateChanged.addListener(this);
     }
@@ -177,15 +208,19 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
     Reset background color for provided button
      */
     private void resetButtonBackground(Button button) {
-        int colorTransparent = ContextCompat.getColor(getContext(),R.color.colorTransparent);
-        setButtonBackground(button, colorTransparent);
+        Context context = getContext();
+
+        if(context != null) {
+            int color = ContextCompat.getColor(context,R.color.colorTransparent);
+            setButtonBackground(button, color);
+        }
     }
 
     /*
     Set button background color to provided color
      */
     private void setButtonBackground(Button button, int color) {
-        if (getContext() != null && button != null) {
+        if (button != null) {
             GradientDrawable drawable = (GradientDrawable) button.getBackground();
             drawable.setColor(color);
         }
