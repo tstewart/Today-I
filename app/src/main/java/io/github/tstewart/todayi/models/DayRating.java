@@ -6,6 +6,7 @@ import java.util.Date;
 
 import androidx.annotation.NonNull;
 import io.github.tstewart.todayi.data.DBConstants;
+import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.interfaces.DatabaseObject;
 import io.github.tstewart.todayi.helpers.DateFormatter;
@@ -21,7 +22,7 @@ public class DayRating implements DatabaseObject {
     private static final int MIN_RATING = 1;
     /* Maximum accepted day rating */
     // TODO this, with DayRatingSplitter and DayRatingFragment needs to be moved to a constant field inside user params
-    private static final int MAX_RATING = DayRatingFragment.MAX_RATING;
+    private static final int MAX_RATING = UserPreferences.getMaxDayRating();
     /* Day rated */
     private Date mDate;
     /* Rating */

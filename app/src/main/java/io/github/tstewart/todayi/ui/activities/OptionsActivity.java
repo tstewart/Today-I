@@ -1,5 +1,6 @@
 package io.github.tstewart.todayi.ui.activities;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -15,15 +16,20 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.LocalDatabaseIO;
+import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ExportFailedException;
 import io.github.tstewart.todayi.errors.ImportFailedException;
 import io.github.tstewart.todayi.data.DBConstants;
@@ -43,8 +49,12 @@ public class OptionsActivity extends AppCompatActivity {
     private static final boolean DEBUG_ENABLED = true;
     /* Number of taps on the version TextView required to open debug menu */
     private static final int DEBUG_ACTIVITY_TAP_REQUIREMENT = 1;
+
+    /* User preferences */
+    private UserPreferences mPreferences;
+
     /* Current tap count */
-    private int mDebugActivityTapCount = 0;
+    private int mDebugActivityTapCount = 6;
     /* Toast alerts user how many clicks they need to access debug menu */
     private Toast mClicksToDebugToast;
 
@@ -56,11 +66,19 @@ public class OptionsActivity extends AppCompatActivity {
     */
     TextView mCurrentVersionTv;
 
+    SwitchMaterial mGesturesSw;
+    /* Switch to toggle gesture navigation */
+    /* Switch to toggle auto clipping of blank lines from Accomplishments */
+    SwitchMaterial mClipAccomplishments;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_options);
+
+        SharedPreferences sharedPrefs = getSharedPreferences(getString(R.string.user_prefs_file_location_key), MODE_PRIVATE);
+        this.mPreferences = new UserPreferences(sharedPrefs);
 
         /* Find all buttons that have functionality from layout */
         Button importDataButton = findViewById(R.id.buttonImportData);
@@ -73,6 +91,9 @@ public class OptionsActivity extends AppCompatActivity {
         mLastBackedUpTv = findViewById(R.id.textViewLastBackedUp);
         mCurrentVersionTv = findViewById(R.id.textViewAboutVersion);
 
+        mGesturesSw = findViewById(R.id.switchEnableSwipeGesture);
+        mClipAccomplishments = findViewById(R.id.switchClipAccomplishments);
+
         if (mCurrentVersionTv != null) {
             /* Get current version from PackageInfo */
             String currentVersion = getCurrentVersion();
@@ -82,6 +103,21 @@ public class OptionsActivity extends AppCompatActivity {
             if(DEBUG_ENABLED)
                 mCurrentVersionTv.setOnClickListener(this::onDebugViewClickedListener);
         }
+
+        /* Set if options switches are flipped or not */
+        /* Set switch toggle listeners */
+        if(mGesturesSw != null) {
+            boolean gesturesSelected = (boolean)mPreferences.get(getString(R.string.user_prefs_gestures_enabled), false);
+            mGesturesSw.setChecked(gesturesSelected);
+            mGesturesSw.setOnClickListener(this::onGestureSwitchClicked);
+        }
+        if(mClipAccomplishments != null) {
+            boolean clipAccomplishmentsSelected = (boolean) mPreferences.get(getString(R.string.user_prefs_clip_empty_lines), false);
+            mClipAccomplishments.setChecked(clipAccomplishmentsSelected);
+            mClipAccomplishments.setOnClickListener(this::onClipAccomplishmentSwitchClicked);
+        }
+
+
         /* Set appropriate onClickListener for each button, if the button could be found */
         if (importDataButton != null)
             importDataButton.setOnClickListener(this::onImportDataButtonClicked);
@@ -111,9 +147,20 @@ public class OptionsActivity extends AppCompatActivity {
         }
     }
 
+    /* Called if a button is pressed in the top bar */
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        /* If the item selected was the "back" button */
+        if (item.getItemId() == android.R.id.home) {
+            /* Alert the Activity that launched this Activity that it will not receive a response. */
+            returnWithResponse(Activity.RESULT_CANCELED);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     /**
      * Get the current application version from PackageInfo
-     * TODO Move?
      * @return The current application version
      */
     private String getCurrentVersion() {
@@ -130,18 +177,6 @@ public class OptionsActivity extends AppCompatActivity {
         return "Unknown";
     }
 
-    /* Called if a button is pressed in the top bar */
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        /* If the item selected was the "back" button */
-        if (item.getItemId() == android.R.id.home) {
-            /* Alert the Activity that launched this Activity that it will not receive a response. */
-            returnWithResponse(Activity.RESULT_CANCELED);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     /*
     Set last backed up label to a relative text string showing the last time since backing up the database
      */
@@ -153,10 +188,8 @@ public class OptionsActivity extends AppCompatActivity {
     Gets the last time the database was backed up, in a time relative to the current time.
      */
     private String getLastBackedUpRelativeString() {
-        SharedPreferences prefs = getSharedPreferences(getString(R.string.user_prefs_file_location_key), MODE_PRIVATE);
-
         /* Get time last backed up from user preferences */
-        long lastBackedUp = prefs.getLong(getString(R.string.user_prefs_last_backed_up_key), -1);
+        long lastBackedUp = (Long)mPreferences.get(getString(R.string.user_prefs_last_backed_up_key), -1);
 
         /* If a valid time was returned from user preferences */
         if (lastBackedUp > 0) {
@@ -166,6 +199,16 @@ public class OptionsActivity extends AppCompatActivity {
             /* If default value (-1) was returned, or an invalid time was returned */
             return "Unknown";
         }
+    }
+
+    private void onGestureSwitchClicked(View view) {
+        mPreferences.set(getString(R.string.user_prefs_gestures_enabled), mGesturesSw.isChecked());
+        UserPreferences.setEnableGestures(mGesturesSw.isChecked());
+    }
+
+    private void onClipAccomplishmentSwitchClicked(View view) {
+        mPreferences.set(getString(R.string.user_prefs_clip_empty_lines), mClipAccomplishments.isChecked());
+        UserPreferences.setAccomplishmentClipEmptyLines(mClipAccomplishments.isChecked());
     }
 
     private void onDebugViewClickedListener(View view) {

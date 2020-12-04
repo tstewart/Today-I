@@ -20,9 +20,6 @@ public class Accomplishment implements DatabaseObject {
     /* Maximum length of an Accomplishment body */
     private static final int MAX_CONTENT_LENGTH = 200;
 
-    /* If empty lines should be removed when creating Accomplishments */
-    private static final boolean REMOVE_EMPTY_LINES = UserPreferences.shouldRemoveEmptyLines();
-
     /* Date Accomplishment was created on */
     private Date mDate;
     /* Content of Accomplishment */
@@ -87,7 +84,8 @@ public class Accomplishment implements DatabaseObject {
     }
 
     public void setContent(String content) {
-        if(content != null && REMOVE_EMPTY_LINES) {
+        /* If empty lines should be removed when creating Accomplishments */
+        if(content != null && UserPreferences.isAccomplishmentClipEmptyLines()) {
             content = content.replaceAll("(?m)^[ \t]*\r?\n", "");
         }
         this.mContent = content;

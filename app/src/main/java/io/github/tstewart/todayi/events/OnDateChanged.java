@@ -28,7 +28,7 @@ public class OnDateChanged {
     /*
     Alert all listeners that the event has been called
     */
-    public static void notifyDatabaseInteracted(Date date) {
+    public static void notifyDateChanged(Date date) {
         for (OnDateChangedListener listener :
              sListeners) {
             listener.onDateChanged(date);

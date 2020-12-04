@@ -1,5 +1,6 @@
 package io.github.tstewart.todayi.ui.fragments;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.database.Cursor;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.Date;
@@ -29,6 +31,7 @@ import io.github.tstewart.todayi.helpers.AccomplishmentTableHelper;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
 import io.github.tstewart.todayi.adapters.AccomplishmentCursorAdapter;
+import io.github.tstewart.todayi.ui.activities.MainActivity;
 import io.github.tstewart.todayi.ui.dialogs.AccomplishmentDialog;
 
 /**
@@ -53,7 +56,25 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.fragment_accomplishment_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_accomplishment_list, container, false);
+
+        /* Get parent activity that this fragment is attached to */
+        Activity parent = getActivity();
+
+        /* If this fragment is attached to MainActivity */
+        if(parent instanceof MainActivity) {
+            MainActivity mainActivity = (MainActivity)parent;
+
+            /* Pass touch events from ListView up to MainActivity gesture management */
+            ListView listView = view.findViewById(android.R.id.list);
+            if(listView != null) {
+                listView.setOnTouchListener(mainActivity::onTouchEvent);
+            }
+            /* Pass touch events from this app's view up to MainActivity gesture management */
+            view.setOnTouchListener(mainActivity::onTouchEvent);
+        }
+
+        return view;
     }
 
     @Override
