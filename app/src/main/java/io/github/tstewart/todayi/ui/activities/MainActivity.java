@@ -2,6 +2,7 @@ package io.github.tstewart.todayi.ui.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,6 +21,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import io.github.tstewart.todayi.R;
+import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.events.OnDatabaseInteracted;
 import io.github.tstewart.todayi.events.OnDateChanged;
 import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
@@ -42,8 +44,8 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
     private static final int SWIPE_GESTURE_DISTANCE = 250;
 
     /* Location the user started to touch the screen, and the location the user stopped touching the screen */
-    private float touchLocationStart;
-    private float touchLocationEnd;
+    private float mTouchLocationStart;
+    private float mTouchLocationEnd;
 
     /* Currently selected date (Application-wide, controlled by OnDateChangedListener) */
     Date mSelectedDate;
@@ -171,18 +173,19 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
     /* Handle on touch screen events, calculate if a swipe gesture was performed */
     public boolean onTouchEvent(View view, MotionEvent event) {
 
-        if(event != null) {
+        /* If event was not null and gestures are enabled */
+        if(event != null && UserPreferences.isEnableGestures()) {
             switch(event.getAction()) {
                 /* When user presses down on the screen, get the X position of the position of their click */
                 case MotionEvent.ACTION_DOWN:
-                    touchLocationStart = event.getX();
+                    mTouchLocationStart = event.getX();
                     break;
                 /* When user stops pressing down on the screen, get the X position they stopped pressing the screen */
                 case MotionEvent.ACTION_UP:
-                    touchLocationEnd = event.getX();
+                    mTouchLocationEnd = event.getX();
 
                     /* Get distance user travelled while pressing screen */
-                    float swipeDistance = touchLocationEnd - touchLocationStart;
+                    float swipeDistance = mTouchLocationEnd - mTouchLocationStart;
 
                     /* If the distance, positive or negative, is greater than the minimum distance required to constitute a swipe gesture */
                     if(Math.abs(swipeDistance) >= SWIPE_GESTURE_DISTANCE) {
@@ -207,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         }
 
         view.performClick();
-        return true;
+        return false;
     }
 
     /*

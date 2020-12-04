@@ -77,8 +77,6 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
         return view;
     }
 
-
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);

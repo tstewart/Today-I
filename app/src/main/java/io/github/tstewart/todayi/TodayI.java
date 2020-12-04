@@ -44,6 +44,13 @@ public class TodayI extends Application {
         mPreferences.setDefaultValue(getString(R.string.user_prefs_gestures_enabled), true);
         mPreferences.setDefaultValue(getString(R.string.user_prefs_clip_empty_lines), true);
 
+        /* Set preference variables for this instance of the app */
+        boolean gesturesEnabled = (boolean) mPreferences.get(getString(R.string.user_prefs_gestures_enabled), true);
+        boolean clipEmptyLines = (boolean) mPreferences.get(getString(R.string.user_prefs_clip_empty_lines), true);
+        UserPreferences.setEnableGestures(gesturesEnabled);
+        UserPreferences.setAccomplishmentClipEmptyLines(clipEmptyLines);
+
+
         /* Database auto backup management */
         Context context = getApplicationContext();
 

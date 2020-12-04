@@ -40,7 +40,7 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
         EditText editTextContent = view.findViewById(R.id.editTextAccomplishmentManage);
         if(editTextContent != null)
             /* Set input type to force capitalisation when the EditText is focused on */
-            editTextContent.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+            editTextContent.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
     }
 
     @Override

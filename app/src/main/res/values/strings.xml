@@ -19,6 +19,9 @@
     <!-- Options Activity -->
     <string name="google_sign_in_title">Sign in to Google to backup data to Google Drive.</string>
     <string name="google_sign_in_button">Sign in</string>
+    <string name="general_settings">General Settings</string>
+    <string name="enable_gestures">Enable gestures</string>
+    <string name="clip_accomplishments">Clip blank lines from Accomplishments</string>
     <string name="data_management">Data Management</string>
     <string name="last_backed_up">Last backed up: %1$s</string>
     <string name="button_restore_backup">Restore Backup</string>
@@ -52,6 +55,8 @@
     <!-- Files -->
     <string name="user_prefs_file_location_key">io.github.tstewart.todayi.userprefs</string>
     <string name="user_prefs_last_backed_up_key">last_backed_up</string>
+    <string name="user_prefs_gestures_enabled">gestures_enabled</string>
+    <string name="user_prefs_clip_empty_lines">clip_empty_lines</string>
 
 
     <!-- Accessibility -->
