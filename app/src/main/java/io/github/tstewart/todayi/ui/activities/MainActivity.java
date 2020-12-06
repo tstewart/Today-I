@@ -4,14 +4,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.Calendar;
@@ -27,6 +24,7 @@ import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.events.OnDatabaseInteracted;
 import io.github.tstewart.todayi.events.OnDateChanged;
+import io.github.tstewart.todayi.helpers.RelativeDateHelper;
 import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
 import io.github.tstewart.todayi.ui.fragments.AccomplishmentListFragment;
 import io.github.tstewart.todayi.helpers.DateFormatter;
@@ -59,6 +57,9 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
     /* Text label, shows current date formatted */
     TextView mDayLabel;
 
+    /* Text label, shows current date in a relative time span from system date */
+    TextView mRelativeDayLabel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         ImageButton prevButton = findViewById(R.id.buttonPrevDay);
         ImageButton nextButton = findViewById(R.id.buttonNextDay);
         mDayLabel = findViewById(R.id.textViewCurrentDate);
+        mRelativeDayLabel = findViewById(R.id.textViewRelativeDay);
 
         /* Set functionality of bottom bar buttons */
         prevButton.setOnClickListener(this::onDayChangeButtonClicked);
@@ -276,5 +278,9 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         */
         if(mDayLabel != null)
             mDayLabel.setText(new DateFormatter("MMMM d yyyy").formatWithDayIndicators(mSelectedDate));
+
+        if(mRelativeDayLabel != null) {
+            mRelativeDayLabel.setText(RelativeDateHelper.getRelativeDaysSinceString(date));
+        }
     }
 }
