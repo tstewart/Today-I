@@ -2,13 +2,15 @@ package io.github.tstewart.todayi.ui.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.Calendar;
@@ -53,6 +55,8 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
     /* Fragment that contains functionality for viewing, creating, editing, and deleting Accomplishments */
     AccomplishmentListFragment mListFragment;
 
+    /* Bottom bar containing date buttons and DayRating fragment */
+    LinearLayout mBottomBar;
     /* Text label, shows current date formatted */
     TextView mDayLabel;
 
@@ -65,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         Button prevButton = findViewById(R.id.buttonPrevDay);
         Button todayButton = findViewById(R.id.buttonToday);
         Button nextButton = findViewById(R.id.buttonNextDay);
+        mBottomBar = findViewById(R.id.linearLayoutBottomBar);
         mDayLabel = findViewById(R.id.textViewCurrentDate);
 
         /* Set functionality of bottom bar buttons */
@@ -167,6 +172,20 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
              as data has been cleared
             */
             OnDatabaseInteracted.notifyDatabaseInteracted();
+        }
+    }
+
+    /* If the phone orientation is changed, hide or show rating fragment and day management buttons */
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        /* If bottom bar was found */
+        if(mBottomBar != null) {
+            /* If new orientation is portrait, show additional elements */
+            if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) mBottomBar.setVisibility(View.VISIBLE);
+            /* If new orientation is landscape, hide additional elements */
+            else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) mBottomBar.setVisibility(View.GONE);
         }
     }
 
