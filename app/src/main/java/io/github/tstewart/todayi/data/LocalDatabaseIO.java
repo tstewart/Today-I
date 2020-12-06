@@ -103,7 +103,7 @@ public class LocalDatabaseIO {
         }
 
         /* Check if the backup file to load is a valid SQLite database */
-        if (isValidSQLite(databaseBackupFile.getPath())) {
+        if (!isValidSQLite(databaseBackupFile.getPath())) {
             throw new ImportFailedException("Backup was corrupt or invalid.");
         }
 
