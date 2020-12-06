@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -55,8 +56,6 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
     /* Fragment that contains functionality for viewing, creating, editing, and deleting Accomplishments */
     AccomplishmentListFragment mListFragment;
 
-    /* Bottom bar containing date buttons and DayRating fragment */
-    LinearLayout mBottomBar;
     /* Text label, shows current date formatted */
     TextView mDayLabel;
 
@@ -66,15 +65,12 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         setContentView(R.layout.activity_main);
 
         /* Get bottom bar buttons for controlling date */
-        Button prevButton = findViewById(R.id.buttonPrevDay);
-        Button todayButton = findViewById(R.id.buttonToday);
-        Button nextButton = findViewById(R.id.buttonNextDay);
-        mBottomBar = findViewById(R.id.linearLayoutBottomBar);
+        ImageButton prevButton = findViewById(R.id.buttonPrevDay);
+        ImageButton nextButton = findViewById(R.id.buttonNextDay);
         mDayLabel = findViewById(R.id.textViewCurrentDate);
 
         /* Set functionality of bottom bar buttons */
         prevButton.setOnClickListener(this::onDayChangeButtonClicked);
-        todayButton.setOnClickListener(this::onDayChangeButtonClicked);
         nextButton.setOnClickListener(this::onDayChangeButtonClicked);
 
         /* Register for date changed events */
@@ -175,18 +171,11 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         }
     }
 
-    /* If the phone orientation is changed, hide or show rating fragment and day management buttons */
+    /* If the phone orientation is changed, hide or show rating fragment */
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-
-        /* If bottom bar was found */
-        if(mBottomBar != null) {
-            /* If new orientation is portrait, show additional elements */
-            if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) mBottomBar.setVisibility(View.VISIBLE);
-            /* If new orientation is landscape, hide additional elements */
-            else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) mBottomBar.setVisibility(View.GONE);
-        }
+        // TODO HIDE DAY RATING FRAGMENT OR MOVE TO DRAWER ON ROTATION
     }
 
     /* Handle on touch screen events, calculate if a swipe gesture was performed */
@@ -257,7 +246,8 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
             }
         }
         /* If the selected button was Today, reset the currently selected day to System's current day */
-        else if (viewId == R.id.buttonToday) newDate = new Date();
+        // TODO disabled for now. find a place for Today button to go
+        //else if (viewId == R.id.buttonToday) newDate = new Date();
         updateCurrentDate(newDate);
 
         /* Dismiss accomplishment fragment dialog if exists */

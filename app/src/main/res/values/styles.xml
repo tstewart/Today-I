@@ -43,6 +43,11 @@
         <item name="android:backgroundTint">@color/colorButtonBg</item>
     </style>
 
+    <!-- No background button theme -->
+    <style name="AppTheme.ButtonNavigation" parent="Widget.AppCompat.ImageButton">
+        <item name="android:backgroundTint">@color/colorTransparent</item>
+    </style>
+
     <!-- Button delete data theme -->
     <style name="AppTheme.ButtonDeleteData" parent="Widget.AppCompat.Button">
         <item name="android:foreground">@drawable/ripple</item>

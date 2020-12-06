@@ -72,6 +72,11 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
             }
             /* Pass touch events from this app's view up to MainActivity gesture management */
             view.setOnTouchListener(mainActivity::onTouchEvent);
+
+            /* Add click listener to new accomplishment button */
+            Button newAccomplishmentButton = view.findViewById(R.id.buttonNewAccomplishment);
+            if(newAccomplishmentButton != null)
+                newAccomplishmentButton.setOnClickListener(this::onNewItemButtonPressed);
         }
 
         return view;
@@ -87,12 +92,6 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
 
         setListAdapter(mCursorAdapter);
         getListView().setOnItemClickListener(this::onListItemClick);
-
-        /* Append New button to end of ListView */
-        Button newItemButton = new Button(getContext());
-        newItemButton.setText(getResources().getText(R.string.new_accomplishment));
-        newItemButton.setOnClickListener(this::onNewItemButtonPressed);
-        getListView().addFooterView(newItemButton);
 
         /* Add listener to notify fragment of database updates */
         OnDatabaseInteracted.addListener(this);
