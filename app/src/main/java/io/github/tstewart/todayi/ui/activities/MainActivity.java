@@ -2,13 +2,15 @@ package io.github.tstewart.todayi.ui.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.Calendar;
@@ -24,6 +26,7 @@ import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.events.OnDatabaseInteracted;
 import io.github.tstewart.todayi.events.OnDateChanged;
+import io.github.tstewart.todayi.helpers.DateCalculationHelper;
 import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
 import io.github.tstewart.todayi.ui.fragments.AccomplishmentListFragment;
 import io.github.tstewart.todayi.helpers.DateFormatter;
@@ -53,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
     /* Fragment that contains functionality for viewing, creating, editing, and deleting Accomplishments */
     AccomplishmentListFragment mListFragment;
 
+    /* Bottom bar containing date buttons and DayRating fragment */
+    LinearLayout mBottomBar;
     /* Text label, shows current date formatted */
     TextView mDayLabel;
 
@@ -65,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         Button prevButton = findViewById(R.id.buttonPrevDay);
         Button todayButton = findViewById(R.id.buttonToday);
         Button nextButton = findViewById(R.id.buttonNextDay);
+        mBottomBar = findViewById(R.id.linearLayoutBottomBar);
         mDayLabel = findViewById(R.id.textViewCurrentDate);
 
         /* Set functionality of bottom bar buttons */
@@ -170,52 +176,23 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         }
     }
 
-    /* Handle on touch screen events, calculate if a swipe gesture was performed */
-    public boolean onTouchEvent(View view, MotionEvent event) {
+    /* If the phone orientation is changed, hide or show rating fragment and day management buttons */
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
 
-        /* If event was not null and gestures are enabled */
-        if(event != null && UserPreferences.isEnableGestures()) {
-            switch(event.getAction()) {
-                /* When user presses down on the screen, get the X position of the position of their click */
-                case MotionEvent.ACTION_DOWN:
-                    mTouchLocationStart = event.getX();
-                    break;
-                /* When user stops pressing down on the screen, get the X position they stopped pressing the screen */
-                case MotionEvent.ACTION_UP:
-                    mTouchLocationEnd = event.getX();
-
-                    /* Get distance user travelled while pressing screen */
-                    float swipeDistance = mTouchLocationEnd - mTouchLocationStart;
-
-                    /* If the distance, positive or negative, is greater than the minimum distance required to constitute a swipe gesture */
-                    if(Math.abs(swipeDistance) >= SWIPE_GESTURE_DISTANCE) {
-                        Date newDate = mSelectedDate;
-                        /* If swipe distance is positive, user swiped right */
-                        if(swipeDistance>0) {
-                            /* Go to previous day */
-                            newDate = addToCurrentDate(newDate,-1);
-                        }
-                        /* If swipe distance is negative, user swiped left */
-                        else {
-                            /* Go to next day */
-                            newDate = addToCurrentDate(newDate,1);
-                        }
-                        /* Update current day across application */
-                        updateCurrentDate(newDate);
-                    }
-                    break;
-                default:
-                    break;
-            }
+        /* If bottom bar was found */
+        if(mBottomBar != null) {
+            /* If new orientation is portrait, show additional elements */
+            if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) mBottomBar.setVisibility(View.VISIBLE);
+            /* If new orientation is landscape, hide additional elements */
+            else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) mBottomBar.setVisibility(View.GONE);
         }
-
-        view.performClick();
-        return false;
     }
 
     /*
-        Notifies all subscribers to OnDatabaseInteracted that the selected date has been changed
-         */
+     Notifies all subscribers to OnDatabaseInteracted that the selected date has been changed
+     */
     void updateCurrentDate(@NonNull Date date) {
         OnDateChanged.notifyDateChanged(date);
     }
@@ -232,9 +209,9 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         if (viewId == R.id.buttonNextDay || viewId == R.id.buttonPrevDay) {
 
             if (viewId == R.id.buttonPrevDay) {
-                newDate = addToCurrentDate(newDate,-1);
+                newDate = DateCalculationHelper.subtractFromDate(newDate,Calendar.DAY_OF_MONTH,1);
             } else {
-                newDate = addToCurrentDate(newDate,1);
+                newDate = DateCalculationHelper.addToDate(newDate,Calendar.DAY_OF_MONTH,1);
             }
         }
         /* If the selected button was Today, reset the currently selected day to System's current day */
@@ -244,17 +221,6 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         /* Dismiss accomplishment fragment dialog if exists */
         if (mListFragment != null) mListFragment.dismissCurrentDialog();
 
-    }
-
-    /*
-    Add a number of days to the provided date
-     */
-    public Date addToCurrentDate(Date date, int value) {
-        Calendar calendar = getInstance();
-        calendar.setTime(date);
-        calendar.add(Calendar.DAY_OF_MONTH, value);
-
-        return calendar.getTime();
     }
 
     @Override

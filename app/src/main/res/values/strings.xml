@@ -27,6 +27,7 @@
     <string name="button_restore_backup">Restore Backup</string>
     <string name="restore_backup_confirmation">Are you sure you want to restore from backup? All data not backed up will be removed.</string>
     <string name="button_force_backup">Force Backup</string>
+    <string name="force_backup_confirmation">Are you sure you want to force backup? Your current backup will be overwritten.</string>
     <string name="button_erase_all_data">Erase all data</string>
     <string name="button_import_data">Import</string>
     <string name="button_export_data">Export</string>
