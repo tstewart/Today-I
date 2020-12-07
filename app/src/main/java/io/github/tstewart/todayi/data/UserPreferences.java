@@ -71,7 +71,7 @@ public class UserPreferences {
         UserPreferences.sMaxDayRating = maxDayRating;
     }
 
-    public static boolean isEnableGestures() {
+    public static boolean isGesturesEnabled() {
         return sEnableGestures;
     }
 

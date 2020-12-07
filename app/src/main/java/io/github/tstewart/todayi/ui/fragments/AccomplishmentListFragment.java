@@ -1,7 +1,6 @@
 package io.github.tstewart.todayi.ui.fragments;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.database.Cursor;
@@ -22,6 +21,7 @@ import java.util.Date;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.ListFragment;
+import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.events.OnDatabaseInteracted;
@@ -35,7 +35,6 @@ import io.github.tstewart.todayi.helpers.AccomplishmentTableHelper;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
 import io.github.tstewart.todayi.adapters.AccomplishmentCursorAdapter;
-import io.github.tstewart.todayi.ui.activities.MainActivity;
 import io.github.tstewart.todayi.ui.dialogs.AccomplishmentDialog;
 
 /**
@@ -68,23 +67,23 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
         if(listView != null) {
             listView.setOnTouchListener(new OnSwipePerformedListener(getContext()) {
                 @Override
-                public void onLeftSwipe() {
-                    super.onLeftSwipe();
-                    if(mSelectedDate == null) mSelectedDate = new Date();
-                    mSelectedDate = DateCalculationHelper.subtractFromDate(mSelectedDate, Calendar.DAY_OF_MONTH,1);
-                    OnDateChanged.notifyDateChanged(mSelectedDate);
-                }
+                public void onSwipe(SwipeDirection direction) {
+                    /* If we should do anything with swipe gestures (controlled by settings) */
+                    if(UserPreferences.isGesturesEnabled()) {
 
-                @Override
-                public void onRightSwipe() {
-                    super.onRightSwipe();
-                    if(mSelectedDate == null) mSelectedDate = new Date();
-                    mSelectedDate = DateCalculationHelper.addToDate(mSelectedDate, Calendar.DAY_OF_MONTH,1);
-                    OnDateChanged.notifyDateChanged(mSelectedDate);
+                        if (mSelectedDate == null) mSelectedDate = new Date();
+
+                        if (direction == SwipeDirection.LEFT) {
+                            mSelectedDate = DateCalculationHelper.addToDate(mSelectedDate, Calendar.DAY_OF_MONTH, 1);
+                        } else {
+                            mSelectedDate = DateCalculationHelper.subtractFromDate(mSelectedDate, Calendar.DAY_OF_MONTH, 1);
+                        }
+
+                        OnDateChanged.notifyDateChanged(mSelectedDate);
+                    }
                 }
             });
         }
-
         return view;
     }
 

@@ -24,10 +24,7 @@ public class OnSwipePerformedListener implements View.OnTouchListener {
         return mGestureDetector.onTouchEvent(event);
     }
 
-    public void onLeftSwipe() {
-    }
-    public void onRightSwipe() {
-    }
+    public void onSwipe(SwipeDirection direction) {}
 
     /* Handles onFling events and calculates if the fling was valid, and the fling direction */
     public static class SwipeGestureDetector extends GestureDetector.SimpleOnGestureListener {
@@ -61,9 +58,9 @@ public class OnSwipePerformedListener implements View.OnTouchListener {
                 if(Math.abs(relativeVelocityPercent) > MIN_SWIPE_VELOCITY_PERCENTAGE
                 && Math.abs(screenSwipedPercent) > MIN_SWIPE_DISTANCE_PERCENTAGE) {
                     /* If percentage of screen swiped was positive, user swiped right */
-                    if(screenSwipedPercent>0) mListener.onRightSwipe();
+                    if(screenSwipedPercent>0) mListener.onSwipe(SwipeDirection.RIGHT);
                     /* Otherwise, user swiped left */
-                    else mListener.onLeftSwipe();
+                    else mListener.onSwipe(SwipeDirection.LEFT);
                 }
             }
             return super.onFling(e1, e2, velocityX, velocityY);
@@ -84,6 +81,11 @@ public class OnSwipePerformedListener implements View.OnTouchListener {
 
             return (Math.abs(xEnd) - Math.abs(xStart)) / width;
         }
+    }
+
+    public enum SwipeDirection {
+        LEFT,
+        RIGHT
     }
 
 }
