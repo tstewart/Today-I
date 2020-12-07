@@ -48,13 +48,13 @@ public class OptionsActivity extends AppCompatActivity {
     /* Is Debug Activity access enabled */
     private static final boolean DEBUG_ENABLED = true;
     /* Number of taps on the version TextView required to open debug menu */
-    private static final int DEBUG_ACTIVITY_TAP_REQUIREMENT = 1;
+    private static final int DEBUG_ACTIVITY_TAP_REQUIREMENT = 6;
 
     /* User preferences */
     private UserPreferences mPreferences;
 
     /* Current tap count */
-    private int mDebugActivityTapCount = 6;
+    private int mDebugActivityTapCount = 0;
     /* Toast alerts user how many clicks they need to access debug menu */
     private Toast mClicksToDebugToast;
 
@@ -269,14 +269,23 @@ public class OptionsActivity extends AppCompatActivity {
     }
 
     private void onForceBackupButtonClicked(View view) {
-        try {
-            /* Force backup database to file */
-            LocalDatabaseIO.backupDb(this, DBConstants.DB_NAME);
-        } catch (ExportFailedException e) {
-            /* If failed, alert user and log */
-            Log.w(CLASS_LOG_TAG, e.getMessage(), e);
-            Toast.makeText(this, "Backup failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
-        }
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.button_force_backup)
+                .setMessage(R.string.force_backup_confirmation)
+                .setPositiveButton(R.string.button_yes, (dialog, which) -> {
+                    try {
+                        /* Force backup database to file */
+                        LocalDatabaseIO.backupDb(this, DBConstants.DB_NAME);
+                    } catch (ExportFailedException e) {
+                        /* If failed, alert user and log */
+                        Log.w(CLASS_LOG_TAG, e.getMessage(), e);
+                        Toast.makeText(this, "Backup failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                })
+                .setNegativeButton(R.string.button_no, null)
+                .create()
+                .show();
+
 
         /*
          Update time since last backed up
