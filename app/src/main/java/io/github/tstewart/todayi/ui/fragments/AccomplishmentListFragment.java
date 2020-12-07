@@ -1,5 +1,6 @@
 package io.github.tstewart.todayi.ui.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -16,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import androidx.annotation.Nullable;
@@ -23,6 +25,8 @@ import androidx.fragment.app.ListFragment;
 import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.events.OnDatabaseInteracted;
+import io.github.tstewart.todayi.events.OnSwipePerformedListener;
+import io.github.tstewart.todayi.helpers.DateCalculationHelper;
 import io.github.tstewart.todayi.interfaces.OnDatabaseInteractionListener;
 import io.github.tstewart.todayi.events.OnDateChanged;
 import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
@@ -52,26 +56,33 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
     /* Database table helper, assists with Database interaction */
     private AccomplishmentTableHelper mTableHelper;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_accomplishment_list, container, false);
 
-        /* Get parent activity that this fragment is attached to */
-        Activity parent = getActivity();
+        /* Add gesture support, allowing user to change dates by swiping the ListView */
+        ListView listView = view.findViewById(android.R.id.list);
+        if(listView != null) {
+            listView.setOnTouchListener(new OnSwipePerformedListener(getContext()) {
+                @Override
+                public void onLeftSwipe() {
+                    super.onLeftSwipe();
+                    if(mSelectedDate == null) mSelectedDate = new Date();
+                    mSelectedDate = DateCalculationHelper.subtractFromDate(mSelectedDate, Calendar.DAY_OF_MONTH,1);
+                    OnDateChanged.notifyDateChanged(mSelectedDate);
+                }
 
-        /* If this fragment is attached to MainActivity */
-        if(parent instanceof MainActivity) {
-            MainActivity mainActivity = (MainActivity)parent;
-
-            /* Pass touch events from ListView up to MainActivity gesture management */
-            ListView listView = view.findViewById(android.R.id.list);
-            if(listView != null) {
-                listView.setOnTouchListener(mainActivity::onTouchEvent);
-            }
-            /* Pass touch events from this app's view up to MainActivity gesture management */
-            view.setOnTouchListener(mainActivity::onTouchEvent);
+                @Override
+                public void onRightSwipe() {
+                    super.onRightSwipe();
+                    if(mSelectedDate == null) mSelectedDate = new Date();
+                    mSelectedDate = DateCalculationHelper.addToDate(mSelectedDate, Calendar.DAY_OF_MONTH,1);
+                    OnDateChanged.notifyDateChanged(mSelectedDate);
+                }
+            });
         }
 
         return view;
