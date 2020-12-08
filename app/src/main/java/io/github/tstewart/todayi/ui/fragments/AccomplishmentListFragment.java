@@ -55,6 +55,8 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
     /* Database table helper, assists with Database interaction */
     private AccomplishmentTableHelper mTableHelper;
 
+    /* */
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -84,6 +86,12 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
                 }
             });
         }
+
+        /* Add click listener to new accomplishment button */
+        Button newAccomplishmentButton = view.findViewById(R.id.buttonNewAccomplishment);
+        if(newAccomplishmentButton != null)
+            newAccomplishmentButton.setOnClickListener(this::onNewItemButtonPressed);
+
         return view;
     }
 
