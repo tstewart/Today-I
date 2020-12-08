@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorTransparent">#00000000</color>
+
+    <!-- Theme colors -->
+    <color name="colorSplashBackground">#4C3771</color>
+    <color name="colorPrimary">#3E226E</color>
+    <color name="colorPrimaryDark">#341D5E</color>
+    <color name="colorButtonBg">#2c2c2c</color>
+
+    <!-- Erase data warning color -->
+    <color name="colorWarning">#8B0000</color>
+
+    <!-- Day Rating colors -->
+    <color name="colorRatingRed">#90FF0000</color>
+    <color name="colorRatingGreen">#9000FF00</color>
+</resources>

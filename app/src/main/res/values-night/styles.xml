@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme.ListItemText" parent="Widget.AppCompat.ListView">
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <!-- Button primary theme -->
+    <style name="AppTheme.ButtonTheme" parent="Widget.AppCompat.Button">
+        <item name="android:backgroundTint">@color/colorButtonBg</item>
+    </style>
+
+    <!-- No background button theme -->
+    <style name="AppTheme.ButtonNavigation" parent="Widget.AppCompat.ImageButton">
+        <item name="android:backgroundTint">@color/colorTransparent</item>
+        <item name="android:tint">@color/colorWhite</item>
+    </style>
+
+    <!-- Button delete data theme -->
+    <style name="AppTheme.ButtonDeleteData" parent="Widget.AppCompat.Button">
+        <item name="android:backgroundTint">@color/colorWarning</item>
+    </style>
+
+    <!-- Date label theme -->
+    <style name="AppTheme.DateLabel" parent="Widget.AppCompat.TextView">
+        <item name="android:textColor">@color/colorWhite</item>
+    </style>
+</resources>
