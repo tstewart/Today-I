@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.Calendar;
@@ -43,6 +44,9 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
     /* Fragment that contains functionality for viewing, creating, editing, and deleting Accomplishments */
     AccomplishmentListFragment mListFragment;
 
+    /* Parent layout for day/relative day labels */
+    LinearLayout mLayoutDayLabel;
+
     /* Text label, shows current date formatted */
     TextView mDayLabel;
 
@@ -57,12 +61,18 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         /* Get bottom bar buttons for controlling date */
         ImageButton prevButton = findViewById(R.id.buttonPrevDay);
         ImageButton nextButton = findViewById(R.id.buttonNextDay);
+        mLayoutDayLabel = findViewById(R.id.linearLayoutDayLabel);
         mDayLabel = findViewById(R.id.textViewCurrentDate);
         mRelativeDayLabel = findViewById(R.id.textViewRelativeDay);
 
         /* Set functionality of bottom bar buttons */
-        prevButton.setOnClickListener(this::onDayChangeButtonClicked);
-        nextButton.setOnClickListener(this::onDayChangeButtonClicked);
+        if(prevButton != null)
+            prevButton.setOnClickListener(this::onDayChangeButtonClicked);
+        if(nextButton != null)
+            nextButton.setOnClickListener(this::onDayChangeButtonClicked);
+        if(mLayoutDayLabel != null)
+            /* If day label (parent layout) is long pressed, reset current day */
+            mLayoutDayLabel.setOnLongClickListener(this::onDayLabelLongPressed);
 
         /* Register for date changed events */
         OnDateChanged.addListener(this);
@@ -191,6 +201,13 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         /* Dismiss accomplishment fragment dialog if exists */
         if (mListFragment != null) mListFragment.dismissCurrentDialog();
 
+    }
+
+
+    /* Reset day to today on long press day label */
+    private boolean onDayLabelLongPressed(View view) {
+        updateCurrentDate(new Date());
+        return true;
     }
 
     @Override
