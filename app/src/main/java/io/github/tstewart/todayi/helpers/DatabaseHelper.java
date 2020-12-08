@@ -118,9 +118,7 @@ public class DatabaseHelper {
         return Database.getInstance(context).getReadableDatabase();
     }
 
-    /**
-     *
-     */
+
     public String getDateAsDatabaseFormat(Date date) {
         DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT);
 

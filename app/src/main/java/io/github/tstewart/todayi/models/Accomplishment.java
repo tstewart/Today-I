@@ -60,10 +60,12 @@ public class Accomplishment implements DatabaseObject {
         ContentValues contentValues = new ContentValues();
         /* Get date formatter with settings that match the database date format */
         DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT);
+        DateFormatter timeFormatter = new DateFormatter(DBConstants.TIME_FORMAT);
 
         /* Format date and add to content values if not null */
         if (mDate != null) {
             contentValues.put(DBConstants.COLUMN_DATE, dateFormatter.format(mDate));
+            contentValues.put(DBConstants.COLUMN_TIME, timeFormatter.format(mDate));
         }
 
         contentValues.put(DBConstants.COLUMN_CONTENT, mContent);
