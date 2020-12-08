@@ -1,6 +1,6 @@
 package io.github.tstewart.todayi.ui.fragments;
 
-import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.database.Cursor;
@@ -16,13 +16,17 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.ListFragment;
+import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.events.OnDatabaseInteracted;
+import io.github.tstewart.todayi.events.OnSwipePerformedListener;
+import io.github.tstewart.todayi.helpers.DateCalculationHelper;
 import io.github.tstewart.todayi.interfaces.OnDatabaseInteractionListener;
 import io.github.tstewart.todayi.events.OnDateChanged;
 import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
@@ -31,7 +35,6 @@ import io.github.tstewart.todayi.helpers.AccomplishmentTableHelper;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
 import io.github.tstewart.todayi.adapters.AccomplishmentCursorAdapter;
-import io.github.tstewart.todayi.ui.activities.MainActivity;
 import io.github.tstewart.todayi.ui.dialogs.AccomplishmentDialog;
 
 /**
@@ -52,33 +55,35 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
     /* Database table helper, assists with Database interaction */
     private AccomplishmentTableHelper mTableHelper;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_accomplishment_list, container, false);
 
-        /* Get parent activity that this fragment is attached to */
-        Activity parent = getActivity();
+        /* Add gesture support, allowing user to change dates by swiping the ListView */
+        ListView listView = view.findViewById(android.R.id.list);
+        if(listView != null) {
+            listView.setOnTouchListener(new OnSwipePerformedListener(getContext()) {
+                @Override
+                public void onSwipe(SwipeDirection direction) {
+                    /* If we should do anything with swipe gestures (controlled by settings) */
+                    if(UserPreferences.isGesturesEnabled()) {
 
-        /* If this fragment is attached to MainActivity */
-        if(parent instanceof MainActivity) {
-            MainActivity mainActivity = (MainActivity)parent;
+                        if (mSelectedDate == null) mSelectedDate = new Date();
 
-            /* Pass touch events from ListView up to MainActivity gesture management */
-            ListView listView = view.findViewById(android.R.id.list);
-            if(listView != null) {
-                listView.setOnTouchListener(mainActivity::onTouchEvent);
-            }
-            /* Pass touch events from this app's view up to MainActivity gesture management */
-            view.setOnTouchListener(mainActivity::onTouchEvent);
+                        if (direction == SwipeDirection.LEFT) {
+                            mSelectedDate = DateCalculationHelper.addToDate(mSelectedDate, Calendar.DAY_OF_MONTH, 1);
+                        } else {
+                            mSelectedDate = DateCalculationHelper.subtractFromDate(mSelectedDate, Calendar.DAY_OF_MONTH, 1);
+                        }
 
-            /* Add click listener to new accomplishment button */
-            Button newAccomplishmentButton = view.findViewById(R.id.buttonNewAccomplishment);
-            if(newAccomplishmentButton != null)
-                newAccomplishmentButton.setOnClickListener(this::onNewItemButtonPressed);
+                        OnDateChanged.notifyDateChanged(mSelectedDate);
+                    }
+                }
+            });
         }
-
         return view;
     }
 
