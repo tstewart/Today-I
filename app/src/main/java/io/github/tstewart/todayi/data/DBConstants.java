@@ -29,7 +29,7 @@ public class DBConstants {
 
 
     /* Helper queries to fetch data */
-    public static final String ACCOMPLISHMENT_QUERY = "select * from " + ACCOMPLISHMENT_TABLE + " where " + COLUMN_DATE + " like ?";
+    public static final String ACCOMPLISHMENT_QUERY = "select * from " + ACCOMPLISHMENT_TABLE + " where " + COLUMN_DATE + " like ? order by " + COLUMN_DATE;
     public static final String ACCOMPLISHMENT_DATE_GROUP_QUERY = "select " + COLUMN_DATE + "  from " + ACCOMPLISHMENT_TABLE + " group by " + COLUMN_DATE;
     public static final String DAY_RATING_QUERY = "select " + COLUMN_RATING + " from " + RATING_TABLE + " where " + COLUMN_DATE + " = ?";
     public static final String DAY_RATING_ALL_RESULTS_QUERY = "select * from " + RATING_TABLE;
