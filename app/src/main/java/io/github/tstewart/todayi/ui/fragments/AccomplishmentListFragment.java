@@ -278,7 +278,8 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
             /* Format current date to database format with wildcard to pattern match */
             String dateFormatted = mTableHelper.getDatabaseHelper().getDateQueryWildcardFormat(mSelectedDate);
 
-            return db.rawQuery(DBConstants.ACCOMPLISHMENT_QUERY,new String[]{dateFormatted});
+            if(db.isOpen())
+                return db.rawQuery(DBConstants.ACCOMPLISHMENT_QUERY,new String[]{dateFormatted});
         }
         return null;
     }
