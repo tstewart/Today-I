@@ -19,7 +19,6 @@ public class Database extends SQLiteOpenHelper {
             + "("
             + DBConstants.COLUMN_ID + " integer primary key autoincrement, "
             + DBConstants.COLUMN_DATE + " string not null, "
-            + DBConstants.COLUMN_TIME + " string, "
             + DBConstants.COLUMN_CONTENT + " text not null"
             + ")";
 
@@ -53,18 +52,12 @@ public class Database extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        /* Update existing databases from old versions of the app to add new time column */
         try {
-            db.execSQL("ALTER TABLE "
-                    + DBConstants.ACCOMPLISHMENT_TABLE
-                    + " ADD COLUMN "
-                    + DBConstants.COLUMN_TIME
-                    + " string");
+            db.execSQL("DROP TABLE IF EXISTS " + DBConstants.ACCOMPLISHMENT_TABLE);
+            db.execSQL(CREATE_TABLE_ACCOMPLISHMENT);
         }
         catch(SQLiteException e) {
-            Log.w(Database.class.getSimpleName(), "Failed to add new column: "
-                    + DBConstants.COLUMN_TIME
-                    + " to existing database. It may already exist.");
+            Log.w(Database.class.getSimpleName(), e.getMessage(), e);
         }
     }
 

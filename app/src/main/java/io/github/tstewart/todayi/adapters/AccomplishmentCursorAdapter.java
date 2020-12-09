@@ -10,8 +10,12 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
+import java.text.ParseException;
+import java.util.Date;
+
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.DBConstants;
+import io.github.tstewart.todayi.helpers.DateFormatter;
 
 /**
  * Pulls data from the Accomplishments table of the database, and converts it's data into a ListItem
@@ -39,7 +43,16 @@ public class AccomplishmentCursorAdapter extends CursorAdapter {
         /* As older versions of the database may not have been updated, try and get the timePosted string but if it fails, don't add it. */
         try {
             /* Get the time posted of the next item in the Accomplishment table */
-            String timePosted = cursor.getString(cursor.getColumnIndexOrThrow(DBConstants.COLUMN_TIME));
+            String datePosted = cursor.getString(cursor.getColumnIndexOrThrow(DBConstants.COLUMN_DATE));
+            String timePosted = null;
+
+            /* Parse database date to Date object, and format back to hour/minute format */
+            try {
+                Date date = new DateFormatter(DBConstants.DATE_FORMAT).parse(datePosted);
+                if(date != null) {
+                    timePosted = new DateFormatter(DBConstants.TIME_FORMAT).format(date);
+                }
+            } catch (ParseException ignore) { }
 
             /* If there was a time posted, add set date TextView to this. */
             if(timePosted != null) {

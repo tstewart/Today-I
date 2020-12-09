@@ -143,10 +143,10 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
             String timePosted;
             try {
                 /* Get time posted and attempt to parse into a date object */
-                timePosted = cursor.getString(cursor.getColumnIndex(DBConstants.COLUMN_TIME));
+                timePosted = cursor.getString(cursor.getColumnIndex(DBConstants.COLUMN_DATE));
 
                 if(timePosted != null) {
-                    selectedDate = new DateFormatter(DBConstants.TIME_FORMAT).parse(timePosted);
+                    selectedDate = new DateFormatter(DBConstants.DATE_FORMAT).parse(timePosted);
                 }
             }
             /* If failed, ignore this error and set selected date to default */
@@ -275,8 +275,8 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
         if(context != null) {
             SQLiteDatabase db = Database.getInstance(getContext()).getWritableDatabase();
 
-            /* Format current date to database format */
-            String dateFormatted = mTableHelper.getDatabaseHelper().getDateAsDatabaseFormat(mSelectedDate);
+            /* Format current date to database format with wildcard to pattern match */
+            String dateFormatted = mTableHelper.getDatabaseHelper().getDateQueryWildcardFormat(mSelectedDate);
 
             return db.rawQuery(DBConstants.ACCOMPLISHMENT_QUERY,new String[]{dateFormatted});
         }
