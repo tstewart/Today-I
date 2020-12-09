@@ -92,9 +92,6 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
                 /* Hide delete button when creating an Accomplishment */
                 mButtonDelete.setVisibility(View.GONE);
             }
-
-            /* Get a new time instance, and format it to get hour and mins */
-
         }
         /* If dialog type is edit, set dialog to edit an existing Accomplishment */
         else if (dialogType == DialogType.EDIT) {
@@ -176,6 +173,10 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
 
     public View getView() {
         return this.mView;
+    }
+
+    public Date getSelectedDate() {
+        return mSelectedDate;
     }
 
     @Override

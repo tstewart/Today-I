@@ -83,7 +83,10 @@ public class DateFormatter {
      * @throws ParseException Thrown if the parser could not create a date from the provided string.
      */
     public Date parse(String dateString) throws ParseException {
-        return mDateFormatter.parse(dateString);
+        if(dateString != null) {
+            return mDateFormatter.parse(dateString);
+        }
+        return null;
     }
 
     /**
