@@ -2,7 +2,9 @@ package io.github.tstewart.todayi.data;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,6 +19,7 @@ public class Database extends SQLiteOpenHelper {
             + "("
             + DBConstants.COLUMN_ID + " integer primary key autoincrement, "
             + DBConstants.COLUMN_DATE + " string not null, "
+            + DBConstants.COLUMN_TIME + " string, "
             + DBConstants.COLUMN_CONTENT + " text not null"
             + ")";
 
@@ -50,7 +53,19 @@ public class Database extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // TODO purge existing database and backup
+        /* Update existing databases from old versions of the app to add new time column */
+        try {
+            db.execSQL("ALTER TABLE "
+                    + DBConstants.ACCOMPLISHMENT_TABLE
+                    + " ADD COLUMN "
+                    + DBConstants.COLUMN_TIME
+                    + " string");
+        }
+        catch(SQLiteException e) {
+            Log.w(Database.class.getSimpleName(), "Failed to add new column: "
+                    + DBConstants.COLUMN_TIME
+                    + " to existing database. It may already exist.");
+        }
     }
 
     /**
