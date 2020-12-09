@@ -54,6 +54,7 @@
     <!-- No background button theme -->
     <style name="AppTheme.ButtonNavigation" parent="Widget.AppCompat.ImageButton">
         <item name="android:backgroundTint">@color/colorTransparent</item>
+        <item name="android:foreground">@drawable/ripple</item>
     </style>
 
     <!-- Button delete data theme -->
@@ -68,6 +69,15 @@
     </style>
 
     <!-- Calendar activity -->
+    <style name="AppTheme.CalendarTheme">
+        <item name="mcv_selectionColor">@color/colorCalendarSelection</item>
+        <item name="mcv_dateTextAppearance">@style/AppTheme.CalendarDateText</item>
+        <item name="mcv_headerTextAppearance">@style/AppTheme.CalendarHeaderText</item>
+        <item name="mcv_weekDayTextAppearance">@style/AppTheme.CalendarMonthLabelText</item>
+        <item name="mcv_leftArrow">@drawable/navigation_previous</item>
+        <item name="mcv_rightArrow">@drawable/navigation_next</item>
+    </style>
+
     <style name="AppTheme.CalendarDateText">
         <item name="android:textSize">16sp</item>
     </style>

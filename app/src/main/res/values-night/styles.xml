@@ -12,8 +12,11 @@
 
     <!-- No background button theme -->
     <style name="AppTheme.ButtonNavigation" parent="Widget.AppCompat.ImageButton">
+        <item name="android:drawable">@drawable/rounded_shape</item>
         <item name="android:backgroundTint">@color/colorTransparent</item>
+        <item name="android:foreground">@drawable/ripple</item>
         <item name="android:tint">@color/colorWhite</item>
+
     </style>
 
     <!-- Button delete data theme -->
