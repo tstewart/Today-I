@@ -224,7 +224,7 @@ public class CalendarActivity extends AppCompatActivity {
 
                 try {
                     /* Try and parse the date string from Database format to a Date object */
-                    Date date = new DateFormatter(DBConstants.DATE_FORMAT).parse(dateString);
+                    Date date = new DateFormatter(DBConstants.DATE_FORMAT_NO_TIME).parse(dateString);
 
                     /* If successful, the Date object must be converted to an object that MaterialCalendarView understands */
                     if (date != null) {
