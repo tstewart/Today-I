@@ -98,19 +98,7 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
         /* Set gradient of colors up to MAX_RATING */
         Context context = getContext();
 
-        int colorStart;
-        int colorEnd;
-
-        if(context != null) {
-            colorStart = ContextCompat.getColor(getContext(), R.color.colorRatingRed);
-            colorEnd = ContextCompat.getColor(getContext(), R.color.colorRatingGreen);
-        }
-        else {
-            colorStart = DEFAULT_COLOR_START;
-            colorEnd = DEFAULT_COLOR_END;
-        }
-
-        mColors = new ColorBlendHelper(mColors.length, colorStart, colorEnd).generateColors();
+        mColors = new ColorBlendHelper(mColors.length).blendColors();
 
         /* Get rating for current date */
         int index = getIndexOfRating(new Date());

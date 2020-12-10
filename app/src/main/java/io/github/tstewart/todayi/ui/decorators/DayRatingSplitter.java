@@ -7,7 +7,6 @@ import android.graphics.drawable.GradientDrawable;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +15,6 @@ import androidx.core.content.ContextCompat;
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.helpers.ColorBlendHelper;
-import io.github.tstewart.todayi.ui.fragments.DayRatingFragment;
 
 /*
  Splits a HashMap of CalendarDays and Integers into a list of DayRatedDecorators
@@ -44,11 +42,7 @@ public class DayRatingSplitter {
     public DayRatingSplitter(@NonNull Context context) {
         this.mContext = context;
 
-        /* Generate colors to assign to ratings */
-        int colorStart = context.getColor(R.color.colorRatingRed);
-        int colorEnd = context.getColor(R.color.colorRatingGreen);
-
-        mColors = new ColorBlendHelper(MAX_RATING, colorStart, colorEnd).generateColors();
+        mColors = new ColorBlendHelper(MAX_RATING).blendColors();
     }
 
     public List<DayRatedDecorator> getDayRatingDecorators(Map<CalendarDay, Integer> ratings) {

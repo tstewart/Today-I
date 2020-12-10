@@ -1,15 +1,12 @@
 package io.github.tstewart.todayi.ui.activities;
 
 import android.app.ActionBar;
-import android.content.DialogInterface;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.ScrollView;
@@ -23,8 +20,6 @@ import java.util.Random;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.ColorUtils;
-import androidx.vectordrawable.graphics.drawable.ArgbEvaluator;
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.helpers.ColorBlendHelper;
 import io.github.tstewart.todayi.models.Accomplishment;
@@ -116,7 +111,7 @@ public class DebugActivity extends AppCompatActivity {
                 .setPositiveButton("Ok", (dialog, which) -> {
                     int numSelection = numberPicker.getValue();
 
-                    int[] colors = new ColorBlendHelper(numSelection, Color.RED, Color.GREEN).generateColors();
+                    int[] colors = new ColorBlendHelper(numSelection).blendColors();
 
                     LinearLayout resultView = new LinearLayout(this);
                     resultView.setOrientation(LinearLayout.VERTICAL);
