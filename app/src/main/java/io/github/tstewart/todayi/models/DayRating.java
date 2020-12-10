@@ -56,7 +56,7 @@ public class DayRating implements DatabaseObject {
     public ContentValues createCV() {
         ContentValues contentValues = new ContentValues();
         /* Get date formatter with settings that match the database date format */
-        DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT);
+        DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT_NO_TIME);
 
         /* Format date and add to content values if not null */
         if (mDate != null) {

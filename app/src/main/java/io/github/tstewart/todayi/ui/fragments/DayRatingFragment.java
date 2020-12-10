@@ -47,11 +47,6 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
      */
     private static final int MAX_RATING = UserPreferences.getMaxDayRating();
 
-
-    /* Default colors to use in gradient, if color could not be retrieved from Context */
-    private static final int DEFAULT_COLOR_START = Color.RED;
-    private static final int DEFAULT_COLOR_END = Color.GREEN;
-
     /* Colors for individual day rating */
     int[] mColors;
     /* List of day rating buttons */
@@ -94,9 +89,6 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
         /* Set weight of individual buttons in the fragment
         * E.g. A weight of 5 means each button takes up 20% of the parent layout */
         ll.setWeightSum(MAX_RATING);
-
-        /* Set gradient of colors up to MAX_RATING */
-        Context context = getContext();
 
         mColors = new ColorBlendHelper(mColors.length).blendColors();
 
