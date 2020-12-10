@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <full-backup-content>
-    <!-- Exclude the shared preferences file that contains the GCM registrationId -->
-    <exclude
-        domain="sharedpref"
-        path="io.github.tstewart.todayi.userprefs.xml" />
+    <include domain="sharedpref"
+        path="string"
+        requiredFlags="clientSideEncryption"/>
+
+    <include domain="database"
+        path="string" />
+
+    <!-- Exclude back-up location -->
+    <exclude domain="external"/>
 </full-backup-content>
