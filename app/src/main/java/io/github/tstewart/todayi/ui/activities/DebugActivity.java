@@ -1,6 +1,7 @@
 package io.github.tstewart.todayi.ui.activities;
 
 import android.app.ActionBar;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.ContextThemeWrapper;
@@ -21,17 +22,18 @@ import java.util.Random;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import io.github.tstewart.todayi.R;
+import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.helpers.ColorBlendHelper;
+import io.github.tstewart.todayi.helpers.DateCalculationHelper;
 import io.github.tstewart.todayi.models.Accomplishment;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.helpers.DatabaseHelper;
+import io.github.tstewart.todayi.models.DayRating;
 
 /*
 Debug functions for messing with the internals of the app
  */
 public class DebugActivity extends AppCompatActivity {
-
-    Button mGetColorPercentageTest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,29 +42,29 @@ public class DebugActivity extends AppCompatActivity {
 
         this.setTitle("Debug Menu <3");
 
-        Button invalidateBackupButton = findViewById(R.id.debugInvalidateBackupTime);
-        Button populateAccomplishmentsButton = findViewById(R.id.debug_populate_accomplishments);
-        Button getAccomplishmentsButton = findViewById(R.id.debug_get_accomplishments);
-        Button getRatingsButton = findViewById(R.id.debug_get_ratings);
-        mGetColorPercentageTest = findViewById(R.id.debug_color_test);
-        Button backButton = findViewById(R.id.debugBack);
+        LinearLayout debugLayout = findViewById(R.id.debugLayout);
 
-        if (invalidateBackupButton != null)
-            invalidateBackupButton.setOnClickListener(this::onInvalidateBackupButtonClicked);
-        if (populateAccomplishmentsButton != null)
-           // populateAccomplishmentsButton.setOnClickListener(this::onPopulateAccomplishmentsButtonClicked);
-        if (getAccomplishmentsButton != null)
-            getAccomplishmentsButton.setOnClickListener(this::onGetAccomplishmentsButtonClicked);
-        if (getRatingsButton != null)
-            getRatingsButton.setOnClickListener(this::onGetRatingsButtonClicked);
-        if (mGetColorPercentageTest != null)
-            mGetColorPercentageTest.setOnClickListener(this::onColorTestButtonClicked);
-        if (backButton != null) backButton.setOnClickListener(view -> {
-            this.finish();
-        });
+        if(debugLayout != null) {
+            for (View v : debugLayout.getTouchables()) {
+                if(v instanceof Button) {
+                    v.setOnClickListener(this::onButtonClicked);
+                }
+            }
+        }
     }
 
-    private void onInvalidateBackupButtonClicked(View view) {
+
+    public void onButtonClicked(View view) {
+        int id = view.getId();
+
+        if(id == R.id.debugInvalidateBackupTime) onInvalidateBackupButtonClicked();
+        else if(id == R.id.debug_populate_accomplishments) onPopulateAccomplishmentsButtonClicked();
+        else if(id == R.id.debug_populate_ratings) onPopulateRatingsButtonClicked();
+        else if(id == R.id.debug_color_test) onColorTestButtonClicked();
+        else if(id == R.id.debugBack) this.finish();
+    }
+
+    private void onInvalidateBackupButtonClicked() {
         try {
             getSharedPreferences(getString(R.string.user_prefs_file_location_key), MODE_PRIVATE)
                     .edit()
@@ -75,32 +77,60 @@ public class DebugActivity extends AppCompatActivity {
         }
     }
 
-    private void onPopulateAccomplishmentsButtonClicked(View view) {
-        Random random = new Random();
-        Date targetDate = new Date();
-        Date currentDate = getDateMonthAgo();
+    private void onPopulateAccomplishmentsButtonClicked() {
 
-        DatabaseHelper helper = new DatabaseHelper(DBConstants.ACCOMPLISHMENT_TABLE);
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.debug_populate_accomplishments)
+                .setMessage(R.string.debug_populate_confirmation)
+                .setPositiveButton(R.string.button_yes, (dialog, which) -> {
+                        Random random = new Random();
+                        Date targetDate = new Date();
+                        Date currentDate = DateCalculationHelper.subtractFromDate(targetDate, Calendar.DAY_OF_MONTH, 31);
 
-        while (currentDate.before(targetDate)) {
-            int numPosts = random.nextInt(5);
+                        DatabaseHelper helper = new DatabaseHelper(DBConstants.ACCOMPLISHMENT_TABLE);
 
-            for (int i = 0; i < numPosts; i++) {
-                Accomplishment accomplishment = new Accomplishment(currentDate, "DUMMY CONTENT!");
-                helper.insert(this, accomplishment);
-            }
+                        while (currentDate.before(targetDate)) {
+                            int numPosts = random.nextInt(5);
 
-            currentDate = addDay(currentDate);
-        }
+                            for (int i = 0; i < numPosts; i++) {
+                                Accomplishment accomplishment = new Accomplishment(currentDate, "DUMMY CONTENT!");
+                                helper.insert(this, accomplishment);
+                            }
+
+                            currentDate = DateCalculationHelper.addToDate(currentDate, Calendar.DAY_OF_MONTH, 1);
+                        }
+                })
+                .setNegativeButton(R.string.button_no, null)
+                .create()
+                .show();
     }
 
-    private void onGetAccomplishmentsButtonClicked(View view) {
+    private void onPopulateRatingsButtonClicked() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.debug_populate_ratings)
+                .setMessage(R.string.debug_populate_confirmation)
+                .setPositiveButton(R.string.button_yes, (dialog, which) -> {
+                    Random random = new Random();
+                    Date targetDate = new Date();
+                    Date currentDate = DateCalculationHelper.subtractFromDate(targetDate, Calendar.DAY_OF_MONTH, 31);
+
+                    DatabaseHelper helper = new DatabaseHelper(DBConstants.RATING_TABLE);
+
+                    while (currentDate.before(targetDate)) {
+                        int rating = random.nextInt(UserPreferences.getMaxDayRating())+1;
+
+                        DayRating dayRating = new DayRating(currentDate,rating);
+                        helper.insert(getApplicationContext(),dayRating);
+
+                        currentDate = DateCalculationHelper.addToDate(currentDate, Calendar.DAY_OF_MONTH, 1);
+                    }
+                })
+                .setNegativeButton(R.string.button_no, null)
+                .create()
+                .show();
     }
 
-    private void onGetRatingsButtonClicked(View view) {
-    }
-
-    public void onColorTestButtonClicked(View view) {
+    public void onColorTestButtonClicked() {
 
         final NumberPicker numberPicker = new NumberPicker(this);
         numberPicker.setMaxValue(0);
@@ -136,20 +166,5 @@ public class DebugActivity extends AppCompatActivity {
                 })
                 .create()
                 .show();
-    }
-
-    private Date addDay(Date currentDate) {
-        Calendar c = new GregorianCalendar();
-        c.setTime(currentDate);
-        c.add(Calendar.DAY_OF_YEAR, 1);
-        return c.getTime();
-    }
-
-    private Date getDateMonthAgo() {
-        Calendar c = new GregorianCalendar();
-        c.setTime(new Date());
-        c.add(Calendar.DAY_OF_YEAR, -31);
-
-        return c.getTime();
     }
 }
