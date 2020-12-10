@@ -1,6 +1,5 @@
 package io.github.tstewart.todayi.ui.activities;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -14,19 +13,20 @@ import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Switch;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
+import java.util.List;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SwitchCompat;
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.LocalDatabaseIO;
 import io.github.tstewart.todayi.data.UserPreferences;
@@ -58,6 +58,9 @@ public class OptionsActivity extends AppCompatActivity {
     /* Toast alerts user how many clicks they need to access debug menu */
     private Toast mClicksToDebugToast;
 
+    /* View currently being pressed by user */
+    private View mSelectedView = null;
+
     /* Notifies the user when the application was last backed up */
     TextView mLastBackedUpTv;
     /*
@@ -80,13 +83,17 @@ public class OptionsActivity extends AppCompatActivity {
         SharedPreferences sharedPrefs = getSharedPreferences(getString(R.string.user_prefs_file_location_key), MODE_PRIVATE);
         this.mPreferences = new UserPreferences(sharedPrefs);
 
-        /* Find all buttons that have functionality from layout */
-        Button importDataButton = findViewById(R.id.buttonImportData);
-        Button exportDataButton = findViewById(R.id.buttonExportData);
-        Button restoreBackupButton = findViewById(R.id.buttonRestoreBackup);
-        Button forceBackupButton = findViewById(R.id.buttonForceBackup);
-        Button googleSignInButton = findViewById(R.id.buttonGoogleSignIn);
-        Button eraseAllDataButton = findViewById(R.id.buttonEraseAll);
+        LinearLayout mainLayout = findViewById(R.id.linearLayoutOptions);
+
+        if(mainLayout != null) {
+            for (View v : mainLayout.getTouchables()) {
+                if(v instanceof Button) {
+                    v.setOnTouchListener(this::onTouchEvent);
+                    v.setOnClickListener(this::onButtonClicked);
+                }
+            }
+        }
+
         /* Get TextViews that have functionality from layout */
         mLastBackedUpTv = findViewById(R.id.textViewLastBackedUp);
         mCurrentVersionTv = findViewById(R.id.textViewAboutVersion);
@@ -117,24 +124,45 @@ public class OptionsActivity extends AppCompatActivity {
             mClipAccomplishments.setOnClickListener(this::onClipAccomplishmentSwitchClicked);
         }
 
-
-        /* Set appropriate onClickListener for each button, if the button could be found */
-        if (importDataButton != null)
-            importDataButton.setOnClickListener(this::onImportDataButtonClicked);
-        if (exportDataButton != null)
-            exportDataButton.setOnClickListener(this::onExportDataButtonClicked);
-        if (restoreBackupButton != null)
-            restoreBackupButton.setOnClickListener(this::onRestoreBackupButtonClicked);
-        if (forceBackupButton != null)
-            forceBackupButton.setOnClickListener(this::onForceBackupButtonClicked);
-        if (googleSignInButton != null)
-            googleSignInButton.setOnClickListener(this::onGoogleSignInButtonClicked);
-        if (eraseAllDataButton != null)
-            eraseAllDataButton.setOnClickListener(this::eraseButtonClicked);
-
         /* Set top bar title */
         if (getSupportActionBar() != null)
             getSupportActionBar().setTitle(R.string.activity_settings);
+    }
+
+    /* If a button is touched, set that button as the selected view until that button is released */
+    private boolean onTouchEvent(View view, MotionEvent event) {
+        /* If no button is held or this button is held */
+        if(mSelectedView == null || view == mSelectedView) {
+            /* If the button was just held */
+            if (event.getAction() == MotionEvent.ACTION_DOWN)
+                mSelectedView = view;
+            /* If the button was released, stop preventing clicks */
+            else if (event.getAction() == MotionEvent.ACTION_UP) {
+                mSelectedView = null;
+            }
+            /* Touch event has not been captured, allowing other onTouchEvents to use this button */
+            return false;
+        }
+        /* Touch event has been captured, preventing other onTouchEvents from using this button */
+        return true;
+    }
+
+    /* Control for all buttons in the Activity, disables clicking multiple buttons at the same time */
+    public void onButtonClicked(View view) {
+        int id = view.getId();
+
+        if(id == R.id.buttonRestoreBackup)
+            this.onRestoreBackupButtonClicked();
+        else if(id == R.id.buttonForceBackup)
+            this.onForceBackupButtonClicked();
+        else if(id == R.id.buttonImportData)
+            this.onImportDataButtonClicked();
+        else if(id == R.id.buttonExportData)
+            this.onExportDataButtonClicked();
+        else if(id == R.id.buttonGoogleSignIn)
+            this.onGoogleSignInButtonClicked();
+        else if(id == R.id.buttonEraseAll)
+            this.eraseButtonClicked();
     }
 
     @Override
@@ -145,6 +173,9 @@ public class OptionsActivity extends AppCompatActivity {
         if (mLastBackedUpTv != null) {
             setLastBackedUpText();
         }
+
+        /* Reset selected view */
+        mSelectedView = null;
     }
 
     /* Called if a button is pressed in the top bar */
@@ -237,7 +268,7 @@ public class OptionsActivity extends AppCompatActivity {
         }
     }
 
-    private void onRestoreBackupButtonClicked(View view) {
+    private void onRestoreBackupButtonClicked() {
         /* Open an alert dialog to confirm if the user wishes to restore from backup */
         new AlertDialog.Builder(this)
                 .setTitle(R.string.button_restore_backup)
@@ -268,7 +299,7 @@ public class OptionsActivity extends AppCompatActivity {
 
     }
 
-    private void onForceBackupButtonClicked(View view) {
+    private void onForceBackupButtonClicked() {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.button_force_backup)
                 .setMessage(R.string.force_backup_confirmation)
@@ -276,6 +307,8 @@ public class OptionsActivity extends AppCompatActivity {
                     try {
                         /* Force backup database to file */
                         LocalDatabaseIO.backupDb(this, DBConstants.DB_NAME);
+                        /* Update last backed up */
+                        mPreferences.set(getString(R.string.user_prefs_last_backed_up_key),System.currentTimeMillis());
                     } catch (ExportFailedException e) {
                         /* If failed, alert user and log */
                         Log.w(CLASS_LOG_TAG, e.getMessage(), e);
@@ -286,33 +319,23 @@ public class OptionsActivity extends AppCompatActivity {
                 .create()
                 .show();
 
-
-        /*
-         Update time since last backed up
-         TODO move to LocalDatabaseIO?
-        */
-        getSharedPreferences(getString(R.string.user_prefs_file_location_key), MODE_PRIVATE)
-                .edit()
-                .putLong(getString(R.string.user_prefs_last_backed_up_key), System.currentTimeMillis())
-                .apply();
-
         /* Update last backed up text */
         setLastBackedUpText();
     }
 
-    private void onImportDataButtonClicked(View view) {
+    private void onImportDataButtonClicked() {
         Toast.makeText(this, "Coming soon!", Toast.LENGTH_SHORT).show();
     }
 
-    private void onExportDataButtonClicked(View view) {
+    private void onExportDataButtonClicked() {
         Toast.makeText(this, "Coming soon!", Toast.LENGTH_SHORT).show();
     }
 
-    private void onGoogleSignInButtonClicked(View view) {
+    private void onGoogleSignInButtonClicked() {
         Toast.makeText(this, "Coming soon!", Toast.LENGTH_SHORT).show();
     }
 
-    private void eraseButtonClicked(View view) {
+    private void eraseButtonClicked() {
         /* Open an alert dialog to confirm if the user wishes to erase all data */
         new AlertDialog.Builder(this)
                 .setTitle(R.string.erase_all_warning_dialog_title)

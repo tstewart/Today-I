@@ -2,7 +2,9 @@ package io.github.tstewart.todayi.data;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -50,7 +52,13 @@ public class Database extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // TODO purge existing database and backup
+        try {
+            db.execSQL("DROP TABLE IF EXISTS " + DBConstants.ACCOMPLISHMENT_TABLE);
+            db.execSQL(CREATE_TABLE_ACCOMPLISHMENT);
+        }
+        catch(SQLiteException e) {
+            Log.w(Database.class.getSimpleName(), e.getMessage(), e);
+        }
     }
 
     /**

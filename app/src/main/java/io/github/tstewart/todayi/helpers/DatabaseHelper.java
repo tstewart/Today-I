@@ -118,9 +118,16 @@ public class DatabaseHelper {
         return Database.getInstance(context).getReadableDatabase();
     }
 
-    /**
-     *
-     */
+    /* Get date query with wildcard at the end, to match all records with the same date without the time */
+    public String getDateQueryWildcardFormat(Date date) {
+        DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT_NO_TIME);
+
+        if(date != null) {
+            return dateFormatter.format(date) + "%";
+        }
+        return null;
+    }
+
     public String getDateAsDatabaseFormat(Date date) {
         DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT);
 

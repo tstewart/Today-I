@@ -1,6 +1,7 @@
 package io.github.tstewart.todayi.ui.dialogs;
 
 import android.app.AlertDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -9,13 +10,27 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.TimePicker;
+
+import java.util.Calendar;
+import java.util.Date;
 
 import io.github.tstewart.todayi.R;
+import io.github.tstewart.todayi.data.DBConstants;
+import io.github.tstewart.todayi.helpers.DateFormatter;
 
 /*
 Dialog for adding and editing Accomplishments
  */
 public class AccomplishmentDialog extends AlertDialog.Builder {
+
+    /* Selected date / time */
+    private Date mSelectedDate;
+    /* Time selection label */
+    private final TextView mSelectedTimeLabel;
+    /* Time selection button */
+    private final Button mButtonTimeSelection;
 
     /* Delete button */
     private final Button mButtonDelete;
@@ -23,6 +38,8 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
     private final Button mButtonConfirm;
     /* This dialog's view */
     private View mView;
+    /* Activity context */
+    private final Context mContext;
     /* This dialog's instance. Set when create is called */
     private AlertDialog mInstance;
 
@@ -34,12 +51,24 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
         View view = inflater.inflate(R.layout.dialog_accomplishment_manage, null);
         this.setView(view);
 
+        mContext = context;
+        mSelectedTimeLabel = view.findViewById(R.id.textViewSelectedTime);
+        mButtonTimeSelection = view.findViewById(R.id.buttonSetTime);
         mButtonDelete = view.findViewById(R.id.buttonDelete);
         mButtonConfirm = view.findViewById(R.id.buttonConfirm);
+
+        if(mButtonTimeSelection != null)
+            mButtonTimeSelection.setOnClickListener(this::setTimeSelectionButtonListener);
     }
 
     @Override
     public AlertDialog create() {
+
+        /* If current selected time was not set, set to current time */
+        if(mSelectedTimeLabel != null && mSelectedTimeLabel.getText().length()==0) {
+            setSelectedTime(new Date());
+        }
+
         AlertDialog dialog = super.create();
 
         /* Used for onclick control management */
@@ -88,6 +117,40 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
         return this;
     }
 
+    /* Set selected time */
+    public AccomplishmentDialog setSelectedTime(Date date) {
+        if(mSelectedTimeLabel != null && date != null) {
+            DateFormatter dateFormatter = new DateFormatter(DBConstants.TIME_FORMAT);
+            mSelectedTimeLabel.setText(dateFormatter.format(date));
+
+            mSelectedDate = date;
+        }
+        return this;
+    }
+
+    private void setTimeSelectionButtonListener(View view) {
+        if(mContext != null) {
+            /* Get current time */
+            Calendar calendar = Calendar.getInstance();
+
+            /* If already provided a time, set the time picker default value to this selected time */
+            if(mSelectedDate != null)
+                calendar.setTime(mSelectedDate);
+
+            /* Get time picker dialog */
+            new TimePickerDialog(mContext, (timeView, hourOfDay, minute) -> {
+                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                calendar.set(Calendar.MINUTE, minute);
+
+                setSelectedTime(calendar.getTime());
+
+            }, calendar.get(Calendar.HOUR_OF_DAY),
+                    calendar.get(Calendar.MINUTE),
+                    true)
+            .show();
+        }
+    }
+
     public AccomplishmentDialog setConfirmClickListener(View.OnClickListener listener) {
         if (mButtonConfirm != null) {
             mButtonConfirm.setOnClickListener(v -> {
@@ -110,6 +173,10 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
 
     public View getView() {
         return this.mView;
+    }
+
+    public Date getSelectedDate() {
+        return mSelectedDate;
     }
 
     @Override

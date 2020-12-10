@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/debugLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -17,12 +18,6 @@
             android:layout_height="wrap_content"
             android:text="@string/debug_invalidate_backup" />
 
-        <Button
-            android:id="@+id/debug_populate_accomplishments"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/debug_populate_accomplishments" />
-
     </LinearLayout>
 
     <LinearLayout
@@ -31,19 +26,17 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/debug_get_accomplishments"
+            android:id="@+id/debug_populate_accomplishments"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/debug_get_accomplishments" />
+            android:text="@string/debug_populate_accomplishments" />
 
         <Button
-            android:id="@+id/debug_get_ratings"
-            android:layout_width="wrap_content"
+            android:id="@+id/debug_populate_ratings"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/debug_get_ratings" />
-
+            android:text="@string/debug_populate_ratings" />
     </LinearLayout>
 
     <LinearLayout

@@ -7,7 +7,7 @@ public class DBConstants {
 
     /* Meta table data */
     public static final String DB_NAME = "todayi_db";
-    public static final int DB_VERSION = 1;
+    public static final int DB_VERSION = 3;
 
     /* Table names */
     public static final String ACCOMPLISHMENT_TABLE = "accomplishments";
@@ -21,14 +21,17 @@ public class DBConstants {
 
     /*
      Default date format, all dates should be formatted to this to be accepted
-     This is used because dates are represented in SQLite as a millisecond-date, which makes querying specific dates difficult
     */
-    public static final String DATE_FORMAT = "yyyy-MM-dd";
+    public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm";
+    public static final String DATE_FORMAT_NO_TIME = "yyyy-MM-dd";
+    /* Time format, used when date is not required to be shown */
+    public static final String TIME_FORMAT = "HH:mm";
+
 
     /* Helper queries to fetch data */
-    public static final String ACCOMPLISHMENT_QUERY = "select * from " + ACCOMPLISHMENT_TABLE + " where date = ?";
+    public static final String ACCOMPLISHMENT_QUERY = "select * from " + ACCOMPLISHMENT_TABLE + " where " + COLUMN_DATE + " like ? order by " + COLUMN_DATE;
     public static final String ACCOMPLISHMENT_DATE_GROUP_QUERY = "select " + COLUMN_DATE + "  from " + ACCOMPLISHMENT_TABLE + " group by " + COLUMN_DATE;
-    public static final String DAY_RATING_QUERY = "select " + COLUMN_RATING + " from " + RATING_TABLE + " where date = ?";
+    public static final String DAY_RATING_QUERY = "select " + COLUMN_RATING + " from " + RATING_TABLE + " where " + COLUMN_DATE + " = ?";
     public static final String DAY_RATING_ALL_RESULTS_QUERY = "select * from " + RATING_TABLE;
 
     /* Private constructor prevents initialisation of helper class */

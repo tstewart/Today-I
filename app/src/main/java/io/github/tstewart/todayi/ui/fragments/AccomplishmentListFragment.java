@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,8 +15,10 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -27,6 +30,7 @@ import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.events.OnDatabaseInteracted;
 import io.github.tstewart.todayi.events.OnSwipePerformedListener;
 import io.github.tstewart.todayi.helpers.DateCalculationHelper;
+import io.github.tstewart.todayi.helpers.DateFormatter;
 import io.github.tstewart.todayi.interfaces.OnDatabaseInteractionListener;
 import io.github.tstewart.todayi.events.OnDateChanged;
 import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
@@ -54,6 +58,8 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
 
     /* Database table helper, assists with Database interaction */
     private AccomplishmentTableHelper mTableHelper;
+
+    /* */
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -84,6 +90,12 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
                 }
             });
         }
+
+        /* Add click listener to new accomplishment button */
+        Button newAccomplishmentButton = view.findViewById(R.id.buttonNewAccomplishment);
+        if(newAccomplishmentButton != null)
+            newAccomplishmentButton.setOnClickListener(this::onNewItemButtonPressed);
+
         return view;
     }
 
@@ -97,12 +109,6 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
 
         setListAdapter(mCursorAdapter);
         getListView().setOnItemClickListener(this::onListItemClick);
-
-        /* Append New button to end of ListView */
-        Button newItemButton = new Button(getContext());
-        newItemButton.setText(getResources().getText(R.string.new_accomplishment));
-        newItemButton.setOnClickListener(this::onNewItemButtonPressed);
-        getListView().addFooterView(newItemButton);
 
         /* Add listener to notify fragment of database updates */
         OnDatabaseInteracted.addListener(this);
@@ -132,6 +138,24 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
             /* Get content of the currently selected Accomplishment */
             String itemContent = cursor.getString(cursor.getColumnIndex(DBConstants.COLUMN_CONTENT));
 
+            /* Get time posted if available, otherwise default to current time */
+            Date selectedDate = null;
+            String timePosted;
+            try {
+                /* Get time posted and attempt to parse into a date object */
+                timePosted = cursor.getString(cursor.getColumnIndex(DBConstants.COLUMN_DATE));
+
+                if(timePosted != null) {
+                    selectedDate = new DateFormatter(DBConstants.DATE_FORMAT).parse(timePosted);
+                }
+            }
+            /* If failed, ignore this error and set selected date to default */
+            catch(SQLiteException | ParseException ignore) {}
+            finally {
+                if(selectedDate == null)
+                    selectedDate = new Date();
+            }
+
             /*
              Dismiss current dialog if one is currently open
              Prevents multiple dialogs from opening
@@ -141,12 +165,22 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
             this.mDialog = new AccomplishmentDialog(this.getContext())
                     .setText(itemContent)
                     .setDialogType(AccomplishmentDialog.DialogType.EDIT)
+                    .setSelectedTime(selectedDate)
                     .setConfirmClickListener((dialogView -> {
                         EditText input = dialogView.getRootView().findViewById(R.id.editTextAccomplishmentManage);
+                        TextView timeLabel = dialogView.getRootView().findViewById(R.id.textViewSelectedTime);
 
                         if (input != null) {
+
+                            Date newSelectedDate;
+
+                            if(timeLabel != null)
+                                newSelectedDate = parseDate(timeLabel.getText().toString());
+                            else
+                                newSelectedDate = mSelectedDate;
+
                             /* Create Accomplishment object from new values */
-                            Accomplishment accomplishment = new Accomplishment(mSelectedDate, input.getText().toString());
+                            Accomplishment accomplishment = new Accomplishment(newSelectedDate, input.getText().toString());
 
                             try {
                                 /* Update Database entry with new content */
@@ -175,10 +209,20 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
                 .setDialogType(AccomplishmentDialog.DialogType.NEW)
                 .setConfirmClickListener(dialogView -> {
                     EditText input = dialogView.getRootView().findViewById(R.id.editTextAccomplishmentManage);
+                    TextView timeLabel = dialogView.getRootView().findViewById(R.id.textViewSelectedTime);
 
                     if (input != null) {
+
+                        Date selectedDate;
+
+                        if(timeLabel != null)
+                            selectedDate = parseDate(timeLabel.getText().toString());
+                        else
+                            selectedDate = mSelectedDate;
+
+
                         /* Create Accomplishment object from new values */
-                        Accomplishment accomplishment = new Accomplishment(mSelectedDate, input.getText().toString());
+                        Accomplishment accomplishment = new Accomplishment(selectedDate, input.getText().toString());
 
                         try {
                             /* Insert Accomplishment into Database */
@@ -191,6 +235,28 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
                 .create();
 
         this.mDialog.show();
+    }
+
+    /* Parse date response from dialog */
+    private Date parseDate(String dateString) {
+        Calendar calendar = Calendar.getInstance();
+
+        /* Set calendar day to selected day */
+        if(mSelectedDate != null)
+            calendar.setTime(mSelectedDate);
+
+        try {
+            if (dateString != null) {
+                /* Get time from new string, and set the time for the current calendar instance to this time */
+                Calendar newTimeCal = Calendar.getInstance();
+                newTimeCal.setTime(new DateFormatter(DBConstants.TIME_FORMAT).parse(dateString));
+
+                calendar.set(Calendar.HOUR_OF_DAY, newTimeCal.get(Calendar.HOUR_OF_DAY));
+                calendar.set(Calendar.MINUTE, newTimeCal.get(Calendar.MINUTE));
+            }
+        } catch (ParseException ignore) {}
+
+        return calendar.getTime();
     }
 
     /**
@@ -209,10 +275,11 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
         if(context != null) {
             SQLiteDatabase db = Database.getInstance(getContext()).getWritableDatabase();
 
-            /* Format current date to database format */
-            String dateFormatted = mTableHelper.getDatabaseHelper().getDateAsDatabaseFormat(mSelectedDate);
+            /* Format current date to database format with wildcard to pattern match */
+            String dateFormatted = mTableHelper.getDatabaseHelper().getDateQueryWildcardFormat(mSelectedDate);
 
-            return db.rawQuery(DBConstants.ACCOMPLISHMENT_QUERY,new String[]{dateFormatted});
+            if(db.isOpen())
+                return db.rawQuery(DBConstants.ACCOMPLISHMENT_QUERY,new String[]{dateFormatted});
         }
         return null;
     }

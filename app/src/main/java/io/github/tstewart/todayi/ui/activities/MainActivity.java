@@ -2,14 +2,11 @@ package io.github.tstewart.todayi.ui.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
-import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -23,15 +20,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import io.github.tstewart.todayi.R;
-import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.events.OnDatabaseInteracted;
 import io.github.tstewart.todayi.events.OnDateChanged;
 import io.github.tstewart.todayi.helpers.DateCalculationHelper;
+import io.github.tstewart.todayi.helpers.DateFormatter;
+import io.github.tstewart.todayi.helpers.RelativeDateHelper;
 import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
 import io.github.tstewart.todayi.ui.fragments.AccomplishmentListFragment;
-import io.github.tstewart.todayi.helpers.DateFormatter;
-
-import static java.util.Calendar.getInstance;
 
 /*
 Main Activity of the application (obviously), handles AccomplishmentListFragment and DayRatingFragment functionality
@@ -43,23 +38,20 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
     /* Used when requesting a response from OptionsActivity */
     private static final int OPTIONS_ACTIVITY_REQUEST_CODE = 2;
 
-    /* Minimum pixel distance required to constitute a swipe gesture */
-    private static final int SWIPE_GESTURE_DISTANCE = 250;
-
-    /* Location the user started to touch the screen, and the location the user stopped touching the screen */
-    private float mTouchLocationStart;
-    private float mTouchLocationEnd;
-
     /* Currently selected date (Application-wide, controlled by OnDateChangedListener) */
     Date mSelectedDate;
 
     /* Fragment that contains functionality for viewing, creating, editing, and deleting Accomplishments */
     AccomplishmentListFragment mListFragment;
 
-    /* Bottom bar containing date buttons and DayRating fragment */
-    LinearLayout mBottomBar;
+    /* Parent layout for day/relative day labels */
+    LinearLayout mLayoutDayLabel;
+
     /* Text label, shows current date formatted */
     TextView mDayLabel;
+
+    /* Text label, shows current date in a relative time span from system date */
+    TextView mRelativeDayLabel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,16 +59,20 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         setContentView(R.layout.activity_main);
 
         /* Get bottom bar buttons for controlling date */
-        Button prevButton = findViewById(R.id.buttonPrevDay);
-        Button todayButton = findViewById(R.id.buttonToday);
-        Button nextButton = findViewById(R.id.buttonNextDay);
-        mBottomBar = findViewById(R.id.linearLayoutBottomBar);
+        ImageButton prevButton = findViewById(R.id.buttonPrevDay);
+        ImageButton nextButton = findViewById(R.id.buttonNextDay);
+        mLayoutDayLabel = findViewById(R.id.linearLayoutDayLabel);
         mDayLabel = findViewById(R.id.textViewCurrentDate);
+        mRelativeDayLabel = findViewById(R.id.textViewRelativeDay);
 
         /* Set functionality of bottom bar buttons */
-        prevButton.setOnClickListener(this::onDayChangeButtonClicked);
-        todayButton.setOnClickListener(this::onDayChangeButtonClicked);
-        nextButton.setOnClickListener(this::onDayChangeButtonClicked);
+        if(prevButton != null)
+            prevButton.setOnClickListener(this::onDayChangeButtonClicked);
+        if(nextButton != null)
+            nextButton.setOnClickListener(this::onDayChangeButtonClicked);
+        if(mLayoutDayLabel != null)
+            /* If day label (parent layout) is long pressed, reset current day */
+            mLayoutDayLabel.setOnLongClickListener(this::onDayLabelLongPressed);
 
         /* Register for date changed events */
         OnDateChanged.addListener(this);
@@ -176,20 +172,6 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         }
     }
 
-    /* If the phone orientation is changed, hide or show rating fragment and day management buttons */
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        /* If bottom bar was found */
-        if(mBottomBar != null) {
-            /* If new orientation is portrait, show additional elements */
-            if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) mBottomBar.setVisibility(View.VISIBLE);
-            /* If new orientation is landscape, hide additional elements */
-            else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) mBottomBar.setVisibility(View.GONE);
-        }
-    }
-
     /*
      Notifies all subscribers to OnDatabaseInteracted that the selected date has been changed
      */
@@ -214,13 +196,18 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
                 newDate = DateCalculationHelper.addToDate(newDate,Calendar.DAY_OF_MONTH,1);
             }
         }
-        /* If the selected button was Today, reset the currently selected day to System's current day */
-        else if (viewId == R.id.buttonToday) newDate = new Date();
         updateCurrentDate(newDate);
 
         /* Dismiss accomplishment fragment dialog if exists */
         if (mListFragment != null) mListFragment.dismissCurrentDialog();
 
+    }
+
+
+    /* Reset day to today on long press day label */
+    private boolean onDayLabelLongPressed(View view) {
+        updateCurrentDate(new Date());
+        return true;
     }
 
     @Override
@@ -233,5 +220,9 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         */
         if(mDayLabel != null)
             mDayLabel.setText(new DateFormatter("MMMM d yyyy").formatWithDayIndicators(mSelectedDate));
+
+        if(mRelativeDayLabel != null) {
+            mRelativeDayLabel.setText(RelativeDateHelper.getRelativeDaysSinceString(date));
+        }
     }
 }

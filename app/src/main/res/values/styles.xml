@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -19,6 +19,7 @@
 
     <style name="FullscreenActionBarStyle" parent="Widget.AppCompat.ActionBar">
         <item name="android:background">@color/black_overlay</item>
+        <item name="android:titleTextColor">@color/colorWhite</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -30,8 +31,15 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="AppTheme.TimeSelectionText">
+        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
     <style name="AppTheme.ListItemText" parent="Widget.AppCompat.ListView">
         <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
     <style name="AppTheme.SplashScreen" parent="AppTheme.NoActionBar">
@@ -43,10 +51,15 @@
         <item name="android:backgroundTint">@color/colorButtonBg</item>
     </style>
 
+    <!-- No background button theme -->
+    <style name="AppTheme.ButtonNavigation" parent="Widget.AppCompat.ImageButton">
+        <item name="android:backgroundTint">@color/colorTransparent</item>
+        <item name="android:foreground">@drawable/ripple</item>
+    </style>
+
     <!-- Button delete data theme -->
     <style name="AppTheme.ButtonDeleteData" parent="Widget.AppCompat.Button">
-        <item name="android:foreground">@drawable/ripple</item>
-        <item name="android:background">@color/colorWarning</item>
+        <item name="android:backgroundTint">@color/colorWarning</item>
     </style>
 
     <!-- Day rating fragment -->
@@ -56,6 +69,15 @@
     </style>
 
     <!-- Calendar activity -->
+    <style name="AppTheme.CalendarTheme">
+        <item name="mcv_selectionColor">@color/colorCalendarSelection</item>
+        <item name="mcv_dateTextAppearance">@style/AppTheme.CalendarDateText</item>
+        <item name="mcv_headerTextAppearance">@style/AppTheme.CalendarHeaderText</item>
+        <item name="mcv_weekDayTextAppearance">@style/AppTheme.CalendarMonthLabelText</item>
+        <item name="mcv_leftArrow">@drawable/navigation_previous</item>
+        <item name="mcv_rightArrow">@drawable/navigation_next</item>
+    </style>
+
     <style name="AppTheme.CalendarDateText">
         <item name="android:textSize">16sp</item>
     </style>

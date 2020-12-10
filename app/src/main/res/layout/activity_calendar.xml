@@ -12,8 +12,7 @@
         android:id="@+id/calendarView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:mcv_dateTextAppearance="@style/AppTheme.CalendarDateText"
-        app:mcv_headerTextAppearance="@style/AppTheme.CalendarHeaderText"
-        app:mcv_weekDayTextAppearance="@style/AppTheme.CalendarMonthLabelText" />
+        android:theme="@style/AppTheme.CalendarTheme"
+        tools:mcv_selectionColor="#FFFFFF" />
 
 </RelativeLayout>

@@ -10,7 +10,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:id="@+id/linearLayoutOptions">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -124,7 +125,6 @@
                     style="@style/AppTheme.ButtonDeleteData"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="#EB7777"
                     android:text="@string/button_erase_all_data" />
 
                 <TextView
