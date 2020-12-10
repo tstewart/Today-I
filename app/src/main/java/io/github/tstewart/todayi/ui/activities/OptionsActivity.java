@@ -159,8 +159,6 @@ public class OptionsActivity extends AppCompatActivity {
             this.onImportDataButtonClicked();
         else if(id == R.id.buttonExportData)
             this.onExportDataButtonClicked();
-        else if(id == R.id.buttonGoogleSignIn)
-            this.onGoogleSignInButtonClicked();
         else if(id == R.id.buttonEraseAll)
             this.eraseButtonClicked();
     }
@@ -328,10 +326,6 @@ public class OptionsActivity extends AppCompatActivity {
     }
 
     private void onExportDataButtonClicked() {
-        Toast.makeText(this, "Coming soon!", Toast.LENGTH_SHORT).show();
-    }
-
-    private void onGoogleSignInButtonClicked() {
         Toast.makeText(this, "Coming soon!", Toast.LENGTH_SHORT).show();
     }
 

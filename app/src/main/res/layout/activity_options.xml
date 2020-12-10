@@ -16,27 +16,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/textViewGoogleSignInTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/google_sign_in_title"
-                android:textAlignment="center" />
-
-            <Button
-                android:id="@+id/buttonGoogleSignIn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/google_sign_in_button" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:gravity="top"
             android:orientation="vertical"
             android:paddingLeft="10dp"
