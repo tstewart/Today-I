@@ -4,7 +4,6 @@ import android.content.SharedPreferences;
 
 /*
 User preferences constants.
-TODO For now, this does not link with Android preferences or Settings
  */
 public class UserPreferences {
 

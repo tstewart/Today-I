@@ -25,10 +25,12 @@ import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.helpers.ColorBlendHelper;
 import io.github.tstewart.todayi.helpers.DateCalculationHelper;
+import io.github.tstewart.todayi.helpers.NotificationHelper;
 import io.github.tstewart.todayi.models.Accomplishment;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.helpers.DatabaseHelper;
 import io.github.tstewart.todayi.models.DayRating;
+import io.github.tstewart.todayi.services.NotificationService;
 
 /*
 Debug functions for messing with the internals of the app
@@ -61,6 +63,7 @@ public class DebugActivity extends AppCompatActivity {
         else if(id == R.id.debug_populate_accomplishments) onPopulateAccomplishmentsButtonClicked();
         else if(id == R.id.debug_populate_ratings) onPopulateRatingsButtonClicked();
         else if(id == R.id.debug_color_test) onColorTestButtonClicked();
+        else if(id == R.id.debug_send_notification) onSendNotificationButtonClicked();
         else if(id == R.id.debugBack) this.finish();
     }
 
@@ -166,5 +169,12 @@ public class DebugActivity extends AppCompatActivity {
                 })
                 .create()
                 .show();
+    }
+
+
+    private void onSendNotificationButtonClicked() {
+        NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
+
+        notificationHelper.sendNotification("Debug", "Hello! This is a test!");
     }
 }

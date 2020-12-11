@@ -9,6 +9,7 @@ import java.util.Date;
 import androidx.annotation.NonNull;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
+import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.models.DayRating;
 
@@ -67,6 +68,8 @@ public class DayRatingTableHelper {
      * @return Returns the rating for the date, or a defaultValue if no rating was recorded for the provided date
      */
     public int getRating(Date date, int defaultValue) {
+        int rating = defaultValue;
+
         if (date != null) {
             SQLiteDatabase db = Database.getInstance(this.mContext).getReadableDatabase();
 
@@ -78,13 +81,13 @@ public class DayRatingTableHelper {
             /* If the cursor is able to move to a record for this date, then the record exists */
             if (cursor.moveToFirst()) {
                 /* Get and return the rating for this date */
-                return cursor.getInt(cursor.getColumnIndex(DBConstants.COLUMN_RATING));
+                rating = cursor.getInt(cursor.getColumnIndex(DBConstants.COLUMN_RATING));
             }
 
             cursor.close();
         }
         /* If a value was not returned, return the default value */
-        return defaultValue;
+        return rating;
     }
 
 }

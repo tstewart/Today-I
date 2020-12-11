@@ -1,8 +1,11 @@
 package io.github.tstewart.todayi;
 
 import android.app.Application;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -10,11 +13,14 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import io.github.tstewart.todayi.data.LocalDatabaseIO;
 import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ExportFailedException;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.helpers.DatabaseHelper;
+import io.github.tstewart.todayi.helpers.NotificationHelper;
+import io.github.tstewart.todayi.services.NotificationService;
 
 /*
  * Application class, called on application start
@@ -50,10 +56,13 @@ public class TodayI extends Application {
         UserPreferences.setEnableGestures(gesturesEnabled);
         UserPreferences.setAccomplishmentClipEmptyLines(clipEmptyLines);
 
+        /* Setup notification channel if required */
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createReminderNotificationChannel();
+        }
 
         /* Database auto backup management */
         Context context = getApplicationContext();
-
 
         if (context != null && sharedPrefs != null) {
             boolean shouldBackup = false;
@@ -89,6 +98,30 @@ public class TodayI extends Application {
             } else {
                 Log.i(CLASS_LOG_TAG, "Application data did not need to backup.");
             }
+        }
+    }
+
+    /* Create notification channel for daily reminder notifications.
+    * This is required to show notifications in Android O and above. */
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void createReminderNotificationChannel() {
+        NotificationManager manager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+
+        /* Channel id */
+        String channelId = NotificationHelper.DAILY_REMINDERS_CHANNEL_ID;
+
+        String channelName = getString(R.string.daily_reminder_notification_channel_name);
+
+        /* Importance of the notification */
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+
+        if(channelName != null) {
+            NotificationChannel dailyReminderChannel = new NotificationChannel(channelId,channelName, importance);
+
+            dailyReminderChannel.enableVibration(true);
+            dailyReminderChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+
+            manager.createNotificationChannel(dailyReminderChannel);
         }
     }
 

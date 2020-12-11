@@ -50,6 +50,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Color gradient test" />
+
+        <Button
+            android:id="@+id/debug_send_notification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/debug_send_notification" />
     </LinearLayout>
 
     <LinearLayout

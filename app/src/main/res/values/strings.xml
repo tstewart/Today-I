@@ -47,7 +47,13 @@
     <string name="debug_populate_confirmation">Are you sure you want to populate this table? You may want to backup first.</string>
     <string name="debug_get_accomplishments">Get all Accomplishments</string>
     <string name="debug_get_ratings">Get all Ratings</string>
+    <string name="debug_send_notification">Send test notification</string>
     <string name="debug_back">Back</string>
+
+    <!-- Notifications -->
+    <string name="daily_reminder_notification_channel_name">Daily notifications</string>
+    <string name="daily_reminder_notification_title">Today I</string>
+    <string name="daily_reminder_notification_content">TODO</string>
 
     <!-- Other -->
     <string name="button_confirm">Confirm</string>
