@@ -1,8 +1,6 @@
 package io.github.tstewart.todayi.ui.activities;
 
 import android.app.ActionBar;
-import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.ContextThemeWrapper;
 import android.view.View;
@@ -16,7 +14,6 @@ import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Random;
 
 import androidx.appcompat.app.AlertDialog;
@@ -28,9 +25,8 @@ import io.github.tstewart.todayi.helpers.DateCalculationHelper;
 import io.github.tstewart.todayi.helpers.NotificationHelper;
 import io.github.tstewart.todayi.models.Accomplishment;
 import io.github.tstewart.todayi.data.DBConstants;
-import io.github.tstewart.todayi.helpers.DatabaseHelper;
+import io.github.tstewart.todayi.helpers.db.DatabaseHelper;
 import io.github.tstewart.todayi.models.DayRating;
-import io.github.tstewart.todayi.services.NotificationService;
 
 /*
 Debug functions for messing with the internals of the app

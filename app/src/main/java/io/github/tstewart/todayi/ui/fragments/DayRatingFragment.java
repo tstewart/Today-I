@@ -2,7 +2,6 @@ package io.github.tstewart.todayi.ui.fragments;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,7 +26,7 @@ import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.events.OnDateChanged;
 import io.github.tstewart.todayi.helpers.ColorBlendHelper;
 import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
-import io.github.tstewart.todayi.helpers.DayRatingTableHelper;
+import io.github.tstewart.todayi.helpers.db.DayRatingTableHelper;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 

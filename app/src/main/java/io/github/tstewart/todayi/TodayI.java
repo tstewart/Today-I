@@ -18,9 +18,8 @@ import io.github.tstewart.todayi.data.LocalDatabaseIO;
 import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ExportFailedException;
 import io.github.tstewart.todayi.data.DBConstants;
-import io.github.tstewart.todayi.helpers.DatabaseHelper;
+import io.github.tstewart.todayi.helpers.db.DatabaseHelper;
 import io.github.tstewart.todayi.helpers.NotificationHelper;
-import io.github.tstewart.todayi.services.NotificationService;
 
 /*
  * Application class, called on application start

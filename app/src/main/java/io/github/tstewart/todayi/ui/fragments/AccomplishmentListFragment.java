@@ -35,7 +35,7 @@ import io.github.tstewart.todayi.interfaces.OnDatabaseInteractionListener;
 import io.github.tstewart.todayi.events.OnDateChanged;
 import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
 import io.github.tstewart.todayi.models.Accomplishment;
-import io.github.tstewart.todayi.helpers.AccomplishmentTableHelper;
+import io.github.tstewart.todayi.helpers.db.AccomplishmentTableHelper;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
 import io.github.tstewart.todayi.adapters.AccomplishmentCursorAdapter;

@@ -1,4 +1,4 @@
-package io.github.tstewart.todayi.helpers;
+package io.github.tstewart.todayi.helpers.db;
 
 import android.content.Context;
 

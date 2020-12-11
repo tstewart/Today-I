@@ -1,4 +1,4 @@
-package io.github.tstewart.todayi.helpers;
+package io.github.tstewart.todayi.helpers.db;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
 import io.github.tstewart.todayi.events.OnDatabaseInteracted;
+import io.github.tstewart.todayi.helpers.DateFormatter;
 import io.github.tstewart.todayi.interfaces.DatabaseObject;
 
 /**

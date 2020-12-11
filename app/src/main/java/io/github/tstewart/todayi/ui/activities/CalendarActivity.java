@@ -15,7 +15,6 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import org.threeten.bp.Instant;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.ZoneId;
-import org.threeten.bp.ZoneOffset;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -30,7 +29,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
-import io.github.tstewart.todayi.helpers.DatabaseHelper;
+import io.github.tstewart.todayi.helpers.db.DatabaseHelper;
 import io.github.tstewart.todayi.ui.decorators.DayPostedDecorator;
 import io.github.tstewart.todayi.ui.decorators.DayRatedDecorator;
 import io.github.tstewart.todayi.ui.decorators.DayRatingSplitter;
