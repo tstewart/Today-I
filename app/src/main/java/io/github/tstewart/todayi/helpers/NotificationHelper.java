@@ -30,8 +30,7 @@ public class NotificationHelper {
         Notification notification = new NotificationCompat.Builder(getContext(), DAILY_REMINDERS_CHANNEL_ID)
                 .setContentTitle(title)
                 .setContentText(content)
-                //TODO change icon to support small icon
-                .setSound(soundUri).setSmallIcon(R.mipmap.ic_launcher)
+                .setSound(soundUri).setSmallIcon(R.drawable.notification_logo)
                 .build();
         NotificationManagerCompat.from(getContext()).notify(0, notification);
     }

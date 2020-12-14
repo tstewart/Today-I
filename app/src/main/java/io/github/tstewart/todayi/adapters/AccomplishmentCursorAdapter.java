@@ -58,7 +58,7 @@ public class AccomplishmentCursorAdapter extends CursorAdapter {
 
             /* If there was a time posted, add set date TextView to this. */
             if(timePosted != null) {
-                datePostedView.setText(timePosted.getHour() + ":" + timePosted.getMinute());
+                datePostedView.setText(new DateFormatter(DBConstants.TIME_FORMAT).format(timePosted));
             }
         }
         catch(SQLiteException | IllegalArgumentException e) {
