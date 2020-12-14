@@ -225,7 +225,7 @@ public class CalendarActivity extends AppCompatActivity {
 
                 try {
                     /* Try and parse the date string from Database format to a LocalDate object */
-                    LocalDate date = LocalDate.parse(dateString, DateTimeFormatter.ofPattern(DBConstants.DATE_FORMAT));
+                    LocalDate date = LocalDate.parse(dateString, DateTimeFormatter.ofPattern(DBConstants.DATE_FORMAT_NO_TIME));
 
                     /* If successful, the LocalDate object must be converted to an object that MaterialCalendarView understands */
                     if (date != null) {
@@ -242,6 +242,7 @@ public class CalendarActivity extends AppCompatActivity {
                     /* Alert the user that date information may be corrupt in the Database */
                     Toast.makeText(this, "Failed to gather ratings. Database may be corrupt.", Toast.LENGTH_LONG).show();
                     Log.w(CLASS_LOG_TAG, e.getMessage(), e);
+                    break;
                 }
 
             }
