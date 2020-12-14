@@ -18,8 +18,10 @@ import io.github.tstewart.todayi.data.LocalDatabaseIO;
 import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ExportFailedException;
 import io.github.tstewart.todayi.data.DBConstants;
+import io.github.tstewart.todayi.helpers.db.AccomplishmentTableHelper;
 import io.github.tstewart.todayi.helpers.db.DatabaseHelper;
 import io.github.tstewart.todayi.helpers.NotificationHelper;
+import io.github.tstewart.todayi.helpers.db.DayRatingTableHelper;
 
 /*
  * Application class, called on application start
@@ -130,10 +132,10 @@ public class TodayI extends Application {
      * @return True if tables are empty
      */
     private boolean databasesEmpty(@NonNull Context context) {
-        DatabaseHelper accomplishmentHelper = new DatabaseHelper(DBConstants.ACCOMPLISHMENT_TABLE);
-        DatabaseHelper ratingHelper = new DatabaseHelper(DBConstants.RATING_TABLE);
+        AccomplishmentTableHelper accomplishmentHelper = new AccomplishmentTableHelper(context);
+        DayRatingTableHelper ratingHelper = new DayRatingTableHelper(context);
 
-        return accomplishmentHelper.isEmpty(context) && ratingHelper.isEmpty(context);
+        return accomplishmentHelper.isEmpty() && ratingHelper.isEmpty();
     }
 
     /**

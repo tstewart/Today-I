@@ -20,17 +20,11 @@ import io.github.tstewart.todayi.models.DayRating;
 /**
  * Helper class. Provides functionality to insert, update, and remove ratings from the database
  */
-public class DayRatingTableHelper {
-
-    /* Application environment context */
-    final Context mContext;
-    /* Database Helper, provides functions for generic database access */
-    final DatabaseHelper mHelper;
+public class DayRatingTableHelper extends DatabaseHelper {
 
     public DayRatingTableHelper(@NonNull Context context) {
-        this.mContext = context;
         /* Default to generating a DatabaseHelper for the Ratings table */
-        this.mHelper = new DatabaseHelper(DBConstants.RATING_TABLE);
+        super(context, DBConstants.RATING_TABLE);
     }
 
     /**
@@ -46,7 +40,7 @@ public class DayRatingTableHelper {
             /* Validate the day rating object, to check the variables for invalid values */
             dayRating.validate();
 
-            SQLiteDatabase db = mHelper.getDatabase(this.mContext);
+            SQLiteDatabase db = getDatabase();
             /* Format the date to database requirements */
             String dateFormatted = new DateFormatter(DBConstants.DATE_FORMAT_NO_TIME).format(date);
             /* Get a cursor with the provided date, to check if the Ratings table already contains a value for this date */
@@ -55,10 +49,10 @@ public class DayRatingTableHelper {
             /* If the cursor is able to move to a record for this date, then a record already exists */
             if (existingRowCheck.moveToFirst()) {
                 /* Update the existing record */
-                mHelper.update(this.mContext, dayRating, DBConstants.COLUMN_DATE + "=?", new String[]{dateFormatted});
+                super.update( dayRating, DBConstants.COLUMN_DATE + "=?", new String[]{dateFormatted});
             } else {
                 /* Insert a new record for this date */
-                mHelper.insert(this.mContext, dayRating);
+                super.insert(dayRating);
             }
 
             existingRowCheck.close();
@@ -75,7 +69,7 @@ public class DayRatingTableHelper {
         int rating = defaultValue;
 
         if (date != null) {
-            SQLiteDatabase db = Database.getInstance(this.mContext).getReadableDatabase();
+            SQLiteDatabase db = getDatabase();
 
             /* Format the date to database requirements */
             String dateFormatted = new DateFormatter(DBConstants.DATE_FORMAT_NO_TIME).format(date);

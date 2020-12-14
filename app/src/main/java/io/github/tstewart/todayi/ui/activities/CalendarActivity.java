@@ -32,6 +32,7 @@ import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
 import io.github.tstewart.todayi.helpers.db.DatabaseHelper;
+import io.github.tstewart.todayi.helpers.db.DayRatingTableHelper;
 import io.github.tstewart.todayi.ui.decorators.DayPostedDecorator;
 import io.github.tstewart.todayi.ui.decorators.DayRatedDecorator;
 import io.github.tstewart.todayi.ui.decorators.DayRatingSplitter;
@@ -202,15 +203,13 @@ public class CalendarActivity extends AppCompatActivity {
      * @return A HashMap of days rated and their ratings
      */
     private HashMap<CalendarDay, Integer> getDaysRated() {
-        SQLiteDatabase db = new DatabaseHelper(DBConstants.RATING_TABLE).getDatabase(getApplicationContext());
-
         HashMap<CalendarDay, Integer> ratings = new HashMap<>();
 
         /*
          Get a cursor for the SQL query
          Query gets all ratings
         */
-        Cursor cursor = db.rawQuery(DBConstants.DAY_RATING_ALL_RESULTS_QUERY, null);
+        Cursor cursor = new DayRatingTableHelper(this).getAll();
 
         /* If database contains ratings */
         if (cursor.moveToFirst()) {
@@ -240,9 +239,7 @@ public class CalendarActivity extends AppCompatActivity {
 
                 } catch (DateTimeParseException e) {
                     /* Alert the user that date information may be corrupt in the Database */
-                    Toast.makeText(this, "Failed to gather ratings. Database may be corrupt.", Toast.LENGTH_LONG).show();
                     Log.w(CLASS_LOG_TAG, e.getMessage(), e);
-                    break;
                 }
 
             }

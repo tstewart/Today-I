@@ -10,17 +10,11 @@ import io.github.tstewart.todayi.models.Accomplishment;
 /**
  * Helper class. Provides functionality to insert, update, and remove accomplishments from the database
  */
-public class AccomplishmentTableHelper {
-
-    /* Application environment context */
-    final Context mContext;
-    /* Database Helper, provides functions for generic database access */
-    final DatabaseHelper mHelper;
+public class AccomplishmentTableHelper extends DatabaseHelper {
 
     public AccomplishmentTableHelper(@NonNull Context context) {
-        this.mContext = context;
         /* Default to generating a DatabaseHelper for the Accomplishment table */
-        this.mHelper = new DatabaseHelper(DBConstants.ACCOMPLISHMENT_TABLE);
+        super(context, DBConstants.ACCOMPLISHMENT_TABLE);
     }
 
     /**
@@ -33,7 +27,7 @@ public class AccomplishmentTableHelper {
         accomplishment.validate();
 
         /* Insert into database */
-        mHelper.insert(mContext, accomplishment);
+        super.insert(accomplishment);
     }
 
     /**
@@ -47,7 +41,7 @@ public class AccomplishmentTableHelper {
         accomplishment.validate();
 
         /* Insert into database, overwriting existing */
-        mHelper.update(mContext, accomplishment, DBConstants.COLUMN_ID + "=? ", new String[]{String.valueOf(id)});
+        super.update(accomplishment, DBConstants.COLUMN_ID + "=? ", new String[]{String.valueOf(id)});
     }
 
     /**
@@ -55,10 +49,6 @@ public class AccomplishmentTableHelper {
      * @param id Identifier number of accomplishment to be removed
      */
     public void delete(long id) {
-        mHelper.delete(mContext, DBConstants.COLUMN_ID + "=?", new String[]{String.valueOf(id)});
-    }
-
-    public DatabaseHelper getDatabaseHelper() {
-        return mHelper;
+        super.delete(DBConstants.COLUMN_ID + "=?", new String[]{String.valueOf(id)});
     }
 }

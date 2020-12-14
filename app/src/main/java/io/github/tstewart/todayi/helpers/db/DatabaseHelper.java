@@ -22,22 +22,24 @@ import io.github.tstewart.todayi.interfaces.DatabaseObject;
  */
 public class DatabaseHelper {
 
+    /* Application environment context */
+    final Context mContext;
     /* Table of database to read/write data from */
     private final String mTable;
     /* Database to read/write data from */
     private SQLiteDatabase mDb;
 
-    public DatabaseHelper(@NonNull String table) {
+    public DatabaseHelper(@NonNull Context context, @NonNull String table) {
+        this.mContext = context;
         this.mTable = table;
     }
 
     /**
      * Checks if the table has no records
-     * @param context Application environment context
      * @return True if the table has no records
      */
-    public boolean isEmpty(@NonNull Context context) {
-        mDb = getDatabase(context);
+    public boolean isEmpty() {
+        mDb = getDatabase();
 
         /* Get a cursor with the provided SQL query. */
         Cursor cursor = mDb.rawQuery("select ? from " + mTable, new String[]{DBConstants.COLUMN_ID});
@@ -52,20 +54,18 @@ public class DatabaseHelper {
 
     /**
      * Get all records from the table
-     * @param context Application environment context
      * @return Cursor containing all records for the table
      */
-    public Cursor getAll(@NonNull Context context) {
-        return getDatabase(context).rawQuery("select * from " + mTable, null);
+    public Cursor getAll() {
+        return getDatabase().rawQuery("select * from " + mTable, null);
     }
 
     /**
      * Insert DatabaseObject into table
-     * @param context Application environment context
      * @param object DatabaseObject to be inserted into table
      */
-    public void insert(@NonNull Context context, @NonNull DatabaseObject object) {
-        mDb = getDatabase(context);
+    public void insert(@NonNull DatabaseObject object) {
+        mDb = getDatabase();
         /* Generate ContentValues from the object's variables */
         ContentValues cv = object.createCV();
 
@@ -80,13 +80,12 @@ public class DatabaseHelper {
 
     /**
      * Update DatabaseObject from table
-     * @param context Application environment context
      * @param object DatabaseObject to update existing record with
      * @param whereClause Replace records that match clause
      * @param whereArgs Replaces '?' wildcards in whereClause
      */
-    public void update(@NonNull Context context, @NonNull DatabaseObject object, String whereClause, String[] whereArgs) {
-        mDb = getDatabase(context);
+    public void update(@NonNull DatabaseObject object, String whereClause, String[] whereArgs) {
+        mDb = getDatabase();
         ContentValues cv = object.createCV();
 
         /* If the ContentValues were generated successfully, update record */
@@ -100,12 +99,11 @@ public class DatabaseHelper {
 
     /**
      * Delete record from table
-     * @param context Application environment context
      * @param whereClause Delete records that match clause
      * @param whereArgs Replaces '?' wildcards in whereClause
      */
-    public void delete(@NonNull Context context, String whereClause, String[] whereArgs) {
-        mDb = getDatabase(context);
+    public void delete(String whereClause, String[] whereArgs) {
+        mDb = getDatabase();
 
         mDb.delete(this.mTable, whereClause, whereArgs);
 
@@ -115,11 +113,10 @@ public class DatabaseHelper {
 
     /**
      * Get a database instance from the provided context environment.
-     * @param context Application environment context
      * @return Returns a SQLiteDatabase instance
      */
-    public SQLiteDatabase getDatabase(Context context) {
-        return Database.getInstance(context).getReadableDatabase();
+    public SQLiteDatabase getDatabase() {
+        return Database.getInstance(mContext).getReadableDatabase();
     }
 
     /* Get date query with wildcard at the end, to match all records with the same date without the time */

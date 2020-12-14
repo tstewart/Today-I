@@ -2,6 +2,7 @@ package io.github.tstewart.todayi.ui.activities;
 
 import android.app.ActionBar;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,9 +23,12 @@ import java.util.Random;
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.UserPreferences;
+import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.helpers.ColorBlendHelper;
 import io.github.tstewart.todayi.helpers.NotificationHelper;
+import io.github.tstewart.todayi.helpers.db.AccomplishmentTableHelper;
 import io.github.tstewart.todayi.helpers.db.DatabaseHelper;
+import io.github.tstewart.todayi.helpers.db.DayRatingTableHelper;
 import io.github.tstewart.todayi.models.Accomplishment;
 import io.github.tstewart.todayi.models.DayRating;
 
@@ -86,14 +90,19 @@ public class DebugActivity extends AppCompatActivity {
                         LocalDate targetDate = LocalDate.now();
                         LocalDate currentDate = targetDate.minusDays(31);
 
-                        DatabaseHelper helper = new DatabaseHelper(DBConstants.ACCOMPLISHMENT_TABLE);
+                        AccomplishmentTableHelper helper = new AccomplishmentTableHelper(this);
 
                         while (currentDate.isBefore(targetDate)) {
                             int numPosts = random.nextInt(5);
 
                             for (int i = 0; i < numPosts; i++) {
                                 Accomplishment accomplishment = new Accomplishment(currentDate.atStartOfDay(), "DUMMY CONTENT!");
-                                helper.insert(this, accomplishment);
+
+                                try {
+                                    helper.insert(accomplishment);
+                                } catch (ValidationFailedException e) {
+                                    Log.w("debug", e.getMessage(), e);
+                                }
                             }
 
                             currentDate = currentDate.plusDays(1);
@@ -113,13 +122,13 @@ public class DebugActivity extends AppCompatActivity {
                     LocalDate targetDate = LocalDate.now();
                     LocalDate currentDate = targetDate.minusDays(31);
 
-                    DatabaseHelper helper = new DatabaseHelper(DBConstants.RATING_TABLE);
+                    DayRatingTableHelper helper = new DayRatingTableHelper(this);
 
                     while (currentDate.isBefore(targetDate)) {
                         int rating = random.nextInt(UserPreferences.getMaxDayRating())+1;
 
                         DayRating dayRating = new DayRating(currentDate,rating);
-                        helper.insert(getApplicationContext(),dayRating);
+                        helper.insert(dayRating);
 
                         currentDate = currentDate.plusDays(1);
                     }
