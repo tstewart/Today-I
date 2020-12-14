@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
             targetIntent = new Intent(this, CalendarActivity.class);
             requestCode = CALENDAR_ACTIVITY_REQUEST_CODE;
             /* CalendarView is initialised with the current selected date as an argument */
-            targetIntent.putExtra("selectedDate", mSelectedDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
+            targetIntent.putExtra("selectedDate", mSelectedDate.toEpochDay());
 
         } else if (itemId == R.id.toolbar_settings) {
             targetIntent = new Intent(this, OptionsActivity.class);
@@ -151,16 +151,8 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
 
                 /* If the date result was not the default value (-1) */
                 if (dateResult >= 0) {
-
-                    /*
-                     TODO simplify this
-                     Set the current selected day to the provided result
-                    */
-                    Calendar c = new GregorianCalendar();
-                    c.setTime(new Date(0));
-                    c.add(Calendar.DAY_OF_YEAR, (int) dateResult);
-
-                    //updateCurrentDate(c.getTime());
+                    LocalDate selectedDate = LocalDate.ofEpochDay(dateResult);
+                    updateCurrentDate(selectedDate);
                 }
             }
         }

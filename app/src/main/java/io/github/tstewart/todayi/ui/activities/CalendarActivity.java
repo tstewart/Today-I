@@ -71,9 +71,9 @@ public class CalendarActivity extends AppCompatActivity {
         */
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            long time = extras.getLong("selectedDate");
-            if (time > 0) {
-                mSelectedDate = Instant.ofEpochMilli(time).atZone(ZoneId.systemDefault()).toLocalDate();
+            long selectedDate = extras.getLong("selectedDate");
+            if (selectedDate > 0) {
+                mSelectedDate = LocalDate.ofEpochDay(selectedDate);
             }
         }
         /* If no date was provided with the Activity launch, set the current date to the System's time */
