@@ -1,16 +1,14 @@
 package io.github.tstewart.todayi.helpers;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Locale;
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.format.DateTimeFormatter;
+import org.threeten.bp.format.DateTimeParseException;
+import org.threeten.bp.temporal.ChronoField;
+import org.threeten.bp.temporal.TemporalAccessor;
 
-/*
- TODO In later versions, SimpleDateFormat should be replaced app wide with DateTimeFormatter
- TODO replace Date object support?
-*/
+import java.text.ParseException;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Helper class. Format Date object to formatted date, or vice versa
@@ -18,7 +16,10 @@ import java.util.Locale;
 public class DateFormatter {
 
     /* Date formatter */
-    private SimpleDateFormat mDateFormatter;
+    private DateTimeFormatter mDateFormatter;
+
+    /* Formatter pattern */
+    private String mFormatPattern;
 
     /* Private constructor prevents initialisation */
     private DateFormatter() {
@@ -26,65 +27,53 @@ public class DateFormatter {
 
     public DateFormatter(String dateFormat) {
         /* Initialise date formatter with default locale */
-        this.mDateFormatter = new SimpleDateFormat(dateFormat, Locale.getDefault());
+        this.mDateFormatter = DateTimeFormatter.ofPattern(dateFormat, Locale.getDefault());
+        this.mFormatPattern = dateFormat;
     }
 
     /**
      * Formats provided Date to string that matches the dateFormat.
      * @param date Date to be formatted
+     *             TemporalAccessor is used to allow for LocalDate, LocalDateTime support
      * @return Formatted date
      */
-    public String format(Date date) {
+    public String format(TemporalAccessor date) {
         return mDateFormatter.format(date);
     }
 
     /**
      * Formats the date, returning days with day indicators attached (1st, 2nd, 3rd, etc)
      * @param date Date to be formatted
+     *             TemporalAccessor is used to allow for LocalDate, LocalDateTime support
      * @return Formatted date with day indicators
      */
-    public String formatWithDayIndicators(Date date) {
-        /* Initialise indicator formatter as a copy of the original formatter */
-        SimpleDateFormat indicatorDateFormatter = mDateFormatter;
-
+    public String formatWithDayIndicators(TemporalAccessor date) {
         /* Get date format pattern */
-        String dateFormat = mDateFormatter.toPattern();
-        /* Get the position of the date option in the formatter pattern */
-        int indicatorPosition = dateFormat.indexOf("d ");
+        if(mFormatPattern != null) {
+            /* Get the position of the date option in the formatter pattern */
+            int indicatorPosition = mFormatPattern.indexOf("d ");
 
-        /* If the date option exists */
-        if (indicatorPosition >= 0) {
+            /* If the date option exists */
+            if (indicatorPosition >= 0) {
 
-            /* Get this date's day of the month */
-            int day = getDayOfMonth(date);
-
+                /* Get this date's day of the month */
+                int day = date.get(ChronoField.DAY_OF_MONTH);
             /*
              Append ordinal (number indicator) to after the date option in the format pattern
              E.g. The pattern MM/dd with a date of the 1st April becomes MM/dd'st'
              The ordinal is placed in quotes so it is not treated as a format option
             */
-            dateFormat = dateFormat.substring(0, indicatorPosition)
-                    + "'"
-                    + getOrdinal(day)
-                    + "'"
-                    + dateFormat.substring(indicatorPosition + 1);
-        }
+                String ordinalDateFormat = mFormatPattern.substring(0, indicatorPosition)
+                        + "'"
+                        + getOrdinal(day)
+                        + "'"
+                        + mFormatPattern.substring(indicatorPosition + 1);
 
-        /* Apply pattern to formatter */
-        indicatorDateFormatter.applyPattern(dateFormat);
-        /* Format date */
-        return indicatorDateFormatter.format(date);
-    }
-
-    /**
-     * Converts a date string and the pattern provided in the constructor to a valid date object
-     * @param dateString Date in the form of the pattern provided in the constructor
-     * @return Returns a parsed date
-     * @throws ParseException Thrown if the parser could not create a date from the provided string.
-     */
-    public Date parse(String dateString) throws ParseException {
-        if(dateString != null) {
-            return mDateFormatter.parse(dateString);
+                /* Initialise indicator formatter with new pattern */
+                DateTimeFormatter indicatorDateFormatter = DateTimeFormatter.ofPattern(ordinalDateFormat, Locale.getDefault());
+                /* Format date */
+                return indicatorDateFormatter.format(date);
+            }
         }
         return null;
     }
@@ -109,14 +98,5 @@ public class DateFormatter {
                 return i + sufixes[i % 10];
 
         }
-    }
-
-    /**
-     * Get the day of the month of the provided date
-     */
-    private int getDayOfMonth(Date date) {
-        Calendar c = new GregorianCalendar();
-        c.setTime(date);
-        return c.get(Calendar.DAY_OF_MONTH);
     }
 }

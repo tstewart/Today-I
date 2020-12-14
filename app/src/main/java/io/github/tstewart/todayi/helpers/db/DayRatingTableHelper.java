@@ -7,6 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.Date;
 
 import androidx.annotation.NonNull;
+
+import org.threeten.bp.LocalDate;
+
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
 import io.github.tstewart.todayi.errors.ValidationFailedException;
@@ -36,7 +39,7 @@ public class DayRatingTableHelper {
      * @param rating Rating to set for provided date
      * @throws IllegalArgumentException If the rating is invalid (e.g. the rating is outside the provided bounds)
      */
-    public void setRating(Date date, int rating) throws ValidationFailedException {
+    public void setRating(LocalDate date, int rating) throws ValidationFailedException {
         if (date != null) {
             DayRating dayRating = new DayRating(date, rating);
 
@@ -68,7 +71,7 @@ public class DayRatingTableHelper {
      * @param defaultValue Default value, returned if there is no record for this date
      * @return Returns the rating for the date, or a defaultValue if no rating was recorded for the provided date
      */
-    public int getRating(Date date, int defaultValue) {
+    public int getRating(LocalDate date, int defaultValue) {
         int rating = defaultValue;
 
         if (date != null) {

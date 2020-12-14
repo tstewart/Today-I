@@ -18,27 +18,29 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Date;
-
 import androidx.annotation.Nullable;
 import androidx.fragment.app.ListFragment;
-import io.github.tstewart.todayi.data.UserPreferences;
-import io.github.tstewart.todayi.errors.ValidationFailedException;
+
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.LocalTime;
+import org.threeten.bp.format.DateTimeFormatter;
+import org.threeten.bp.format.DateTimeParseException;
+
 import io.github.tstewart.todayi.R;
-import io.github.tstewart.todayi.events.OnDatabaseInteracted;
-import io.github.tstewart.todayi.events.OnSwipePerformedListener;
-import io.github.tstewart.todayi.helpers.DateCalculationHelper;
-import io.github.tstewart.todayi.helpers.DateFormatter;
-import io.github.tstewart.todayi.interfaces.OnDatabaseInteractionListener;
-import io.github.tstewart.todayi.events.OnDateChanged;
-import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
-import io.github.tstewart.todayi.models.Accomplishment;
-import io.github.tstewart.todayi.helpers.db.AccomplishmentTableHelper;
+import io.github.tstewart.todayi.adapters.AccomplishmentCursorAdapter;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
-import io.github.tstewart.todayi.adapters.AccomplishmentCursorAdapter;
+import io.github.tstewart.todayi.data.UserPreferences;
+import io.github.tstewart.todayi.errors.ValidationFailedException;
+import io.github.tstewart.todayi.events.OnDatabaseInteracted;
+import io.github.tstewart.todayi.events.OnDateChanged;
+import io.github.tstewart.todayi.events.OnSwipePerformedListener;
+import io.github.tstewart.todayi.helpers.DateFormatter;
+import io.github.tstewart.todayi.helpers.db.AccomplishmentTableHelper;
+import io.github.tstewart.todayi.interfaces.OnDatabaseInteractionListener;
+import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
+import io.github.tstewart.todayi.models.Accomplishment;
 import io.github.tstewart.todayi.ui.dialogs.AccomplishmentDialog;
 
 /**
@@ -47,6 +49,12 @@ import io.github.tstewart.todayi.ui.dialogs.AccomplishmentDialog;
  */
 public class AccomplishmentListFragment extends ListFragment implements OnDatabaseInteractionListener, OnDateChangedListener {
 
+    /*
+     Log tag, used for Logging
+     Represents class name
+    */
+    private final String CLASS_LOG_TAG = this.getClass().getSimpleName();
+
     /* Cursor adapter, loads posts to ListView with provided Cursor */
     private AccomplishmentCursorAdapter mCursorAdapter;
 
@@ -54,7 +62,7 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
     private AlertDialog mDialog;
 
     /* Currently selected date (Application-wide) */
-    private Date mSelectedDate = new Date();
+    private LocalDate mSelectedDate = LocalDate.now();
 
     /* Database table helper, assists with Database interaction */
     private AccomplishmentTableHelper mTableHelper;
@@ -77,12 +85,12 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
                     /* If we should do anything with swipe gestures (controlled by settings) */
                     if(UserPreferences.isGesturesEnabled()) {
 
-                        if (mSelectedDate == null) mSelectedDate = new Date();
+                        if (mSelectedDate == null) mSelectedDate = LocalDate.now();
 
                         if (direction == SwipeDirection.LEFT) {
-                            mSelectedDate = DateCalculationHelper.addToDate(mSelectedDate, Calendar.DAY_OF_MONTH, 1);
+                            mSelectedDate = mSelectedDate.plusDays(1);
                         } else {
-                            mSelectedDate = DateCalculationHelper.subtractFromDate(mSelectedDate, Calendar.DAY_OF_MONTH, 1);
+                            mSelectedDate = mSelectedDate.minusDays(1);
                         }
 
                         OnDateChanged.notifyDateChanged(mSelectedDate);
@@ -139,21 +147,21 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
             String itemContent = cursor.getString(cursor.getColumnIndex(DBConstants.COLUMN_CONTENT));
 
             /* Get time posted if available, otherwise default to current time */
-            Date selectedDate = null;
+            LocalDateTime selectedDate = null;
             String timePosted;
             try {
                 /* Get time posted and attempt to parse into a date object */
                 timePosted = cursor.getString(cursor.getColumnIndex(DBConstants.COLUMN_DATE));
 
                 if(timePosted != null) {
-                    selectedDate = new DateFormatter(DBConstants.DATE_FORMAT).parse(timePosted);
+                    selectedDate = LocalDateTime.parse(timePosted, DateTimeFormatter.ofPattern(DBConstants.DATE_FORMAT));
                 }
             }
             /* If failed, ignore this error and set selected date to default */
-            catch(SQLiteException | ParseException ignore) {}
+            catch(SQLiteException | DateTimeParseException ignore) {}
             finally {
                 if(selectedDate == null)
-                    selectedDate = new Date();
+                    selectedDate = LocalDateTime.now();
             }
 
             /*
@@ -172,12 +180,12 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
 
                         if (input != null) {
 
-                            Date newSelectedDate;
+                            LocalDateTime newSelectedDate;
 
                             if(timeLabel != null)
                                 newSelectedDate = parseDate(timeLabel.getText().toString());
                             else
-                                newSelectedDate = mSelectedDate;
+                                newSelectedDate = LocalDateTime.of(mSelectedDate, LocalTime.now());
 
                             /* Create Accomplishment object from new values */
                             Accomplishment accomplishment = new Accomplishment(newSelectedDate, input.getText().toString());
@@ -213,12 +221,12 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
 
                     if (input != null) {
 
-                        Date selectedDate;
+                        LocalDateTime selectedDate;
 
                         if(timeLabel != null)
                             selectedDate = parseDate(timeLabel.getText().toString());
                         else
-                            selectedDate = mSelectedDate;
+                            selectedDate = LocalDateTime.of(mSelectedDate, LocalTime.now());
 
 
                         /* Create Accomplishment object from new values */
@@ -237,26 +245,17 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
         this.mDialog.show();
     }
 
-    /* Parse date response from dialog */
-    private Date parseDate(String dateString) {
-        Calendar calendar = Calendar.getInstance();
-
-        /* Set calendar day to selected day */
-        if(mSelectedDate != null)
-            calendar.setTime(mSelectedDate);
-
+    /* Parse time posted response from dialog */
+    private LocalDateTime parseDate(String timeString) {
         try {
-            if (dateString != null) {
-                /* Get time from new string, and set the time for the current calendar instance to this time */
-                Calendar newTimeCal = Calendar.getInstance();
-                newTimeCal.setTime(new DateFormatter(DBConstants.TIME_FORMAT).parse(dateString));
+            LocalTime time = LocalTime.parse(timeString, DateTimeFormatter.ofPattern(DBConstants.TIME_FORMAT));
 
-                calendar.set(Calendar.HOUR_OF_DAY, newTimeCal.get(Calendar.HOUR_OF_DAY));
-                calendar.set(Calendar.MINUTE, newTimeCal.get(Calendar.MINUTE));
-            }
-        } catch (ParseException ignore) {}
-
-        return calendar.getTime();
+            return LocalDateTime.of(mSelectedDate, time);
+        }
+        catch(DateTimeParseException e) {
+            Log.w(CLASS_LOG_TAG, e.getMessage(), e);
+            return null;
+        }
     }
 
     /**
@@ -308,7 +307,7 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
     }
 
     @Override
-    public void onDateChanged(Date date) {
+    public void onDateChanged(LocalDate date) {
         this.mSelectedDate = date;
         refreshCursor();
     }

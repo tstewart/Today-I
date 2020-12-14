@@ -5,12 +5,14 @@ import android.content.ContentValues;
 import java.util.Date;
 
 import androidx.annotation.NonNull;
+
+import org.threeten.bp.LocalDate;
+
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.interfaces.DatabaseObject;
 import io.github.tstewart.todayi.helpers.DateFormatter;
-import io.github.tstewart.todayi.ui.fragments.DayRatingFragment;
 
 /*
  * Object to store day rating data for a selected date
@@ -24,11 +26,11 @@ public class DayRating implements DatabaseObject {
     // TODO this, with DayRatingSplitter and DayRatingFragment needs to be moved to a constant field inside user params
     private static final int MAX_RATING = UserPreferences.getMaxDayRating();
     /* Day rated */
-    private Date mDate;
+    private LocalDate mDate;
     /* Rating */
     private int mDayRating;
 
-    public DayRating(@NonNull Date date, int dayRating) {
+    public DayRating(@NonNull LocalDate date, int dayRating) {
         this.mDate = date;
         this.mDayRating = dayRating;
     }
@@ -68,11 +70,11 @@ public class DayRating implements DatabaseObject {
         return contentValues;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return mDate;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.mDate = date;
     }
 

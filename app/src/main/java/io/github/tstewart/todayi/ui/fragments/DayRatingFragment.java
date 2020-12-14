@@ -20,6 +20,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+
+import org.threeten.bp.LocalDate;
+
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ValidationFailedException;
@@ -51,7 +54,7 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
     /* List of day rating buttons */
     Button[] mButtons;
     /* Current date (Application-wide) */
-    Date mSelectedDate;
+    LocalDate mSelectedDate;
     /* Database table helper, assists with Database interaction */
     DayRatingTableHelper mTableHelper;
 
@@ -92,7 +95,7 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
         mColors = new ColorBlendHelper(mColors.length).blendColors();
 
         /* Get rating for current date */
-        int index = getIndexOfRating(new Date());
+        int index = getIndexOfRating(LocalDate.now());
 
         /* Set currently selected button to rating of current day (if exists) */
         if (index >= 0) setSelectedButton(index);
@@ -208,7 +211,7 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
     /*
     Get day rating from Database for Date, adjusted to match Array index
      */
-    private int getIndexOfRating(Date date) {
+    private int getIndexOfRating(LocalDate date) {
         Context context = getContext();
 
         if (context != null) {
@@ -221,7 +224,7 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
     }
 
     @Override
-    public void onDateChanged(Date date) {
+    public void onDateChanged(LocalDate date) {
         /* Get Array index of rating for current date */
         int index = getIndexOfRating(date);
 

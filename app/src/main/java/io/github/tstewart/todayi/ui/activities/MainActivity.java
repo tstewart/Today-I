@@ -19,10 +19,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.ZoneId;
+
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.events.OnDatabaseInteracted;
 import io.github.tstewart.todayi.events.OnDateChanged;
-import io.github.tstewart.todayi.helpers.DateCalculationHelper;
 import io.github.tstewart.todayi.helpers.DateFormatter;
 import io.github.tstewart.todayi.helpers.RelativeDateHelper;
 import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
@@ -39,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
     private static final int OPTIONS_ACTIVITY_REQUEST_CODE = 2;
 
     /* Currently selected date (Application-wide, controlled by OnDateChangedListener) */
-    Date mSelectedDate;
+    LocalDate mSelectedDate;
 
     /* Fragment that contains functionality for viewing, creating, editing, and deleting Accomplishments */
     AccomplishmentListFragment mListFragment;
@@ -92,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         }
 
         /* Set current date to System's current date */
-        updateCurrentDate(new Date());
+        updateCurrentDate(LocalDate.now());
     }
 
     /* Inflate Main Activity's top bar */
@@ -118,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
             targetIntent = new Intent(this, CalendarActivity.class);
             requestCode = CALENDAR_ACTIVITY_REQUEST_CODE;
             /* CalendarView is initialised with the current selected date as an argument */
-            targetIntent.putExtra("selectedDate", mSelectedDate.getTime());
+            targetIntent.putExtra("selectedDate", mSelectedDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
 
         } else if (itemId == R.id.toolbar_settings) {
             targetIntent = new Intent(this, OptionsActivity.class);
@@ -157,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
                     c.setTime(new Date(0));
                     c.add(Calendar.DAY_OF_YEAR, (int) dateResult);
 
-                    updateCurrentDate(c.getTime());
+                    //updateCurrentDate(c.getTime());
                 }
             }
         }
@@ -175,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
     /*
      Notifies all subscribers to OnDatabaseInteracted that the selected date has been changed
      */
-    void updateCurrentDate(@NonNull Date date) {
+    void updateCurrentDate(@NonNull LocalDate date) {
         OnDateChanged.notifyDateChanged(date);
     }
 
@@ -185,15 +188,15 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
     void onDayChangeButtonClicked(View view) {
         int viewId = view.getId();
 
-        Date newDate = mSelectedDate;
+        LocalDate newDate = mSelectedDate;
 
         /* If selected button was Next or Previous, add or subtract one day from current */
         if (viewId == R.id.buttonNextDay || viewId == R.id.buttonPrevDay) {
 
             if (viewId == R.id.buttonPrevDay) {
-                newDate = DateCalculationHelper.subtractFromDate(newDate,Calendar.DAY_OF_MONTH,1);
+                newDate = newDate.minusDays(1);
             } else {
-                newDate = DateCalculationHelper.addToDate(newDate,Calendar.DAY_OF_MONTH,1);
+                newDate = newDate.plusDays(1);
             }
         }
         updateCurrentDate(newDate);
@@ -206,12 +209,12 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
 
     /* Reset day to today on long press day label */
     private boolean onDayLabelLongPressed(View view) {
-        updateCurrentDate(new Date());
+        updateCurrentDate(LocalDate.now());
         return true;
     }
 
     @Override
-    public void onDateChanged(Date date) {
+    public void onDateChanged(LocalDate date) {
         this.mSelectedDate = date;
 
         /*

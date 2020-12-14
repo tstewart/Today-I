@@ -12,20 +12,20 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Random;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import org.threeten.bp.LocalDate;
+
+import java.util.Random;
+
 import io.github.tstewart.todayi.R;
+import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.helpers.ColorBlendHelper;
-import io.github.tstewart.todayi.helpers.DateCalculationHelper;
 import io.github.tstewart.todayi.helpers.NotificationHelper;
-import io.github.tstewart.todayi.models.Accomplishment;
-import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.helpers.db.DatabaseHelper;
+import io.github.tstewart.todayi.models.Accomplishment;
 import io.github.tstewart.todayi.models.DayRating;
 
 /*
@@ -83,20 +83,20 @@ public class DebugActivity extends AppCompatActivity {
                 .setMessage(R.string.debug_populate_confirmation)
                 .setPositiveButton(R.string.button_yes, (dialog, which) -> {
                         Random random = new Random();
-                        Date targetDate = new Date();
-                        Date currentDate = DateCalculationHelper.subtractFromDate(targetDate, Calendar.DAY_OF_MONTH, 31);
+                        LocalDate targetDate = LocalDate.now();
+                        LocalDate currentDate = targetDate.minusDays(31);
 
                         DatabaseHelper helper = new DatabaseHelper(DBConstants.ACCOMPLISHMENT_TABLE);
 
-                        while (currentDate.before(targetDate)) {
+                        while (currentDate.isBefore(targetDate)) {
                             int numPosts = random.nextInt(5);
 
                             for (int i = 0; i < numPosts; i++) {
-                                Accomplishment accomplishment = new Accomplishment(currentDate, "DUMMY CONTENT!");
+                                Accomplishment accomplishment = new Accomplishment(currentDate.atStartOfDay(), "DUMMY CONTENT!");
                                 helper.insert(this, accomplishment);
                             }
 
-                            currentDate = DateCalculationHelper.addToDate(currentDate, Calendar.DAY_OF_MONTH, 1);
+                            currentDate = currentDate.plusDays(1);
                         }
                 })
                 .setNegativeButton(R.string.button_no, null)
@@ -110,18 +110,18 @@ public class DebugActivity extends AppCompatActivity {
                 .setMessage(R.string.debug_populate_confirmation)
                 .setPositiveButton(R.string.button_yes, (dialog, which) -> {
                     Random random = new Random();
-                    Date targetDate = new Date();
-                    Date currentDate = DateCalculationHelper.subtractFromDate(targetDate, Calendar.DAY_OF_MONTH, 31);
+                    LocalDate targetDate = LocalDate.now();
+                    LocalDate currentDate = targetDate.minusDays(31);
 
                     DatabaseHelper helper = new DatabaseHelper(DBConstants.RATING_TABLE);
 
-                    while (currentDate.before(targetDate)) {
+                    while (currentDate.isBefore(targetDate)) {
                         int rating = random.nextInt(UserPreferences.getMaxDayRating())+1;
 
                         DayRating dayRating = new DayRating(currentDate,rating);
                         helper.insert(getApplicationContext(),dayRating);
 
-                        currentDate = DateCalculationHelper.addToDate(currentDate, Calendar.DAY_OF_MONTH, 1);
+                        currentDate = currentDate.plusDays(1);
                     }
                 })
                 .setNegativeButton(R.string.button_no, null)

@@ -15,6 +15,8 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import org.threeten.bp.Instant;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.ZoneId;
+import org.threeten.bp.format.DateTimeFormatter;
+import org.threeten.bp.format.DateTimeParseException;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -50,7 +52,7 @@ public class CalendarActivity extends AppCompatActivity {
     MaterialCalendarView mCalendarView;
 
     /* Currently selected date (Application-wide, controlled by OnDateChangedListener) */
-    Date mSelectedDate = new Date();
+    LocalDate mSelectedDate = LocalDate.now();
 
     /* List of days posted on */
     List<CalendarDay> mDaysPostedOn;
@@ -71,12 +73,12 @@ public class CalendarActivity extends AppCompatActivity {
         if (extras != null) {
             long time = extras.getLong("selectedDate");
             if (time > 0) {
-                mSelectedDate.setTime(time);
+                mSelectedDate = Instant.ofEpochMilli(time).atZone(ZoneId.systemDefault()).toLocalDate();
             }
         }
         /* If no date was provided with the Activity launch, set the current date to the System's time */
         else {
-            mSelectedDate.setTime(System.currentTimeMillis());
+            mSelectedDate = LocalDate.now();
         }
 
         /* Get calendar view from Layout */
@@ -89,9 +91,9 @@ public class CalendarActivity extends AppCompatActivity {
              Set current date to the selected date
              This defaults to the System's time if no date was provided as an argument when the Activity was created
             */
-            mCalendarView.setCurrentDate(getCalendarDayFromDate(mSelectedDate));
+            mCalendarView.setCurrentDate(mSelectedDate);
             /* Draws a circle around the selected date */
-            mCalendarView.setDateSelected(getCalendarDayFromDate(mSelectedDate), true);
+            mCalendarView.setDateSelected(CalendarDay.from(mSelectedDate), true);
         }
 
         /* Get the top bar, and set it's title correctly */
@@ -165,13 +167,13 @@ public class CalendarActivity extends AppCompatActivity {
                 String dateString = cursor.getString(cursor.getColumnIndex(DBConstants.COLUMN_DATE));
 
                 try {
-                    /* Try and parse the date string from Database format to a Date object */
-                    Date date = new DateFormatter(DBConstants.DATE_FORMAT).parse(dateString);
+                    /* Try and parse the date string from Database format to a LocalDate object */
+                    LocalDate date = LocalDate.parse(dateString, DateTimeFormatter.ofPattern(DBConstants.DATE_FORMAT));
 
-                    /* If successful, the Date object must be converted to an object that MaterialCalendarView understands */
+                    /* If successful, the LocalDate object must be converted to an object that MaterialCalendarView understands */
                     if (date != null) {
-                        /* Convert Date to CalendarDay */
-                        CalendarDay calendarDay = getCalendarDayFromDate(date);
+                        /* Convert LocalDate to CalendarDay */
+                        CalendarDay calendarDay = CalendarDay.from(date);
 
                         /* If successful, add to list of days posted on */
                         if (calendarDay != null) {
@@ -179,7 +181,7 @@ public class CalendarActivity extends AppCompatActivity {
                         }
                     }
 
-                } catch (ParseException e) {
+                } catch (DateTimeParseException e) {
                     /* Alert the user that date information may be corrupt in the Database */
                     Toast.makeText(this, "Failed to gather dates posted on. Database may be corrupt.", Toast.LENGTH_LONG).show();
                     Log.w(CLASS_LOG_TAG, e.getMessage(), e);
@@ -222,13 +224,13 @@ public class CalendarActivity extends AppCompatActivity {
                 String dateString = cursor.getString(cursor.getColumnIndex(DBConstants.COLUMN_DATE));
 
                 try {
-                    /* Try and parse the date string from Database format to a Date object */
-                    Date date = new DateFormatter(DBConstants.DATE_FORMAT_NO_TIME).parse(dateString);
+                    /* Try and parse the date string from Database format to a LocalDate object */
+                    LocalDate date = LocalDate.parse(dateString, DateTimeFormatter.ofPattern(DBConstants.DATE_FORMAT));
 
-                    /* If successful, the Date object must be converted to an object that MaterialCalendarView understands */
+                    /* If successful, the LocalDate object must be converted to an object that MaterialCalendarView understands */
                     if (date != null) {
                         /* Convert Date to CalendarDay */
-                        CalendarDay calendarDay = getCalendarDayFromDate(date);
+                        CalendarDay calendarDay = CalendarDay.from(date);
 
                         /* If successful, add to list of days posted on */
                         if (calendarDay != null) {
@@ -236,7 +238,7 @@ public class CalendarActivity extends AppCompatActivity {
                         }
                     }
 
-                } catch (ParseException e) {
+                } catch (DateTimeParseException e) {
                     /* Alert the user that date information may be corrupt in the Database */
                     Toast.makeText(this, "Failed to gather ratings. Database may be corrupt.", Toast.LENGTH_LONG).show();
                     Log.w(CLASS_LOG_TAG, e.getMessage(), e);
@@ -251,21 +253,6 @@ public class CalendarActivity extends AppCompatActivity {
         cursor.close();
 
         return ratings;
-    }
-
-    /**
-     * Convert Date to CalendarDay
-     * @param date Date object to convert
-     * @return CalendarDay instance
-     */
-    private CalendarDay getCalendarDayFromDate(Date date) {
-        if (date != null) {
-            /* First, we need to convert the Date object to a LocalDate object */
-            LocalDate localDate = Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
-            /* CalendarDay provides the functionality to convert from LocalDate to CalendarDay */
-            return CalendarDay.from(localDate);
-        }
-        return null;
     }
 
     private void onCalendarClick(MaterialCalendarView view, CalendarDay date, boolean b) {

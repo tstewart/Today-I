@@ -10,7 +10,11 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
-import java.text.ParseException;
+import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.LocalTime;
+import org.threeten.bp.format.DateTimeFormatter;
+import org.threeten.bp.format.DateTimeParseException;
+
 import java.util.Date;
 
 import io.github.tstewart.todayi.R;
@@ -44,19 +48,17 @@ public class AccomplishmentCursorAdapter extends CursorAdapter {
         try {
             /* Get the time posted of the next item in the Accomplishment table */
             String datePosted = cursor.getString(cursor.getColumnIndexOrThrow(DBConstants.COLUMN_DATE));
-            String timePosted = null;
+            LocalTime timePosted = null;
 
-            /* Parse database date to Date object, and format back to hour/minute format */
+            /* Parse database date to LocalTime object */
             try {
-                Date date = new DateFormatter(DBConstants.DATE_FORMAT).parse(datePosted);
-                if(date != null) {
-                    timePosted = new DateFormatter(DBConstants.TIME_FORMAT).format(date);
-                }
-            } catch (ParseException ignore) { }
+                LocalDateTime date = LocalDateTime.parse(datePosted, DateTimeFormatter.ofPattern(DBConstants.DATE_FORMAT));
+                timePosted = date.toLocalTime();
+            } catch (DateTimeParseException ignore) { }
 
             /* If there was a time posted, add set date TextView to this. */
             if(timePosted != null) {
-                datePostedView.setText(timePosted);
+                datePostedView.setText(timePosted.getHour() + ":" + timePosted.getMinute());
             }
         }
         catch(SQLiteException | IllegalArgumentException e) {

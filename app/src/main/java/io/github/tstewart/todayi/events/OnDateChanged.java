@@ -1,5 +1,7 @@
 package io.github.tstewart.todayi.events;
 
+import org.threeten.bp.LocalDate;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,7 +30,7 @@ public class OnDateChanged {
     /*
     Alert all listeners that the event has been called
     */
-    public static void notifyDateChanged(Date date) {
+    public static void notifyDateChanged(LocalDate date) {
         for (OnDateChangedListener listener :
              sListeners) {
             listener.onDateChanged(date);

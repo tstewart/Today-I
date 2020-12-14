@@ -8,6 +8,9 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.Date;
 
 import androidx.annotation.NonNull;
+
+import org.threeten.bp.LocalDate;
+
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
 import io.github.tstewart.todayi.events.OnDatabaseInteracted;
@@ -120,7 +123,7 @@ public class DatabaseHelper {
     }
 
     /* Get date query with wildcard at the end, to match all records with the same date without the time */
-    public String getDateQueryWildcardFormat(Date date) {
+    public String getDateQueryWildcardFormat(LocalDate date) {
         DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT_NO_TIME);
 
         if(date != null) {
@@ -128,16 +131,6 @@ public class DatabaseHelper {
         }
         return null;
     }
-
-    public String getDateAsDatabaseFormat(Date date) {
-        DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT);
-
-        if(date != null) {
-            return dateFormatter.format(date);
-        }
-        return null;
-    }
-
 
     /**
      * Close database and notify event listeners that the database was interacted with
