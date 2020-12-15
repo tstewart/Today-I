@@ -19,8 +19,7 @@ import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ExportFailedException;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.helpers.db.AccomplishmentTableHelper;
-import io.github.tstewart.todayi.helpers.db.DatabaseHelper;
-import io.github.tstewart.todayi.helpers.NotificationHelper;
+import io.github.tstewart.todayi.notifications.NotificationSender;
 import io.github.tstewart.todayi.helpers.db.DayRatingTableHelper;
 
 /*
@@ -109,7 +108,7 @@ public class TodayI extends Application {
         NotificationManager manager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 
         /* Channel id */
-        String channelId = NotificationHelper.DAILY_REMINDERS_CHANNEL_ID;
+        String channelId = NotificationSender.DAILY_REMINDERS_CHANNEL_ID;
 
         String channelName = getString(R.string.daily_reminder_notification_channel_name);
 
