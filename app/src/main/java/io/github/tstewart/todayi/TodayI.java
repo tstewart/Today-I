@@ -19,6 +19,7 @@ import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ExportFailedException;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.helpers.db.AccomplishmentTableHelper;
+import io.github.tstewart.todayi.notifications.DailyReminderAlarmHelper;
 import io.github.tstewart.todayi.notifications.NotificationSender;
 import io.github.tstewart.todayi.helpers.db.DayRatingTableHelper;
 
@@ -47,14 +48,21 @@ public class TodayI extends Application {
         mPreferences = new UserPreferences(sharedPrefs);
 
         /* Set default values for user preferences if they do not exist */
+        mPreferences.setDefaultValue(getString(R.string.user_prefs_notifications_enabled), false);
+        mPreferences.set(getString(R.string.user_prefs_notification_time), "18:00");
         mPreferences.setDefaultValue(getString(R.string.user_prefs_gestures_enabled), true);
         mPreferences.setDefaultValue(getString(R.string.user_prefs_clip_empty_lines), true);
 
         /* Set preference variables for this instance of the app */
+        boolean notificationsEnabled = (boolean) mPreferences.get(getString(R.string.user_prefs_notifications_enabled), false);
         boolean gesturesEnabled = (boolean) mPreferences.get(getString(R.string.user_prefs_gestures_enabled), true);
         boolean clipEmptyLines = (boolean) mPreferences.get(getString(R.string.user_prefs_clip_empty_lines), true);
+        UserPreferences.setEnableNotifications(notificationsEnabled);
         UserPreferences.setEnableGestures(gesturesEnabled);
         UserPreferences.setAccomplishmentClipEmptyLines(clipEmptyLines);
+
+        /* Toggle notification alarm on, if notifications are enabled */
+        if(notificationsEnabled) new DailyReminderAlarmHelper().registerAlarm(this, UserPreferences.getNotificationTime());
 
         /* Setup notification channel if required */
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

@@ -18,9 +18,9 @@
     <string name="button_set_custom_time">Set time…</string>
 
     <!-- Options Activity -->
-    <string name="google_sign_in_title">Sign in to Google to backup data to Google Drive.</string>
-    <string name="google_sign_in_button">Sign in</string>
     <string name="general_settings">General Settings</string>
+    <string name="notification_settings">Notification Settings</string>
+    <string name="enable_notifications">Enable daily reminder notifications</string>
     <string name="enable_gestures">Enable gestures</string>
     <string name="clip_accomplishments">Clip blank lines from Accomplishments</string>
     <string name="data_management">Data Management</string>
@@ -30,8 +30,6 @@
     <string name="button_force_backup">Force Backup</string>
     <string name="force_backup_confirmation">Are you sure you want to force backup? Your current backup will be overwritten.</string>
     <string name="button_erase_all_data">Erase all data</string>
-    <string name="button_import_data">Import</string>
-    <string name="button_export_data">Export</string>
     <string name="erase_all_confirmed">All data erased.</string>
     <string name="about_created_by">Created by: Thomas Stewart</string>
     <string name="about_version">Version: %1$s</string>
@@ -65,6 +63,8 @@
     <!-- Files -->
     <string name="user_prefs_file_location_key">io.github.tstewart.todayi.userprefs</string>
     <string name="user_prefs_last_backed_up_key">last_backed_up</string>
+    <string name="user_prefs_notifications_enabled">notifications_enabled</string>
+    <string name="user_prefs_notification_time">notification_time</string>
     <string name="user_prefs_gestures_enabled">gestures_enabled</string>
     <string name="user_prefs_clip_empty_lines">clip_empty_lines</string>
 

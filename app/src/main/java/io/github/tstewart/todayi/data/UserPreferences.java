@@ -2,6 +2,10 @@ package io.github.tstewart.todayi.data;
 
 import android.content.SharedPreferences;
 
+import org.threeten.bp.LocalTime;
+
+import io.github.tstewart.todayi.notifications.DailyReminderAlarmHelper;
+
 /*
 User preferences constants.
  */
@@ -9,6 +13,12 @@ public class UserPreferences {
 
     /* Maximum rating allowed on sliding day rating scale */
     private static int sMaxDayRating = 5;
+
+    /* Whether or not to enable daily notifications */
+    private static boolean sEnableNotifications = false;
+
+    /* Daily notification time */
+    private static LocalTime sNotificationTime = null;
 
     /* Whether or not to enable gesture navigation */
     private static boolean sEnableGestures = true;
@@ -68,6 +78,22 @@ public class UserPreferences {
 
     public static void setMaxDayRating(int maxDayRating) {
         UserPreferences.sMaxDayRating = maxDayRating;
+    }
+
+    public static boolean isEnableNotifications() {
+        return sEnableNotifications;
+    }
+
+    public static void setEnableNotifications(boolean enableNotifications) {
+        sEnableNotifications = enableNotifications;
+    }
+
+    public static LocalTime getNotificationTime() {
+        return sNotificationTime;
+    }
+
+    public static void setNotificationTime(LocalTime notificationTime) {
+        sNotificationTime = notificationTime;
     }
 
     public static boolean isGesturesEnabled() {

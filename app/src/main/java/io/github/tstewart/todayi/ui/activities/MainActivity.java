@@ -80,10 +80,6 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
 
         /* Register for date changed events */
         OnDateChanged.addListener(this);
-
-
-        //TODO REMOVE
-        new DailyReminderAlarmHelper().registerAlarm(this,null);
     }
 
     @Override

@@ -34,6 +34,7 @@ import io.github.tstewart.todayi.errors.ExportFailedException;
 import io.github.tstewart.todayi.errors.ImportFailedException;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
+import io.github.tstewart.todayi.notifications.DailyReminderAlarmHelper;
 
 /*
 Options Activity contains options for the application including data management, and user preferences
@@ -74,6 +75,9 @@ public class OptionsActivity extends AppCompatActivity {
     /* Switch to toggle auto clipping of blank lines from Accomplishments */
     SwitchMaterial mClipAccomplishments;
 
+    /* Switch to toggle daily notifications */
+    SwitchMaterial mNotificationsSw;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +102,7 @@ public class OptionsActivity extends AppCompatActivity {
         mLastBackedUpTv = findViewById(R.id.textViewLastBackedUp);
         mCurrentVersionTv = findViewById(R.id.textViewAboutVersion);
 
+        mNotificationsSw = findViewById(R.id.switchEnableDailyNotifications);
         mGesturesSw = findViewById(R.id.switchEnableSwipeGesture);
         mClipAccomplishments = findViewById(R.id.switchClipAccomplishments);
 
@@ -113,6 +118,12 @@ public class OptionsActivity extends AppCompatActivity {
 
         /* Set if options switches are flipped or not */
         /* Set switch toggle listeners */
+        if(mNotificationsSw != null) {
+            boolean notificationsEnabled = (boolean)mPreferences.get(getString(R.string.user_prefs_notifications_enabled), false);
+
+            mNotificationsSw.setChecked(notificationsEnabled);
+            mNotificationsSw.setOnClickListener(this::onNotificationsSwitchClicked);
+        }
         if(mGesturesSw != null) {
             boolean gesturesSelected = (boolean)mPreferences.get(getString(R.string.user_prefs_gestures_enabled), false);
             mGesturesSw.setChecked(gesturesSelected);
@@ -155,10 +166,6 @@ public class OptionsActivity extends AppCompatActivity {
             this.onRestoreBackupButtonClicked();
         else if(id == R.id.buttonForceBackup)
             this.onForceBackupButtonClicked();
-        else if(id == R.id.buttonImportData)
-            this.onImportDataButtonClicked();
-        else if(id == R.id.buttonExportData)
-            this.onExportDataButtonClicked();
         else if(id == R.id.buttonEraseAll)
             this.eraseButtonClicked();
     }
@@ -228,6 +235,17 @@ public class OptionsActivity extends AppCompatActivity {
             /* If default value (-1) was returned, or an invalid time was returned */
             return "Unknown";
         }
+    }
+
+    private void onNotificationsSwitchClicked(View view) {
+        boolean isNotificationsEnabled = mNotificationsSw.isChecked();
+
+        mPreferences.set(getString(R.string.user_prefs_notifications_enabled),isNotificationsEnabled);
+        UserPreferences.setEnableNotifications(isNotificationsEnabled);
+
+        DailyReminderAlarmHelper alarmHelper = new DailyReminderAlarmHelper();
+        if(isNotificationsEnabled) alarmHelper.registerAlarm(this, UserPreferences.getNotificationTime());
+        else alarmHelper.unregisterAlarm(this);
     }
 
     private void onGestureSwitchClicked(View view) {
@@ -319,14 +337,6 @@ public class OptionsActivity extends AppCompatActivity {
 
         /* Update last backed up text */
         setLastBackedUpText();
-    }
-
-    private void onImportDataButtonClicked() {
-        Toast.makeText(this, "Coming soon!", Toast.LENGTH_SHORT).show();
-    }
-
-    private void onExportDataButtonClicked() {
-        Toast.makeText(this, "Coming soon!", Toast.LENGTH_SHORT).show();
     }
 
     private void eraseButtonClicked() {
