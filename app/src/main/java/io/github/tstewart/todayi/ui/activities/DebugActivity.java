@@ -1,6 +1,8 @@
 package io.github.tstewart.todayi.ui.activities;
 
 import android.app.ActionBar;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
@@ -21,13 +23,11 @@ import org.threeten.bp.LocalDate;
 import java.util.Random;
 
 import io.github.tstewart.todayi.R;
-import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.helpers.ColorBlendHelper;
-import io.github.tstewart.todayi.helpers.NotificationHelper;
+import io.github.tstewart.todayi.notifications.NotificationSender;
 import io.github.tstewart.todayi.helpers.db.AccomplishmentTableHelper;
-import io.github.tstewart.todayi.helpers.db.DatabaseHelper;
 import io.github.tstewart.todayi.helpers.db.DayRatingTableHelper;
 import io.github.tstewart.todayi.models.Accomplishment;
 import io.github.tstewart.todayi.models.DayRating;
@@ -178,8 +178,14 @@ public class DebugActivity extends AppCompatActivity {
 
 
     private void onSendNotificationButtonClicked() {
-        NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext());
+        NotificationSender notificationSender = new NotificationSender(getApplicationContext());
 
-        notificationHelper.sendNotification("Debug", "Hello! This is a test!");
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,
+                0,
+                new Intent(this,
+                        CalendarActivity.class),
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        notificationSender.sendNotification(pendingIntent, "Debug", "Hello! This is a test!");
     }
 }

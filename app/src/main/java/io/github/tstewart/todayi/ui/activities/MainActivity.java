@@ -29,6 +29,7 @@ import io.github.tstewart.todayi.events.OnDateChanged;
 import io.github.tstewart.todayi.helpers.DateFormatter;
 import io.github.tstewart.todayi.helpers.RelativeDateHelper;
 import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
+import io.github.tstewart.todayi.notifications.DailyReminderAlarmHelper;
 import io.github.tstewart.todayi.ui.fragments.AccomplishmentListFragment;
 
 /*
@@ -79,6 +80,10 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
 
         /* Register for date changed events */
         OnDateChanged.addListener(this);
+
+
+        //TODO REMOVE
+        new DailyReminderAlarmHelper().registerAlarm(this,null);
     }
 
     @Override

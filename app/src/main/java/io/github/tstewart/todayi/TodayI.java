@@ -119,7 +119,7 @@ public class TodayI extends Application {
             NotificationChannel dailyReminderChannel = new NotificationChannel(channelId,channelName, importance);
 
             dailyReminderChannel.enableVibration(true);
-            dailyReminderChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+            dailyReminderChannel.setVibrationPattern(new long[]{100, 300});
 
             manager.createNotificationChannel(dailyReminderChannel);
         }
