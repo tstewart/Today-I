@@ -3,6 +3,8 @@ package io.github.tstewart.todayi.helpers;
 import org.ocpsoft.prettytime.PrettyTime;
 import org.threeten.bp.DateTimeUtils;
 import org.threeten.bp.LocalDate;
+import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.LocalTime;
 import org.threeten.bp.ZoneId;
 import org.threeten.bp.temporal.ChronoUnit;
 
@@ -28,8 +30,12 @@ public class RelativeDateHelper {
             case 0: return "Today";
             case 1: return "Yesterday";
             default:
+                /* Get the selected date with a time of 23:59, so that the selected date cannot be interpreted by PrettyTime as a day before or after
+                * E.g. if the current date is 1/1/20 12:00 and the selected date is 3/1/2020 11:59,
+                * PrettyTime justifies this as in 1 day, not in 2 days */
+                LocalDateTime selectedDateLocal = date.atTime(LocalTime.MAX);
                 /* PrettyTime requires the use of java Date, so this needs to be converted */
-                Date dateConverted = DateTimeUtils.toDate(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+                Date dateConverted = DateTimeUtils.toDate(selectedDateLocal.atZone(ZoneId.systemDefault()).toInstant());
                 return new PrettyTime().format(dateConverted);
         }
     }
