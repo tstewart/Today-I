@@ -11,6 +11,7 @@ import org.threeten.bp.LocalTime;
 import java.util.Calendar;
 
 import androidx.annotation.NonNull;
+import io.github.tstewart.todayi.notifications.receivers.DailyAlarmReceiver;
 
 /* Helper class for registering and unregistering daily reminder notifications */
 public class DailyReminderAlarmHelper {
@@ -46,7 +47,7 @@ public class DailyReminderAlarmHelper {
 
         PendingIntent pendingIntent = getDailyAlarmIntent(context);
 
-        alarmManager.setRepeating(AlarmManager.RTC, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 60*1000, pendingIntent);
 
         Log.i(CLASS_LOG_TAG,"Daily reminder notifications enabled.");
     }
@@ -62,11 +63,9 @@ public class DailyReminderAlarmHelper {
     }
 
     private PendingIntent getDailyAlarmIntent(Context context) {
-        Intent serviceIntent = new Intent(context, NotificationService.class);
-        serviceIntent.putExtra("title", "Daily reminder");
-        serviceIntent.putExtra("content","Hello!");
+        Intent serviceIntent = new Intent(context, DailyAlarmReceiver.class);
 
-        return PendingIntent.getService(context,0,
+        return PendingIntent.getBroadcast(context,0,
                 serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }

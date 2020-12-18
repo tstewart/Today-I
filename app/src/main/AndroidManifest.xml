@@ -3,6 +3,7 @@
     package="io.github.tstewart.todayi">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".TodayI"
@@ -55,7 +56,15 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".notifications.NotificationService" />
+        <receiver android:name=".notifications.receivers.WakeUpAlarmReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".notifications.receivers.DailyAlarmReceiver"
+            android:enabled="true"/>
+
     </application>
 
 
