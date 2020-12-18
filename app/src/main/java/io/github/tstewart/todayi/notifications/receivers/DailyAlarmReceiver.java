@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import io.github.tstewart.todayi.notifications.NotificationSender;
+import io.github.tstewart.todayi.ui.activities.MainActivity;
 
 /* Receives Alarm requests for Daily Reminder notifications, and sends a request to NotificationSender */
 public class DailyAlarmReceiver extends BroadcastReceiver {
@@ -14,7 +15,9 @@ public class DailyAlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         NotificationSender sender = new NotificationSender(context);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(context,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent mainActivityIntent = new Intent(context, MainActivity.class);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(context,0,mainActivityIntent,PendingIntent.FLAG_UPDATE_CURRENT);
 
         sender.sendNotification(pendingIntent, "Daily Reminder", "What have you done today?");
     }

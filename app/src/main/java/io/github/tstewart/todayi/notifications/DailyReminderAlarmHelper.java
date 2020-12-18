@@ -47,7 +47,7 @@ public class DailyReminderAlarmHelper {
 
         PendingIntent pendingIntent = getDailyAlarmIntent(context);
 
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 60*1000, pendingIntent);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
 
         Log.i(CLASS_LOG_TAG,"Daily reminder notifications enabled.");
     }
