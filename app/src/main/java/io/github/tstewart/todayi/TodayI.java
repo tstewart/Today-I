@@ -52,7 +52,7 @@ public class TodayI extends Application {
 
         /* Set default values for user preferences if they do not exist */
         mPreferences.setDefaultValue(getString(R.string.user_prefs_notifications_enabled), false);
-        mPreferences.set(getString(R.string.user_prefs_notification_time), "18:00");
+        mPreferences.setDefaultValue(getString(R.string.user_prefs_notification_time), "18:00");
         mPreferences.setDefaultValue(getString(R.string.user_prefs_gestures_enabled), true);
         mPreferences.setDefaultValue(getString(R.string.user_prefs_clip_empty_lines), true);
 

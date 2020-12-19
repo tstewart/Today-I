@@ -289,11 +289,14 @@ public class OptionsActivity extends AppCompatActivity {
         new TimePickerDialog(this,
                 (view, hourOfDay, minute) -> {
                     LocalTime newNotificationTime = LocalTime.of(hourOfDay,minute);
+                    String newNotificationTimeString = newNotificationTime.format(DateTimeFormatter.ofPattern("HH:mm"));
 
                     UserPreferences.setNotificationTime(newNotificationTime);
+                    new UserPreferences(getSharedPreferences(getString(R.string.user_prefs_file_location_key), MODE_PRIVATE))
+                            .set(getString(R.string.user_prefs_notification_time), newNotificationTimeString);
 
                     /* Update notification time label */
-                    if(mNotificationTimeTv != null) mNotificationTimeTv.setText(newNotificationTime.format(DateTimeFormatter.ofPattern("HH:mm")));
+                    if(mNotificationTimeTv != null) mNotificationTimeTv.setText(newNotificationTimeString);
 
                     /* Update notification alarm */
                     new DailyReminderAlarmHelper().registerAlarm(this,newNotificationTime);
