@@ -9,6 +9,9 @@ import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.threeten.bp.LocalTime;
+import org.threeten.bp.format.DateTimeParseException;
+
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -57,9 +60,20 @@ public class TodayI extends Application {
         boolean notificationsEnabled = (boolean) mPreferences.get(getString(R.string.user_prefs_notifications_enabled), false);
         boolean gesturesEnabled = (boolean) mPreferences.get(getString(R.string.user_prefs_gestures_enabled), true);
         boolean clipEmptyLines = (boolean) mPreferences.get(getString(R.string.user_prefs_clip_empty_lines), true);
+        String notificationTimeString = (String) mPreferences.get(getString(R.string.user_prefs_notification_time), "18:00");
         UserPreferences.setEnableNotifications(notificationsEnabled);
         UserPreferences.setEnableGestures(gesturesEnabled);
         UserPreferences.setAccomplishmentClipEmptyLines(clipEmptyLines);
+
+        /* Try and parse notification time from string */
+        LocalTime notificationTime = null;
+        try {
+            notificationTime = LocalTime.parse(notificationTimeString);
+        } catch (DateTimeParseException e) {
+            /* Default to 6PM */
+            notificationTime = LocalTime.of(18,0);
+        }
+        UserPreferences.setNotificationTime(notificationTime);
 
         /* Toggle notification alarm on, if notifications are enabled */
         if(notificationsEnabled) new DailyReminderAlarmHelper().registerAlarm(this, UserPreferences.getNotificationTime());
