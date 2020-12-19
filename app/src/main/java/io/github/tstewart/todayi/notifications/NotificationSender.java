@@ -1,12 +1,16 @@
 package io.github.tstewart.todayi.notifications;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.util.Log;
+
+import java.util.List;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -28,16 +32,42 @@ public class NotificationSender {
     }
 
     public void sendNotification(PendingIntent launchIntent, String title, String content) {
-        Uri soundUri = RingtoneManager
-                .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        if(!isAppInForeground()) {
+            Uri soundUri = RingtoneManager
+                    .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
-        Notification notification = new NotificationCompat.Builder(getContext(), DAILY_REMINDERS_CHANNEL_ID)
-                .setContentTitle(title)
-                .setContentText(content)
-                .setContentIntent(launchIntent)
-                .setSound(soundUri).setSmallIcon(R.drawable.notification_logo)
-                .build();
-        NotificationManagerCompat.from(getContext()).notify(0, notification);
+            Notification notification = new NotificationCompat.Builder(getContext(), DAILY_REMINDERS_CHANNEL_ID)
+                    .setContentTitle(title)
+                    .setContentText(content)
+                    .setContentIntent(launchIntent)
+                    .setSound(soundUri).setSmallIcon(R.drawable.notification_logo)
+                    .build();
+            NotificationManagerCompat.from(getContext()).notify(0, notification);
+        }
+        else
+            Log.i(NotificationSender.class.getSimpleName(), "Notification was not sent as the application is currently in the foreground.");
+    }
+
+    public boolean isAppInForeground() {
+        ActivityManager activityManager = (ActivityManager)getContext().getSystemService(Context.ACTIVITY_SERVICE);
+
+        /* If the activity manager couldn't be found for any reason, default to assuming the app is in the background */
+        if(activityManager != null) {
+            List<ActivityManager.RunningAppProcessInfo> runningProcesses = activityManager.getRunningAppProcesses();
+            for(ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
+                /* If the current process is in the foreground, check if it is this app */
+                if(processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                    for(String activeProcess : processInfo.pkgList) {
+                        /* If the active process is this app, the app is not in the background */
+                        if(activeProcess.equals(getContext().getPackageName())) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        /* App was not found in the foreground */
+        return false;
     }
 
     public Context getContext() {
