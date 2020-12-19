@@ -76,7 +76,7 @@ public class TodayI extends Application {
         UserPreferences.setNotificationTime(notificationTime);
 
         /* Toggle notification alarm on, if notifications are enabled */
-        if(notificationsEnabled) new DailyReminderAlarmHelper().registerAlarm(this, UserPreferences.getNotificationTime());
+        if(notificationsEnabled) new DailyReminderAlarmHelper().registerAlarm(this, UserPreferences.getNotificationTime(), false);
 
         /* Setup notification channel if required */
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

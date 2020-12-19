@@ -135,6 +135,10 @@ public class OptionsActivity extends AppCompatActivity {
         if(mNotificationsSw != null) {
             boolean notificationsEnabled = (boolean)mPreferences.get(getString(R.string.user_prefs_notifications_enabled), false);
 
+            /* Show or hide notification time layout depending on notifications enabled setting */
+            if(mLayoutNotificationTimeSelect != null)
+                mLayoutNotificationTimeSelect.setVisibility(notificationsEnabled ? View.VISIBLE : View.GONE);
+
             mNotificationsSw.setChecked(notificationsEnabled);
             mNotificationsSw.setOnClickListener(this::onNotificationsSwitchClicked);
         }
@@ -267,7 +271,7 @@ public class OptionsActivity extends AppCompatActivity {
         /* Toggle notification alarm on or off */
         DailyReminderAlarmHelper alarmHelper = new DailyReminderAlarmHelper();
         if(isNotificationsEnabled) {
-            alarmHelper.registerAlarm(this, UserPreferences.getNotificationTime());
+            alarmHelper.registerAlarm(this, UserPreferences.getNotificationTime(), true);
         }
         else {
             alarmHelper.unregisterAlarm(this);
@@ -299,7 +303,7 @@ public class OptionsActivity extends AppCompatActivity {
                     if(mNotificationTimeTv != null) mNotificationTimeTv.setText(newNotificationTimeString);
 
                     /* Update notification alarm */
-                    new DailyReminderAlarmHelper().registerAlarm(this,newNotificationTime);
+                    new DailyReminderAlarmHelper().registerAlarm(this,newNotificationTime, true);
                 },
                 currentNotificationTime.getHour(),
                 currentNotificationTime.getMinute(),

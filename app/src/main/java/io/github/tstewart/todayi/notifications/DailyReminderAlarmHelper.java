@@ -22,7 +22,13 @@ public class DailyReminderAlarmHelper {
     */
     private static final String CLASS_LOG_TAG = DailyReminderAlarmHelper.class.getSimpleName();
 
-    public void registerAlarm(@NonNull Context context, LocalTime time) {
+    /**
+     * Register an alarm to send notifications daily at the provided time
+     * @param context Application context
+     * @param time Time to send notification
+     * @param overrideCurrent If an alarm of this type already exists, should it be overwritten
+     */
+    public void registerAlarm(@NonNull Context context, LocalTime time, boolean overrideCurrent) {
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
 
@@ -45,26 +51,35 @@ public class DailyReminderAlarmHelper {
             calendar.add(Calendar.DAY_OF_MONTH,1);
         }
 
-        PendingIntent pendingIntent = getDailyAlarmIntent(context);
+        PendingIntent pendingIntent = getDailyAlarmIntent(context, overrideCurrent);
 
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
-
-        Log.i(CLASS_LOG_TAG,"Daily reminder notifications enabled.");
+        if(pendingIntent != null) {
+            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+            Log.i(CLASS_LOG_TAG,"Daily reminder notifications enabled.");
+        }
     }
 
     /* Remove daily reminder alarm, so that it stops sending notifications */
     public void unregisterAlarm(@NonNull Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        alarmManager.cancel(getDailyAlarmIntent(context));
+        alarmManager.cancel(getDailyAlarmIntent(context, true));
 
 
         Log.i(CLASS_LOG_TAG,"Daily reminder notifications disabled.");
     }
 
-    private PendingIntent getDailyAlarmIntent(Context context) {
+    private PendingIntent getDailyAlarmIntent(Context context, boolean overrideCurrent) {
         Intent serviceIntent = new Intent(context, DailyAlarmReceiver.class);
 
+        if(!overrideCurrent) {
+            PendingIntent existsCheck = PendingIntent.getBroadcast(context, 0,
+                    serviceIntent, PendingIntent.FLAG_NO_CREATE);
+
+            /* If the current alarm should not be overwritten, but FLAG_NO_CREATE has indicated that an alarm already exists
+             * (by not returning null), then return null so that we do not register a new alarm of this type */
+            if (existsCheck != null) return null;
+        }
         return PendingIntent.getBroadcast(context,0,
                 serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
