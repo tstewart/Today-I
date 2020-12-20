@@ -3,6 +3,7 @@ package io.github.tstewart.todayi.ui.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,6 +32,7 @@ import io.github.tstewart.todayi.helpers.RelativeDateHelper;
 import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
 import io.github.tstewart.todayi.notifications.DailyReminderAlarmHelper;
 import io.github.tstewart.todayi.ui.fragments.AccomplishmentListFragment;
+import io.github.tstewart.todayi.ui.tutorials.MainActivityTutorial;
 
 /*
 Main Activity of the application (obviously), handles AccomplishmentListFragment and DayRatingFragment functionality
@@ -97,6 +99,13 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
 
         /* Set current date to System's current date */
         updateCurrentDate(LocalDate.now());
+
+        /*
+        Show tutorial after a set period of time
+        This is done to ensure all views have been initialised before the tutorial is shown
+         */
+        MainActivity thisActivity = this;
+        new Handler().postDelayed(() -> new MainActivityTutorial().showTutorial(thisActivity), 200);
     }
 
     /* Inflate Main Activity's top bar */
