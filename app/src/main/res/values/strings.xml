@@ -53,6 +53,19 @@
     <string name="daily_reminder_notification_title">Today I</string>
     <string name="daily_reminder_notification_content">TODO</string>
 
+    <!-- Tutorial -->
+    <string name="tutorial_next">Next</string>
+    <string name="tutorial_start">Start!</string>
+    <string name="tutorial_welcome">Welcome to Today I, a mini application to track your accomplishments for the day, as well rate your overall feeling of each day.</string>
+    <string name="tutorial_new_accomplishment">To add new Accomplishments, select the New button.</string>
+    <string name="tutorial_current_day">The current selected day is shown here.</string>
+    <string name="tutorial_previous_day">You can change to the previous day by selecting this button.</string>
+    <string name="tutorial_next_day">You can change to the next day by selecting this button.</string>
+    <string name="tutorial_gesture">You can also swipe left and right to change days (If this is enabled in Settings.)</string>
+    <string name="tutorial_day_rating">You can rate your day on a scale from 1–5 by selecting a rating.</string>
+    <string name="tutorial_calendar">You can view past day ratings and quickly find Accomplishments from previous days in the calendar.</string>
+
+
     <!-- Other -->
     <string name="button_confirm">Confirm</string>
     <string name="button_delete">Delete</string>

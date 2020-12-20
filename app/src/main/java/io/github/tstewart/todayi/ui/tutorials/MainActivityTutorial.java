@@ -53,14 +53,16 @@ public class MainActivityTutorial {
 
         MaterialShowcaseSequence showcase = new MaterialShowcaseSequence(tutorialActivity);
 
-        showcase.addSequenceItem(startOverlayView, "Welcome to Today I, a mini application to track your accomplishments for the day, as well rate your overall feeling of each day.", "Next");
-        showcase.addSequenceItem(newAccomplishmentButton, "To add new Accomplishments, select the New button.", "Next");
-        showcase.addSequenceItem(dayLayout, "The current selected day is shown here.", "Next");
-        showcase.addSequenceItem(previousDayButton, "You can change to the previous day by selecting this button.", "Next");
-        showcase.addSequenceItem(nextDayButton, "You can change to the next day by selecting this button.", "Next");
-        showcase.addSequenceItem(accomplishmentListFragment, "You can also swipe left and right to change days (If this is enabled in Settings.)", "Next");
-        showcase.addSequenceItem(dayRatingFragment, "You can rate your day on a scale from 1-5 by selecting a rating.", "Next");
-        showcase.addSequenceItem(calendarButton, "You can view past day ratings and quickly find Accomplishments from previous days in the calendar.", "Next");
+        String next = tutorialActivity.getString(R.string.tutorial_next);
+
+        showcase.addSequenceItem(startOverlayView, tutorialActivity.getString(R.string.tutorial_welcome), next);
+        showcase.addSequenceItem(newAccomplishmentButton, tutorialActivity.getString(R.string.tutorial_new_accomplishment), next);
+        showcase.addSequenceItem(dayLayout, tutorialActivity.getString(R.string.tutorial_current_day), next);
+        showcase.addSequenceItem(previousDayButton, tutorialActivity.getString(R.string.tutorial_previous_day), next);
+        showcase.addSequenceItem(nextDayButton, tutorialActivity.getString(R.string.tutorial_next_day), next);
+        showcase.addSequenceItem(accomplishmentListFragment, tutorialActivity.getString(R.string.tutorial_gesture), next);
+        showcase.addSequenceItem(dayRatingFragment, tutorialActivity.getString(R.string.tutorial_day_rating), next);
+        showcase.addSequenceItem(calendarButton, tutorialActivity.getString(R.string.tutorial_calendar), tutorialActivity.getString(R.string.tutorial_start));
 
         return showcase;
     }
