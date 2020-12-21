@@ -3,7 +3,6 @@ package io.github.tstewart.todayi.ui.dialogs;
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -11,10 +10,11 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
-import java.util.Calendar;
-import java.util.Date;
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.LocalTime;
+import org.threeten.bp.temporal.ChronoField;
 
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.DBConstants;
@@ -26,7 +26,7 @@ Dialog for adding and editing Accomplishments
 public class AccomplishmentDialog extends AlertDialog.Builder {
 
     /* Selected date / time */
-    private Date mSelectedDate;
+    private LocalDateTime mSelectedDate;
     /* Time selection label */
     private final TextView mSelectedTimeLabel;
     /* Time selection button */
@@ -66,7 +66,7 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
 
         /* If current selected time was not set, set to current time */
         if(mSelectedTimeLabel != null && mSelectedTimeLabel.getText().length()==0) {
-            setSelectedTime(new Date());
+            setSelectedTime(LocalDateTime.now());
         }
 
         AlertDialog dialog = super.create();
@@ -118,7 +118,7 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
     }
 
     /* Set selected time */
-    public AccomplishmentDialog setSelectedTime(Date date) {
+    public AccomplishmentDialog setSelectedTime(LocalDateTime date) {
         if(mSelectedTimeLabel != null && date != null) {
             DateFormatter dateFormatter = new DateFormatter(DBConstants.TIME_FORMAT);
             mSelectedTimeLabel.setText(dateFormatter.format(date));
@@ -130,22 +130,22 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
 
     private void setTimeSelectionButtonListener(View view) {
         if(mContext != null) {
-            /* Get current time */
-            Calendar calendar = Calendar.getInstance();
 
             /* If already provided a time, set the time picker default value to this selected time */
-            if(mSelectedDate != null)
-                calendar.setTime(mSelectedDate);
+            if(mSelectedDate == null)
+                mSelectedDate = LocalDateTime.now();
+
+            LocalTime currentTime = mSelectedDate.toLocalTime();
 
             /* Get time picker dialog */
             new TimePickerDialog(mContext, (timeView, hourOfDay, minute) -> {
-                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                calendar.set(Calendar.MINUTE, minute);
+                LocalTime newTime = LocalTime.of(hourOfDay, minute);
 
-                setSelectedTime(calendar.getTime());
+                mSelectedDate = mSelectedDate.with(newTime);
 
-            }, calendar.get(Calendar.HOUR_OF_DAY),
-                    calendar.get(Calendar.MINUTE),
+                setSelectedTime(mSelectedDate);
+
+            }, currentTime.getHour(), currentTime.getMinute(),
                     true)
             .show();
         }
@@ -175,7 +175,7 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
         return this.mView;
     }
 
-    public Date getSelectedDate() {
+    public LocalDateTime getSelectedDate() {
         return mSelectedDate;
     }
 

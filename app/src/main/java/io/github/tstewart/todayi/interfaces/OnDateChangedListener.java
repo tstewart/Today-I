@@ -1,5 +1,7 @@
 package io.github.tstewart.todayi.interfaces;
 
+import org.threeten.bp.LocalDate;
+
 import java.util.Date;
 
 /**
@@ -9,5 +11,5 @@ public interface OnDateChangedListener {
     /**
      * Perform function on date changed
      */
-    void onDateChanged(Date date);
+    void onDateChanged(LocalDate date);
 }

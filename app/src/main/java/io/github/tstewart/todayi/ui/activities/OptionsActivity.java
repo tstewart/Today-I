@@ -2,6 +2,7 @@ package io.github.tstewart.todayi.ui.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,9 +19,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
+
+import org.threeten.bp.LocalTime;
+import org.threeten.bp.format.DateTimeFormatter;
 
 import java.util.List;
 import java.util.Objects;
@@ -34,6 +39,7 @@ import io.github.tstewart.todayi.errors.ExportFailedException;
 import io.github.tstewart.todayi.errors.ImportFailedException;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
+import io.github.tstewart.todayi.notifications.DailyReminderAlarmHelper;
 
 /*
 Options Activity contains options for the application including data management, and user preferences
@@ -74,6 +80,16 @@ public class OptionsActivity extends AppCompatActivity {
     /* Switch to toggle auto clipping of blank lines from Accomplishments */
     SwitchMaterial mClipAccomplishments;
 
+    /* Switch to toggle daily notifications */
+    SwitchMaterial mNotificationsSw;
+
+    /* Layout for selecting notification time
+    * Hidden when notifications are disabled */
+    LinearLayout mLayoutNotificationTimeSelect;
+
+    /* Notification time label, shows current notification time */
+    TextView mNotificationTimeTv;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +100,7 @@ public class OptionsActivity extends AppCompatActivity {
         this.mPreferences = new UserPreferences(sharedPrefs);
 
         LinearLayout mainLayout = findViewById(R.id.linearLayoutOptions);
+        mLayoutNotificationTimeSelect = findViewById(R.id.linearLayoutNotificationTimeSelect);
 
         if(mainLayout != null) {
             for (View v : mainLayout.getTouchables()) {
@@ -98,6 +115,8 @@ public class OptionsActivity extends AppCompatActivity {
         mLastBackedUpTv = findViewById(R.id.textViewLastBackedUp);
         mCurrentVersionTv = findViewById(R.id.textViewAboutVersion);
 
+        mNotificationsSw = findViewById(R.id.switchEnableDailyNotifications);
+        mNotificationTimeTv = findViewById(R.id.textViewSelectedTime);
         mGesturesSw = findViewById(R.id.switchEnableSwipeGesture);
         mClipAccomplishments = findViewById(R.id.switchClipAccomplishments);
 
@@ -113,6 +132,21 @@ public class OptionsActivity extends AppCompatActivity {
 
         /* Set if options switches are flipped or not */
         /* Set switch toggle listeners */
+        if(mNotificationsSw != null) {
+            boolean notificationsEnabled = (boolean)mPreferences.get(getString(R.string.user_prefs_notifications_enabled), false);
+
+            /* Show or hide notification time layout depending on notifications enabled setting */
+            if(mLayoutNotificationTimeSelect != null)
+                mLayoutNotificationTimeSelect.setVisibility(notificationsEnabled ? View.VISIBLE : View.GONE);
+
+            mNotificationsSw.setChecked(notificationsEnabled);
+            mNotificationsSw.setOnClickListener(this::onNotificationsSwitchClicked);
+        }
+        if(mNotificationTimeTv != null) {
+            LocalTime notificationTime = UserPreferences.getNotificationTime();
+            if(notificationTime != null)
+                mNotificationTimeTv.setText(notificationTime.format(DateTimeFormatter.ofPattern("HH:mm")));
+        }
         if(mGesturesSw != null) {
             boolean gesturesSelected = (boolean)mPreferences.get(getString(R.string.user_prefs_gestures_enabled), false);
             mGesturesSw.setChecked(gesturesSelected);
@@ -155,14 +189,10 @@ public class OptionsActivity extends AppCompatActivity {
             this.onRestoreBackupButtonClicked();
         else if(id == R.id.buttonForceBackup)
             this.onForceBackupButtonClicked();
-        else if(id == R.id.buttonImportData)
-            this.onImportDataButtonClicked();
-        else if(id == R.id.buttonExportData)
-            this.onExportDataButtonClicked();
-        else if(id == R.id.buttonGoogleSignIn)
-            this.onGoogleSignInButtonClicked();
         else if(id == R.id.buttonEraseAll)
             this.eraseButtonClicked();
+        else if(id == R.id.buttonSetTime)
+            this.setNotificationTimeButtonClicked();
     }
 
     @Override
@@ -231,6 +261,56 @@ public class OptionsActivity extends AppCompatActivity {
             return "Unknown";
         }
     }
+
+    private void onNotificationsSwitchClicked(View view) {
+        boolean isNotificationsEnabled = mNotificationsSw.isChecked();
+
+        mPreferences.set(getString(R.string.user_prefs_notifications_enabled),isNotificationsEnabled);
+        UserPreferences.setEnableNotifications(isNotificationsEnabled);
+
+        /* Toggle notification alarm on or off */
+        DailyReminderAlarmHelper alarmHelper = new DailyReminderAlarmHelper();
+        if(isNotificationsEnabled) {
+            alarmHelper.registerAlarm(this, UserPreferences.getNotificationTime(), true);
+        }
+        else {
+            alarmHelper.unregisterAlarm(this);
+        }
+
+        if(mLayoutNotificationTimeSelect != null)
+            /* Set visibility to visible if notifications are enabled, otherwise set them to gone (so they don't appear) */
+            mLayoutNotificationTimeSelect.setVisibility(isNotificationsEnabled ? View.VISIBLE : View.GONE);
+    }
+
+
+    private void setNotificationTimeButtonClicked() {
+
+        LocalTime currentNotificationTime = UserPreferences.getNotificationTime();
+
+        if(currentNotificationTime == null) currentNotificationTime = LocalTime.of(18,0);
+
+        /* Show a time picker */
+        new TimePickerDialog(this,
+                (view, hourOfDay, minute) -> {
+                    LocalTime newNotificationTime = LocalTime.of(hourOfDay,minute);
+                    String newNotificationTimeString = newNotificationTime.format(DateTimeFormatter.ofPattern("HH:mm"));
+
+                    UserPreferences.setNotificationTime(newNotificationTime);
+                    new UserPreferences(getSharedPreferences(getString(R.string.user_prefs_file_location_key), MODE_PRIVATE))
+                            .set(getString(R.string.user_prefs_notification_time), newNotificationTimeString);
+
+                    /* Update notification time label */
+                    if(mNotificationTimeTv != null) mNotificationTimeTv.setText(newNotificationTimeString);
+
+                    /* Update notification alarm */
+                    new DailyReminderAlarmHelper().registerAlarm(this,newNotificationTime, true);
+                },
+                currentNotificationTime.getHour(),
+                currentNotificationTime.getMinute(),
+                true)
+                .show();
+    }
+
 
     private void onGestureSwitchClicked(View view) {
         mPreferences.set(getString(R.string.user_prefs_gestures_enabled), mGesturesSw.isChecked());
@@ -321,18 +401,6 @@ public class OptionsActivity extends AppCompatActivity {
 
         /* Update last backed up text */
         setLastBackedUpText();
-    }
-
-    private void onImportDataButtonClicked() {
-        Toast.makeText(this, "Coming soon!", Toast.LENGTH_SHORT).show();
-    }
-
-    private void onExportDataButtonClicked() {
-        Toast.makeText(this, "Coming soon!", Toast.LENGTH_SHORT).show();
-    }
-
-    private void onGoogleSignInButtonClicked() {
-        Toast.makeText(this, "Coming soon!", Toast.LENGTH_SHORT).show();
     }
 
     private void eraseButtonClicked() {

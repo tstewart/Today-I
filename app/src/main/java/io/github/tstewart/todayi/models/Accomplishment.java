@@ -2,14 +2,16 @@ package io.github.tstewart.todayi.models;
 
 import android.content.ContentValues;
 
-import java.util.Date;
-
 import androidx.annotation.NonNull;
+
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.LocalDateTime;
+
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ValidationFailedException;
-import io.github.tstewart.todayi.interfaces.DatabaseObject;
 import io.github.tstewart.todayi.helpers.DateFormatter;
+import io.github.tstewart.todayi.interfaces.DatabaseObject;
 
 /**
  * Object to store information of an Accomplishment
@@ -21,11 +23,11 @@ public class Accomplishment implements DatabaseObject {
     private static final int MAX_CONTENT_LENGTH = 200;
 
     /* Date Accomplishment was created on */
-    private Date mDate;
+    private LocalDateTime mDate;
     /* Content of Accomplishment */
     private String mContent;
 
-    public Accomplishment(@NonNull Date mDate, @NonNull String content) {
+    public Accomplishment(@NonNull LocalDateTime mDate, @NonNull String content) {
         this.mDate = mDate;
         setContent(content);
     }
@@ -63,6 +65,7 @@ public class Accomplishment implements DatabaseObject {
 
         /* Format date and add to content values if not null */
         if (mDate != null) {
+            String test = dateFormatter.format(mDate);
             contentValues.put(DBConstants.COLUMN_DATE, dateFormatter.format(mDate));
         }
 
@@ -71,11 +74,11 @@ public class Accomplishment implements DatabaseObject {
         return contentValues;
     }
 
-    public Date getDate() {
+    public LocalDateTime getDate() {
         return mDate;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDateTime date) {
         this.mDate = date;
     }
 

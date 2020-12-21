@@ -18,9 +18,9 @@
     <string name="button_set_custom_time">Set time…</string>
 
     <!-- Options Activity -->
-    <string name="google_sign_in_title">Sign in to Google to backup data to Google Drive.</string>
-    <string name="google_sign_in_button">Sign in</string>
     <string name="general_settings">General Settings</string>
+    <string name="notification_settings">Notification Settings</string>
+    <string name="enable_notifications">Enable daily reminder notifications</string>
     <string name="enable_gestures">Enable gestures</string>
     <string name="clip_accomplishments">Clip blank lines from Accomplishments</string>
     <string name="data_management">Data Management</string>
@@ -30,8 +30,6 @@
     <string name="button_force_backup">Force Backup</string>
     <string name="force_backup_confirmation">Are you sure you want to force backup? Your current backup will be overwritten.</string>
     <string name="button_erase_all_data">Erase all data</string>
-    <string name="button_import_data">Import</string>
-    <string name="button_export_data">Export</string>
     <string name="erase_all_confirmed">All data erased.</string>
     <string name="about_created_by">Created by: Thomas Stewart</string>
     <string name="about_version">Version: %1$s</string>
@@ -47,7 +45,27 @@
     <string name="debug_populate_confirmation">Are you sure you want to populate this table? You may want to backup first.</string>
     <string name="debug_get_accomplishments">Get all Accomplishments</string>
     <string name="debug_get_ratings">Get all Ratings</string>
+    <string name="debug_send_notification">Send test notification</string>
+    <string name="debug_show_tutorial">Show tutorial</string>
     <string name="debug_back">Back</string>
+
+    <!-- Notifications -->
+    <string name="daily_reminder_notification_channel_name">Daily notifications</string>
+    <string name="daily_reminder_notification_title">Today I</string>
+    <string name="daily_reminder_notification_content">TODO</string>
+
+    <!-- Tutorial -->
+    <string name="tutorial_next">Next</string>
+    <string name="tutorial_start">Start!</string>
+    <string name="tutorial_welcome">Welcome to Today I, a mini application to track your accomplishments for the day, as well rate your overall feeling of each day.</string>
+    <string name="tutorial_new_accomplishment">To add new Accomplishments, select the New button.</string>
+    <string name="tutorial_current_day">The current selected day is shown here.</string>
+    <string name="tutorial_previous_day">You can change to the previous day by selecting this button.</string>
+    <string name="tutorial_next_day">You can change to the next day by selecting this button.</string>
+    <string name="tutorial_gesture">You can also swipe left and right to change days (If this is enabled in Settings.)</string>
+    <string name="tutorial_day_rating">You can rate your day on a scale from 1–5 by selecting a rating.</string>
+    <string name="tutorial_calendar">You can view past day ratings and quickly find Accomplishments from previous days in the calendar.</string>
+
 
     <!-- Other -->
     <string name="button_confirm">Confirm</string>
@@ -59,6 +77,9 @@
     <!-- Files -->
     <string name="user_prefs_file_location_key">io.github.tstewart.todayi.userprefs</string>
     <string name="user_prefs_last_backed_up_key">last_backed_up</string>
+    <string name="user_prefs_tutorial_shown">tutorial_shown</string>
+    <string name="user_prefs_notifications_enabled">notifications_enabled</string>
+    <string name="user_prefs_notification_time">notification_time</string>
     <string name="user_prefs_gestures_enabled">gestures_enabled</string>
     <string name="user_prefs_clip_empty_lines">clip_empty_lines</string>
 

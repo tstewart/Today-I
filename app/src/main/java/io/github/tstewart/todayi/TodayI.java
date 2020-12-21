@@ -1,20 +1,30 @@
 package io.github.tstewart.todayi;
 
 import android.app.Application;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
+
+import org.threeten.bp.LocalTime;
+import org.threeten.bp.format.DateTimeParseException;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import io.github.tstewart.todayi.data.LocalDatabaseIO;
 import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ExportFailedException;
 import io.github.tstewart.todayi.data.DBConstants;
-import io.github.tstewart.todayi.helpers.DatabaseHelper;
+import io.github.tstewart.todayi.helpers.db.AccomplishmentTableHelper;
+import io.github.tstewart.todayi.notifications.DailyReminderAlarmHelper;
+import io.github.tstewart.todayi.notifications.NotificationSender;
+import io.github.tstewart.todayi.helpers.db.DayRatingTableHelper;
 
 /*
  * Application class, called on application start
@@ -41,19 +51,41 @@ public class TodayI extends Application {
         mPreferences = new UserPreferences(sharedPrefs);
 
         /* Set default values for user preferences if they do not exist */
+        mPreferences.setDefaultValue(getString(R.string.user_prefs_tutorial_shown), false);
+        mPreferences.setDefaultValue(getString(R.string.user_prefs_notifications_enabled), false);
+        mPreferences.setDefaultValue(getString(R.string.user_prefs_notification_time), "18:00");
         mPreferences.setDefaultValue(getString(R.string.user_prefs_gestures_enabled), true);
         mPreferences.setDefaultValue(getString(R.string.user_prefs_clip_empty_lines), true);
 
         /* Set preference variables for this instance of the app */
+        boolean notificationsEnabled = (boolean) mPreferences.get(getString(R.string.user_prefs_notifications_enabled), false);
         boolean gesturesEnabled = (boolean) mPreferences.get(getString(R.string.user_prefs_gestures_enabled), true);
         boolean clipEmptyLines = (boolean) mPreferences.get(getString(R.string.user_prefs_clip_empty_lines), true);
+        String notificationTimeString = (String) mPreferences.get(getString(R.string.user_prefs_notification_time), "18:00");
+        UserPreferences.setEnableNotifications(notificationsEnabled);
         UserPreferences.setEnableGestures(gesturesEnabled);
         UserPreferences.setAccomplishmentClipEmptyLines(clipEmptyLines);
 
+        /* Try and parse notification time from string */
+        LocalTime notificationTime = null;
+        try {
+            notificationTime = LocalTime.parse(notificationTimeString);
+        } catch (DateTimeParseException e) {
+            /* Default to 6PM */
+            notificationTime = LocalTime.of(18,0);
+        }
+        UserPreferences.setNotificationTime(notificationTime);
+
+        /* Toggle notification alarm on, if notifications are enabled */
+        if(notificationsEnabled) new DailyReminderAlarmHelper().registerAlarm(this, UserPreferences.getNotificationTime(), false);
+
+        /* Setup notification channel if required */
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createReminderNotificationChannel();
+        }
 
         /* Database auto backup management */
         Context context = getApplicationContext();
-
 
         if (context != null && sharedPrefs != null) {
             boolean shouldBackup = false;
@@ -92,16 +124,40 @@ public class TodayI extends Application {
         }
     }
 
+    /* Create notification channel for daily reminder notifications.
+    * This is required to show notifications in Android O and above. */
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void createReminderNotificationChannel() {
+        NotificationManager manager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+
+        /* Channel id */
+        String channelId = NotificationSender.DAILY_REMINDERS_CHANNEL_ID;
+
+        String channelName = getString(R.string.daily_reminder_notification_channel_name);
+
+        /* Importance of the notification */
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+
+        if(channelName != null) {
+            NotificationChannel dailyReminderChannel = new NotificationChannel(channelId,channelName, importance);
+
+            dailyReminderChannel.enableVibration(true);
+            dailyReminderChannel.setVibrationPattern(new long[]{100, 300});
+
+            manager.createNotificationChannel(dailyReminderChannel);
+        }
+    }
+
     /**
      * If there are no entries in either table of the database
      * @param context Application context
      * @return True if tables are empty
      */
     private boolean databasesEmpty(@NonNull Context context) {
-        DatabaseHelper accomplishmentHelper = new DatabaseHelper(DBConstants.ACCOMPLISHMENT_TABLE);
-        DatabaseHelper ratingHelper = new DatabaseHelper(DBConstants.RATING_TABLE);
+        AccomplishmentTableHelper accomplishmentHelper = new AccomplishmentTableHelper(context);
+        DayRatingTableHelper ratingHelper = new DayRatingTableHelper(context);
 
-        return accomplishmentHelper.isEmpty(context) && ratingHelper.isEmpty(context);
+        return accomplishmentHelper.isEmpty() && ratingHelper.isEmpty();
     }
 
     /**

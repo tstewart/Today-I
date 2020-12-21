@@ -2,7 +2,9 @@ package io.github.tstewart.todayi.ui.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,14 +21,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.ZoneId;
+
 import io.github.tstewart.todayi.R;
+import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.events.OnDatabaseInteracted;
 import io.github.tstewart.todayi.events.OnDateChanged;
-import io.github.tstewart.todayi.helpers.DateCalculationHelper;
 import io.github.tstewart.todayi.helpers.DateFormatter;
 import io.github.tstewart.todayi.helpers.RelativeDateHelper;
 import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
+import io.github.tstewart.todayi.notifications.DailyReminderAlarmHelper;
 import io.github.tstewart.todayi.ui.fragments.AccomplishmentListFragment;
+import io.github.tstewart.todayi.ui.tutorials.MainActivityTutorial;
 
 /*
 Main Activity of the application (obviously), handles AccomplishmentListFragment and DayRatingFragment functionality
@@ -39,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
     private static final int OPTIONS_ACTIVITY_REQUEST_CODE = 2;
 
     /* Currently selected date (Application-wide, controlled by OnDateChangedListener) */
-    Date mSelectedDate;
+    LocalDate mSelectedDate;
 
     /* Fragment that contains functionality for viewing, creating, editing, and deleting Accomplishments */
     AccomplishmentListFragment mListFragment;
@@ -92,7 +100,23 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         }
 
         /* Set current date to System's current date */
-        updateCurrentDate(new Date());
+        updateCurrentDate(LocalDate.now());
+
+        /*
+        Show tutorial after a set period of time
+        This is done to ensure all views have been initialised before the tutorial is shown
+         */
+        new Handler().postDelayed(() -> {
+            SharedPreferences sharedPrefs = getSharedPreferences(getString(R.string.user_prefs_file_location_key), MODE_PRIVATE);
+            UserPreferences userPrefs = new UserPreferences(sharedPrefs);
+
+            boolean hasTutorialShown = (boolean)userPrefs.get(getString(R.string.user_prefs_tutorial_shown), true);
+
+            if(!hasTutorialShown) {
+                showTutorial();
+                userPrefs.set(getString(R.string.user_prefs_tutorial_shown), true);
+            }
+        }, 200);
     }
 
     /* Inflate Main Activity's top bar */
@@ -118,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
             targetIntent = new Intent(this, CalendarActivity.class);
             requestCode = CALENDAR_ACTIVITY_REQUEST_CODE;
             /* CalendarView is initialised with the current selected date as an argument */
-            targetIntent.putExtra("selectedDate", mSelectedDate.getTime());
+            targetIntent.putExtra("selectedDate", mSelectedDate.toEpochDay());
 
         } else if (itemId == R.id.toolbar_settings) {
             targetIntent = new Intent(this, OptionsActivity.class);
@@ -148,16 +172,8 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
 
                 /* If the date result was not the default value (-1) */
                 if (dateResult >= 0) {
-
-                    /*
-                     TODO simplify this
-                     Set the current selected day to the provided result
-                    */
-                    Calendar c = new GregorianCalendar();
-                    c.setTime(new Date(0));
-                    c.add(Calendar.DAY_OF_YEAR, (int) dateResult);
-
-                    updateCurrentDate(c.getTime());
+                    LocalDate selectedDate = LocalDate.ofEpochDay(dateResult);
+                    updateCurrentDate(selectedDate);
                 }
             }
         }
@@ -172,10 +188,15 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         }
     }
 
+    public void showTutorial() {
+        MainActivityTutorial tutorial = new MainActivityTutorial();
+        tutorial.showTutorial(this);
+    }
+
     /*
      Notifies all subscribers to OnDatabaseInteracted that the selected date has been changed
      */
-    void updateCurrentDate(@NonNull Date date) {
+    void updateCurrentDate(@NonNull LocalDate date) {
         OnDateChanged.notifyDateChanged(date);
     }
 
@@ -185,15 +206,15 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
     void onDayChangeButtonClicked(View view) {
         int viewId = view.getId();
 
-        Date newDate = mSelectedDate;
+        LocalDate newDate = mSelectedDate;
 
         /* If selected button was Next or Previous, add or subtract one day from current */
         if (viewId == R.id.buttonNextDay || viewId == R.id.buttonPrevDay) {
 
             if (viewId == R.id.buttonPrevDay) {
-                newDate = DateCalculationHelper.subtractFromDate(newDate,Calendar.DAY_OF_MONTH,1);
+                newDate = newDate.minusDays(1);
             } else {
-                newDate = DateCalculationHelper.addToDate(newDate,Calendar.DAY_OF_MONTH,1);
+                newDate = newDate.plusDays(1);
             }
         }
         updateCurrentDate(newDate);
@@ -206,12 +227,12 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
 
     /* Reset day to today on long press day label */
     private boolean onDayLabelLongPressed(View view) {
-        updateCurrentDate(new Date());
+        updateCurrentDate(LocalDate.now());
         return true;
     }
 
     @Override
-    public void onDateChanged(Date date) {
+    public void onDateChanged(LocalDate date) {
         this.mSelectedDate = date;
 
         /*

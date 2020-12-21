@@ -1,9 +1,10 @@
 package io.github.tstewart.todayi.ui.activities;
 
 import android.app.ActionBar;
-import android.content.DialogInterface;
-import android.graphics.Color;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,20 +15,21 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Random;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import org.threeten.bp.LocalDate;
+
+import java.util.Random;
+
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.UserPreferences;
+import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.helpers.ColorBlendHelper;
-import io.github.tstewart.todayi.helpers.DateCalculationHelper;
+import io.github.tstewart.todayi.notifications.NotificationSender;
+import io.github.tstewart.todayi.helpers.db.AccomplishmentTableHelper;
+import io.github.tstewart.todayi.helpers.db.DayRatingTableHelper;
 import io.github.tstewart.todayi.models.Accomplishment;
-import io.github.tstewart.todayi.data.DBConstants;
-import io.github.tstewart.todayi.helpers.DatabaseHelper;
 import io.github.tstewart.todayi.models.DayRating;
 
 /*
@@ -61,6 +63,8 @@ public class DebugActivity extends AppCompatActivity {
         else if(id == R.id.debug_populate_accomplishments) onPopulateAccomplishmentsButtonClicked();
         else if(id == R.id.debug_populate_ratings) onPopulateRatingsButtonClicked();
         else if(id == R.id.debug_color_test) onColorTestButtonClicked();
+        else if(id == R.id.debug_send_notification) onSendNotificationButtonClicked();
+        else if(id == R.id.debugShowTutorial) onShowTutorialButtonClicked();
         else if(id == R.id.debugBack) this.finish();
     }
 
@@ -84,20 +88,25 @@ public class DebugActivity extends AppCompatActivity {
                 .setMessage(R.string.debug_populate_confirmation)
                 .setPositiveButton(R.string.button_yes, (dialog, which) -> {
                         Random random = new Random();
-                        Date targetDate = new Date();
-                        Date currentDate = DateCalculationHelper.subtractFromDate(targetDate, Calendar.DAY_OF_MONTH, 31);
+                        LocalDate targetDate = LocalDate.now();
+                        LocalDate currentDate = targetDate.minusDays(31);
 
-                        DatabaseHelper helper = new DatabaseHelper(DBConstants.ACCOMPLISHMENT_TABLE);
+                        AccomplishmentTableHelper helper = new AccomplishmentTableHelper(this);
 
-                        while (currentDate.before(targetDate)) {
+                        while (currentDate.isBefore(targetDate)) {
                             int numPosts = random.nextInt(5);
 
                             for (int i = 0; i < numPosts; i++) {
-                                Accomplishment accomplishment = new Accomplishment(currentDate, "DUMMY CONTENT!");
-                                helper.insert(this, accomplishment);
+                                Accomplishment accomplishment = new Accomplishment(currentDate.atStartOfDay(), "DUMMY CONTENT!");
+
+                                try {
+                                    helper.insert(accomplishment);
+                                } catch (ValidationFailedException e) {
+                                    Log.w("debug", e.getMessage(), e);
+                                }
                             }
 
-                            currentDate = DateCalculationHelper.addToDate(currentDate, Calendar.DAY_OF_MONTH, 1);
+                            currentDate = currentDate.plusDays(1);
                         }
                 })
                 .setNegativeButton(R.string.button_no, null)
@@ -111,18 +120,18 @@ public class DebugActivity extends AppCompatActivity {
                 .setMessage(R.string.debug_populate_confirmation)
                 .setPositiveButton(R.string.button_yes, (dialog, which) -> {
                     Random random = new Random();
-                    Date targetDate = new Date();
-                    Date currentDate = DateCalculationHelper.subtractFromDate(targetDate, Calendar.DAY_OF_MONTH, 31);
+                    LocalDate targetDate = LocalDate.now();
+                    LocalDate currentDate = targetDate.minusDays(31);
 
-                    DatabaseHelper helper = new DatabaseHelper(DBConstants.RATING_TABLE);
+                    DayRatingTableHelper helper = new DayRatingTableHelper(this);
 
-                    while (currentDate.before(targetDate)) {
+                    while (currentDate.isBefore(targetDate)) {
                         int rating = random.nextInt(UserPreferences.getMaxDayRating())+1;
 
                         DayRating dayRating = new DayRating(currentDate,rating);
-                        helper.insert(getApplicationContext(),dayRating);
+                        helper.insert(dayRating);
 
-                        currentDate = DateCalculationHelper.addToDate(currentDate, Calendar.DAY_OF_MONTH, 1);
+                        currentDate = currentDate.plusDays(1);
                     }
                 })
                 .setNegativeButton(R.string.button_no, null)
@@ -166,5 +175,27 @@ public class DebugActivity extends AppCompatActivity {
                 })
                 .create()
                 .show();
+    }
+
+
+    private void onSendNotificationButtonClicked() {
+        NotificationSender notificationSender = new NotificationSender(getApplicationContext());
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,
+                0,
+                new Intent(this,
+                        CalendarActivity.class),
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        notificationSender.sendNotification(pendingIntent, true,"Debug", "Hello! This is a test!");
+    }
+
+
+    private void onShowTutorialButtonClicked() {
+        UserPreferences userPrefs = new UserPreferences(getSharedPreferences(getString(R.string.user_prefs_file_location_key), MODE_PRIVATE));
+        userPrefs.set(getString(R.string.user_prefs_tutorial_shown), false);
+
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 }
