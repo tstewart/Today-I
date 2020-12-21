@@ -294,7 +294,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/erase_all_data"
-                        android:theme="@style/AppTheme.OptionsItemTitleText" />
+                        android:theme="@style/AppTheme.OptionsEraseData" />
 
                 </LinearLayout>
 

@@ -108,6 +108,10 @@
         <item name="android:paddingEnd">10dp</item>
     </style>
 
+    <style name="AppTheme.OptionsEraseData">
+        <item name="android:textColor">@color/colorWarning</item>
+    </style>
+
     <!-- Calendar activity -->
     <style name="AppTheme.CalendarTheme">
         <item name="mcv_selectionColor">@color/colorCalendarSelection</item>
