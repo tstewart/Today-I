@@ -108,7 +108,7 @@ public class OptionsActivity extends AppCompatActivity {
 
         if(mainLayout != null) {
             for (View v : mainLayout.getTouchables()) {
-                if(v instanceof Button) {
+                if(v instanceof LinearLayout || v instanceof Button) {
                     v.setOnTouchListener(this::onTouchEvent);
                     v.setOnClickListener(this::onButtonClicked);
                 }
@@ -146,9 +146,6 @@ public class OptionsActivity extends AppCompatActivity {
 
             mNotificationsSw.setChecked(notificationsEnabled);
             mNotificationsSw.setOnClickListener(this::onNotificationsSwitchClicked);
-        }
-        if(mLayoutNotificationTimeSelect != null) {
-            mLayoutNotificationTimeSelect.setOnClickListener(this::setNotificationTimeButtonClicked);
         }
         if(mNotificationTimeTv != null) {
             LocalTime notificationTime = UserPreferences.getNotificationTime();
@@ -189,15 +186,19 @@ public class OptionsActivity extends AppCompatActivity {
         return true;
     }
 
-    /* Control for all buttons in the Activity, disables clicking multiple buttons at the same time */
+    /* Control for all Layouts (acting as buttons) in the Activity */
     public void onButtonClicked(View view) {
         int id = view.getId();
 
-        if(id == R.id.buttonRestoreBackup)
+        if(id == R.id.linearLayoutNotificationTimeSelect) {
+            this.setNotificationTimeButtonClicked(view);
+        }
+        else if(id == R.id.linearLayoutRestoreBackup) {
             this.onRestoreBackupButtonClicked();
-        else if(id == R.id.buttonForceBackup)
+        }
+        else if(id == R.id.linearLayoutForceBackup)
             this.onForceBackupButtonClicked();
-        else if(id == R.id.buttonEraseAll)
+        else if(id == R.id.linearLayoutEraseAllData)
             this.eraseButtonClicked();
     }
 
@@ -371,7 +372,7 @@ public class OptionsActivity extends AppCompatActivity {
     private void onRestoreBackupButtonClicked() {
         /* Open an alert dialog to confirm if the user wishes to restore from backup */
         new AlertDialog.Builder(this)
-                .setTitle(R.string.button_restore_backup)
+                .setTitle(R.string.restore_backup)
                 .setMessage(R.string.restore_backup_confirmation)
                 .setPositiveButton(R.string.button_yes, new DialogInterface.OnClickListener() {
                     @Override
@@ -401,7 +402,7 @@ public class OptionsActivity extends AppCompatActivity {
 
     private void onForceBackupButtonClicked() {
         new AlertDialog.Builder(this)
-                .setTitle(R.string.button_force_backup)
+                .setTitle(R.string.force_backup)
                 .setMessage(R.string.force_backup_confirmation)
                 .setPositiveButton(R.string.button_yes, (dialog, which) -> {
                     try {

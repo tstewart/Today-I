@@ -29,11 +29,11 @@
     <string name="clip_accomplishments_subtitle">Remove empty lines from Accomplishment posts</string>
     <string name="data_management">Data Management</string>
     <string name="last_backed_up">Last backed up: %1$s</string>
-    <string name="button_restore_backup">Restore Backup</string>
+    <string name="restore_backup">Restore Backup</string>
     <string name="restore_backup_confirmation">Are you sure you want to restore from backup? All data not backed up will be removed.</string>
-    <string name="button_force_backup">Force Backup</string>
+    <string name="force_backup">Force Backup</string>
     <string name="force_backup_confirmation">Are you sure you want to force backup? Your current backup will be overwritten.</string>
-    <string name="button_erase_all_data">Erase all data</string>
+    <string name="erase_all_data">Erase all data</string>
     <string name="erase_all_confirmed">All data erased.</string>
     <string name="about_created_by">Created by: Thomas Stewart</string>
     <string name="about_version">Version: %1$s</string>
