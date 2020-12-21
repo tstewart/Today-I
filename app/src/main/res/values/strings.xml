@@ -20,9 +20,13 @@
     <!-- Options Activity -->
     <string name="general_settings">General Settings</string>
     <string name="notification_settings">Notification Settings</string>
-    <string name="enable_notifications">Enable daily reminder notifications</string>
-    <string name="enable_gestures">Enable gestures</string>
-    <string name="clip_accomplishments">Clip blank lines from Accomplishments</string>
+    <string name="enable_notifications">Notifications</string>
+    <string name="enable_notifications_subtitle">Enable daily reminder notifications</string>
+    <string name="notification_time_title">Set notification time</string>
+    <string name="enable_gestures">Gestures</string>
+    <string name="enable_gestures_subtitle">Allow swiping to change current day</string>
+    <string name="clip_accomplishments">Auto Clipping</string>
+    <string name="clip_accomplishments_subtitle">Remove empty lines from Accomplishment posts</string>
     <string name="data_management">Data Management</string>
     <string name="last_backed_up">Last backed up: %1$s</string>
     <string name="button_restore_backup">Restore Backup</string>

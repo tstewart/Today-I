@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -83,6 +84,9 @@ public class OptionsActivity extends AppCompatActivity {
     /* Switch to toggle daily notifications */
     SwitchMaterial mNotificationsSw;
 
+    /* Notifications icon */
+    ImageView mNotificationIcon;
+
     /* Layout for selecting notification time
     * Hidden when notifications are disabled */
     LinearLayout mLayoutNotificationTimeSelect;
@@ -116,6 +120,7 @@ public class OptionsActivity extends AppCompatActivity {
         mCurrentVersionTv = findViewById(R.id.textViewAboutVersion);
 
         mNotificationsSw = findViewById(R.id.switchEnableDailyNotifications);
+        mNotificationIcon = findViewById(R.id.imageViewNotificationsEnabled);
         mNotificationTimeTv = findViewById(R.id.textViewSelectedTime);
         mGesturesSw = findViewById(R.id.switchEnableSwipeGesture);
         mClipAccomplishments = findViewById(R.id.switchClipAccomplishments);
@@ -137,10 +142,13 @@ public class OptionsActivity extends AppCompatActivity {
 
             /* Show or hide notification time layout depending on notifications enabled setting */
             if(mLayoutNotificationTimeSelect != null)
-                mLayoutNotificationTimeSelect.setVisibility(notificationsEnabled ? View.VISIBLE : View.GONE);
+                toggleNotificationViews(notificationsEnabled);
 
             mNotificationsSw.setChecked(notificationsEnabled);
             mNotificationsSw.setOnClickListener(this::onNotificationsSwitchClicked);
+        }
+        if(mLayoutNotificationTimeSelect != null) {
+            mLayoutNotificationTimeSelect.setOnClickListener(this::setNotificationTimeButtonClicked);
         }
         if(mNotificationTimeTv != null) {
             LocalTime notificationTime = UserPreferences.getNotificationTime();
@@ -191,8 +199,6 @@ public class OptionsActivity extends AppCompatActivity {
             this.onForceBackupButtonClicked();
         else if(id == R.id.buttonEraseAll)
             this.eraseButtonClicked();
-        else if(id == R.id.buttonSetTime)
-            this.setNotificationTimeButtonClicked();
     }
 
     @Override
@@ -238,6 +244,20 @@ public class OptionsActivity extends AppCompatActivity {
         return "Unknown";
     }
 
+    /* Show or hide notification time selection, and toggle notification icon */
+    private void toggleNotificationViews(boolean enabled) {
+        if(mLayoutNotificationTimeSelect != null)
+            mLayoutNotificationTimeSelect.setVisibility(enabled ? View.VISIBLE : View.GONE);
+
+        if(mNotificationIcon != null) {
+            if(enabled)
+                mNotificationIcon.setImageResource(R.drawable.settings_icon_notifications_on);
+            else
+                mNotificationIcon.setImageResource(R.drawable.settings_icon_notifications_off);
+        }
+    }
+
+
     /*
     Set last backed up label to a relative text string showing the last time since backing up the database
      */
@@ -279,11 +299,11 @@ public class OptionsActivity extends AppCompatActivity {
 
         if(mLayoutNotificationTimeSelect != null)
             /* Set visibility to visible if notifications are enabled, otherwise set them to gone (so they don't appear) */
-            mLayoutNotificationTimeSelect.setVisibility(isNotificationsEnabled ? View.VISIBLE : View.GONE);
+            toggleNotificationViews(isNotificationsEnabled);
     }
 
 
-    private void setNotificationTimeButtonClicked() {
+    private void setNotificationTimeButtonClicked(View view) {
 
         LocalTime currentNotificationTime = UserPreferences.getNotificationTime();
 
@@ -291,7 +311,7 @@ public class OptionsActivity extends AppCompatActivity {
 
         /* Show a time picker */
         new TimePickerDialog(this,
-                (view, hourOfDay, minute) -> {
+                (timeView, hourOfDay, minute) -> {
                     LocalTime newNotificationTime = LocalTime.of(hourOfDay,minute);
                     String newNotificationTimeString = newNotificationTime.format(DateTimeFormatter.ofPattern("HH:mm"));
 

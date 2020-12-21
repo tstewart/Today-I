@@ -46,6 +46,12 @@
         <item name="android:background">@color/colorSplashBackground</item>
     </style>
 
+    <style name="AppTheme.Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">?android:attr/listDivider</item>
+    </style>
+
     <!-- Button primary theme -->
     <style name="AppTheme.ButtonTheme" parent="Widget.AppCompat.Button">
         <item name="android:backgroundTint">@color/colorButtonBg</item>
@@ -68,6 +74,35 @@
         <item name="android:background">@drawable/rounded_shape</item>
     </style>
 
+    <!-- Options activity -->
+
+    <style name="AppTheme.OptionsGroup">
+        <item name="android:paddingTop">10dp</item>
+    </style>
+
+    <style name="AppTheme.OptionsItem">
+        <item name="android:padding">5dp</item>
+    </style>
+
+    <style name="AppTheme.OptionsItemNoIcon" parent="AppTheme.OptionsItem">
+        <item name="android:paddingStart">16dp</item>
+    </style>
+
+    <style name="AppTheme.OptionsItemTitleText" parent="android:TextAppearance.Holo">
+        <item name="android:textColorHighlight">@color/colorWhite</item>
+        <item name="android:textColorHint">@color/colorWhite</item>
+        <item name="android:textColorLink">@color/colorWhite</item>
+        <item name="android:padding">0dp</item>
+    </style>
+
+    <style name="AppTheme.OptionsItemSubtitleText">
+        <item name="android:padding">0dp</item>
+    </style>
+
+    <style name="AppTheme.OptionsItemIcon">
+        <item name="android:paddingEnd">10dp</item>
+    </style>
+
     <!-- Calendar activity -->
     <style name="AppTheme.CalendarTheme">
         <item name="mcv_selectionColor">@color/colorCalendarSelection</item>
@@ -79,7 +114,7 @@
     </style>
 
     <style name="AppTheme.CalendarDateText">
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">20sp</item>
     </style>
 
     <style name="AppTheme.CalendarHeaderText">
