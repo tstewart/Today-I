@@ -1,19 +1,11 @@
 package io.github.tstewart.todayi.ui.tutorials;
 
-import android.graphics.Color;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
 
-import androidx.appcompat.view.menu.ActionMenuItemView;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.ui.activities.MainActivity;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
-import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 import uk.co.deanwild.materialshowcaseview.shape.NoShape;
 
 public class MainActivityTutorial {

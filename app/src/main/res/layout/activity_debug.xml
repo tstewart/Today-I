@@ -65,6 +65,19 @@
         android:orientation="horizontal">
 
         <Button
+            android:id="@+id/debugShowTutorial"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/debug_show_tutorial" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
             android:id="@+id/debugBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

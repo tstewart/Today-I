@@ -2,6 +2,7 @@ package io.github.tstewart.todayi.ui.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
@@ -25,6 +26,7 @@ import org.threeten.bp.LocalDate;
 import org.threeten.bp.ZoneId;
 
 import io.github.tstewart.todayi.R;
+import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.events.OnDatabaseInteracted;
 import io.github.tstewart.todayi.events.OnDateChanged;
 import io.github.tstewart.todayi.helpers.DateFormatter;
@@ -104,8 +106,17 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         Show tutorial after a set period of time
         This is done to ensure all views have been initialised before the tutorial is shown
          */
-        MainActivity thisActivity = this;
-        new Handler().postDelayed(() -> new MainActivityTutorial().showTutorial(thisActivity), 200);
+        new Handler().postDelayed(() -> {
+            SharedPreferences sharedPrefs = getSharedPreferences(getString(R.string.user_prefs_file_location_key), MODE_PRIVATE);
+            UserPreferences userPrefs = new UserPreferences(sharedPrefs);
+
+            boolean hasTutorialShown = (boolean)userPrefs.get(getString(R.string.user_prefs_tutorial_shown), true);
+
+            if(!hasTutorialShown) {
+                showTutorial();
+                userPrefs.set(getString(R.string.user_prefs_tutorial_shown), true);
+            }
+        }, 200);
     }
 
     /* Inflate Main Activity's top bar */
@@ -175,6 +186,11 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
             */
             OnDatabaseInteracted.notifyDatabaseInteracted();
         }
+    }
+
+    public void showTutorial() {
+        MainActivityTutorial tutorial = new MainActivityTutorial();
+        tutorial.showTutorial(this);
     }
 
     /*
