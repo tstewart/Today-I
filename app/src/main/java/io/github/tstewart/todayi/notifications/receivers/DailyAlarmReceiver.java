@@ -19,6 +19,6 @@ public class DailyAlarmReceiver extends BroadcastReceiver {
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context,0,mainActivityIntent,PendingIntent.FLAG_UPDATE_CURRENT);
 
-        sender.sendNotification(pendingIntent, "Daily Reminder", "What have you done today?");
+        sender.sendNotification(pendingIntent, false,"Daily Reminder", "What have you done today?");
     }
 }

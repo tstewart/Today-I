@@ -31,8 +31,8 @@ public class NotificationSender {
         mContext = context;
     }
 
-    public void sendNotification(PendingIntent launchIntent, String title, String content) {
-        if(!isAppInForeground()) {
+    public void sendNotification(PendingIntent launchIntent, boolean showWhenRunning, String title, String content) {
+        if(showWhenRunning || !isAppInForeground()) {
             Uri soundUri = RingtoneManager
                     .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 

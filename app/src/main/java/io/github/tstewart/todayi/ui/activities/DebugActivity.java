@@ -187,7 +187,7 @@ public class DebugActivity extends AppCompatActivity {
                         CalendarActivity.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
-        notificationSender.sendNotification(pendingIntent, "Debug", "Hello! This is a test!");
+        notificationSender.sendNotification(pendingIntent, true,"Debug", "Hello! This is a test!");
     }
 
 
