@@ -65,9 +65,6 @@ public class OptionsActivity extends AppCompatActivity {
     /* Toast alerts user how many clicks they need to access debug menu */
     private Toast mClicksToDebugToast;
 
-    /* View currently being pressed by user */
-    private View mSelectedView = null;
-
     /* Notifies the user when the application was last backed up */
     TextView mLastBackedUpTv;
     /*
@@ -109,7 +106,6 @@ public class OptionsActivity extends AppCompatActivity {
         if(mainLayout != null) {
             for (View v : mainLayout.getTouchables()) {
                 if(v instanceof LinearLayout || v instanceof Button) {
-                    v.setOnTouchListener(this::onTouchEvent);
                     v.setOnClickListener(this::onButtonClicked);
                 }
             }
@@ -168,24 +164,6 @@ public class OptionsActivity extends AppCompatActivity {
             getSupportActionBar().setTitle(R.string.activity_settings);
     }
 
-    /* If a button is touched, set that button as the selected view until that button is released */
-    private boolean onTouchEvent(View view, MotionEvent event) {
-        /* If no button is held or this button is held */
-        if(mSelectedView == null || view == mSelectedView) {
-            /* If the button was just held */
-            if (event.getAction() == MotionEvent.ACTION_DOWN)
-                mSelectedView = view;
-            /* If the button was released, stop preventing clicks */
-            else if (event.getAction() == MotionEvent.ACTION_UP) {
-                mSelectedView = null;
-            }
-            /* Touch event has not been captured, allowing other onTouchEvents to use this button */
-            return false;
-        }
-        /* Touch event has been captured, preventing other onTouchEvents from using this button */
-        return true;
-    }
-
     /* Control for all Layouts (acting as buttons) in the Activity */
     public void onButtonClicked(View view) {
         int id = view.getId();
@@ -210,9 +188,6 @@ public class OptionsActivity extends AppCompatActivity {
         if (mLastBackedUpTv != null) {
             setLastBackedUpText();
         }
-
-        /* Reset selected view */
-        mSelectedView = null;
     }
 
     /* Called if a button is pressed in the top bar */
