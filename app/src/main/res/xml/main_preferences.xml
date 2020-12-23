@@ -1,0 +1,72 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/setting_general_title">
+
+        <SwitchPreferenceCompat
+            app:icon="@drawable/settings_icon_gesture"
+            app:key="@string/user_prefs_gestures_enabled"
+            app:summary="@string/setting_enable_gestures_summary"
+            app:title="@string/setting_enable_gestures" />
+
+        <SwitchPreferenceCompat
+            app:icon="@drawable/settings_icon_clip"
+            app:key="@string/user_prefs_clip_empty_lines"
+            app:summary="@string/setting_clip_accomplishments_summary"
+            app:title="@string/setting_clip_accomplishments" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/setting_notification_title">
+
+        <SwitchPreferenceCompat
+        app:icon="@drawable/settings_icon_notifications_off"
+        app:key="@string/user_prefs_notifications_enabled"
+        app:summary="@string/setting_enable_notifications_summary"
+        app:title="@string/setting_enable_notifications" />
+
+        <Preference
+            app:key="@string/user_prefs_notification_time"
+            app:title="@string/setting_notification_time"
+            app:dependency="@string/user_prefs_notifications_enabled"/>
+
+    </PreferenceCategory>
+    <PreferenceCategory app:title="@string/setting_data_management_title">
+
+        <Preference
+            app:key="import"
+            app:title="@string/setting_restore_backup"
+            app:summary="@string/setting_restore_backup_summary"/>
+
+        <Preference
+            app:key="export"
+            app:title="@string/setting_force_backup"
+            app:summary="@string/setting_force_backup_summary"/>
+
+        <Preference
+            android:theme="@style/AppTheme.OptionsEraseData"
+            app:key="erase"
+            app:title="@string/setting_erase_all_data" />
+
+        <Preference
+            app:key="last_backed_up"
+            app:title="@string/about_last_backed_up"
+            app:selectable="false"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/about_title">
+
+        <Preference
+            app:key="created_by"
+            app:summary="@string/about_created_by_summary"
+            app:title="@string/about_created_by" />
+
+        <Preference
+            app:key="version"
+            app:title="@string/about_version"
+            app:summary="@string/about_version_default_summary" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

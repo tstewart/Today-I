@@ -27,7 +27,7 @@
                 android:id="@+id/textViewGeneralSettings"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/general_settings"
+                android:text="@string/setting_general_title"
                 android:textAlignment="center"
                 android:textStyle="bold"
                 android:theme="@style/AppTheme.OptionsGroupTitle" />
@@ -56,13 +56,13 @@
                         android:id="@+id/switchEnableSwipeGesture"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/enable_gestures"
+                        android:text="@string/setting_enable_gestures"
                         android:theme="@style/AppTheme.OptionsItemTitleText" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/enable_gestures_subtitle"
+                        android:text="@string/setting_enable_gestures_summary"
                         android:theme="@style/AppTheme.OptionsItemSubtitleText" />
                 </LinearLayout>
 
@@ -93,13 +93,13 @@
                         android:id="@+id/switchClipAccomplishments"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/clip_accomplishments"
+                        android:text="@string/setting_clip_accomplishments"
                         android:theme="@style/AppTheme.OptionsItemTitleText" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/clip_accomplishments_subtitle"
+                        android:text="@string/setting_clip_accomplishments_summary"
                         android:theme="@style/AppTheme.OptionsItemSubtitleText" />
                 </LinearLayout>
 
@@ -125,7 +125,7 @@
                 android:id="@+id/textViewNotificationSettings"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/notification_settings"
+                android:text="@string/setting_notification_title"
                 android:textAlignment="center"
                 android:textStyle="bold"
                 android:theme="@style/AppTheme.OptionsGroupTitle" />
@@ -148,20 +148,19 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0"
                     android:orientation="vertical">
 
                     <com.google.android.material.switchmaterial.SwitchMaterial
                         android:id="@+id/switchEnableDailyNotifications"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/enable_notifications"
+                        android:text="@string/setting_enable_notifications"
                         android:theme="@style/AppTheme.OptionsItemTitleText" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/enable_notifications_subtitle"
+                        android:text="@string/setting_enable_notifications_summary"
                         android:theme="@style/AppTheme.OptionsItemSubtitleText" />
                 </LinearLayout>
 
@@ -187,7 +186,7 @@
                         android:id="@+id/textView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/notification_time_title"
+                        android:text="@string/setting_notification_time"
                         android:theme="@style/AppTheme.OptionsItemTitleText" />
 
                     <TextView
@@ -217,7 +216,7 @@
                 android:id="@+id/textViewDataManagementTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/data_management"
+                android:text="@string/setting_data_management_title"
                 android:textAlignment="center"
                 android:textStyle="bold"
                 android:theme="@style/AppTheme.OptionsGroupTitle" />
@@ -241,7 +240,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/force_backup"
+                        android:text="@string/setting_force_backup"
                         android:theme="@style/AppTheme.OptionsItemTitleText" />
 
                 </LinearLayout>
@@ -267,7 +266,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/restore_backup"
+                        android:text="@string/setting_restore_backup"
                         android:theme="@style/AppTheme.OptionsItemTitleText" />
 
                 </LinearLayout>
@@ -293,7 +292,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/erase_all_data"
+                        android:text="@string/setting_erase_all_data"
                         android:theme="@style/AppTheme.OptionsEraseData" />
 
                 </LinearLayout>
@@ -309,7 +308,7 @@
                     android:id="@+id/textViewLastBackedUp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/last_backed_up"
+                    android:text="@string/about_last_backed_up"
                     android:textAlignment="center" />
             </LinearLayout>
 

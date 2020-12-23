@@ -14,13 +14,11 @@ import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -28,7 +26,6 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import org.threeten.bp.LocalTime;
 import org.threeten.bp.format.DateTimeFormatter;
 
-import java.util.List;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
@@ -238,7 +235,7 @@ public class OptionsActivity extends AppCompatActivity {
     Set last backed up label to a relative text string showing the last time since backing up the database
      */
     private void setLastBackedUpText() {
-        mLastBackedUpTv.setText(String.format(getText(R.string.last_backed_up).toString(), getLastBackedUpRelativeString()));
+        mLastBackedUpTv.setText(String.format(getText(R.string.about_last_backed_up).toString(), getLastBackedUpRelativeString()));
     }
 
     /*
@@ -347,7 +344,7 @@ public class OptionsActivity extends AppCompatActivity {
     private void onRestoreBackupButtonClicked() {
         /* Open an alert dialog to confirm if the user wishes to restore from backup */
         new AlertDialog.Builder(this)
-                .setTitle(R.string.restore_backup)
+                .setTitle(R.string.setting_restore_backup)
                 .setMessage(R.string.restore_backup_confirmation)
                 .setPositiveButton(R.string.button_yes, new DialogInterface.OnClickListener() {
                     @Override
@@ -377,7 +374,7 @@ public class OptionsActivity extends AppCompatActivity {
 
     private void onForceBackupButtonClicked() {
         new AlertDialog.Builder(this)
-                .setTitle(R.string.force_backup)
+                .setTitle(R.string.setting_force_backup)
                 .setMessage(R.string.force_backup_confirmation)
                 .setPositiveButton(R.string.button_yes, (dialog, which) -> {
                     try {
