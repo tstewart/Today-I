@@ -16,25 +16,22 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ui.activities.SettingsActivity"></activity>
-        <activity
-            android:name=".ui.activities.DebugActivity"
-            android:parentActivityName=".ui.activities.OptionsActivity"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.activities.OptionsActivity" />
-        </activity>
-        <activity
-            android:name=".ui.activities.CalendarActivity"
-            android:parentActivityName=".ui.activities.MainActivity"
-            android:theme="@style/AppTheme">
+            android:name=".ui.activities.SettingsActivity"
+            android:label="@string/activity_settings">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.activities.MainActivity" />
         </activity>
         <activity
-            android:name=".ui.activities.OptionsActivity"
+            android:name=".ui.activities.DebugActivity"
+            android:parentActivityName=".ui.activities.SettingsActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.activities.SettingsActivity" />
+        </activity>
+        <activity
+            android:name=".ui.activities.CalendarActivity"
             android:parentActivityName=".ui.activities.MainActivity"
             android:theme="@style/AppTheme">
             <meta-data
