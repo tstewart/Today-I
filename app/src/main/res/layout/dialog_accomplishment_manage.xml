@@ -49,6 +49,16 @@
         android:paddingTop="16dp">
 
         <Button
+            android:id="@+id/buttonDelete"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/button_delete"
+            android:textColor="@color/colorWarning"
+            tools:visibility="gone" />
+
+        <Button
             android:id="@+id/buttonConfirm"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
@@ -65,16 +75,6 @@
             android:layout_weight="1"
             android:text="@string/button_cancel"
             android:textColor="@color/colorAccent" /> -->
-
-        <Button
-            android:id="@+id/buttonDelete"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/button_delete"
-            android:textColor="@color/colorWarning"
-            tools:visibility="gone" />
 
     </LinearLayout>
 
