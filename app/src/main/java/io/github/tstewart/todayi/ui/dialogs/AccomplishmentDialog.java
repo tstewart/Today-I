@@ -10,6 +10,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.threeten.bp.LocalDate;
@@ -30,8 +31,8 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
     private LocalDateTime mSelectedDate;
     /* Time selection label */
     private final TextView mSelectedTimeLabel;
-    /* Time selection button */
-    private final Button mButtonTimeSelection;
+    /* Time selection layout, acts as a button */
+    private final LinearLayout mButtonTimeSelection;
 
     /* Delete button */
     private final Button mButtonDelete;
@@ -56,7 +57,7 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
 
         mContext = context;
         mSelectedTimeLabel = view.findViewById(R.id.textViewSelectedTime);
-        mButtonTimeSelection = view.findViewById(R.id.buttonSetTime);
+        mButtonTimeSelection = view.findViewById(R.id.linearLayoutTimeSelection);
         mButtonDelete = view.findViewById(R.id.buttonDelete);
         mButtonConfirm = view.findViewById(R.id.buttonConfirm);
 

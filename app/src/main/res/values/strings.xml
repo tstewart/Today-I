@@ -15,6 +15,7 @@
     <!-- Accomplishment dialog -->
     <string name="new_accomplishment_dialog_title">Enter your new accomplishment:</string>
     <string name="edit_accomplishment_dialog_title">Edit accomplishment:</string>
+    <string name="current_accomplishment_time">Set time</string>
     <string name="button_set_custom_time">Set time…</string>
     <string name="confirm_delete">Delete this Accomplishment?</string>
 
