@@ -20,12 +20,16 @@ import org.threeten.bp.format.DateTimeParseException;
 import java.util.Objects;
 
 import androidx.preference.Preference;
+import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceGroup;
 import androidx.preference.PreferenceManager;
+import androidx.preference.PreferenceScreen;
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
 import io.github.tstewart.todayi.data.LocalDatabaseIO;
+import io.github.tstewart.todayi.data.PreferencesKeyStore;
 import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ExportFailedException;
 import io.github.tstewart.todayi.errors.ImportFailedException;
@@ -34,18 +38,8 @@ import io.github.tstewart.todayi.ui.activities.DebugActivity;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
-    /* Notification time key */
-    private static final int NOTIFICATION_TIME_KEY = R.string.user_prefs_notification_time;
-    /* Import data key */
-    private static final String IMPORT_DATA_KEY = "import";
-    /* Export data key */
-    private static final String EXPORT_DATA_KEY = "export";
-    /* Erase data key */
-    private static final String ERASE_DATA_KEY = "erase";
-    /* Last backed up key */
-    private static final String LAST_BACKED_UP_KEY = "last_backed_up";
-    /* Version key */
-    private static final String VERSION_KEY = "version";
+    /* Preference key store */
+    private PreferencesKeyStore mPreferenceKeys;
 
     /* Is Debug Activity access enabled */
     private static final boolean DEBUG_ENABLED = true;
@@ -71,19 +65,42 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         setPreferencesFromResource(R.xml.main_preferences, rootKey);
 
+        /* Initialize key store */
+        this.mPreferenceKeys = new PreferencesKeyStore(getActivity().getBaseContext());
+
+        /* Set on preference changed listeners for preferences to update settings for the current instance of the app
+        * When settings are changed, their value in the preferences file is updated. However, these changes are not reflected until
+        * the application is restarted. This is a fix for that.  */
+        PreferenceScreen preferenceScreen = getPreferenceScreen();
+        int preferenceCount = preferenceScreen.getPreferenceCount();
+
+        for (int i = 0; i < preferenceCount; i++) {
+            Preference preference = preferenceScreen.getPreference(i);
+            if(preference instanceof PreferenceCategory) {
+                PreferenceCategory preferenceCategory = (PreferenceCategory) preferenceScreen.getPreference(i);
+
+                int preferenceChildCount = preferenceCategory.getPreferenceCount();
+
+                for (int j = 0; j < preferenceChildCount; j++) {
+                    Preference childPreference = preferenceCategory.getPreference(j);
+                    childPreference.setOnPreferenceChangeListener(this::onPreferenceChanged);
+                }
+            }
+        }
+
         /* Set on click listeners for preferences with custom functionality */
 
-        Preference notificationTime = findPreference(getString(NOTIFICATION_TIME_KEY));
+        Preference notificationTime = findPreference(mPreferenceKeys.NOTIFICATION_TIME_KEY);
         if(notificationTime != null) {
             notificationTime.setOnPreferenceClickListener(this::onNotificationTimeSelected);
             /* Set subtitle for this preference to the currently selected time */
-            notificationTime.setSummary((String) mUserPreferences.get(getString(NOTIFICATION_TIME_KEY), "18:00"));
+            notificationTime.setSummary((String) mUserPreferences.get(mPreferenceKeys.NOTIFICATION_TIME_KEY, "18:00"));
         }
 
         /* Import, export, and erase data buttons act as Preference buttons for functionality with PreferenceFragment*/
-        Preference importData = findPreference(IMPORT_DATA_KEY);
-        Preference exportData = findPreference(EXPORT_DATA_KEY);
-        Preference eraseData = findPreference(ERASE_DATA_KEY);
+        Preference importData = findPreference(mPreferenceKeys.IMPORT_DATA_KEY);
+        Preference exportData = findPreference(mPreferenceKeys.EXPORT_DATA_KEY);
+        Preference eraseData = findPreference(mPreferenceKeys.ERASE_DATA_KEY);
 
         if(importData != null)
             importData.setOnPreferenceClickListener(this::onRestoreBackupClicked);
@@ -93,13 +110,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             eraseData.setOnPreferenceClickListener(this::onEraseClicked);
 
         /* Set last backed up label */
-        mLastBackedUp = findPreference(LAST_BACKED_UP_KEY);
+        mLastBackedUp = findPreference(mPreferenceKeys.LAST_BACKED_UP_KEY);
         if(mLastBackedUp != null)
             setLastBackedUpText(mLastBackedUp);
 
 
         /* Set version click listener for accessing hidden debug menu */
-        Preference version = findPreference(VERSION_KEY);
+        Preference version = findPreference(mPreferenceKeys.VERSION_KEY);
         if(version != null) {
 
             /* Set version number */
@@ -112,13 +129,41 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     }
 
+    private boolean onPreferenceChanged(Preference preference, Object newValue) {
+
+        String preferenceKey = preference.getKey();
+
+        if(preferenceKey.equals(mPreferenceKeys.ENABLE_CLIP_ACCOMPLISHMENT_KEY)) {
+            UserPreferences.setAccomplishmentClipEmptyLines((boolean)newValue);
+        }
+        else if(preferenceKey.equals(mPreferenceKeys.ENABLE_GESTURES_KEY)) {
+            UserPreferences.setEnableGestures((boolean)newValue);
+        }
+        else if(preferenceKey.equals(mPreferenceKeys.ENABLE_NOTIFICATIONS_KEY)) {
+            UserPreferences.setEnableNotifications((boolean)newValue);
+        }
+        else if(preferenceKey.equals(mPreferenceKeys.NOTIFICATION_TIME_KEY)) {
+            String timeString = (String)newValue;
+            try {
+                LocalTime notificationTime = LocalTime.parse(timeString);
+
+                UserPreferences.setNotificationTime(notificationTime);
+            }
+            catch(DateTimeParseException e) {
+                Toast.makeText(getContext(), "Failed to update notification time.", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        return true;
+    }
+
     private boolean onNotificationTimeSelected(Preference preference) {
 
         /* Get notification time from preferences and attempt to parse into a LocalTime object */
         LocalTime currentNotificationTime;
         try {
             currentNotificationTime = LocalTime.parse(
-                    (String) mUserPreferences.get(getString(NOTIFICATION_TIME_KEY), "18:00")
+                    (String) mUserPreferences.get(mPreferenceKeys.NOTIFICATION_TIME_KEY, "18:00")
             );
         }
         catch (DateTimeParseException e) {
@@ -137,7 +182,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
                     /* Set notification time value in settings */
                     if(mUserPreferences != null)
-                        mUserPreferences.set(getString(NOTIFICATION_TIME_KEY), selectedTimeString);
+                        mUserPreferences.set(mPreferenceKeys.NOTIFICATION_TIME_KEY, selectedTimeString);
 
                     /* Restart notification alarm */
                     // TODO simplify/move?
