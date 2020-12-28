@@ -22,8 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center"
             android:paddingBottom="8dp"
-            android:src="@drawable/ic_down_arrow"
-            android:visibility="invisible" />
+            android:src="@drawable/ic_down_arrow" />
     </FrameLayout>
 
     <Button

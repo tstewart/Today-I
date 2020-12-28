@@ -106,8 +106,6 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
             /* Get indicator imageView */
             ImageView indicator = view.findViewById(R.id.imageViewListDownIndicator);
 
-            indicator.setVisibility(View.VISIBLE);
-
             if(indicator != null) {
                 listView.setOnScrollListener(new AbsListView.OnScrollListener() {
                     @Override
@@ -123,6 +121,8 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
 
                     }
                 });
+                /* Add onClickListener to indicator to auto scroll to bottom of ListView */
+                indicator.setOnClickListener(v -> listView.setSelection(listView.getCount()-1));
             }
         }
 
