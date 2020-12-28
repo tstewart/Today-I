@@ -1,5 +1,6 @@
 package io.github.tstewart.todayi.ui.fragments;
 
+import android.animation.Animator;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -104,6 +105,9 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
 
             /* Get indicator imageView */
             ImageView indicator = view.findViewById(R.id.imageViewListDownIndicator);
+
+            indicator.setVisibility(View.VISIBLE);
+
             if(indicator != null) {
                 listView.setOnScrollListener(new AbsListView.OnScrollListener() {
                     @Override
@@ -112,8 +116,10 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
                     @Override
                     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
-                        if (view.canScrollVertically(1)) indicator.setVisibility(View.VISIBLE);
-                        else indicator.setVisibility(View.INVISIBLE);
+                        /* If can scroll, animate indicator to an alpha of 1 (Visible) */
+                        if (view.canScrollVertically(1)) indicator.animate().alpha(1).setDuration(200);
+                        /* If can scroll, animate indicator to an alpha of 0 (Invisible) */
+                        else indicator.animate().alpha(0).setDuration(200);
 
                     }
                 });
