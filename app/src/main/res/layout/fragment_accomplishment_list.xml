@@ -27,11 +27,4 @@
             android:src="@drawable/ic_down_arrow" />
     </FrameLayout>
 
-    <Button
-            android:id="@+id/buttonNewAccomplishment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:text="@string/new_accomplishment"/>
-
 </LinearLayout>

@@ -45,6 +45,11 @@
         <item name="android:textSize">18sp</item>
     </style>
 
+    <style name="AppTheme.NewAccomplishmentButton" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:foreground">?selectableItemBackground</item>
+        <item name="android:backgroundTint">@color/colorTransparent</item>
+    </style>
+
     <style name="AppTheme.SplashScreen" parent="AppTheme.NoActionBar">
         <item name="android:background">@color/colorSplashBackground</item>
     </style>

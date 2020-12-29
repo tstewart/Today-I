@@ -28,7 +28,6 @@ public class MainActivityTutorial {
     public MaterialShowcaseSequence getTutorialSequence(MainActivity tutorialActivity) {
 
         /* Get Views focused on in the tutorial */
-        View newAccomplishmentButton = tutorialActivity.findViewById(R.id.buttonNewAccomplishment);
         View dayLayout = tutorialActivity.findViewById(R.id.linearLayoutDayButtons);
         View previousDayButton = tutorialActivity.findViewById(R.id.buttonPrevDay);
         View nextDayButton = tutorialActivity.findViewById(R.id.buttonNextDay);
@@ -38,7 +37,7 @@ public class MainActivityTutorial {
 
         /* The first view is initialised without a focus shape, so the overlay takes up the whole screen */
         MaterialShowcaseView startOverlayView = new MaterialShowcaseView.Builder(tutorialActivity)
-                .setTarget(newAccomplishmentButton)
+                .setTarget(dayLayout)
                 .setShape(new NoShape())
                 .build();
 
@@ -48,7 +47,7 @@ public class MainActivityTutorial {
         String next = tutorialActivity.getString(R.string.tutorial_next);
 
         showcase.addSequenceItem(startOverlayView, tutorialActivity.getString(R.string.tutorial_welcome), next);
-        showcase.addSequenceItem(newAccomplishmentButton, tutorialActivity.getString(R.string.tutorial_new_accomplishment), next);
+        showcase.addSequenceItem(accomplishmentListFragment, tutorialActivity.getString(R.string.tutorial_new_accomplishment), next);
         showcase.addSequenceItem(dayLayout, tutorialActivity.getString(R.string.tutorial_current_day), next);
         showcase.addSequenceItem(previousDayButton, tutorialActivity.getString(R.string.tutorial_previous_day), next);
         showcase.addSequenceItem(nextDayButton, tutorialActivity.getString(R.string.tutorial_next_day), next);

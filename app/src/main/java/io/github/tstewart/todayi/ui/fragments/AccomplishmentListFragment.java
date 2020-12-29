@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -69,8 +71,6 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
 
     /* Database table helper, assists with Database interaction */
     private AccomplishmentTableHelper mTableHelper;
-
-    /* */
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -133,11 +133,15 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
         }
 
 
-        /* Add click listener to new accomplishment button */
-        Button newAccomplishmentButton = view.findViewById(R.id.buttonNewAccomplishment);
-        if(newAccomplishmentButton != null)
-            newAccomplishmentButton.setOnClickListener(this::onNewItemButtonPressed);
+        ImageButton newAccomplishmentButton = new ImageButton(new ContextThemeWrapper(getContext(), R.style.AppTheme_NewAccomplishmentButton));
+        newAccomplishmentButton.setImageResource(R.drawable.ic_add);
 
+        if(listView != null) {
+            /* Add click listener to new accomplishment button */
+            newAccomplishmentButton.setOnClickListener(this::onNewItemButtonPressed);
+            /* Append New Accomplishment button to parent ListView */
+            listView.addFooterView(newAccomplishmentButton);
+        }
         return view;
     }
 
