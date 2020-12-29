@@ -116,7 +116,7 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
 
                         /* If can scroll, animate indicator to an alpha of 1 (Visible) */
                         if (view.canScrollVertically(1)) indicator.animate().alpha(1).setDuration(200);
-                        /* If can scroll, animate indicator to an alpha of 0 (Invisible) */
+                        /* If cant scroll, animate indicator to an alpha of 0 (Invisible) */
                         else indicator.animate().alpha(0).setDuration(200);
 
                     }

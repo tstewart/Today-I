@@ -12,9 +12,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -23,16 +20,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import org.threeten.bp.LocalDate;
-import org.threeten.bp.ZoneId;
 
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.UserPreferences;
-import io.github.tstewart.todayi.events.OnDatabaseInteracted;
 import io.github.tstewart.todayi.events.OnDateChanged;
 import io.github.tstewart.todayi.helpers.DateFormatter;
 import io.github.tstewart.todayi.helpers.RelativeDateHelper;
 import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
-import io.github.tstewart.todayi.notifications.DailyReminderAlarmHelper;
 import io.github.tstewart.todayi.ui.fragments.AccomplishmentListFragment;
 import io.github.tstewart.todayi.ui.tutorials.MainActivityTutorial;
 
@@ -146,6 +140,9 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
         }
+
+        /* Add animation on Activity change, swipe out this activity and swipe in new activity */
+        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
 
         return super.onOptionsItemSelected(item);
     }

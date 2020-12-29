@@ -1,37 +1,12 @@
 package io.github.tstewart.todayi.ui.activities;
 
-import android.app.AlertDialog;
-import android.app.TimePickerDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.text.format.DateUtils;
-import android.util.Log;
-import android.widget.Toast;
+import android.view.MenuItem;
 
-import org.threeten.bp.LocalTime;
-import org.threeten.bp.format.DateTimeFormatter;
-import org.threeten.bp.format.DateTimeParseException;
-
-import java.util.Objects;
-
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceManager;
 import io.github.tstewart.todayi.R;
-import io.github.tstewart.todayi.data.DBConstants;
-import io.github.tstewart.todayi.data.Database;
-import io.github.tstewart.todayi.data.LocalDatabaseIO;
-import io.github.tstewart.todayi.data.UserPreferences;
-import io.github.tstewart.todayi.errors.ExportFailedException;
-import io.github.tstewart.todayi.errors.ImportFailedException;
-import io.github.tstewart.todayi.notifications.DailyReminderAlarmHelper;
 import io.github.tstewart.todayi.ui.fragments.SettingsFragment;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -50,5 +25,28 @@ public class SettingsActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        /* If back button pressed */
+        if(item.getItemId() == android.R.id.home) {
+            onReturn();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        onReturn();
+        super.onBackPressed();
+    }
+
+    private void onReturn() {
+        this.finish();
+        /* Add animation on Activity change, swipe out this activity and swipe in new activity */
+        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
     }
 }

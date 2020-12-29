@@ -134,11 +134,25 @@ public class CalendarActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         /* If the item selected was the "back" button */
         if (item.getItemId() == android.R.id.home) {
-            /* Alert the Activity that launched this Activity that it will not receive a response. */
-            returnResponseCancelled();
+            onReturn();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        onReturn();
+        super.onBackPressed();
+    }
+
+    /* Called on return to parent Activity without a provided response */
+    private void onReturn() {
+        /* Alert the Activity that launched this Activity that it will not receive a response. */
+        returnResponseCancelled();
+
+        /* Add animation on Activity change, swipe out this activity and swipe in new activity */
+        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
     }
 
     /**
