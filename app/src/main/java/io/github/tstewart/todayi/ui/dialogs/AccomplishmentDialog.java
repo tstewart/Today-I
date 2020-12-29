@@ -3,12 +3,14 @@ package io.github.tstewart.todayi.ui.dialogs;
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.threeten.bp.LocalDate;
@@ -29,11 +31,13 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
     private LocalDateTime mSelectedDate;
     /* Time selection label */
     private final TextView mSelectedTimeLabel;
-    /* Time selection button */
-    private final Button mButtonTimeSelection;
+    /* Time selection layout, acts as a button */
+    private final LinearLayout mButtonTimeSelection;
 
     /* Delete button */
     private final Button mButtonDelete;
+    /* Listener called on delete pressed */
+    private View.OnClickListener mDeleteListener;
     /* Confirm button */
     private final Button mButtonConfirm;
     /* This dialog's view */
@@ -53,7 +57,7 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
 
         mContext = context;
         mSelectedTimeLabel = view.findViewById(R.id.textViewSelectedTime);
-        mButtonTimeSelection = view.findViewById(R.id.buttonSetTime);
+        mButtonTimeSelection = view.findViewById(R.id.linearLayoutTimeSelection);
         mButtonDelete = view.findViewById(R.id.buttonDelete);
         mButtonConfirm = view.findViewById(R.id.buttonConfirm);
 
@@ -79,6 +83,9 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
             /* Set input mode to auto open keyboard on dialog open */
             window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         }
+
+        /* Set delete listener */
+        mButtonDelete.setOnClickListener(this::onDeletePressed);
 
         return dialog;
     }
@@ -163,12 +170,27 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
 
     public AccomplishmentDialog setDeleteButtonListener(View.OnClickListener listener) {
         if (mButtonDelete != null) {
-            mButtonDelete.setOnClickListener(v -> {
-                listener.onClick(v);
-                if (this.mInstance != null) mInstance.dismiss();
-            });
+            this.mDeleteListener = listener;
         }
         return this;
+    }
+
+    /* Called when the delete button is pressed
+    * Hide the current dialog and show a new delete confirmation dialog */
+    private void onDeletePressed(View view) {
+        if(mInstance != null) mInstance.dismiss();
+
+        new AlertDialog.Builder(mContext)
+                .setTitle(R.string.confirm_delete)
+                .setPositiveButton(R.string.button_yes, ((dialog, which) ->  {
+                    if(mDeleteListener != null) mDeleteListener.onClick(view);
+                }))
+                .setNegativeButton(R.string.button_no, (dialog, which) -> {
+                    if(mInstance != null) mInstance.show();
+                })
+                .setCancelable(false)
+                .create()
+                .show();
     }
 
     public View getView() {

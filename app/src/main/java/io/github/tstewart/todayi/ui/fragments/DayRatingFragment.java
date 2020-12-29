@@ -22,12 +22,15 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import org.threeten.bp.LocalDate;
+import org.threeten.bp.format.DateTimeFormatter;
 
 import io.github.tstewart.todayi.R;
+import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.events.OnDateChanged;
 import io.github.tstewart.todayi.helpers.ColorBlendHelper;
+import io.github.tstewart.todayi.helpers.DateFormatter;
 import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
 import io.github.tstewart.todayi.helpers.db.DayRatingTableHelper;
 
@@ -134,27 +137,36 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
             /* Set all button backgrounds to transparent */
             resetAllButtonBackgrounds();
 
-                Button buttonClicked = (Button) v;
+            Button buttonClicked = (Button) v;
 
-                /* Index of selected button in List of buttons */
-                int index = Arrays.asList(mButtons).indexOf(buttonClicked);
+            /* Index of selected button in List of buttons */
+            int index = Arrays.asList(mButtons).indexOf(buttonClicked);
 
-                /* If the selected button is within the bounds of buttons (0 - buttons array length) */
-                if (index >= 0 && index < mButtons.length) {
+            /* Get current rating for this date */
+            int currentRating = mTableHelper.getRating(mSelectedDate, -1);
 
-                    /* Set background color for selected button */
-                    setSelectedButton(index);
+            /* If the current rating for this day is the same as the rating just selected, cancel the rating for this date */
+            if(index+1 == currentRating) {
+                String currentDateString = mSelectedDate.format(DateTimeFormatter.ofPattern(DBConstants.DATE_FORMAT_NO_TIME));
+                mTableHelper.delete(DBConstants.COLUMN_DATE +"=?", new String[]{currentDateString});
+            }
+            /* If the rating selection was not the same as the previous rating, change the rating in the db
+            If the selected button is within the bounds of buttons (0 - buttons array length) */
+            else if (index >= 0 && index < mButtons.length) {
 
-                    /* Set rating for this day in Database */
-                    if (mTableHelper != null) {
-                        try {
-                            mTableHelper.setRating(mSelectedDate, index + 1);
-                        } catch (ValidationFailedException e) {
-                            Log.w(CLASS_LOG_TAG,e.getMessage(), e);
-                            Toast.makeText(getContext(),"Failed to set rating, validation of rating value failed!", Toast.LENGTH_SHORT).show();
-                        }
+                /* Set background color for selected button */
+                setSelectedButton(index);
+
+                /* Set rating for this day in Database */
+                if (mTableHelper != null) {
+                    try {
+                        mTableHelper.setRating(mSelectedDate, index + 1);
+                    } catch (ValidationFailedException e) {
+                        Log.w(CLASS_LOG_TAG,e.getMessage(), e);
+                        Toast.makeText(getContext(),"Failed to set rating, validation of rating value failed!", Toast.LENGTH_SHORT).show();
                     }
                 }
+            }
         }
     }
 

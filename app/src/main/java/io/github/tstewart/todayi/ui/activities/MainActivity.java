@@ -12,9 +12,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -23,16 +20,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import org.threeten.bp.LocalDate;
-import org.threeten.bp.ZoneId;
 
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.UserPreferences;
-import io.github.tstewart.todayi.events.OnDatabaseInteracted;
 import io.github.tstewart.todayi.events.OnDateChanged;
 import io.github.tstewart.todayi.helpers.DateFormatter;
 import io.github.tstewart.todayi.helpers.RelativeDateHelper;
 import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
-import io.github.tstewart.todayi.notifications.DailyReminderAlarmHelper;
 import io.github.tstewart.todayi.ui.fragments.AccomplishmentListFragment;
 import io.github.tstewart.todayi.ui.tutorials.MainActivityTutorial;
 
@@ -43,8 +37,6 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
 
     /* Used when requesting a response from CalendarActivity */
     private static final int CALENDAR_ACTIVITY_REQUEST_CODE = 1;
-    /* Used when requesting a response from OptionsActivity */
-    private static final int OPTIONS_ACTIVITY_REQUEST_CODE = 2;
 
     /* Currently selected date (Application-wide, controlled by OnDateChangedListener) */
     LocalDate mSelectedDate;
@@ -130,31 +122,27 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
-
-        Intent targetIntent = null;
-        int requestCode = 0;
-
         /*
          Depending on the selected item, set the Intent Activity, and the request code
          Request code will be used later on to determine the response from the Activity
         */
         if (itemId == R.id.toolbar_calendar) {
-            targetIntent = new Intent(this, CalendarActivity.class);
-            requestCode = CALENDAR_ACTIVITY_REQUEST_CODE;
+            Intent intent = new Intent(this, CalendarActivity.class);
+            int requestCode = CALENDAR_ACTIVITY_REQUEST_CODE;
             /* CalendarView is initialised with the current selected date as an argument */
-            targetIntent.putExtra("selectedDate", mSelectedDate.toEpochDay());
+            intent.putExtra("selectedDate", mSelectedDate.toEpochDay());
 
-        } else if (itemId == R.id.toolbar_settings) {
-            targetIntent = new Intent(this, OptionsActivity.class);
-            requestCode = OPTIONS_ACTIVITY_REQUEST_CODE;
+            /* Start calendar Activity, await for response
+            * Response is given when a day is clicked */
+            startActivityForResult(intent, requestCode);
+        }
+        else if(itemId == R.id.toolbar_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
         }
 
-        /*
-         Start new activity and await response
-         Calendar will respond when a date is selected
-         Options will respond when an option causes a database refresh
-        */
-        if (targetIntent != null) startActivityForResult(targetIntent, requestCode);
+        /* Add animation on Activity change, swipe out this activity and swipe in new activity */
+        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
 
         return super.onOptionsItemSelected(item);
     }
@@ -176,15 +164,6 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
                     updateCurrentDate(selectedDate);
                 }
             }
-        }
-        /* If the response was Ok, settings activity forces reset of accomplishments */
-        else if (requestCode == OPTIONS_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            /*
-             Options Activities responses trigger Database interaction notification
-             For example, when Erase Data is called from Options, the database must now refresh,
-             as data has been cleared
-            */
-            OnDatabaseInteracted.notifyDatabaseInteracted();
         }
     }
 

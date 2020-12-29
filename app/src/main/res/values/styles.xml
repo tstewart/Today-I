@@ -31,15 +31,23 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="AppTheme.TimeSelectionText">
+    <style name="AppTheme.TimeSelectionTitle">
         <item name="android:textColor">@color/colorBlack</item>
-        <item name="android:textSize">20sp</item>
-        <item name="android:gravity">center</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="AppTheme.TimeSelectionText">
+        <item name="android:textSize">16sp</item>
     </style>
 
     <style name="AppTheme.ListItemText" parent="Widget.AppCompat.ListView">
         <item name="android:textColor">@color/colorBlack</item>
         <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="AppTheme.NewAccomplishmentButton" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:foreground">?selectableItemBackground</item>
+        <item name="android:backgroundTint">@color/colorTransparent</item>
     </style>
 
     <style name="AppTheme.SplashScreen" parent="AppTheme.NoActionBar">
@@ -68,6 +76,11 @@
         <item name="android:background">@drawable/rounded_shape</item>
     </style>
 
+    <!-- Settings activity -->
+    <style name="AppTheme.OptionsEraseData">
+        <item name="android:textColor">@color/colorWarning</item>
+    </style>
+
     <!-- Calendar activity -->
     <style name="AppTheme.CalendarTheme">
         <item name="mcv_selectionColor">@color/colorCalendarSelection</item>
@@ -79,7 +92,7 @@
     </style>
 
     <style name="AppTheme.CalendarDateText">
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">20sp</item>
     </style>
 
     <style name="AppTheme.CalendarHeaderText">

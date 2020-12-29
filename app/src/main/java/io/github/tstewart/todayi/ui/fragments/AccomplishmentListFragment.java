@@ -1,5 +1,6 @@
 package io.github.tstewart.todayi.ui.fragments;
 
+import android.animation.Animator;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -8,12 +9,16 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -67,8 +72,6 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
     /* Database table helper, assists with Database interaction */
     private AccomplishmentTableHelper mTableHelper;
 
-    /* */
-
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -97,13 +100,48 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
                     }
                 }
             });
+            /* Add listener for scroll events on ListView
+            * Show or hide the indicator that tells the user if the ListView overflows off screen */
+
+            /* Get indicator imageView */
+            ImageView indicator = view.findViewById(R.id.imageViewListDownIndicator);
+
+            if(indicator != null) {
+                listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+                    @Override
+                    public void onScrollStateChanged(AbsListView view, int scrollState) { /* Not required */}
+
+                    @Override
+                    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+                        /* If can scroll, animate indicator to an alpha of 1 (Visible) */
+                        if (view.canScrollVertically(1)) {
+                            indicator.animate().alpha(1).setDuration(200);
+                            indicator.setClickable(true);
+                        }
+                        /* If cant scroll, animate indicator to an alpha of 0 (Invisible) */
+                        else {
+                            indicator.animate().alpha(0).setDuration(200);
+                            indicator.setClickable(false);
+                        }
+
+                    }
+                });
+                /* Add onClickListener to indicator to auto scroll to bottom of ListView */
+                indicator.setOnClickListener(v -> listView.setSelection(listView.getCount()-1));
+            }
         }
 
-        /* Add click listener to new accomplishment button */
-        Button newAccomplishmentButton = view.findViewById(R.id.buttonNewAccomplishment);
-        if(newAccomplishmentButton != null)
-            newAccomplishmentButton.setOnClickListener(this::onNewItemButtonPressed);
 
+        ImageButton newAccomplishmentButton = new ImageButton(new ContextThemeWrapper(getContext(), R.style.AppTheme_NewAccomplishmentButton));
+        newAccomplishmentButton.setImageResource(R.drawable.ic_add);
+
+        if(listView != null) {
+            /* Add click listener to new accomplishment button */
+            newAccomplishmentButton.setOnClickListener(this::onNewItemButtonPressed);
+            /* Append New Accomplishment button to parent ListView */
+            listView.addFooterView(newAccomplishmentButton);
+        }
         return view;
     }
 

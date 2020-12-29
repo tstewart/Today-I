@@ -4,20 +4,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.fragments.AccomplishmentListFragment">
+    tools:context=".ui.fragments.AccomplishmentListFragment"
+    android:id="@+id/listLayout">
 
-    <ListView
-        android:id="@android:id/list"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1">
-    </ListView>
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:clickable="false">
 
-    <Button
-            android:id="@+id/buttonNewAccomplishment"
+        <ListView
+            android:id="@android:id/list"
             android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <ImageView
+            android:id="@+id/imageViewListDownIndicator"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:text="@string/new_accomplishment"/>
+            android:layout_gravity="bottom|center"
+            android:paddingBottom="8dp"
+            android:src="@drawable/ic_down_arrow" />
+    </FrameLayout>
 
 </LinearLayout>
