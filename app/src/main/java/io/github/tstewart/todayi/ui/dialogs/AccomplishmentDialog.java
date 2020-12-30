@@ -144,17 +144,20 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
 
             LocalTime currentTime = mSelectedDate.toLocalTime();
 
-            /* Get time picker dialog */
-            new TimePickerDialog(mContext, (timeView, hourOfDay, minute) -> {
-                LocalTime newTime = LocalTime.of(hourOfDay, minute);
+            /* If this Accomplishment dialog is still showing (has not been cancelled) */
+            if(mInstance.isShowing()) {
+                /* Get time picker dialog */
+                new TimePickerDialog(mContext, (timeView, hourOfDay, minute) -> {
+                    LocalTime newTime = LocalTime.of(hourOfDay, minute);
 
-                mSelectedDate = mSelectedDate.with(newTime);
+                    mSelectedDate = mSelectedDate.with(newTime);
 
-                setSelectedTime(mSelectedDate);
+                    setSelectedTime(mSelectedDate);
 
-            }, currentTime.getHour(), currentTime.getMinute(),
-                    true)
-            .show();
+                }, currentTime.getHour(), currentTime.getMinute(),
+                        true)
+                        .show();
+            }
         }
     }
 
@@ -183,7 +186,11 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
         new AlertDialog.Builder(mContext)
                 .setTitle(R.string.confirm_delete)
                 .setPositiveButton(R.string.button_yes, ((dialog, which) ->  {
-                    if(mDeleteListener != null) mDeleteListener.onClick(view);
+                    if(mDeleteListener != null) {
+                        mDeleteListener.onClick(view);
+                        /* Dismiss parent dialog, if it has been reopened (e.g. by pressing No at the same time as pressing Yes) */
+                        if(mInstance.isShowing()) mInstance.dismiss();
+                    }
                 }))
                 .setNegativeButton(R.string.button_no, (dialog, which) -> {
                     if(mInstance != null) mInstance.show();
