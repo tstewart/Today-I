@@ -315,7 +315,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
      */
     private String getLastBackedUpRelativeString() {
         /* Get time last backed up from user preferences */
-        long lastBackedUp = (Long)mUserPreferences.get(getString(R.string.user_prefs_last_backed_up_key), -1);
+        long lastBackedUp = (Long)mUserPreferences.get(getString(R.string.user_prefs_last_backed_up_key), -1L);
 
         /* If a valid time was returned from user preferences */
         if (lastBackedUp > 0) {
@@ -323,7 +323,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             return DateUtils.getRelativeTimeSpanString(lastBackedUp).toString();
         } else {
             /* If default value (-1) was returned, or an invalid time was returned */
-            return "Unknown";
+            return "Never";
         }
     }
 

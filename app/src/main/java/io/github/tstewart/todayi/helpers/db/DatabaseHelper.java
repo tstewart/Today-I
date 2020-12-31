@@ -45,11 +45,11 @@ public class DatabaseHelper {
         Cursor cursor = mDb.rawQuery("select ? from " + mTable, new String[]{DBConstants.COLUMN_ID});
 
         /* Get the number of returned records. */
-        int columnCount = cursor.getColumnCount();
+        int rowCount = cursor.getCount();
         cursor.close();
 
         /* If the number of records is none, the table is empty */
-        return columnCount == 0;
+        return rowCount == 0;
     }
 
     /**
@@ -74,8 +74,8 @@ public class DatabaseHelper {
             mDb.insert(this.mTable, null, cv);
         }
 
-        /* Close database connection on end. */
-        onEnd(mDb);
+        /* Notify event listeners that the database was interacted with */
+        OnDatabaseInteracted.notifyDatabaseInteracted();
     }
 
     /**
@@ -93,8 +93,8 @@ public class DatabaseHelper {
             mDb.update(this.mTable, cv, whereClause, whereArgs);
         }
 
-        /* Close database connection on end. */
-        onEnd(mDb);
+        /* Notify event listeners that the database was interacted with */
+        OnDatabaseInteracted.notifyDatabaseInteracted();
     }
 
     /**
@@ -107,8 +107,8 @@ public class DatabaseHelper {
 
         mDb.delete(this.mTable, whereClause, whereArgs);
 
-        /* Close database connection on end. */
-        onEnd(mDb);
+        /* Notify event listeners that the database was interacted with */
+        OnDatabaseInteracted.notifyDatabaseInteracted();
     }
 
     /**
@@ -127,19 +127,6 @@ public class DatabaseHelper {
             return dateFormatter.format(date) + "%";
         }
         return null;
-    }
-
-    /**
-     * Close database and notify event listeners that the database was interacted with
-     * @param db Database to be closed
-     */
-    private void onEnd(SQLiteDatabase db) {
-        /* If database is open, close it. */
-        if (db != null && db.isOpen()) {
-            db.close();
-        }
-        /* Notify event listeners that the database was interacted with */
-        OnDatabaseInteracted.notifyDatabaseInteracted();
     }
 
 }
