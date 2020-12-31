@@ -25,6 +25,8 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceGroup;
 import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
+import androidx.preference.SwitchPreferenceCompat;
+
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
@@ -88,6 +90,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             }
         }
 
+        /* Toggle notification icon */
+        SwitchPreferenceCompat notificationPreference = findPreference(mPreferenceKeys.ENABLE_NOTIFICATIONS_KEY);
+        toggleNotificationIcon(notificationPreference);
+
         /* Set on click listeners for preferences with custom functionality */
 
         Preference notificationTime = findPreference(mPreferenceKeys.NOTIFICATION_TIME_KEY);
@@ -141,6 +147,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         }
         else if(preferenceKey.equals(mPreferenceKeys.ENABLE_NOTIFICATIONS_KEY)) {
             UserPreferences.setEnableNotifications((boolean)newValue);
+            toggleNotificationIcon(preference);
         }
         else if(preferenceKey.equals(mPreferenceKeys.NOTIFICATION_TIME_KEY)) {
             String timeString = (String)newValue;
@@ -155,6 +162,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         }
 
         return true;
+    }
+
+    private void toggleNotificationIcon(Preference preference) {
+        boolean enabled = UserPreferences.isEnableNotifications();
+
+        int notificationIcon = enabled ? R.drawable.settings_icon_notifications_on : R.drawable.settings_icon_notifications_off;
+
+        preference.setIcon(notificationIcon);
     }
 
     private boolean onNotificationTimeSelected(Preference preference) {
