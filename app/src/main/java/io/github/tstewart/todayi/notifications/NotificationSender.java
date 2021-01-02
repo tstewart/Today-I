@@ -42,6 +42,9 @@ public class NotificationSender {
                     .setContentIntent(launchIntent)
                     .setSound(soundUri).setSmallIcon(R.drawable.notification_logo)
                     .build();
+
+            notification.flags += Notification.FLAG_AUTO_CANCEL;
+
             NotificationManagerCompat.from(getContext()).notify(0, notification);
         }
         else
