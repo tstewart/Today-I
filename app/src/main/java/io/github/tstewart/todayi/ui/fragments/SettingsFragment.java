@@ -25,6 +25,8 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceGroup;
 import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
+import androidx.preference.SwitchPreferenceCompat;
+
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
@@ -88,6 +90,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             }
         }
 
+        /* Toggle notification icon */
+        SwitchPreferenceCompat notificationPreference = findPreference(mPreferenceKeys.ENABLE_NOTIFICATIONS_KEY);
+        toggleNotificationIcon(notificationPreference);
+
         /* Set on click listeners for preferences with custom functionality */
 
         Preference notificationTime = findPreference(mPreferenceKeys.NOTIFICATION_TIME_KEY);
@@ -140,7 +146,16 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             UserPreferences.setEnableGestures((boolean)newValue);
         }
         else if(preferenceKey.equals(mPreferenceKeys.ENABLE_NOTIFICATIONS_KEY)) {
-            UserPreferences.setEnableNotifications((boolean)newValue);
+            /* Change notification icon depending on if the value was enabled/disabled */
+            toggleNotificationIcon(preference);
+            boolean isEnabled = (boolean)newValue;
+
+            DailyReminderAlarmHelper helper = new DailyReminderAlarmHelper();
+
+            if(isEnabled) helper.registerAlarm(getContext(),UserPreferences.getNotificationTime(), true);
+            else helper.unregisterAlarm(getContext());
+
+            UserPreferences.setEnableNotifications(isEnabled);
         }
         else if(preferenceKey.equals(mPreferenceKeys.NOTIFICATION_TIME_KEY)) {
             String timeString = (String)newValue;
@@ -155,6 +170,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         }
 
         return true;
+    }
+
+    private void toggleNotificationIcon(Preference preference) {
+        boolean enabled = UserPreferences.isEnableNotifications();
+
+        int notificationIcon = enabled ? R.drawable.settings_icon_notifications_on : R.drawable.settings_icon_notifications_off;
+
+        preference.setIcon(notificationIcon);
     }
 
     private boolean onNotificationTimeSelected(Preference preference) {
@@ -315,7 +338,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
      */
     private String getLastBackedUpRelativeString() {
         /* Get time last backed up from user preferences */
-        long lastBackedUp = (Long)mUserPreferences.get(getString(R.string.user_prefs_last_backed_up_key), -1);
+        long lastBackedUp = (Long)mUserPreferences.get(getString(R.string.user_prefs_last_backed_up_key), -1L);
 
         /* If a valid time was returned from user preferences */
         if (lastBackedUp > 0) {
@@ -323,7 +346,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             return DateUtils.getRelativeTimeSpanString(lastBackedUp).toString();
         } else {
             /* If default value (-1) was returned, or an invalid time was returned */
-            return "Unknown";
+            return "Never";
         }
     }
 

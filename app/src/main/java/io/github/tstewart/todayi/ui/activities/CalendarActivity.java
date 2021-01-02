@@ -12,15 +12,11 @@ import android.widget.Toast;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
-import org.threeten.bp.Instant;
 import org.threeten.bp.LocalDate;
-import org.threeten.bp.ZoneId;
 import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.format.DateTimeParseException;
 
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -31,12 +27,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
-import io.github.tstewart.todayi.helpers.db.DatabaseHelper;
 import io.github.tstewart.todayi.helpers.db.DayRatingTableHelper;
 import io.github.tstewart.todayi.ui.decorators.DayPostedDecorator;
 import io.github.tstewart.todayi.ui.decorators.DayRatedDecorator;
 import io.github.tstewart.todayi.ui.decorators.DayRatingSplitter;
-import io.github.tstewart.todayi.helpers.DateFormatter;
 
 /*
     Provides a calendar that the user can use to select a date to instantly jump to a date
@@ -134,7 +128,7 @@ public class CalendarActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         /* If the item selected was the "back" button */
         if (item.getItemId() == android.R.id.home) {
-            onReturn();
+            returnResponse(Activity.RESULT_CANCELED, null);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -142,17 +136,8 @@ public class CalendarActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        onReturn();
+        returnResponse(Activity.RESULT_CANCELED, null);
         super.onBackPressed();
-    }
-
-    /* Called on return to parent Activity without a provided response */
-    private void onReturn() {
-        /* Alert the Activity that launched this Activity that it will not receive a response. */
-        returnResponseCancelled();
-
-        /* Add animation on Activity change, swipe out this activity and swipe in new activity */
-        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
     }
 
     /**
@@ -276,18 +261,25 @@ public class CalendarActivity extends AppCompatActivity {
         long epochDay = localDate.toEpochDay();
 
         /* Return to parent Activity with selected day result */
-        Intent returnIntent = new Intent();
-        returnIntent.putExtra("result", epochDay);
-        setResult(Activity.RESULT_OK, returnIntent);
-        finish();
+        Bundle bundle = new Bundle();
+        bundle.putLong("result", epochDay);
+
+        returnResponse(Activity.RESULT_OK, bundle);
     }
 
-    /*
-    Alert parent Activity that the request for a response was cancelled
-     */
-    private void returnResponseCancelled() {
+    /* Called on return to parent Activity without a provided response */
+    private void returnResponse(int response, Bundle extras) {
         Intent returnIntent = new Intent();
-        setResult(Activity.RESULT_CANCELED, returnIntent);
+
+        if(extras != null) {
+            returnIntent.putExtras(extras);
+        }
+
+        setResult(response, returnIntent);
+
         finish();
+
+        /* Add animation on Activity change, swipe out this activity and swipe in new activity */
+        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
     }
 }
