@@ -146,8 +146,16 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             UserPreferences.setEnableGestures((boolean)newValue);
         }
         else if(preferenceKey.equals(mPreferenceKeys.ENABLE_NOTIFICATIONS_KEY)) {
-            UserPreferences.setEnableNotifications((boolean)newValue);
+            /* Change notification icon depending on if the value was enabled/disabled */
             toggleNotificationIcon(preference);
+            boolean isEnabled = (boolean)newValue;
+
+            DailyReminderAlarmHelper helper = new DailyReminderAlarmHelper();
+
+            if(isEnabled) helper.registerAlarm(getContext(),UserPreferences.getNotificationTime(), true);
+            else helper.unregisterAlarm(getContext());
+
+            UserPreferences.setEnableNotifications(isEnabled);
         }
         else if(preferenceKey.equals(mPreferenceKeys.NOTIFICATION_TIME_KEY)) {
             String timeString = (String)newValue;
