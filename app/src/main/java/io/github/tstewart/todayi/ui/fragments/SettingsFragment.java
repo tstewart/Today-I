@@ -145,6 +145,15 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         else if(preferenceKey.equals(mPreferenceKeys.ENABLE_GESTURES_KEY)) {
             UserPreferences.setEnableGestures((boolean)newValue);
         }
+        else if(preferenceKey.equals(mPreferenceKeys.MAX_DAY_RATING_KEY)) {
+            try {
+                /* Try and cast string response from preference to an integer value */
+                int maxRating = Integer.parseInt((String)newValue);
+                UserPreferences.setMaxDayRating(maxRating);
+            } catch (ClassCastException | NumberFormatException e) {
+                Toast.makeText(getContext(),"Failed to update preference.", Toast.LENGTH_SHORT).show();
+            }
+        }
         else if(preferenceKey.equals(mPreferenceKeys.ENABLE_NOTIFICATIONS_KEY)) {
             /* Change notification icon depending on if the value was enabled/disabled */
             toggleNotificationIcon(preference);

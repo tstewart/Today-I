@@ -14,6 +14,14 @@
             app:key="@string/user_prefs_clip_empty_lines"
             app:summary="@string/setting_clip_accomplishments_summary"
             app:title="@string/setting_clip_accomplishments" />
+        <ListPreference
+            android:defaultValue="false"
+            android:entries="@array/day_ratings_key"
+            android:entryValues="@array/day_ratings_value"
+            android:title="@string/setting_day_ratings"
+            app:icon="@drawable/settings_icon_mood"
+            app:key="@string/user_prefs_num_day_ratings"
+            app:summary="@string/setting_day_ratings_summary" />
 
     </PreferenceCategory>
 
