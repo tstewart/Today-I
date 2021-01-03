@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.DateTimeFormatter;
@@ -125,6 +126,19 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
 
         /* Register OnDateChanged to set current day rating */
         OnDateChanged.addListener(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        /* If this fragment is attached to a parent */
+        if(isAdded()) {
+            /* Refresh this fragment by detaching it and reattaching it
+            * This will reset the max rating view, so that if settings change the max rating, this will instantly be reflected */
+            FragmentManager fragmentManager = getParentFragmentManager();
+            fragmentManager.beginTransaction().detach(this).attach(this).commit();
+        }
     }
 
     private void onRatingButtonClicked(View v) {
