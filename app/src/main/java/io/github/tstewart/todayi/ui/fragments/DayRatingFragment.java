@@ -33,6 +33,7 @@ import io.github.tstewart.todayi.helpers.ColorBlendHelper;
 import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
 import io.github.tstewart.todayi.helpers.db.DayRatingTableHelper;
 import io.github.tstewart.todayi.ui.views.DayRatingButtonSelector;
+import io.github.tstewart.todayi.ui.views.DayRatingListSelector;
 import io.github.tstewart.todayi.ui.views.DayRatingSelector;
 
 /*
@@ -79,7 +80,7 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
         LinearLayout ll = view.findViewById(R.id.linearLayoutDayRating);
 
         if(MAX_RATING>5) {
-            //mRatingSelector = new DayRatingButtonSelector(getContext(), ll, rating -> {});
+            mRatingSelector = new DayRatingListSelector(getContext(), ll, this::updateRating);
         }
         else {
             mRatingSelector = new DayRatingButtonSelector(getContext(), ll, this::updateRating);

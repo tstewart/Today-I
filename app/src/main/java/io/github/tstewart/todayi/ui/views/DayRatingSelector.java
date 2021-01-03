@@ -2,7 +2,9 @@ package io.github.tstewart.todayi.ui.views;
 
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.RippleDrawable;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
@@ -29,8 +31,10 @@ public abstract class DayRatingSelector {
 
     void setButtonBackground(Button button, int color) {
         if (button != null) {
-            ColorDrawable drawable = (ColorDrawable) button.getBackground();
-            drawable.setColor(color);
+            Drawable drawable = button.getBackground();
+
+            if(drawable instanceof ColorDrawable) ((ColorDrawable)drawable).setColor(color);
+            else if(drawable instanceof GradientDrawable) ((GradientDrawable)drawable).setColor(color);
         }
     }
 
