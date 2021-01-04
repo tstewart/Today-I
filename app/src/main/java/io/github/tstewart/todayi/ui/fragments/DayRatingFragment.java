@@ -57,8 +57,6 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
 
     /* Colors for individual day rating */
     int[] mColors;
-    /* List of day rating buttons */
-    Button[] mButtons;
     /* Current date (Application-wide) */
     LocalDate mSelectedDate;
     /* Database table helper, assists with Database interaction */

@@ -9,6 +9,9 @@ import android.widget.LinearLayout;
 
 import io.github.tstewart.todayi.R;
 
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+
 public class DayRatingListSelector extends DayRatingSelector {
 
     Button mRateButton;
@@ -19,12 +22,14 @@ public class DayRatingListSelector extends DayRatingSelector {
         /* Create rating button, which will open an AlertDialog to select rating */
         mRateButton = new Button(new ContextThemeWrapper(context, R.style.AppTheme_DayRatingButton), null, R.style.Widget_AppCompat_Button_Borderless);
 
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT, 1);
+
         /* Set button text TODO use resource string */
         mRateButton.setText("Rate your day...");
 
         mRateButton.setOnClickListener(this::onRateButtonClicked);
 
-        parent.addView(mRateButton);
+        parent.addView(mRateButton, layoutParams);
     }
 
     private void onRateButtonClicked(View view) {
@@ -48,12 +53,15 @@ public class DayRatingListSelector extends DayRatingSelector {
 
     @Override
     public void setRating(int rating) {
-        int color = getColorForRating(rating);
-        setButtonBackground(mRateButton, color);
+        if(rating>0) {
+            int color = getColorForRating(rating);
+            setButtonBackground(mRateButton, color);
+        }
+        else resetSelected();
     }
 
     @Override
     public void resetSelected() {
-
+        setButtonBackground(mRateButton,mContext.getColor(R.color.colorTransparent));
     }
 }
