@@ -22,9 +22,6 @@ public class DayRating implements DatabaseObject {
 
     /* Minimum accepted day rating */
     private static final int MIN_RATING = 1;
-    /* Maximum accepted day rating */
-    // TODO this, with DayRatingSplitter and DayRatingFragment needs to be moved to a constant field inside user params
-    private static final int MAX_RATING = UserPreferences.getMaxDayRating();
     /* Day rated */
     private LocalDate mDate;
     /* Rating */
@@ -41,12 +38,15 @@ public class DayRating implements DatabaseObject {
      */
     @Override
     public void validate() throws ValidationFailedException {
+
+        int maxRating = UserPreferences.getMaxDayRating();
+
         /* If rating is less than the minimum accepted */
         if (mDayRating < MIN_RATING) {
             throw new ValidationFailedException("Rating cannot be lower than " + MIN_RATING + ".");
             /* If rating is more than the maximum accepted */
-        } else if (mDayRating > MAX_RATING) {
-            throw new ValidationFailedException("Rating cannot be higher than " + MAX_RATING + ".");
+        } else if (mDayRating > maxRating) {
+            throw new ValidationFailedException("Rating cannot be higher than " + maxRating + ".");
         }
     }
 
