@@ -56,6 +56,8 @@ public class DayRatingListSelector extends DayRatingSelector {
         if(rating>0) {
             int color = getColorForRating(rating);
             setButtonBackground(mRateButton, color);
+
+            mRateButton.setText(String.format(mContext.getString(R.string.rate_day) + " (%s)", rating));
         }
         else resetSelected();
     }
@@ -63,5 +65,6 @@ public class DayRatingListSelector extends DayRatingSelector {
     @Override
     public void resetSelected() {
         setButtonBackground(mRateButton,mContext.getColor(R.color.colorTransparent));
+        mRateButton.setText(mContext.getString(R.string.rate_day));
     }
 }

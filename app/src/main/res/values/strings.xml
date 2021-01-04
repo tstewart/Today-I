@@ -12,6 +12,9 @@
     <string name="button_today">Today</string>
     <string name="button_prev_day">Previous</string>
 
+    <!-- Day Rater -->
+    <string name="rate_day">Rate your day…</string>
+
     <!-- Accomplishment dialog -->
     <string name="new_accomplishment_dialog_title">Enter your new accomplishment:</string>
     <string name="edit_accomplishment_dialog_title">Edit accomplishment:</string>
