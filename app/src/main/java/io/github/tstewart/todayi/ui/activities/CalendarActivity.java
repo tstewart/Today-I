@@ -28,6 +28,7 @@ import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
 import io.github.tstewart.todayi.helpers.db.DayRatingTableHelper;
+import io.github.tstewart.todayi.models.DayRating;
 import io.github.tstewart.todayi.ui.decorators.DayPostedDecorator;
 import io.github.tstewart.todayi.ui.decorators.DayRatedDecorator;
 import io.github.tstewart.todayi.ui.decorators.DayRatingSplitter;
@@ -213,8 +214,12 @@ public class CalendarActivity extends AppCompatActivity {
         /* If database contains ratings */
         if (cursor.moveToFirst()) {
             do {
-                /* Get day rating response from Database */
-                int rating = cursor.getInt(cursor.getColumnIndex(DBConstants.COLUMN_RATING));
+                /* Get day rating percent response from Database */
+                int ratingPercent = cursor.getInt(cursor.getColumnIndex(DBConstants.COLUMN_RATING));
+
+                //TODO THIS ENTIRE SEGMENT NEEDS TO BE FORMATTED
+                //TODO THIS WILL, FOR NOW, CONVERT RATING PERCENT MANUALLY
+                int rating = DayRating.percentToRating(ratingPercent);
                 /*
                  Get date response from Database
                  Date is represented as a string inside the Database, so it will need to be converted
