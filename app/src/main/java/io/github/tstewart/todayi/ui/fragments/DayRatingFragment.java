@@ -1,25 +1,17 @@
 package io.github.tstewart.todayi.ui.fragments;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.Toast;
-
-import java.util.Arrays;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.DateTimeFormatter;
@@ -50,7 +42,10 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
     /*
     Maximum selectable rating
      */
-    private static final int MAX_RATING = UserPreferences.getMaxDayRating();
+    private int mCurrentMaxRating = UserPreferences.getMaxDayRating();
+
+    /* Main Layout */
+    LinearLayout mMainLayout;
 
     /* Current rating selector */
     private DayRatingSelector mRatingSelector;
@@ -72,18 +67,10 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mColors = new int[MAX_RATING];
+        mColors = new int[mCurrentMaxRating];
         mColors = new ColorBlendHelper(mColors.length).blendColors();
 
-        LinearLayout ll = view.findViewById(R.id.linearLayoutDayRating);
-
-        if(MAX_RATING>5) {
-            mRatingSelector = new DayRatingListSelector(getContext(), ll, this::updateRating);
-        }
-        else {
-            mRatingSelector = new DayRatingButtonSelector(getContext(), ll, this::updateRating);
-        }
-
+        mMainLayout = view.findViewById(R.id.linearLayoutDayRating);
     }
 
     @Override
@@ -104,11 +91,8 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
             }
         }
 
-        /* Get rating for current date */
-        int rating = mTableHelper.getRating(LocalDate.now(), -1);
-
-        /* Set currently selected button to rating of current day (if exists) */
-        if (rating >= 0) mRatingSelector.setRating(rating);
+        /* Setup rating selector */
+        setRatingSelector();
 
         /* Register OnDateChanged to set current day rating */
         OnDateChanged.addListener(this);
@@ -118,12 +102,43 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
     public void onResume() {
         super.onResume();
 
+        mCurrentMaxRating = UserPreferences.getMaxDayRating();
+
         /* If this fragment is attached to a parent */
         if(isAdded()) {
-            /* Refresh this fragment by detaching it and reattaching it
-            * This will reset the max rating view, so that if settings change the max rating, this will instantly be reflected */
-            FragmentManager fragmentManager = getParentFragmentManager();
-            fragmentManager.beginTransaction().detach(this).attach(this).commit();
+            /* Refresh the fragment's rating selector. */
+            updateRatingSelector();
+
+            if(mRatingSelector != null) {
+                /* Get rating for current date */
+                int rating = mTableHelper.getRating(LocalDate.now(), -1);
+
+                /* Set currently selected button to rating of current day (if exists) */
+                if (rating >= 0) mRatingSelector.setRating(rating);
+            }
+        }
+    }
+
+    private void updateRatingSelector() {
+        if(mMainLayout != null) {
+            /* Delete existing selector from layout */
+            mMainLayout.removeAllViews();
+            /* Set new rating selector */
+            setRatingSelector();
+        }
+    }
+
+    /* Setup the rating selector for this fragment */
+    private void setRatingSelector() {
+        if(mMainLayout != null) {
+            /* If max rating is greater than 10, use list-based selector */
+            if (mCurrentMaxRating > 10 ) {
+                mRatingSelector = new DayRatingListSelector(getContext(), mMainLayout, this::updateRating);
+            }
+            /* If max rating is less than or equal to 5, use button-based selector */
+            else {
+                mRatingSelector = new DayRatingButtonSelector(getContext(), mMainLayout, this::updateRating);
+            }
         }
     }
 

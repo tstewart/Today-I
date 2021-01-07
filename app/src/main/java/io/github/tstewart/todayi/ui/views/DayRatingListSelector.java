@@ -24,8 +24,7 @@ public class DayRatingListSelector extends DayRatingSelector {
 
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT, 1);
 
-        /* Set button text TODO use resource string */
-        mRateButton.setText("Rate your day...");
+        mRateButton.setText(context.getString(R.string.rate_day));
 
         mRateButton.setOnClickListener(this::onRateButtonClicked);
 
