@@ -26,10 +26,14 @@ public class DayRating implements DatabaseObject {
     private LocalDate mDate;
     /* Rating */
     private int mDayRating;
+    /* Rating represented as a percentage of the current maximum value */
+    private int mDayRatingPercent;
 
     public DayRating(@NonNull LocalDate date, int dayRating) {
         this.mDate = date;
         this.mDayRating = dayRating;
+
+        this.mDayRatingPercent = ratingToPercent(dayRating);
     }
 
     /**
@@ -50,6 +54,30 @@ public class DayRating implements DatabaseObject {
         }
     }
 
+    /* Get rating as a percentage of the max value
+     * Where the min value represents 0%, and the max value represents 100% */
+    public static int ratingToPercent(int rating) {
+        int maxRating = UserPreferences.getMaxDayRating();
+
+        if(rating>0) {
+            int percentagePerRating = 100/maxRating;
+            return rating*percentagePerRating;
+
+        }
+        return -1;
+    }
+
+    /* Get rating from the percentage representation (percentage of 100) */
+    public static int percentToRating(int percent) {
+        int maxRating = UserPreferences.getMaxDayRating();
+
+        if(percent>0 && percent<=100) {
+            float rating = ((float)percent/100)*maxRating;
+            return (int)Math.ceil(rating);
+        }
+        return -1;
+    }
+
     /**
      * Bundle variables into ContentValues object, for insertion into Database
      * @return ContentValues instance with variables bundled
@@ -65,9 +93,17 @@ public class DayRating implements DatabaseObject {
             contentValues.put(DBConstants.COLUMN_DATE, dateFormatter.format(mDate));
         }
 
-        contentValues.put(DBConstants.COLUMN_RATING, mDayRating);
+        contentValues.put(DBConstants.COLUMN_RATING, mDayRatingPercent);
 
         return contentValues;
+    }
+
+    public int getDayRatingPercent() {
+        return mDayRatingPercent;
+    }
+
+    public void setDayRatingPercent(int dayRatingPercent) {
+        mDayRatingPercent = dayRatingPercent;
     }
 
     public LocalDate getDate() {

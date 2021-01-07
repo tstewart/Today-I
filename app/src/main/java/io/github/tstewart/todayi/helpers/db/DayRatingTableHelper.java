@@ -3,6 +3,7 @@ package io.github.tstewart.todayi.helpers.db;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.widget.Toast;
 
 import java.util.Date;
 
@@ -12,6 +13,7 @@ import org.threeten.bp.LocalDate;
 
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
+import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.helpers.DateFormatter;
 import io.github.tstewart.todayi.helpers.db.DatabaseHelper;
@@ -78,13 +80,14 @@ public class DayRatingTableHelper extends DatabaseHelper {
 
             /* If the cursor is able to move to a record for this date, then the record exists */
             if (cursor.moveToFirst()) {
-                /* Get and return the rating for this date */
-                rating = cursor.getInt(cursor.getColumnIndex(DBConstants.COLUMN_RATING));
+                /* Get the rating percent (of 100%) for this date */
+                int ratingPercent = cursor.getInt(cursor.getColumnIndex(DBConstants.COLUMN_RATING));
+                /* Convert rating percent back to rating */
+                rating = DayRating.percentToRating(ratingPercent);
             }
 
             cursor.close();
         }
-        /* If a value was not returned, return the default value */
         return rating;
     }
 
