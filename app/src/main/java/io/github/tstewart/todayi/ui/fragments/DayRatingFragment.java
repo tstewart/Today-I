@@ -109,13 +109,11 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
             /* Refresh the fragment's rating selector. */
             updateRatingSelector();
 
-            if(mRatingSelector != null) {
-                /* Get rating for current date */
-                int rating = mTableHelper.getRating(LocalDate.now(), -1);
+            /* Get rating for current date */
+            int rating = mTableHelper.getRating(LocalDate.now(), -1);
 
-                /* Set currently selected button to rating of current day (if exists) */
-                if (rating >= 0) mRatingSelector.setRating(rating);
-            }
+            /* Set currently selected button to rating of current day */
+            mRatingSelector.setRating(rating);
         }
     }
 
