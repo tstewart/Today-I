@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -57,6 +58,10 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
     /* Database table helper, assists with Database interaction */
     DayRatingTableHelper mTableHelper;
 
+    /* Checks if onResume has been run at least once.
+    * This prevents onResume from being called as soon as the Activity is created */
+    boolean mHasCalledResume = false;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -102,19 +107,20 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
     public void onResume() {
         super.onResume();
 
-        mCurrentMaxRating = UserPreferences.getMaxDayRating();
+        if(mHasCalledResume) {
 
-        /* If this fragment is attached to a parent */
-        if(isAdded()) {
-            /* Refresh the fragment's rating selector. */
-            updateRatingSelector();
+            int newMaxRating = UserPreferences.getMaxDayRating();
 
-            /* Get rating for current date */
-            int rating = mTableHelper.getRating(LocalDate.now(), -1);
+            /* If max rating has changed, refresh selector */
+            if(newMaxRating != mCurrentMaxRating) {
+                /* Refresh the fragment's rating selector. */
+                updateRatingSelector();
 
-            /* Set currently selected button to rating of current day */
-            mRatingSelector.setRating(rating);
+                mCurrentMaxRating = UserPreferences.getMaxDayRating();
+            }
         }
+        /* Resume has now been called at least once, and rating selector can be properly adjusted */
+        else mHasCalledResume = true;
     }
 
     private void updateRatingSelector() {
@@ -140,6 +146,17 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
         }
     }
 
+    /* Set selected rating on rating selector for the selected date */
+    private void setSelectedRating() {
+        /* Get rating for current date */
+        int rating = mTableHelper.getRating(mSelectedDate, -1);
+
+        /* If index is valid, set selected rating in rating selector */
+        if (rating >= 0) mRatingSelector.setRating(rating);
+            /* If index is invalid, reset selected rating in rating selector */
+        else mRatingSelector.resetSelected();
+    }
+
     public void updateRating(int rating) {
         if(mTableHelper != null) {
 
@@ -163,14 +180,7 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
 
     @Override
     public void onDateChanged(LocalDate date) {
-        /* Get rating for current date */
-        int rating = mTableHelper.getRating(date, -1);
-
-        /* If index is valid, set background color for Button */
-        if (rating >= 0) mRatingSelector.setRating(rating);
-        /* If index is invalid, reset background color for all buttons */
-        else mRatingSelector.resetSelected();
-
         this.mSelectedDate = date;
+        setSelectedRating();
     }
 }
