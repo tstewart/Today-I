@@ -102,6 +102,7 @@
     <string name="debug_invalidate_backup">Invalidate backup</string>
     <string name="debug_populate_accomplishments">Populate Accomplishments</string>
     <string name="debug_populate_ratings">Populate Ratings</string>
+    <string name="debug_override_max_rating">Override Max Rating</string>
     <string name="debug_populate_confirmation">Are you sure you want to populate this table? You may want to backup first.</string>
     <string name="debug_get_accomplishments">Get all Accomplishments</string>
     <string name="debug_get_ratings">Get all Ratings</string>

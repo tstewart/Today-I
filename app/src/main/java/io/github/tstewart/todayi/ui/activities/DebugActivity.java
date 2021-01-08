@@ -62,6 +62,7 @@ public class DebugActivity extends AppCompatActivity {
         if(id == R.id.debugInvalidateBackupTime) onInvalidateBackupButtonClicked();
         else if(id == R.id.debug_populate_accomplishments) onPopulateAccomplishmentsButtonClicked();
         else if(id == R.id.debug_populate_ratings) onPopulateRatingsButtonClicked();
+        else if(id == R.id.debug_override_max_rating) onOverrideMaxRatingButtonClicked();
         else if(id == R.id.debug_color_test) onColorTestButtonClicked();
         else if(id == R.id.debug_send_notification) onSendNotificationButtonClicked();
         else if(id == R.id.debugShowTutorial) onShowTutorialButtonClicked();
@@ -135,6 +136,32 @@ public class DebugActivity extends AppCompatActivity {
                     }
                 })
                 .setNegativeButton(R.string.button_no, null)
+                .create()
+                .show();
+    }
+
+
+    private void onOverrideMaxRatingButtonClicked() {
+
+        final NumberPicker numberPicker = new NumberPicker(this);
+        numberPicker.setMinValue(1);
+        numberPicker.setMaxValue(100);
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.debug_override_max_rating)
+                .setView(numberPicker)
+                .setPositiveButton("Ok", (dialog, which) -> {
+                    int numSelection = numberPicker.getValue();
+
+                    if(numSelection>0 && numSelection<=100) {
+                        UserPreferences preferences = new UserPreferences(getSharedPreferences(getString(R.string.user_prefs_file_location_key), MODE_PRIVATE));
+                        preferences.set(getString(R.string.user_prefs_num_day_ratings), String.valueOf(numSelection));
+
+                        UserPreferences.setMaxDayRating(numSelection);
+                        Toast.makeText(this,"Updated max rating!", Toast.LENGTH_SHORT).show();
+                    }
+                    else Toast.makeText(this,"Failed to update.", Toast.LENGTH_SHORT).show();
+                })
                 .create()
                 .show();
     }
