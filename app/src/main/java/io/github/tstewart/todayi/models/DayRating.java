@@ -22,17 +22,18 @@ public class DayRating implements DatabaseObject {
 
     /* Minimum accepted day rating */
     private static final int MIN_RATING = 1;
-    /* Maximum accepted day rating */
-    // TODO this, with DayRatingSplitter and DayRatingFragment needs to be moved to a constant field inside user params
-    private static final int MAX_RATING = UserPreferences.getMaxDayRating();
     /* Day rated */
     private LocalDate mDate;
     /* Rating */
     private int mDayRating;
+    /* Rating represented as a percentage of the current maximum value */
+    private int mDayRatingPercent;
 
     public DayRating(@NonNull LocalDate date, int dayRating) {
         this.mDate = date;
         this.mDayRating = dayRating;
+
+        this.mDayRatingPercent = ratingToPercent(dayRating);
     }
 
     /**
@@ -41,13 +42,40 @@ public class DayRating implements DatabaseObject {
      */
     @Override
     public void validate() throws ValidationFailedException {
+
+        int maxRating = UserPreferences.getMaxDayRating();
+
         /* If rating is less than the minimum accepted */
         if (mDayRating < MIN_RATING) {
             throw new ValidationFailedException("Rating cannot be lower than " + MIN_RATING + ".");
             /* If rating is more than the maximum accepted */
-        } else if (mDayRating > MAX_RATING) {
-            throw new ValidationFailedException("Rating cannot be higher than " + MAX_RATING + ".");
+        } else if (mDayRating > maxRating) {
+            throw new ValidationFailedException("Rating cannot be higher than " + maxRating + ".");
         }
+    }
+
+    /* Get rating as a percentage of the max value
+     * Where the min value represents 0%, and the max value represents 100% */
+    public static int ratingToPercent(int rating) {
+        int maxRating = UserPreferences.getMaxDayRating();
+
+        if(rating>0) {
+            int percentagePerRating = 100/maxRating;
+            return rating*percentagePerRating;
+
+        }
+        return -1;
+    }
+
+    /* Get rating from the percentage representation (percentage of 100) */
+    public static int percentToRating(int percent) {
+        int maxRating = UserPreferences.getMaxDayRating();
+
+        if(percent>0 && percent<=100) {
+            float rating = ((float)percent/100)*maxRating;
+            return (int)Math.ceil(rating);
+        }
+        return -1;
     }
 
     /**
@@ -65,9 +93,17 @@ public class DayRating implements DatabaseObject {
             contentValues.put(DBConstants.COLUMN_DATE, dateFormatter.format(mDate));
         }
 
-        contentValues.put(DBConstants.COLUMN_RATING, mDayRating);
+        contentValues.put(DBConstants.COLUMN_RATING, mDayRatingPercent);
 
         return contentValues;
+    }
+
+    public int getDayRatingPercent() {
+        return mDayRatingPercent;
+    }
+
+    public void setDayRatingPercent(int dayRatingPercent) {
+        mDayRatingPercent = dayRatingPercent;
     }
 
     public LocalDate getDate() {

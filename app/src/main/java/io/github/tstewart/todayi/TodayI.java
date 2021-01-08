@@ -56,15 +56,20 @@ public class TodayI extends Application {
         mPreferences.setDefaultValue(getString(R.string.user_prefs_notification_time), "18:00");
         mPreferences.setDefaultValue(getString(R.string.user_prefs_gestures_enabled), true);
         mPreferences.setDefaultValue(getString(R.string.user_prefs_clip_empty_lines), true);
+        mPreferences.setDefaultValue(getString(R.string.user_prefs_num_day_ratings), "5");
 
         /* Set preference variables for this instance of the app */
         boolean notificationsEnabled = (boolean) mPreferences.get(getString(R.string.user_prefs_notifications_enabled), false);
         boolean gesturesEnabled = (boolean) mPreferences.get(getString(R.string.user_prefs_gestures_enabled), true);
-        boolean clipEmptyLines = (boolean) mPreferences.get(getString(R.string.user_prefs_clip_empty_lines), true);
+        String numRatings = (String) mPreferences.get(getString(R.string.user_prefs_num_day_ratings), "5");
         String notificationTimeString = (String) mPreferences.get(getString(R.string.user_prefs_notification_time), "18:00");
+        boolean clipEmptyLines = (boolean) mPreferences.get(getString(R.string.user_prefs_clip_empty_lines), true);
         UserPreferences.setEnableNotifications(notificationsEnabled);
         UserPreferences.setEnableGestures(gesturesEnabled);
         UserPreferences.setAccomplishmentClipEmptyLines(clipEmptyLines);
+        try {
+            UserPreferences.setMaxDayRating(Integer.parseInt(numRatings));
+        } catch(NumberFormatException ignore) {}
 
         /* Try and parse notification time from string */
         LocalTime notificationTime = null;

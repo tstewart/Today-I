@@ -31,7 +31,7 @@ public class DayRatingSplitter {
     /*
      Maximum selectable rating
      */
-    static final int MAX_RATING = UserPreferences.getMaxDayRating();
+    final int MAX_RATING = UserPreferences.getMaxDayRating();
 
     /* Array of colors to assign to rating */
     int[] mColors;

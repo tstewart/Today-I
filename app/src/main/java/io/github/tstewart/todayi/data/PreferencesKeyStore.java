@@ -11,6 +11,8 @@ public class PreferencesKeyStore {
     public final String ENABLE_GESTURES_KEY;
     /* Enable clip accomplishments key */
     public final String ENABLE_CLIP_ACCOMPLISHMENT_KEY;
+    /* Maximum day ratings key */
+    public final String MAX_DAY_RATING_KEY;
     /* Enable notifications key */
     public final String ENABLE_NOTIFICATIONS_KEY;
     /* Notification time key */
@@ -33,6 +35,7 @@ public class PreferencesKeyStore {
 
         this.ENABLE_GESTURES_KEY = mContext.getString(R.string.user_prefs_gestures_enabled);
         this.ENABLE_CLIP_ACCOMPLISHMENT_KEY = mContext.getString(R.string.user_prefs_clip_empty_lines);
+        this.MAX_DAY_RATING_KEY = context.getString(R.string.user_prefs_num_day_ratings);
         this.ENABLE_NOTIFICATIONS_KEY = mContext.getString(R.string.user_prefs_notifications_enabled);
         this.NOTIFICATION_TIME_KEY = mContext.getString(R.string.user_prefs_notification_time);
     }
