@@ -72,8 +72,13 @@ public class DayRating implements DatabaseObject {
         int maxRating = UserPreferences.getMaxDayRating();
 
         if(percent>0 && percent<=100) {
-            float rating = ((float)percent/100)*maxRating;
-            return (int)Math.ceil(rating);
+            float ratingValue = (float)percent/100;
+            int rating = Math.round(ratingValue*maxRating);
+
+            /* Fix for rounding down to a rating of 0 */
+            if(rating==0) rating += 1;
+
+            return rating;
         }
         return -1;
     }
