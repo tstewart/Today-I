@@ -160,9 +160,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             }
         }
         else if(preferenceKey.equals(mPreferenceKeys.ENABLE_NOTIFICATIONS_KEY)) {
+            boolean isEnabled = (boolean)newValue;
+            UserPreferences.setEnableNotifications(isEnabled);
+
             /* Change notification icon depending on if the value was enabled/disabled */
             toggleNotificationIcon(preference);
-            boolean isEnabled = (boolean)newValue;
 
             Context context = getContext();
             if(context != null) {
@@ -170,7 +172,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 else DailyReminderAlarmHelper.unregisterAlarm(getContext());
             }
 
-            UserPreferences.setEnableNotifications(isEnabled);
         }
         else if(preferenceKey.equals(mPreferenceKeys.NOTIFICATION_TIME_KEY)) {
             String timeString = (String)newValue;
