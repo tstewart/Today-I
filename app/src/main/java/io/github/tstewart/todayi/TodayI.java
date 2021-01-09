@@ -72,7 +72,7 @@ public class TodayI extends Application {
         } catch(NumberFormatException ignore) {}
 
         /* Try and parse notification time from string */
-        LocalTime notificationTime = null;
+        LocalTime notificationTime;
         try {
             notificationTime = LocalTime.parse(notificationTimeString);
         } catch (DateTimeParseException e) {

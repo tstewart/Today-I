@@ -55,8 +55,4 @@ public class ColorBlendHelper {
 
         return mColors;
     }
-
-    public int[] getColors() {
-        return mColors;
-    }
 }

@@ -128,13 +128,12 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         */
         if (itemId == R.id.toolbar_calendar) {
             Intent intent = new Intent(this, CalendarActivity.class);
-            int requestCode = CALENDAR_ACTIVITY_REQUEST_CODE;
             /* CalendarView is initialised with the current selected date as an argument */
             intent.putExtra("selectedDate", mSelectedDate.toEpochDay());
 
             /* Start calendar Activity, await for response
             * Response is given when a day is clicked */
-            startActivityForResult(intent, requestCode);
+            startActivityForResult(intent, CALENDAR_ACTIVITY_REQUEST_CODE);
         }
         else if(itemId == R.id.toolbar_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);

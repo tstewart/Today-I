@@ -28,6 +28,7 @@ import androidx.preference.PreferenceScreen;
 import androidx.preference.SwitchPreferenceCompat;
 
 import io.github.tstewart.todayi.R;
+import io.github.tstewart.todayi.TodayI;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
 import io.github.tstewart.todayi.data.LocalDatabaseIO;
@@ -69,7 +70,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         setPreferencesFromResource(R.xml.main_preferences, rootKey);
 
         /* Initialize key store */
-        this.mPreferenceKeys = new PreferencesKeyStore(getActivity().getBaseContext());
+        Context context = getContext();
+        if(context != null) {
+            this.mPreferenceKeys = new PreferencesKeyStore(getContext());
+        }
 
         /* Set on preference changed listeners for preferences to update settings for the current instance of the app
         * When settings are changed, their value in the preferences file is updated. However, these changes are not reflected until
@@ -93,7 +97,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         /* Toggle notification icon */
         SwitchPreferenceCompat notificationPreference = findPreference(mPreferenceKeys.ENABLE_NOTIFICATIONS_KEY);
-        toggleNotificationIcon(notificationPreference);
+        if (notificationPreference != null) toggleNotificationIcon(notificationPreference);
 
         /* Set on click listeners for preferences with custom functionality */
 
@@ -160,8 +164,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             toggleNotificationIcon(preference);
             boolean isEnabled = (boolean)newValue;
 
-            if(isEnabled) DailyReminderAlarmHelper.registerAlarm(getContext(),UserPreferences.getNotificationTime(), true);
-            else DailyReminderAlarmHelper.unregisterAlarm(getContext());
+            Context context = getContext();
+            if(context != null) {
+                if (isEnabled) DailyReminderAlarmHelper.registerAlarm(getContext(), UserPreferences.getNotificationTime(), true);
+                else DailyReminderAlarmHelper.unregisterAlarm(getContext());
+            }
 
             UserPreferences.setEnableNotifications(isEnabled);
         }
@@ -285,24 +292,26 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     }
 
     private boolean onEraseClicked(Preference preference) {
-        /* Open an alert dialog to confirm if the user wishes to erase all data */
-        new AlertDialog.Builder(getContext())
-                .setTitle(R.string.erase_all_warning_dialog_title)
-                .setMessage(R.string.erase_all_warning_dialog_message)
-                .setPositiveButton(R.string.button_yes, (dialogInterface, which) -> {
-                    Database database = Database.getInstance(getContext());
-                    SQLiteDatabase db = database.getWritableDatabase();
+        Context context = getContext();
+        if(context != null) {
+            /* Open an alert dialog to confirm if the user wishes to erase all data */
+            new AlertDialog.Builder(getContext())
+                    .setTitle(R.string.erase_all_warning_dialog_title)
+                    .setMessage(R.string.erase_all_warning_dialog_message)
+                    .setPositiveButton(R.string.button_yes, (dialogInterface, which) -> {
+                        Database database = Database.getInstance(getContext());
+                        SQLiteDatabase db = database.getWritableDatabase();
 
-                    /* Delete data from both tables */
-                    database.eraseAllData(db, DBConstants.ACCOMPLISHMENT_TABLE);
-                    database.eraseAllData(db, DBConstants.RATING_TABLE);
+                        /* Delete data from both tables */
+                        database.eraseAllData(db, DBConstants.ACCOMPLISHMENT_TABLE);
+                        database.eraseAllData(db, DBConstants.RATING_TABLE);
 
-                    Toast.makeText(getContext(), R.string.erase_all_confirmed, Toast.LENGTH_LONG).show();
-                })
-                .setNegativeButton(R.string.button_no, null)
-                .create()
-                .show();
-
+                        Toast.makeText(getContext(), R.string.erase_all_confirmed, Toast.LENGTH_LONG).show();
+                    })
+                    .setNegativeButton(R.string.button_no, null)
+                    .create()
+                    .show();
+        }
         return true;
     }
 

@@ -16,14 +16,10 @@ import java.util.Locale;
 public class DateFormatter {
 
     /* Date formatter */
-    private DateTimeFormatter mDateFormatter;
+    private final DateTimeFormatter mDateFormatter;
 
     /* Formatter pattern */
-    private String mFormatPattern;
-
-    /* Private constructor prevents initialisation */
-    private DateFormatter() {
-    }
+    private final String mFormatPattern;
 
     public DateFormatter(String dateFormat) {
         /* Initialise date formatter with default locale */

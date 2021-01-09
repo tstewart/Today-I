@@ -186,10 +186,10 @@ public class DebugActivity extends AppCompatActivity {
                     scrollView.setLayoutParams(new LinearLayout.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                     scrollView.addView(resultView);
 
-                    for (int i = 0; i < colors.length; i++) {
+                    for (int color : colors) {
                         TextView colorView = new TextView(this);
                         colorView.setText("\n");
-                        colorView.setBackgroundColor(colors[i]);
+                        colorView.setBackgroundColor(color);
 
                         resultView.addView(colorView);
                     }

@@ -25,9 +25,9 @@ public class DayRating implements DatabaseObject {
     /* Day rated */
     private LocalDate mDate;
     /* Rating */
-    private int mDayRating;
+    private final int mDayRating;
     /* Rating represented as a percentage of the current maximum value */
-    private int mDayRatingPercent;
+    private final int mDayRatingPercent;
 
     public DayRating(@NonNull LocalDate date, int dayRating) {
         this.mDate = date;
@@ -103,27 +103,11 @@ public class DayRating implements DatabaseObject {
         return contentValues;
     }
 
-    public int getDayRatingPercent() {
-        return mDayRatingPercent;
-    }
-
-    public void setDayRatingPercent(int dayRatingPercent) {
-        mDayRatingPercent = dayRatingPercent;
-    }
-
     public LocalDate getDate() {
         return mDate;
     }
 
     public void setDate(LocalDate date) {
         this.mDate = date;
-    }
-
-    public int getDayRating() {
-        return mDayRating;
-    }
-
-    public void setDayRating(int dayRating) {
-        this.mDayRating = dayRating;
     }
 }

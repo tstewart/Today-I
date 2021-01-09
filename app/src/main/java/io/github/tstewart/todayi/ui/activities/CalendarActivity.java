@@ -176,10 +176,8 @@ public class CalendarActivity extends AppCompatActivity {
                         /* Convert LocalDate to CalendarDay */
                         CalendarDay calendarDay = CalendarDay.from(date);
 
-                        /* If successful, add to list of days posted on */
-                        if (calendarDay != null) {
-                            dates.add(calendarDay);
-                        }
+                        /* Add to list of days posted on */
+                        dates.add(calendarDay);
                     }
 
                 } catch (DateTimeParseException e) {
@@ -235,10 +233,8 @@ public class CalendarActivity extends AppCompatActivity {
                         /* Convert Date to CalendarDay */
                         CalendarDay calendarDay = CalendarDay.from(date);
 
-                        /* If successful, add to list of days posted on */
-                        if (calendarDay != null) {
-                            ratings.put(calendarDay, rating);
-                        }
+                        /* Add to list of days posted on */
+                        ratings.put(calendarDay, rating);
                     }
 
                 } catch (DateTimeParseException e) {

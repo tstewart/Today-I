@@ -28,15 +28,12 @@ public class PreferencesKeyStore {
     /* Version key */
     public final String VERSION_KEY = "version";
 
-    private final Context mContext;
-
     public PreferencesKeyStore(@NonNull Context context) {
-        mContext = context;
 
-        this.ENABLE_GESTURES_KEY = mContext.getString(R.string.user_prefs_gestures_enabled);
-        this.ENABLE_CLIP_ACCOMPLISHMENT_KEY = mContext.getString(R.string.user_prefs_clip_empty_lines);
+        this.ENABLE_GESTURES_KEY = context.getString(R.string.user_prefs_gestures_enabled);
+        this.ENABLE_CLIP_ACCOMPLISHMENT_KEY = context.getString(R.string.user_prefs_clip_empty_lines);
         this.MAX_DAY_RATING_KEY = context.getString(R.string.user_prefs_num_day_ratings);
-        this.ENABLE_NOTIFICATIONS_KEY = mContext.getString(R.string.user_prefs_notifications_enabled);
-        this.NOTIFICATION_TIME_KEY = mContext.getString(R.string.user_prefs_notification_time);
+        this.ENABLE_NOTIFICATIONS_KEY = context.getString(R.string.user_prefs_notifications_enabled);
+        this.NOTIFICATION_TIME_KEY = context.getString(R.string.user_prefs_notification_time);
     }
 }

@@ -65,7 +65,6 @@ public class Accomplishment implements DatabaseObject {
 
         /* Format date and add to content values if not null */
         if (mDate != null) {
-            String test = dateFormatter.format(mDate);
             contentValues.put(DBConstants.COLUMN_DATE, dateFormatter.format(mDate));
         }
 

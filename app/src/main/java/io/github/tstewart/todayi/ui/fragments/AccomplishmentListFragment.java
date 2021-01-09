@@ -149,11 +149,16 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        this.mTableHelper = new AccomplishmentTableHelper(getContext());
+        Context context = getContext();
 
-        this.mCursorAdapter = new AccomplishmentCursorAdapter(getContext(), null);
+        if(context != null) {
+            this.mTableHelper = new AccomplishmentTableHelper(context);
 
-        setListAdapter(mCursorAdapter);
+            this.mCursorAdapter = new AccomplishmentCursorAdapter(context, null);
+
+            setListAdapter(mCursorAdapter);
+        }
+
         getListView().setOnItemClickListener(this::onListItemClick);
 
         /* Add listener to notify fragment of database updates */
@@ -226,13 +231,15 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
                                 newSelectedDate = LocalDateTime.of(mSelectedDate, LocalTime.now());
 
                             /* Create Accomplishment object from new values */
-                            Accomplishment accomplishment = new Accomplishment(newSelectedDate, input.getText().toString());
+                            if(newSelectedDate != null) {
+                                Accomplishment accomplishment = new Accomplishment(newSelectedDate, input.getText().toString());
 
-                            try {
-                                /* Update Database entry with new content */
-                                mTableHelper.update(accomplishment, id);
-                            } catch (ValidationFailedException e) {
-                                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                                try {
+                                    /* Update Database entry with new content */
+                                    mTableHelper.update(accomplishment, id);
+                                } catch (ValidationFailedException e) {
+                                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
                             }
                         }
                     }))
@@ -267,14 +274,16 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
                             selectedDate = LocalDateTime.of(mSelectedDate, LocalTime.now());
 
 
-                        /* Create Accomplishment object from new values */
-                        Accomplishment accomplishment = new Accomplishment(selectedDate, input.getText().toString());
+                        if(selectedDate != null) {
+                            /* Create Accomplishment object from new values */
+                            Accomplishment accomplishment = new Accomplishment(selectedDate, input.getText().toString());
 
-                        try {
-                            /* Insert Accomplishment into Database */
-                            mTableHelper.insert(accomplishment);
-                        } catch (ValidationFailedException e) {
-                            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                            try {
+                                /* Insert Accomplishment into Database */
+                                mTableHelper.insert(accomplishment);
+                            } catch (ValidationFailedException e) {
+                                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }
                 })

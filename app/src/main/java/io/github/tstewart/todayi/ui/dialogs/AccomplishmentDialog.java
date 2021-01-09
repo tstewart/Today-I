@@ -204,10 +204,6 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
         return this.mView;
     }
 
-    public LocalDateTime getSelectedDate() {
-        return mSelectedDate;
-    }
-
     @Override
     public AlertDialog.Builder setView(View view) {
         super.setView(view);
