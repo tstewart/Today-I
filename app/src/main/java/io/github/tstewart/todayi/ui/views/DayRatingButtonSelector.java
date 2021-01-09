@@ -1,6 +1,7 @@
 package io.github.tstewart.todayi.ui.views;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.Button;
@@ -22,13 +23,16 @@ public class DayRatingButtonSelector extends DayRatingSelector {
 
         int maxRating = this.mMaxRating;
 
+        /* Define button theme */
+        ContextThemeWrapper themeWrapper = new ContextThemeWrapper(context, R.style.AppTheme_DayRatingButton);
+
         /* Create buttons to make up the selectable day ratings */
         mButtons = new Button[maxRating];
 
         for (int i = 0; i < maxRating; i++) {
 
             /* Set button theme */
-            mButtons[i] = new Button(new ContextThemeWrapper(context, R.style.AppTheme_DayRatingButton), null, R.style.Widget_AppCompat_Button_Borderless);
+            mButtons[i] = new Button(themeWrapper, null, 0);
             /* Set text to current index */
             mButtons[i].setText(String.valueOf(i + 1));
             /* Set button tag to rating (to ensure this button can have it's associated rating checked later) */
@@ -84,8 +88,9 @@ public class DayRatingButtonSelector extends DayRatingSelector {
 
     @Override
     public void resetSelected() {
+        int transparent = mContext.getColor(R.color.colorTransparent);
         for (Button button : mButtons) {
-            button.setBackgroundColor(mContext.getColor(R.color.colorTransparent));
+            setButtonBackground(button, transparent);
         }
     }
 }
