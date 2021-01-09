@@ -22,13 +22,17 @@ public class DailyReminderAlarmHelper {
     */
     private static final String CLASS_LOG_TAG = DailyReminderAlarmHelper.class.getSimpleName();
 
+    public static void updateAlarm(@NonNull Context context, LocalTime time) {
+        registerAlarm(context, time, true);
+    }
+
     /**
      * Register an alarm to send notifications daily at the provided time
      * @param context Application context
      * @param time Time to send notification
      * @param overrideCurrent If an alarm of this type already exists, should it be overwritten
      */
-    public void registerAlarm(@NonNull Context context, LocalTime time, boolean overrideCurrent) {
+    public static void registerAlarm(@NonNull Context context, LocalTime time, boolean overrideCurrent) {
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
 
@@ -60,7 +64,7 @@ public class DailyReminderAlarmHelper {
     }
 
     /* Remove daily reminder alarm, so that it stops sending notifications */
-    public void unregisterAlarm(@NonNull Context context) {
+    public static void unregisterAlarm(@NonNull Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
         alarmManager.cancel(getDailyAlarmIntent(context, true));
@@ -69,7 +73,7 @@ public class DailyReminderAlarmHelper {
         Log.i(CLASS_LOG_TAG,"Daily reminder notifications disabled.");
     }
 
-    private PendingIntent getDailyAlarmIntent(Context context, boolean overrideCurrent) {
+    private static PendingIntent getDailyAlarmIntent(Context context, boolean overrideCurrent) {
         Intent serviceIntent = new Intent(context, DailyAlarmReceiver.class);
 
         if(!overrideCurrent) {

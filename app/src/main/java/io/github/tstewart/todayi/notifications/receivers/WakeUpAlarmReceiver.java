@@ -32,7 +32,7 @@ public class WakeUpAlarmReceiver extends BroadcastReceiver {
             boolean isNotificationsEnabled = (boolean) preferences.get(context.getString(R.string.user_prefs_notifications_enabled), false);
 
             if (isNotificationsEnabled) {
-                new DailyReminderAlarmHelper().registerAlarm(context, UserPreferences.getNotificationTime(), true);
+                DailyReminderAlarmHelper.registerAlarm(context, UserPreferences.getNotificationTime(), true);
             }
         }
     }

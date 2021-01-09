@@ -35,6 +35,7 @@ import io.github.tstewart.todayi.data.PreferencesKeyStore;
 import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ExportFailedException;
 import io.github.tstewart.todayi.errors.ImportFailedException;
+import io.github.tstewart.todayi.models.DayRating;
 import io.github.tstewart.todayi.notifications.DailyReminderAlarmHelper;
 import io.github.tstewart.todayi.ui.activities.DebugActivity;
 
@@ -159,10 +160,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             toggleNotificationIcon(preference);
             boolean isEnabled = (boolean)newValue;
 
-            DailyReminderAlarmHelper helper = new DailyReminderAlarmHelper();
-
-            if(isEnabled) helper.registerAlarm(getContext(),UserPreferences.getNotificationTime(), true);
-            else helper.unregisterAlarm(getContext());
+            if(isEnabled) DailyReminderAlarmHelper.registerAlarm(getContext(),UserPreferences.getNotificationTime(), true);
+            else DailyReminderAlarmHelper.unregisterAlarm(getContext());
 
             UserPreferences.setEnableNotifications(isEnabled);
         }
@@ -217,9 +216,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         mUserPreferences.set(mPreferenceKeys.NOTIFICATION_TIME_KEY, selectedTimeString);
 
                     /* Restart notification alarm */
-                    // TODO simplify/move?
                     if(getContext() != null)
-                        new DailyReminderAlarmHelper().registerAlarm(getContext(),selectedTime,true);
+                        DailyReminderAlarmHelper.updateAlarm(getContext(),selectedTime);
                 },
                 currentNotificationTime.getHour(),
                 currentNotificationTime.getMinute(),
