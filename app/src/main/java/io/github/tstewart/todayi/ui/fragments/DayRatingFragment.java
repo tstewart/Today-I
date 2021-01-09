@@ -113,10 +113,11 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
 
             /* If max rating has changed, refresh selector */
             if(newMaxRating != mCurrentMaxRating) {
+                mCurrentMaxRating = UserPreferences.getMaxDayRating();
                 /* Refresh the fragment's rating selector. */
                 updateRatingSelector();
-
-                mCurrentMaxRating = UserPreferences.getMaxDayRating();
+                /* Update selector with selected rating for this date */
+                setSelectedRating();
             }
         }
         /* Resume has now been called at least once, and rating selector can be properly adjusted */

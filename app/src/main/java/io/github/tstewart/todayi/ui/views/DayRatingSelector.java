@@ -13,13 +13,14 @@ import io.github.tstewart.todayi.helpers.ColorBlendHelper;
 
 public abstract class DayRatingSelector {
 
-    final int mMaxRating = UserPreferences.getMaxDayRating();
     final int[] mColors;
     final Context mContext;
+    int mMaxRating;
     LinearLayout mParent;
     OnRatingChangedListener mListener;
 
     public DayRatingSelector(Context context, LinearLayout parent, OnRatingChangedListener listener) {
+        this.mMaxRating = UserPreferences.getMaxDayRating();
         this.mColors = new ColorBlendHelper(mMaxRating).blendColors();
         this.mContext = context;
         this.mParent = parent;
