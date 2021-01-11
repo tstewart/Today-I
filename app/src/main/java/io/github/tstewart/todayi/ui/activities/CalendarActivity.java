@@ -182,7 +182,7 @@ public class CalendarActivity extends AppCompatActivity {
 
                 } catch (DateTimeParseException e) {
                     /* Alert the user that date information may be corrupt in the Database */
-                    Toast.makeText(this, "Failed to gather dates posted on. Database may be corrupt.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.gather_dates_failed, Toast.LENGTH_LONG).show();
                     Log.w(CLASS_LOG_TAG, e.getMessage(), e);
                 }
             }
@@ -214,7 +214,7 @@ public class CalendarActivity extends AppCompatActivity {
             do {
                 /* Get day rating percent response from Database */
                 int ratingPercent = cursor.getInt(cursor.getColumnIndex(DBConstants.COLUMN_RATING));
-                
+
                 int rating = DayRating.percentToRating(ratingPercent);
                 /*
                  Get date response from Database

@@ -78,7 +78,7 @@ public class TodayI extends Application {
 
                     } catch (ExportFailedException e) {
                         Log.w(CLASS_LOG_TAG, e.getMessage(), e);
-                        Toast.makeText(this, "Automatic backup failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, String.format(getString(R.string.automatic_backup_failed), e.getMessage()), Toast.LENGTH_LONG).show();
                     }
                 } else {
                     Log.i(CLASS_LOG_TAG, "Application data did not need to backup.");

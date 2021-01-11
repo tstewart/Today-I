@@ -154,7 +154,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 int maxRating = Integer.parseInt((String)newValue);
                 UserPreferences.setMaxDayRating(maxRating);
             } catch (ClassCastException | NumberFormatException e) {
-                Toast.makeText(getContext(),"Failed to update preference.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(),R.string.setting_update_failed, Toast.LENGTH_LONG).show();
             }
         }
         else if(preferenceKey.equals(mPreferenceKeys.ENABLE_NOTIFICATIONS_KEY)) {
@@ -179,7 +179,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 UserPreferences.setNotificationTime(notificationTime);
             }
             catch(DateTimeParseException e) {
-                Toast.makeText(getContext(), "Failed to update notification time.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.setting_update_failed, Toast.LENGTH_LONG).show();
             }
         }
 
@@ -247,13 +247,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                             /* Try and load from backup */
                             LocalDatabaseIO.importBackupDb(context, DBConstants.DB_NAME);
 
-                            Toast.makeText(context, "Backup restored successfully!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, R.string.setting_restore_backup_success, Toast.LENGTH_SHORT).show();
 
                         } catch (ImportFailedException e) {
                             /* If failed, alert user and log */
                             Log.w(this.getClass().getSimpleName(), Objects.requireNonNull(e.getMessage()));
 
-                            Toast.makeText(context, "Failed to import backup:" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, String.format(getString(R.string.setting_restore_backup_failed), e.getMessage()), Toast.LENGTH_LONG).show();
                         }
                     }
                 })
@@ -276,10 +276,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
                         /* Update last backed up */
                         setLastBackedUpText();
+
+                        Toast.makeText(getContext(),R.string.setting_force_backup_success, Toast.LENGTH_SHORT).show();
                     } catch (ExportFailedException e) {
                         /* If failed, alert user and log */
                         Log.w(this.getClass().getSimpleName(), e.getMessage(), e);
-                        Toast.makeText(getContext(), "Backup failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), String.format(getString(R.string.setting_force_backup_failed), e.getMessage()), Toast.LENGTH_LONG).show();
                     }
                 })
                 .setNegativeButton(R.string.button_no, null)
