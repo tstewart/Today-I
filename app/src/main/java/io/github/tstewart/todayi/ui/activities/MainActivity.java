@@ -36,9 +36,6 @@ Main Activity of the application (obviously), handles AccomplishmentListFragment
  */
 public class MainActivity extends AppCompatActivity implements OnDateChangedListener {
 
-    /* Used when requesting a response from CalendarActivity */
-    private static final int CALENDAR_ACTIVITY_REQUEST_CODE = 1;
-
     /* Currently selected date (Application-wide, controlled by OnDateChangedListener) */
     LocalDate mSelectedDate;
 
@@ -124,50 +121,27 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
+        Intent intent = null;
         /*
-         Depending on the selected item, set the Intent Activity, and the request code
-         Request code will be used later on to determine the response from the Activity
+         Depending on the selected item, set the Intent Activity
         */
         if (itemId == R.id.toolbar_calendar) {
-            Intent intent = new Intent(this, CalendarActivity.class);
+            intent = new Intent(this, CalendarActivity.class);
             /* CalendarView is initialised with the current selected date as an argument */
             intent.putExtra("selectedDate", mSelectedDate.toEpochDay());
 
-            /* Start calendar Activity, await for response
-            * Response is given when a day is clicked */
-            startActivityForResult(intent, CALENDAR_ACTIVITY_REQUEST_CODE);
         }
         else if(itemId == R.id.toolbar_settings) {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
+            intent = new Intent(this, SettingsActivity.class);
         }
 
-        /* Add animation on Activity change, swipe out this activity and swipe in new activity */
-        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+        if(intent != null)  {
+            startActivity(intent);
+            /* Add animation on Activity change, swipe out this activity and swipe in new activity */
+            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+        }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    /* On receiving a response from an Activity */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        // TODO make CalendarActivity send a request to OnDateChanged, instead of making MainActivity deal with this result.
-
-        /* If the calendar was the Activity that responded */
-        if (requestCode == CALENDAR_ACTIVITY_REQUEST_CODE) {
-            /* If the response was Ok, and data was provided with the response */
-            if (resultCode == Activity.RESULT_OK && data != null) {
-                long dateResult = data.getLongExtra("result", -1);
-
-                /* If the date result was not the default value (-1) */
-                if (dateResult >= 0) {
-                    LocalDate selectedDate = LocalDate.ofEpochDay(dateResult);
-                    updateCurrentDate(selectedDate);
-                }
-            }
-        }
     }
 
     public void showTutorial() {
