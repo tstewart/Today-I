@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -99,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         This is done to ensure all views have been initialised before the tutorial is shown
          */
         // TODO make this rely instead on when topbar menu is inflated
-        new Handler().postDelayed(() -> {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
             SharedPreferences sharedPrefs = getSharedPreferences(getString(R.string.user_prefs_file_location_key), MODE_PRIVATE);
             UserPreferences userPrefs = new UserPreferences(sharedPrefs);
 

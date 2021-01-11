@@ -3,6 +3,7 @@ package io.github.tstewart.todayi.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -11,13 +12,11 @@ import io.github.tstewart.todayi.R;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
-    //TODO replace handler
-
     /* Time in milliseconds to display this Activity for */
     static final int SPLASH_DISPLAY_LENGTH_MILLIS = 3000;
 
     /* Handles wait time */
-    final Handler mSplashWaitHandler = new Handler();
+    final Handler mSplashWaitHandler = new Handler(Looper.getMainLooper());
 
 
     @Override

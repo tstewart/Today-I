@@ -214,9 +214,7 @@ public class CalendarActivity extends AppCompatActivity {
             do {
                 /* Get day rating percent response from Database */
                 int ratingPercent = cursor.getInt(cursor.getColumnIndex(DBConstants.COLUMN_RATING));
-
-                //TODO THIS ENTIRE SEGMENT NEEDS TO BE FORMATTED
-                //TODO THIS WILL, FOR NOW, CONVERT RATING PERCENT MANUALLY
+                
                 int rating = DayRating.percentToRating(ratingPercent);
                 /*
                  Get date response from Database
