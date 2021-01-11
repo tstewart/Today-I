@@ -1,6 +1,5 @@
 package io.github.tstewart.todayi.ui.activities;
 
-import android.app.ActionBar;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
@@ -183,7 +182,7 @@ public class DebugActivity extends AppCompatActivity {
                     resultView.setOrientation(LinearLayout.VERTICAL);
 
                     ScrollView scrollView = new ScrollView(this);
-                    scrollView.setLayoutParams(new LinearLayout.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                    scrollView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                     scrollView.addView(resultView);
 
                     for (int color : colors) {

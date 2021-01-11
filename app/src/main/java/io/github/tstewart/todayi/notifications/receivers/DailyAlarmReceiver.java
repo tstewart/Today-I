@@ -9,6 +9,7 @@ import io.github.tstewart.todayi.notifications.NotificationSender;
 import io.github.tstewart.todayi.ui.activities.MainActivity;
 
 /* Receives Alarm requests for Daily Reminder notifications, and sends a request to NotificationSender */
+//TODO RESOURCE STRING
 public class DailyAlarmReceiver extends BroadcastReceiver {
 
     @Override

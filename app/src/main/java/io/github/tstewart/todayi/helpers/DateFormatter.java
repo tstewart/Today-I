@@ -1,13 +1,11 @@
 package io.github.tstewart.todayi.helpers;
 
-import org.threeten.bp.LocalDate;
+import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.format.DateTimeParseException;
 import org.threeten.bp.temporal.ChronoField;
 import org.threeten.bp.temporal.TemporalAccessor;
 
-import java.text.ParseException;
-import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -25,6 +23,13 @@ public class DateFormatter {
         /* Initialise date formatter with default locale */
         this.mDateFormatter = DateTimeFormatter.ofPattern(dateFormat, Locale.getDefault());
         this.mFormatPattern = dateFormat;
+    }
+
+    /* Parse database date/time to a LocalDateTime object */
+    public LocalDateTime parseDate(String date) {
+        try {
+            return LocalDateTime.parse(date, DateTimeFormatter.ofPattern(mFormatPattern));
+        } catch (DateTimeParseException e) { return null; }
     }
 
     /**

@@ -5,12 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import java.util.Date;
-
-import androidx.annotation.NonNull;
-
 import org.threeten.bp.LocalDate;
 
+import androidx.annotation.NonNull;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
 import io.github.tstewart.todayi.events.OnDatabaseInteracted;

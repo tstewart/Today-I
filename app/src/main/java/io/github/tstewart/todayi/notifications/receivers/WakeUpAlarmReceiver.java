@@ -3,7 +3,6 @@ package io.github.tstewart.todayi.notifications.receivers;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.util.Log;
 
 import io.github.tstewart.todayi.R;

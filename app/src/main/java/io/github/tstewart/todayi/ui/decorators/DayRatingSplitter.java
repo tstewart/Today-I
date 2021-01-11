@@ -23,9 +23,6 @@ import io.github.tstewart.todayi.helpers.ColorBlendHelper;
  There is probably a much simpler way to do this, however the MaterialCalendarView api is restrictive.
  The only sensible way to decorate 5 different colors is to have 5 different decorators. Why? I don't know.
 */
-/*
- TODO This should really be done with database interactions instead of passing a HashMap
-*/
 public class DayRatingSplitter {
 
     /*

@@ -2,8 +2,6 @@ package io.github.tstewart.todayi.models;
 
 import android.content.ContentValues;
 
-import java.util.Date;
-
 import androidx.annotation.NonNull;
 
 import org.threeten.bp.LocalDate;

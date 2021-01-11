@@ -1,11 +1,9 @@
 package io.github.tstewart.todayi.notifications;
 
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.util.Log;

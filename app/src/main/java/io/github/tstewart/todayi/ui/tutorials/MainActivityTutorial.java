@@ -1,5 +1,6 @@
 package io.github.tstewart.todayi.ui.tutorials;
 
+import android.util.Log;
 import android.view.View;
 
 import io.github.tstewart.todayi.R;
@@ -22,7 +23,9 @@ public class MainActivityTutorial {
             sequence.start();
         }
         /* If a view was not found and the tutorial could not be shown, don't show it. */
-        catch(NullPointerException ignore) {}
+        catch(NullPointerException e) {
+            Log.w(this.getClass().getSimpleName(), "Failed to show tutorial. One or more views were not instantiated.", e);
+        }
     }
 
     public MaterialShowcaseSequence getTutorialSequence(MainActivity tutorialActivity) {

@@ -18,15 +18,15 @@ public class PreferencesKeyStore {
     /* Notification time key */
     public final String NOTIFICATION_TIME_KEY;
     /* Import data key */
-    public final String IMPORT_DATA_KEY = "import";
+    public static final String IMPORT_DATA_KEY = "import";
     /* Export data key */
-    public final String EXPORT_DATA_KEY = "export";
+    public static final String EXPORT_DATA_KEY = "export";
     /* Erase data key */
-    public final String ERASE_DATA_KEY = "erase";
+    public static final String ERASE_DATA_KEY = "erase";
     /* Last backed up key */
-    public final String LAST_BACKED_UP_KEY = "last_backed_up";
+    public static final String LAST_BACKED_UP_KEY = "last_backed_up";
     /* Version key */
-    public final String VERSION_KEY = "version";
+    public static final String VERSION_KEY = "version";
 
     public PreferencesKeyStore(@NonNull Context context) {
 

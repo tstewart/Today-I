@@ -22,13 +22,10 @@ import java.util.Objects;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceGroup;
 import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.SwitchPreferenceCompat;
-
 import io.github.tstewart.todayi.R;
-import io.github.tstewart.todayi.TodayI;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
 import io.github.tstewart.todayi.data.LocalDatabaseIO;
@@ -36,7 +33,6 @@ import io.github.tstewart.todayi.data.PreferencesKeyStore;
 import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ExportFailedException;
 import io.github.tstewart.todayi.errors.ImportFailedException;
-import io.github.tstewart.todayi.models.DayRating;
 import io.github.tstewart.todayi.notifications.DailyReminderAlarmHelper;
 import io.github.tstewart.todayi.ui.activities.DebugActivity;
 
@@ -56,9 +52,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     /* User preference manager */
     UserPreferences mUserPreferences;
-
-    /* Last backed up label preference */
-    Preference mLastBackedUp;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -101,33 +94,17 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         /* Set on click listeners for preferences with custom functionality */
 
-        Preference notificationTime = findPreference(mPreferenceKeys.NOTIFICATION_TIME_KEY);
-        if(notificationTime != null) {
-            notificationTime.setOnPreferenceClickListener(this::onNotificationTimeSelected);
-            /* Set subtitle for this preference to the currently selected time */
-            notificationTime.setSummary((String) mUserPreferences.get(mPreferenceKeys.NOTIFICATION_TIME_KEY, "18:00"));
-        }
+        /* Set current notification time summary */
+        setCurrentNotificationTime();
 
         /* Import, export, and erase data buttons act as Preference buttons for functionality with PreferenceFragment*/
-        Preference importData = findPreference(mPreferenceKeys.IMPORT_DATA_KEY);
-        Preference exportData = findPreference(mPreferenceKeys.EXPORT_DATA_KEY);
-        Preference eraseData = findPreference(mPreferenceKeys.ERASE_DATA_KEY);
-
-        if(importData != null)
-            importData.setOnPreferenceClickListener(this::onRestoreBackupClicked);
-        if(exportData != null)
-            exportData.setOnPreferenceClickListener(this::onForceBackupClicked);
-        if(eraseData != null)
-            eraseData.setOnPreferenceClickListener(this::onEraseClicked);
+        setDataManagementListeners();
 
         /* Set last backed up label */
-        mLastBackedUp = findPreference(mPreferenceKeys.LAST_BACKED_UP_KEY);
-        if(mLastBackedUp != null)
-            setLastBackedUpText(mLastBackedUp);
-
+        setLastBackedUpText();
 
         /* Set version click listener for accessing hidden debug menu */
-        Preference version = findPreference(mPreferenceKeys.VERSION_KEY);
+        Preference version = findPreference(PreferencesKeyStore.VERSION_KEY);
         if(version != null) {
 
             /* Set version number */
@@ -137,7 +114,28 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 version.setOnPreferenceClickListener(this::onVersionClicked);
             }
         }
+    }
 
+    private void setCurrentNotificationTime() {
+        Preference notificationTime = findPreference(mPreferenceKeys.NOTIFICATION_TIME_KEY);
+        if(notificationTime != null) {
+            notificationTime.setOnPreferenceClickListener(this::onNotificationTimeSelected);
+            /* Set subtitle for this preference to the currently selected time */
+            notificationTime.setSummary((String) mUserPreferences.get(mPreferenceKeys.NOTIFICATION_TIME_KEY, "18:00"));
+        }
+    }
+
+    private void setDataManagementListeners() {
+        Preference importData = findPreference(PreferencesKeyStore.IMPORT_DATA_KEY);
+        Preference exportData = findPreference(PreferencesKeyStore.EXPORT_DATA_KEY);
+        Preference eraseData = findPreference(PreferencesKeyStore.ERASE_DATA_KEY);
+
+        if(importData != null)
+            importData.setOnPreferenceClickListener(this::onRestoreBackupClicked);
+        if(exportData != null)
+            exportData.setOnPreferenceClickListener(this::onForceBackupClicked);
+        if(eraseData != null)
+            eraseData.setOnPreferenceClickListener(this::onEraseClicked);
     }
 
     private boolean onPreferenceChanged(Preference preference, Object newValue) {
@@ -277,8 +275,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         mUserPreferences.set(getString(R.string.user_prefs_last_backed_up_key),System.currentTimeMillis());
 
                         /* Update last backed up */
-                        if(mLastBackedUp != null)
-                            setLastBackedUpText(mLastBackedUp);
+                        setLastBackedUpText();
                     } catch (ExportFailedException e) {
                         /* If failed, alert user and log */
                         Log.w(this.getClass().getSimpleName(), e.getMessage(), e);
@@ -346,8 +343,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     /*
     Set last backed up label to a relative text string showing the last time since backing up the database
      */
-    private void setLastBackedUpText(Preference preference) {
-        preference.setSummary(getLastBackedUpRelativeString());
+    private void setLastBackedUpText() {
+        Preference lastBackedUp = findPreference(PreferencesKeyStore.LAST_BACKED_UP_KEY);
+        if(lastBackedUp != null)
+            lastBackedUp.setSummary(getLastBackedUpRelativeString());
     }
 
     /*

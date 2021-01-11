@@ -2,11 +2,9 @@ package io.github.tstewart.todayi.models;
 
 import android.content.ContentValues;
 
-import androidx.annotation.NonNull;
-
-import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
 
+import androidx.annotation.NonNull;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ValidationFailedException;

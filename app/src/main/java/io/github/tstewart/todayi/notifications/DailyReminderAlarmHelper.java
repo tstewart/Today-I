@@ -16,6 +16,9 @@ import io.github.tstewart.todayi.notifications.receivers.DailyAlarmReceiver;
 /* Helper class for registering and unregistering daily reminder notifications */
 public class DailyReminderAlarmHelper {
 
+    /* Private constructor prevents initialisation of helper class */
+    private DailyReminderAlarmHelper() {}
+
     /*
      Log tag, used for Logging
      Represents class name

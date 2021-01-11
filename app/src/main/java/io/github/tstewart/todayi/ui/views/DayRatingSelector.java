@@ -19,7 +19,7 @@ public abstract class DayRatingSelector {
     LinearLayout mParent;
     OnRatingChangedListener mListener;
 
-    public DayRatingSelector(Context context, LinearLayout parent, OnRatingChangedListener listener) {
+    protected DayRatingSelector(Context context, LinearLayout parent, OnRatingChangedListener listener) {
         this.mMaxRating = UserPreferences.getMaxDayRating();
         this.mColors = new ColorBlendHelper(mMaxRating).blendColors();
         this.mContext = context;

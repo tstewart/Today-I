@@ -8,12 +8,12 @@ import android.view.View;
 import android.view.ViewConfiguration;
 
 /* Listens for Swipe performed events from View.OnTouchListener */
-public class OnSwipePerformedListener implements View.OnTouchListener {
+public abstract class OnSwipePerformedListener implements View.OnTouchListener {
 
     GestureDetector mGestureDetector;
     Context mContext;
 
-    public OnSwipePerformedListener(Context context) {
+    protected OnSwipePerformedListener(Context context) {
         this.mGestureDetector = new GestureDetector(context, new SwipeGestureDetector(context,this));
         this.mContext = context;
     }
@@ -24,7 +24,7 @@ public class OnSwipePerformedListener implements View.OnTouchListener {
         return mGestureDetector.onTouchEvent(event);
     }
 
-    public void onSwipe(SwipeDirection direction) {}
+    public abstract void onSwipe(SwipeDirection direction);
 
     /* Handles onFling events and calculates if the fling was valid, and the fling direction */
     public static class SwipeGestureDetector extends GestureDetector.SimpleOnGestureListener {

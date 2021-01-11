@@ -4,8 +4,6 @@ import android.content.SharedPreferences;
 
 import org.threeten.bp.LocalTime;
 
-import io.github.tstewart.todayi.notifications.DailyReminderAlarmHelper;
-
 /*
 User preferences constants.
  */

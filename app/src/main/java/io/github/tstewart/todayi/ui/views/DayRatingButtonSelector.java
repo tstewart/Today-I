@@ -1,14 +1,10 @@
 package io.github.tstewart.todayi.ui.views;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-
-import java.text.ParseException;
-import java.util.Arrays;
 
 import io.github.tstewart.todayi.R;
 

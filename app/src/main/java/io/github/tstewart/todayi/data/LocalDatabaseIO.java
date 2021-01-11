@@ -43,7 +43,7 @@ public class LocalDatabaseIO {
      * @param newFileName Name of the new backup file
      * @throws ExportFailedException If the export process was interrupted (e.g. If the database could not be read)
      */
-    public static void exportDb(Context context, String databaseName, String newFileName) throws ExportFailedException {
+    private static void exportDb(Context context, String databaseName, String newFileName) throws ExportFailedException {
 
         /* Location of folder to write backup file to */
         File databaseBackupFolder = context.getExternalFilesDir(DATABASE_BACKUP_DEFAULT_LOCATION);
@@ -84,7 +84,7 @@ public class LocalDatabaseIO {
         importDb(context, databaseName, "backup_" + databaseName);
     }
 
-    public static void importDb(Context context, String databaseName, String backupFileName) throws ImportFailedException {
+    private static void importDb(Context context, String databaseName, String backupFileName) throws ImportFailedException {
         /* Location of folder containing the backup file */
         File databaseBackupFolder = context.getExternalFilesDir(DATABASE_BACKUP_DEFAULT_LOCATION);
         /* Location of the backup file */

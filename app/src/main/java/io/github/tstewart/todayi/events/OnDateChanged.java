@@ -3,7 +3,6 @@ package io.github.tstewart.todayi.events;
 import org.threeten.bp.LocalDate;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import io.github.tstewart.todayi.interfaces.OnDateChangedListener;

@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         Show tutorial after a set period of time
         This is done to ensure all views have been initialised before the tutorial is shown
          */
+        // TODO make this rely instead on when topbar menu is inflated
         new Handler().postDelayed(() -> {
             SharedPreferences sharedPrefs = getSharedPreferences(getString(R.string.user_prefs_file_location_key), MODE_PRIVATE);
             UserPreferences userPrefs = new UserPreferences(sharedPrefs);
@@ -150,6 +151,8 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        // TODO make CalendarActivity send a request to OnDateChanged, instead of making MainActivity deal with this result.
 
         /* If the calendar was the Activity that responded */
         if (requestCode == CALENDAR_ACTIVITY_REQUEST_CODE) {

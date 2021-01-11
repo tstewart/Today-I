@@ -11,6 +11,8 @@ import io.github.tstewart.todayi.R;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
+    //TODO replace handler
+
     /* Time in milliseconds to display this Activity for */
     static final int SPLASH_DISPLAY_LENGTH_MILLIS = 3000;
 

@@ -3,20 +3,13 @@ package io.github.tstewart.todayi.helpers.db;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.widget.Toast;
-
-import java.util.Date;
-
-import androidx.annotation.NonNull;
 
 import org.threeten.bp.LocalDate;
 
+import androidx.annotation.NonNull;
 import io.github.tstewart.todayi.data.DBConstants;
-import io.github.tstewart.todayi.data.Database;
-import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.helpers.DateFormatter;
-import io.github.tstewart.todayi.helpers.db.DatabaseHelper;
 import io.github.tstewart.todayi.models.DayRating;
 
 /**
