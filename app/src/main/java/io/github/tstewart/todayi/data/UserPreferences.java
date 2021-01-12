@@ -12,6 +12,9 @@ public class UserPreferences {
     /* Maximum rating allowed on sliding day rating scale */
     private static int sMaxDayRating = 5;
 
+    /* Has tutorial been shown */
+    private static boolean sTutorialShown =  true;
+
     /* Whether or not to enable daily notifications */
     private static boolean sEnableNotifications = false;
 
@@ -76,6 +79,14 @@ public class UserPreferences {
 
     public static void setMaxDayRating(int maxDayRating) {
         UserPreferences.sMaxDayRating = maxDayRating;
+    }
+
+    public static boolean isTutorialShown() {
+        return sTutorialShown;
+    }
+
+    public static void setTutorialShown(boolean sTutorialShown) {
+        UserPreferences.sTutorialShown = sTutorialShown;
     }
 
     public static boolean isEnableNotifications() {
