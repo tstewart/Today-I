@@ -5,12 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import java.util.Date;
-
-import androidx.annotation.NonNull;
-
 import org.threeten.bp.LocalDate;
 
+import androidx.annotation.NonNull;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
 import io.github.tstewart.todayi.events.OnDatabaseInteracted;
@@ -119,7 +116,11 @@ public class DatabaseHelper {
         return Database.getInstance(mContext).getReadableDatabase();
     }
 
-    /* Get date query with wildcard at the end, to match all records with the same date without the time */
+    /**
+     * Get date query with wildcard at the end, to match all records with the same date without the time
+     * @param date Date to check for records on
+     * @return A formatted query to check for records on the provided date
+     */
     public String getDateQueryWildcardFormat(LocalDate date) {
         DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT_NO_TIME);
 

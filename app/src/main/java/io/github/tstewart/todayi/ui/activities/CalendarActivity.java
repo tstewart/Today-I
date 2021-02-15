@@ -27,6 +27,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
+import io.github.tstewart.todayi.events.OnDateChanged;
 import io.github.tstewart.todayi.helpers.db.DayRatingTableHelper;
 import io.github.tstewart.todayi.models.DayRating;
 import io.github.tstewart.todayi.ui.decorators.DayPostedDecorator;
@@ -129,7 +130,7 @@ public class CalendarActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         /* If the item selected was the "back" button */
         if (item.getItemId() == android.R.id.home) {
-            returnResponse(Activity.RESULT_CANCELED, null);
+            finish();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -137,7 +138,7 @@ public class CalendarActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        returnResponse(Activity.RESULT_CANCELED, null);
+        finish();
         super.onBackPressed();
     }
 
@@ -176,15 +177,13 @@ public class CalendarActivity extends AppCompatActivity {
                         /* Convert LocalDate to CalendarDay */
                         CalendarDay calendarDay = CalendarDay.from(date);
 
-                        /* If successful, add to list of days posted on */
-                        if (calendarDay != null) {
-                            dates.add(calendarDay);
-                        }
+                        /* Add to list of days posted on */
+                        dates.add(calendarDay);
                     }
 
                 } catch (DateTimeParseException e) {
                     /* Alert the user that date information may be corrupt in the Database */
-                    Toast.makeText(this, "Failed to gather dates posted on. Database may be corrupt.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.gather_dates_failed, Toast.LENGTH_LONG).show();
                     Log.w(CLASS_LOG_TAG, e.getMessage(), e);
                 }
             }
@@ -217,8 +216,6 @@ public class CalendarActivity extends AppCompatActivity {
                 /* Get day rating percent response from Database */
                 int ratingPercent = cursor.getInt(cursor.getColumnIndex(DBConstants.COLUMN_RATING));
 
-                //TODO THIS ENTIRE SEGMENT NEEDS TO BE FORMATTED
-                //TODO THIS WILL, FOR NOW, CONVERT RATING PERCENT MANUALLY
                 int rating = DayRating.percentToRating(ratingPercent);
                 /*
                  Get date response from Database
@@ -235,10 +232,8 @@ public class CalendarActivity extends AppCompatActivity {
                         /* Convert Date to CalendarDay */
                         CalendarDay calendarDay = CalendarDay.from(date);
 
-                        /* If successful, add to list of days posted on */
-                        if (calendarDay != null) {
-                            ratings.put(calendarDay, rating);
-                        }
+                        /* Add to list of days posted on */
+                        ratings.put(calendarDay, rating);
                     }
 
                 } catch (DateTimeParseException e) {
@@ -262,27 +257,16 @@ public class CalendarActivity extends AppCompatActivity {
         /* Get LocalDate from selected date CalendarDay object */
         LocalDate localDate = date.getDate();
 
-        /* Get time since epoch from selected day */
-        long epochDay = localDate.toEpochDay();
-
-        /* Return to parent Activity with selected day result */
-        Bundle bundle = new Bundle();
-        bundle.putLong("result", epochDay);
-
-        returnResponse(Activity.RESULT_OK, bundle);
-    }
-
-    /* Called on return to parent Activity without a provided response */
-    private void returnResponse(int response, Bundle extras) {
-        Intent returnIntent = new Intent();
-
-        if(extras != null) {
-            returnIntent.putExtras(extras);
-        }
-
-        setResult(response, returnIntent);
+        /* Alert subscribers that the date has changed */
+        OnDateChanged.notifyDateChanged(localDate);
 
         finish();
+    }
+
+    /* Override finish to override transition animation */
+    @Override
+    public void finish() {
+        super.finish();
 
         /* Add animation on Activity change, swipe out this activity and swipe in new activity */
         overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);

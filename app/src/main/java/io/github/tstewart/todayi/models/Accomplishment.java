@@ -2,11 +2,9 @@ package io.github.tstewart.todayi.models;
 
 import android.content.ContentValues;
 
-import androidx.annotation.NonNull;
-
-import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
 
+import androidx.annotation.NonNull;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ValidationFailedException;
@@ -29,6 +27,7 @@ public class Accomplishment implements DatabaseObject {
 
     public Accomplishment(@NonNull LocalDateTime mDate, @NonNull String content) {
         this.mDate = mDate;
+        /* Set content, removing empty lines if this is required */
         setContent(content);
     }
 
@@ -65,7 +64,6 @@ public class Accomplishment implements DatabaseObject {
 
         /* Format date and add to content values if not null */
         if (mDate != null) {
-            String test = dateFormatter.format(mDate);
             contentValues.put(DBConstants.COLUMN_DATE, dateFormatter.format(mDate));
         }
 

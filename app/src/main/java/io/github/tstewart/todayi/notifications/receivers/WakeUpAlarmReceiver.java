@@ -21,18 +21,24 @@ public class WakeUpAlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.i(CLASS_LOG_TAG,"Received wake up request. Checking for alarm toggled permission.");
 
-        if(context != null) {
-            UserPreferences preferences = new UserPreferences(
-                    context.getSharedPreferences(context.getString(R.string.user_prefs_file_location_key),
-                            Context.MODE_PRIVATE
-                    ));
+        /* Confirm that the correct action was received
+        * This ensures the WakeUpReceiver request is only completed on boot completion. */
+        if(intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
+            Log.i(CLASS_LOG_TAG, "Received wake up request. Checking for alarm toggled permission.");
 
-            boolean isNotificationsEnabled = (boolean) preferences.get(context.getString(R.string.user_prefs_notifications_enabled), false);
+            if (context != null) {
+                UserPreferences preferences = new UserPreferences(
+                        context.getSharedPreferences(context.getString(R.string.user_prefs_file_location_key),
+                                Context.MODE_PRIVATE
+                        ));
 
-            if (isNotificationsEnabled) {
-                new DailyReminderAlarmHelper().registerAlarm(context, UserPreferences.getNotificationTime(), true);
+                boolean isNotificationsEnabled = (boolean) preferences.get(context.getString(R.string.user_prefs_notifications_enabled), false);
+
+                /* If notifications are enabled, restart the Daily Reminder alarm */
+                if (isNotificationsEnabled) {
+                    DailyReminderAlarmHelper.registerAlarm(context, UserPreferences.getNotificationTime(), true);
+                }
             }
         }
     }

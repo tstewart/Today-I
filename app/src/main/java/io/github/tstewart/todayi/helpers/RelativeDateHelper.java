@@ -13,6 +13,9 @@ import java.util.Date;
 /* Class to calculate days between Date objects and return relative time span strings */
 public class RelativeDateHelper {
 
+    /* Private constructor prevents initialisation of helper class */
+    private RelativeDateHelper() {}
+
     /**
      * Get the provided date relative to the current date as a time span label
      * @param date Current date create a relative label from

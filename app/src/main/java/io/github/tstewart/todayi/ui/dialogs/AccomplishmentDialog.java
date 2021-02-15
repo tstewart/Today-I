@@ -3,7 +3,6 @@ package io.github.tstewart.todayi.ui.dialogs;
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -13,10 +12,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.LocalTime;
-import org.threeten.bp.temporal.ChronoField;
 
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.DBConstants;
@@ -31,8 +28,6 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
     private LocalDateTime mSelectedDate;
     /* Time selection label */
     private final TextView mSelectedTimeLabel;
-    /* Time selection layout, acts as a button */
-    private final LinearLayout mButtonTimeSelection;
 
     /* Delete button */
     private final Button mButtonDelete;
@@ -57,12 +52,14 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
 
         mContext = context;
         mSelectedTimeLabel = view.findViewById(R.id.textViewSelectedTime);
-        mButtonTimeSelection = view.findViewById(R.id.linearLayoutTimeSelection);
+        /* Time selection layout, acts as a button */
+        LinearLayout buttonTimeSelection = view.findViewById(R.id.linearLayoutTimeSelection);
+
         mButtonDelete = view.findViewById(R.id.buttonDelete);
         mButtonConfirm = view.findViewById(R.id.buttonConfirm);
 
-        if(mButtonTimeSelection != null)
-            mButtonTimeSelection.setOnClickListener(this::setTimeSelectionButtonListener);
+        if(buttonTimeSelection != null)
+            buttonTimeSelection.setOnClickListener(this::setTimeSelectionButtonListener);
     }
 
     @Override
@@ -202,10 +199,6 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
 
     public View getView() {
         return this.mView;
-    }
-
-    public LocalDateTime getSelectedDate() {
-        return mSelectedDate;
     }
 
     @Override

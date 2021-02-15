@@ -32,6 +32,8 @@ public class Database extends SQLiteOpenHelper {
 
     private static Database mInstance = null;
 
+    /* Restrict database access to a single instance
+    * Prevents threads opening a database instance and not closing it */
     public static Database getInstance(@NonNull Context context) {
         if(mInstance == null) {
             mInstance = new Database(context.getApplicationContext());
@@ -46,12 +48,16 @@ public class Database extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        /* Run SQL command to create Accomplishment table */
         db.execSQL(CREATE_TABLE_ACCOMPLISHMENT);
+        /* Run SQL command to create Ratings table */
         db.execSQL(CREATE_TABLE_RATINGS);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        /* If upgrading database, delete Accomplishment table and try and recreate it
+        * Fixes old database models not containing proper time-based Accomplishment data */
         try {
             db.execSQL("DROP TABLE IF EXISTS " + DBConstants.ACCOMPLISHMENT_TABLE);
             db.execSQL(CREATE_TABLE_ACCOMPLISHMENT);

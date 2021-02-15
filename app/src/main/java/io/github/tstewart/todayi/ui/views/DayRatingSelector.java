@@ -11,6 +11,9 @@ import android.widget.LinearLayout;
 import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.helpers.ColorBlendHelper;
 
+/*
+Generic class for day rating selector views.
+ */
 public abstract class DayRatingSelector {
 
     final int[] mColors;
@@ -19,7 +22,7 @@ public abstract class DayRatingSelector {
     LinearLayout mParent;
     OnRatingChangedListener mListener;
 
-    public DayRatingSelector(Context context, LinearLayout parent, OnRatingChangedListener listener) {
+    protected DayRatingSelector(Context context, LinearLayout parent, OnRatingChangedListener listener) {
         this.mMaxRating = UserPreferences.getMaxDayRating();
         this.mColors = new ColorBlendHelper(mMaxRating).blendColors();
         this.mContext = context;

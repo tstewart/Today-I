@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,12 +33,9 @@ import io.github.tstewart.todayi.ui.fragments.AccomplishmentListFragment;
 import io.github.tstewart.todayi.ui.tutorials.MainActivityTutorial;
 
 /*
-Main Activity of the application (obviously), handles AccomplishmentListFragment and DayRatingFragment functionality
+Main Activity of the application, handles AccomplishmentListFragment and DayRatingFragment functionality
  */
 public class MainActivity extends AppCompatActivity implements OnDateChangedListener {
-
-    /* Used when requesting a response from CalendarActivity */
-    private static final int CALENDAR_ACTIVITY_REQUEST_CODE = 1;
 
     /* Currently selected date (Application-wide, controlled by OnDateChangedListener) */
     LocalDate mSelectedDate;
@@ -93,80 +92,60 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
 
         /* Set current date to System's current date */
         updateCurrentDate(LocalDate.now());
-
-        /*
-        Show tutorial after a set period of time
-        This is done to ensure all views have been initialised before the tutorial is shown
-         */
-        new Handler().postDelayed(() -> {
-            SharedPreferences sharedPrefs = getSharedPreferences(getString(R.string.user_prefs_file_location_key), MODE_PRIVATE);
-            UserPreferences userPrefs = new UserPreferences(sharedPrefs);
-
-            boolean hasTutorialShown = (boolean)userPrefs.get(getString(R.string.user_prefs_tutorial_shown), true);
-
-            if(!hasTutorialShown) {
-                showTutorial();
-                userPrefs.set(getString(R.string.user_prefs_tutorial_shown), true);
-            }
-        }, 200);
     }
 
     /* Inflate Main Activity's top bar */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main_nav, menu);
-        return super.onCreateOptionsMenu(menu);
+        super.onCreateOptionsMenu(menu);
+
+        /* After the options menu has been initialised, check to see if tutorial should be shown */
+        new Handler(Looper.getMainLooper()).post(() -> {
+
+            SharedPreferences sharedPrefs = getSharedPreferences(getString(R.string.user_prefs_file_location_key), MODE_PRIVATE);
+            UserPreferences userPrefs = new UserPreferences(sharedPrefs);
+
+            if(!UserPreferences.isTutorialShown()) {
+                showTutorial();
+                userPrefs.set(getString(R.string.user_prefs_tutorial_shown), true);
+            }
+
+        });
+
+        return true;
     }
 
     /* If an item on the top bar is selected */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
+        Intent intent = null;
         /*
-         Depending on the selected item, set the Intent Activity, and the request code
-         Request code will be used later on to determine the response from the Activity
+         Depending on the selected item, set the Intent Activity
         */
         if (itemId == R.id.toolbar_calendar) {
-            Intent intent = new Intent(this, CalendarActivity.class);
-            int requestCode = CALENDAR_ACTIVITY_REQUEST_CODE;
+            intent = new Intent(this, CalendarActivity.class);
             /* CalendarView is initialised with the current selected date as an argument */
             intent.putExtra("selectedDate", mSelectedDate.toEpochDay());
 
-            /* Start calendar Activity, await for response
-            * Response is given when a day is clicked */
-            startActivityForResult(intent, requestCode);
         }
         else if(itemId == R.id.toolbar_settings) {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
+            intent = new Intent(this, SettingsActivity.class);
         }
 
-        /* Add animation on Activity change, swipe out this activity and swipe in new activity */
-        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+        if(intent != null)  {
+            startActivity(intent);
+            /* Add animation on Activity change, swipe out this activity and swipe in new activity */
+            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+        }
 
         return super.onOptionsItemSelected(item);
     }
 
-    /* On receiving a response from an Activity */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        /* If the calendar was the Activity that responded */
-        if (requestCode == CALENDAR_ACTIVITY_REQUEST_CODE) {
-            /* If the response was Ok, and data was provided with the response */
-            if (resultCode == Activity.RESULT_OK && data != null) {
-                long dateResult = data.getLongExtra("result", -1);
-
-                /* If the date result was not the default value (-1) */
-                if (dateResult >= 0) {
-                    LocalDate selectedDate = LocalDate.ofEpochDay(dateResult);
-                    updateCurrentDate(selectedDate);
-                }
-            }
-        }
-    }
-
+    /**
+     * Show first-use tutorial to show user's how to use the application
+     */
     public void showTutorial() {
         MainActivityTutorial tutorial = new MainActivityTutorial();
         tutorial.showTutorial(this);
@@ -222,6 +201,9 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
             mDayLabel.setText(new DateFormatter("MMMM d yyyy").formatWithDayIndicators(mSelectedDate));
 
         if(mRelativeDayLabel != null) {
+            /* Get relative date string
+            * E.g. if selected date is today, show "Today"
+            * If it was yesterday, show "Yesterday" etc. */
             mRelativeDayLabel.setText(RelativeDateHelper.getRelativeDaysSinceString(date));
         }
     }

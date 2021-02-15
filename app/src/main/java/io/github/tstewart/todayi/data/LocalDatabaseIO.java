@@ -31,6 +31,12 @@ public class LocalDatabaseIO {
     private LocalDatabaseIO() {
     }
 
+    /**
+     * Export the provided database to the default backup location with the default name for backups (backup_(filename))
+     * @param context Environment context, provides the location of objects at runtime
+     * @param databaseName Name of the database to be backed up
+     * @throws ExportFailedException If the export process was interrupted (e.g. If the database could not be read)
+     */
     public static void backupDb(Context context, String databaseName) throws ExportFailedException {
         /* Runs export function, but enforces standard backup file name */
         exportDb(context, databaseName, "backup_" + databaseName);
@@ -43,7 +49,7 @@ public class LocalDatabaseIO {
      * @param newFileName Name of the new backup file
      * @throws ExportFailedException If the export process was interrupted (e.g. If the database could not be read)
      */
-    public static void exportDb(Context context, String databaseName, String newFileName) throws ExportFailedException {
+    private static void exportDb(Context context, String databaseName, String newFileName) throws ExportFailedException {
 
         /* Location of folder to write backup file to */
         File databaseBackupFolder = context.getExternalFilesDir(DATABASE_BACKUP_DEFAULT_LOCATION);
@@ -79,12 +85,25 @@ public class LocalDatabaseIO {
         }
     }
 
+    /**
+     * Import the provided database from the default backup location with the default name for backups (backup_(filename))
+     * @param context Environment context, provides the location of objects at runtime
+     * @param databaseName Name of existing database file
+     * @throws ImportFailedException If the import process was interrupted (e.g. If the database could not be read)
+     */
     public static void importBackupDb(Context context, String databaseName) throws ImportFailedException {
         /* Runs import function, but enforces standard backup file name */
         importDb(context, databaseName, "backup_" + databaseName);
     }
 
-    public static void importDb(Context context, String databaseName, String backupFileName) throws ImportFailedException {
+    /**
+     * Import the provided database from the application's default backup location
+     * @param context Environment context, provides the location of objects at runtime
+     * @param databaseName Name of existing database file
+     * @param backupFileName Name of the backup to import
+     * @throws ImportFailedException If the import process was interrupted (e.g. If the database could not be read)
+     */
+    private static void importDb(Context context, String databaseName, String backupFileName) throws ImportFailedException {
         /* Location of folder containing the backup file */
         File databaseBackupFolder = context.getExternalFilesDir(DATABASE_BACKUP_DEFAULT_LOCATION);
         /* Location of the backup file */

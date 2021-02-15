@@ -6,13 +6,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import java.text.ParseException;
-import java.util.Arrays;
-
 import io.github.tstewart.todayi.R;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
+/*
+Day rating selector view, as selectable buttons
+ */
 public class DayRatingButtonSelector extends DayRatingSelector {
 
     Button[] mButtons;
@@ -22,13 +22,16 @@ public class DayRatingButtonSelector extends DayRatingSelector {
 
         int maxRating = this.mMaxRating;
 
+        /* Define button theme */
+        ContextThemeWrapper themeWrapper = new ContextThemeWrapper(context, R.style.AppTheme_DayRatingButton);
+
         /* Create buttons to make up the selectable day ratings */
         mButtons = new Button[maxRating];
 
         for (int i = 0; i < maxRating; i++) {
 
             /* Set button theme */
-            mButtons[i] = new Button(new ContextThemeWrapper(context, R.style.AppTheme_DayRatingButton), null, R.style.Widget_AppCompat_Button_Borderless);
+            mButtons[i] = new Button(themeWrapper, null, 0);
             /* Set text to current index */
             mButtons[i].setText(String.valueOf(i + 1));
             /* Set button tag to rating (to ensure this button can have it's associated rating checked later) */
@@ -84,8 +87,9 @@ public class DayRatingButtonSelector extends DayRatingSelector {
 
     @Override
     public void resetSelected() {
+        int transparent = mContext.getColor(R.color.colorTransparent);
         for (Button button : mButtons) {
-            button.setBackgroundColor(mContext.getColor(R.color.colorTransparent));
+            setButtonBackground(button, transparent);
         }
     }
 }

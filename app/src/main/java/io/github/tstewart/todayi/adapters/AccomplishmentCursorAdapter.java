@@ -12,10 +12,6 @@ import android.widget.TextView;
 
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.LocalTime;
-import org.threeten.bp.format.DateTimeFormatter;
-import org.threeten.bp.format.DateTimeParseException;
-
-import java.util.Date;
 
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.DBConstants;
@@ -51,12 +47,10 @@ public class AccomplishmentCursorAdapter extends CursorAdapter {
             LocalTime timePosted = null;
 
             /* Parse database date to LocalTime object */
-            try {
-                LocalDateTime date = LocalDateTime.parse(datePosted, DateTimeFormatter.ofPattern(DBConstants.DATE_FORMAT));
-                timePosted = date.toLocalTime();
-            } catch (DateTimeParseException ignore) { }
+            LocalDateTime dateTime = new DateFormatter(DBConstants.DATE_FORMAT).parseDate(datePosted);
+            if(dateTime != null) timePosted = dateTime.toLocalTime();
 
-            /* If there was a time posted, add set date TextView to this. */
+            /* If there was a time posted, set date TextView to this. */
             if(timePosted != null) {
                 datePostedView.setText(new DateFormatter(DBConstants.TIME_FORMAT).format(timePosted));
             }
@@ -64,7 +58,7 @@ public class AccomplishmentCursorAdapter extends CursorAdapter {
         catch(SQLiteException | IllegalArgumentException e) {
             Log.w(AccomplishmentCursorAdapter.class.getSimpleName(), e.getMessage(), e);
         }
-
+        /* Set Accomplishment TextView content */
         contentView.setText(content);
     }
 

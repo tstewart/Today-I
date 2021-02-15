@@ -22,11 +22,9 @@ import java.util.Objects;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceGroup;
 import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.SwitchPreferenceCompat;
-
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
@@ -38,6 +36,9 @@ import io.github.tstewart.todayi.errors.ImportFailedException;
 import io.github.tstewart.todayi.notifications.DailyReminderAlarmHelper;
 import io.github.tstewart.todayi.ui.activities.DebugActivity;
 
+/*
+Fragment of settings views and their functionality.
+ */
 public class SettingsFragment extends PreferenceFragmentCompat {
 
     /* Preference key store */
@@ -55,9 +56,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     /* User preference manager */
     UserPreferences mUserPreferences;
 
-    /* Last backed up label preference */
-    Preference mLastBackedUp;
-
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         /* Setup preferences to this app's preference file */
@@ -68,7 +66,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         setPreferencesFromResource(R.xml.main_preferences, rootKey);
 
         /* Initialize key store */
-        this.mPreferenceKeys = new PreferencesKeyStore(getActivity().getBaseContext());
+        Context context = getContext();
+        if(context != null) {
+            this.mPreferenceKeys = new PreferencesKeyStore(getContext());
+        }
 
         /* Set on preference changed listeners for preferences to update settings for the current instance of the app
         * When settings are changed, their value in the preferences file is updated. However, these changes are not reflected until
@@ -92,37 +93,21 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         /* Toggle notification icon */
         SwitchPreferenceCompat notificationPreference = findPreference(mPreferenceKeys.ENABLE_NOTIFICATIONS_KEY);
-        toggleNotificationIcon(notificationPreference);
+        if (notificationPreference != null) toggleNotificationIcon(notificationPreference);
 
         /* Set on click listeners for preferences with custom functionality */
 
-        Preference notificationTime = findPreference(mPreferenceKeys.NOTIFICATION_TIME_KEY);
-        if(notificationTime != null) {
-            notificationTime.setOnPreferenceClickListener(this::onNotificationTimeSelected);
-            /* Set subtitle for this preference to the currently selected time */
-            notificationTime.setSummary((String) mUserPreferences.get(mPreferenceKeys.NOTIFICATION_TIME_KEY, "18:00"));
-        }
+        /* Set current notification time summary */
+        setCurrentNotificationTime();
 
         /* Import, export, and erase data buttons act as Preference buttons for functionality with PreferenceFragment*/
-        Preference importData = findPreference(mPreferenceKeys.IMPORT_DATA_KEY);
-        Preference exportData = findPreference(mPreferenceKeys.EXPORT_DATA_KEY);
-        Preference eraseData = findPreference(mPreferenceKeys.ERASE_DATA_KEY);
-
-        if(importData != null)
-            importData.setOnPreferenceClickListener(this::onRestoreBackupClicked);
-        if(exportData != null)
-            exportData.setOnPreferenceClickListener(this::onForceBackupClicked);
-        if(eraseData != null)
-            eraseData.setOnPreferenceClickListener(this::onEraseClicked);
+        setDataManagementListeners();
 
         /* Set last backed up label */
-        mLastBackedUp = findPreference(mPreferenceKeys.LAST_BACKED_UP_KEY);
-        if(mLastBackedUp != null)
-            setLastBackedUpText(mLastBackedUp);
-
+        setLastBackedUpText();
 
         /* Set version click listener for accessing hidden debug menu */
-        Preference version = findPreference(mPreferenceKeys.VERSION_KEY);
+        Preference version = findPreference(PreferencesKeyStore.VERSION_KEY);
         if(version != null) {
 
             /* Set version number */
@@ -132,7 +117,28 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 version.setOnPreferenceClickListener(this::onVersionClicked);
             }
         }
+    }
 
+    private void setCurrentNotificationTime() {
+        Preference notificationTime = findPreference(mPreferenceKeys.NOTIFICATION_TIME_KEY);
+        if(notificationTime != null) {
+            notificationTime.setOnPreferenceClickListener(this::onNotificationTimeSelected);
+            /* Set subtitle for this preference to the currently selected time */
+            notificationTime.setSummary((String) mUserPreferences.get(mPreferenceKeys.NOTIFICATION_TIME_KEY, "18:00"));
+        }
+    }
+
+    private void setDataManagementListeners() {
+        Preference importData = findPreference(PreferencesKeyStore.IMPORT_DATA_KEY);
+        Preference exportData = findPreference(PreferencesKeyStore.EXPORT_DATA_KEY);
+        Preference eraseData = findPreference(PreferencesKeyStore.ERASE_DATA_KEY);
+
+        if(importData != null)
+            importData.setOnPreferenceClickListener(this::onRestoreBackupClicked);
+        if(exportData != null)
+            exportData.setOnPreferenceClickListener(this::onForceBackupClicked);
+        if(eraseData != null)
+            eraseData.setOnPreferenceClickListener(this::onEraseClicked);
     }
 
     private boolean onPreferenceChanged(Preference preference, Object newValue) {
@@ -151,20 +157,22 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 int maxRating = Integer.parseInt((String)newValue);
                 UserPreferences.setMaxDayRating(maxRating);
             } catch (ClassCastException | NumberFormatException e) {
-                Toast.makeText(getContext(),"Failed to update preference.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(),R.string.setting_update_failed, Toast.LENGTH_LONG).show();
             }
         }
         else if(preferenceKey.equals(mPreferenceKeys.ENABLE_NOTIFICATIONS_KEY)) {
+            boolean isEnabled = (boolean)newValue;
+            UserPreferences.setEnableNotifications(isEnabled);
+
             /* Change notification icon depending on if the value was enabled/disabled */
             toggleNotificationIcon(preference);
-            boolean isEnabled = (boolean)newValue;
 
-            DailyReminderAlarmHelper helper = new DailyReminderAlarmHelper();
+            Context context = getContext();
+            if(context != null) {
+                if (isEnabled) DailyReminderAlarmHelper.registerAlarm(getContext(), UserPreferences.getNotificationTime(), true);
+                else DailyReminderAlarmHelper.unregisterAlarm(getContext());
+            }
 
-            if(isEnabled) helper.registerAlarm(getContext(),UserPreferences.getNotificationTime(), true);
-            else helper.unregisterAlarm(getContext());
-
-            UserPreferences.setEnableNotifications(isEnabled);
         }
         else if(preferenceKey.equals(mPreferenceKeys.NOTIFICATION_TIME_KEY)) {
             String timeString = (String)newValue;
@@ -174,7 +182,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 UserPreferences.setNotificationTime(notificationTime);
             }
             catch(DateTimeParseException e) {
-                Toast.makeText(getContext(), "Failed to update notification time.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.setting_update_failed, Toast.LENGTH_LONG).show();
             }
         }
 
@@ -217,9 +225,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         mUserPreferences.set(mPreferenceKeys.NOTIFICATION_TIME_KEY, selectedTimeString);
 
                     /* Restart notification alarm */
-                    // TODO simplify/move?
                     if(getContext() != null)
-                        new DailyReminderAlarmHelper().registerAlarm(getContext(),selectedTime,true);
+                        DailyReminderAlarmHelper.updateAlarm(getContext(),selectedTime);
                 },
                 currentNotificationTime.getHour(),
                 currentNotificationTime.getMinute(),
@@ -243,13 +250,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                             /* Try and load from backup */
                             LocalDatabaseIO.importBackupDb(context, DBConstants.DB_NAME);
 
-                            Toast.makeText(context, "Backup restored successfully!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, R.string.setting_restore_backup_success, Toast.LENGTH_SHORT).show();
 
                         } catch (ImportFailedException e) {
                             /* If failed, alert user and log */
                             Log.w(this.getClass().getSimpleName(), Objects.requireNonNull(e.getMessage()));
 
-                            Toast.makeText(context, "Failed to import backup:" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, String.format(getString(R.string.setting_restore_backup_failed), e.getMessage()), Toast.LENGTH_LONG).show();
                         }
                     }
                 })
@@ -271,12 +278,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         mUserPreferences.set(getString(R.string.user_prefs_last_backed_up_key),System.currentTimeMillis());
 
                         /* Update last backed up */
-                        if(mLastBackedUp != null)
-                            setLastBackedUpText(mLastBackedUp);
+                        setLastBackedUpText();
+
+                        Toast.makeText(getContext(),R.string.setting_force_backup_success, Toast.LENGTH_SHORT).show();
                     } catch (ExportFailedException e) {
                         /* If failed, alert user and log */
                         Log.w(this.getClass().getSimpleName(), e.getMessage(), e);
-                        Toast.makeText(getContext(), "Backup failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), String.format(getString(R.string.setting_force_backup_failed), e.getMessage()), Toast.LENGTH_LONG).show();
                     }
                 })
                 .setNegativeButton(R.string.button_no, null)
@@ -287,24 +295,26 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     }
 
     private boolean onEraseClicked(Preference preference) {
-        /* Open an alert dialog to confirm if the user wishes to erase all data */
-        new AlertDialog.Builder(getContext())
-                .setTitle(R.string.erase_all_warning_dialog_title)
-                .setMessage(R.string.erase_all_warning_dialog_message)
-                .setPositiveButton(R.string.button_yes, (dialogInterface, which) -> {
-                    Database database = Database.getInstance(getContext());
-                    SQLiteDatabase db = database.getWritableDatabase();
+        Context context = getContext();
+        if(context != null) {
+            /* Open an alert dialog to confirm if the user wishes to erase all data */
+            new AlertDialog.Builder(getContext())
+                    .setTitle(R.string.erase_all_warning_dialog_title)
+                    .setMessage(R.string.erase_all_warning_dialog_message)
+                    .setPositiveButton(R.string.button_yes, (dialogInterface, which) -> {
+                        Database database = Database.getInstance(getContext());
+                        SQLiteDatabase db = database.getWritableDatabase();
 
-                    /* Delete data from both tables */
-                    database.eraseAllData(db, DBConstants.ACCOMPLISHMENT_TABLE);
-                    database.eraseAllData(db, DBConstants.RATING_TABLE);
+                        /* Delete data from both tables */
+                        database.eraseAllData(db, DBConstants.ACCOMPLISHMENT_TABLE);
+                        database.eraseAllData(db, DBConstants.RATING_TABLE);
 
-                    Toast.makeText(getContext(), R.string.erase_all_confirmed, Toast.LENGTH_LONG).show();
-                })
-                .setNegativeButton(R.string.button_no, null)
-                .create()
-                .show();
-
+                        Toast.makeText(getContext(), R.string.erase_all_confirmed, Toast.LENGTH_LONG).show();
+                    })
+                    .setNegativeButton(R.string.button_no, null)
+                    .create()
+                    .show();
+        }
         return true;
     }
 
@@ -338,8 +348,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     /*
     Set last backed up label to a relative text string showing the last time since backing up the database
      */
-    private void setLastBackedUpText(Preference preference) {
-        preference.setSummary(getLastBackedUpRelativeString());
+    private void setLastBackedUpText() {
+        Preference lastBackedUp = findPreference(PreferencesKeyStore.LAST_BACKED_UP_KEY);
+        if(lastBackedUp != null)
+            lastBackedUp.setSummary(getLastBackedUpRelativeString());
     }
 
     /*
