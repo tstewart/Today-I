@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import io.github.tstewart.todayi.R;
 
+/* Splash Screen, shown when application is run to show application logo */
 public class SplashScreenActivity extends AppCompatActivity {
 
     /* Time in milliseconds to display this Activity for */

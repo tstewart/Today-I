@@ -5,7 +5,8 @@ import android.content.SharedPreferences;
 import org.threeten.bp.LocalTime;
 
 /*
-User preferences constants.
+Helper class for storing application-wide preferences
+Also provides functionality to easily add/modify SharedPreferences
  */
 public class UserPreferences {
 
@@ -34,7 +35,12 @@ public class UserPreferences {
         this.mPreferences = prefs;
     }
 
-    /* Get object from preferences, or default value if not found */
+    /**
+     * Get user preference from SharedPreference, or return default
+     * @param key Key to return value from
+     * @param defaultValue Returned if the provided key had no value
+     * @return Value from provided key or default value
+     */
     public Object get(String key, Object defaultValue) {
         if(mPreferences != null) {
             Object value = mPreferences.getAll().get(key);
@@ -44,8 +50,12 @@ public class UserPreferences {
         return defaultValue;
     }
 
-    /* Save value to user preferences.
-    * If value couldn't be saved, return false */
+    /**
+     * Save value to SharedPreference
+     * @param key Key to set value for
+     * @param value Value to set for provided key
+     * @return True if the value was saved, otherwise returns false
+     */
     public boolean set(String key, Object value) {
         /* Shared Preferences will only allow saving of these specific types */
 
@@ -61,7 +71,12 @@ public class UserPreferences {
         return true;
     }
 
-    /* Set default preference value, if the value doesn't already exist in preferences */
+    /**
+     * Set default preference value, if the value doesn't already exist in SharedPreference
+     * @param key Key to set default value for
+     * @param value Default value
+     * @return True if a default value was set (i.e. there was not an existing value for this preference).
+     */
     public boolean setDefaultValue(String key, Object value) {
         if(!mPreferences.contains(key)) {
             return set(key,value);

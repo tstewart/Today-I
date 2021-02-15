@@ -28,7 +28,6 @@ import io.github.tstewart.todayi.helpers.db.DayRatingTableHelper;
 
 /*
  * Application class, called on application start
- * Manages automatic backup
  */
 public class TodayI extends Application {
     /*

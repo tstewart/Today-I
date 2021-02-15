@@ -36,6 +36,9 @@ import io.github.tstewart.todayi.errors.ImportFailedException;
 import io.github.tstewart.todayi.notifications.DailyReminderAlarmHelper;
 import io.github.tstewart.todayi.ui.activities.DebugActivity;
 
+/*
+Fragment of settings views and their functionality.
+ */
 public class SettingsFragment extends PreferenceFragmentCompat {
 
     /* Preference key store */

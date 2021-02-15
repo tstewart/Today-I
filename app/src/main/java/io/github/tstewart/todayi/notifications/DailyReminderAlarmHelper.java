@@ -25,6 +25,11 @@ public class DailyReminderAlarmHelper {
     */
     private static final String CLASS_LOG_TAG = DailyReminderAlarmHelper.class.getSimpleName();
 
+    /**
+     * Update currently active alarm. Replaces existing alarm time
+     * @param context Application context
+     * @param time Time for notification to be called on
+     */
     public static void updateAlarm(@NonNull Context context, LocalTime time) {
         registerAlarm(context, time, true);
     }
@@ -40,16 +45,20 @@ public class DailyReminderAlarmHelper {
 
 
         Calendar calendar = Calendar.getInstance();
+        /* If provided time is not null, set notification time to provided time */
         if(time != null) {
             calendar.set(Calendar.HOUR_OF_DAY, time.getHour());
             calendar.set(Calendar.MINUTE,time.getMinute());
         }
+        /* If provided time was null, default to a notification at 6pm */
             else {
             Log.i(CLASS_LOG_TAG, "No time provided for alarm. Defaulting to 6pm.");
             calendar.set(Calendar.HOUR_OF_DAY, 18);
             calendar.set(Calendar.MINUTE, 0);
         }
 
+        /* Set notification second to 0
+        * Ensures notification is called at the start of the minute */
         calendar.set(Calendar.SECOND, 0);
 
         /* If the set time has already passed, add an extra day so that the event fires tomorrow instead. */
@@ -58,15 +67,21 @@ public class DailyReminderAlarmHelper {
             calendar.add(Calendar.DAY_OF_MONTH,1);
         }
 
+        /* Check to see if notification alarm should replace existing alarm
+        * Also get what service should be called when alarm is elapsed */
         PendingIntent pendingIntent = getDailyAlarmIntent(context, overrideCurrent);
 
         if(pendingIntent != null) {
+            /* Set inexact alarm, as the notification doesn't need to be shown at the exact provided time */
             alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
             Log.i(CLASS_LOG_TAG,"Daily reminder notifications enabled.");
         }
     }
 
-    /* Remove daily reminder alarm, so that it stops sending notifications */
+    /**
+     * Remove daily reminder alarm, so that it stops sending notifications
+     * @param context Application context
+     */
     public static void unregisterAlarm(@NonNull Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
@@ -76,6 +91,12 @@ public class DailyReminderAlarmHelper {
         Log.i(CLASS_LOG_TAG,"Daily reminder notifications disabled.");
     }
 
+    /**
+     * Get service to be called when notification alarm time has elapsed
+     * @param context Application context
+     * @param overrideCurrent Should this replace existing alarm (if exists)
+     * @return PendingIntent with provided service, and if this should replace existing alarm
+     */
     private static PendingIntent getDailyAlarmIntent(Context context, boolean overrideCurrent) {
         Intent serviceIntent = new Intent(context, DailyAlarmReceiver.class);
 

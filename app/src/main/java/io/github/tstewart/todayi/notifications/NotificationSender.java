@@ -29,7 +29,16 @@ public class NotificationSender {
         mContext = context;
     }
 
+    /**
+     * Send notification to user
+     * @param launchIntent Action to be called on click
+     * @param showWhenRunning Should notification be shown when application is currently open
+     * @param title Title text for notification
+     * @param content Content text for notification
+     */
     public void sendNotification(PendingIntent launchIntent, boolean showWhenRunning, String title, String content) {
+        /* If should show when running, or if the app is in background
+        * Show notification */
         if(showWhenRunning || !isAppInForeground()) {
             Uri soundUri = RingtoneManager
                     .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -41,6 +50,7 @@ public class NotificationSender {
                     .setSound(soundUri).setSmallIcon(R.drawable.notification_logo)
                     .build();
 
+            /* Cancel notification on click */
             notification.flags += Notification.FLAG_AUTO_CANCEL;
 
             NotificationManagerCompat.from(getContext()).notify(0, notification);
@@ -49,6 +59,10 @@ public class NotificationSender {
             Log.i(NotificationSender.class.getSimpleName(), "Notification was not sent as the application is currently in the foreground.");
     }
 
+    /**
+     * Check if application is currently running and in foreground (i.e. actively being used)
+     * @return True if application is in foreground
+     */
     public boolean isAppInForeground() {
         ActivityManager activityManager = (ActivityManager)getContext().getSystemService(Context.ACTIVITY_SERVICE);
 

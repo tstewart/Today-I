@@ -33,7 +33,7 @@ import io.github.tstewart.todayi.ui.fragments.AccomplishmentListFragment;
 import io.github.tstewart.todayi.ui.tutorials.MainActivityTutorial;
 
 /*
-Main Activity of the application (obviously), handles AccomplishmentListFragment and DayRatingFragment functionality
+Main Activity of the application, handles AccomplishmentListFragment and DayRatingFragment functionality
  */
 public class MainActivity extends AppCompatActivity implements OnDateChangedListener {
 
@@ -143,13 +143,9 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         return super.onOptionsItemSelected(item);
     }
 
-    private boolean shouldShowTutorial() {
-        SharedPreferences sharedPrefs = getSharedPreferences(getString(R.string.user_prefs_file_location_key), MODE_PRIVATE);
-        UserPreferences userPrefs = new UserPreferences(sharedPrefs);
-
-        return (boolean)userPrefs.get(getString(R.string.user_prefs_tutorial_shown), true);
-    }
-
+    /**
+     * Show first-use tutorial to show user's how to use the application
+     */
     public void showTutorial() {
         MainActivityTutorial tutorial = new MainActivityTutorial();
         tutorial.showTutorial(this);
@@ -205,6 +201,9 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
             mDayLabel.setText(new DateFormatter("MMMM d yyyy").formatWithDayIndicators(mSelectedDate));
 
         if(mRelativeDayLabel != null) {
+            /* Get relative date string
+            * E.g. if selected date is today, show "Today"
+            * If it was yesterday, show "Yesterday" etc. */
             mRelativeDayLabel.setText(RelativeDateHelper.getRelativeDaysSinceString(date));
         }
     }

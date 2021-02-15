@@ -16,10 +16,12 @@ public class DailyAlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         NotificationSender sender = new NotificationSender(context);
 
+        /* Set Activity to be launched when notification is clicked */
         Intent mainActivityIntent = new Intent(context, MainActivity.class);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context,0,mainActivityIntent,PendingIntent.FLAG_UPDATE_CURRENT);
 
+        /* Show notification to user */
         sender.sendNotification(pendingIntent, false,context.getString(R.string.daily_reminder_notification_title), context.getString(R.string.daily_reminder_notification_content));
     }
 }

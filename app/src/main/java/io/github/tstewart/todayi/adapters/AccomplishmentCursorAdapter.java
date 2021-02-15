@@ -58,7 +58,7 @@ public class AccomplishmentCursorAdapter extends CursorAdapter {
         catch(SQLiteException | IllegalArgumentException e) {
             Log.w(AccomplishmentCursorAdapter.class.getSimpleName(), e.getMessage(), e);
         }
-
+        /* Set Accomplishment TextView content */
         contentView.setText(content);
     }
 

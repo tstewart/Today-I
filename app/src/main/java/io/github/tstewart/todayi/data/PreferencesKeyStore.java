@@ -5,6 +5,8 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import io.github.tstewart.todayi.R;
 
+/* Helper class. Searches application resource files for the keys to specific preferences
+* Certain preference keys are always the same, and these keys are static */
 public class PreferencesKeyStore {
 
     /* Enable gestures key */
@@ -30,6 +32,7 @@ public class PreferencesKeyStore {
 
     public PreferencesKeyStore(@NonNull Context context) {
 
+        /* Search application resources for these keys  */
         this.ENABLE_GESTURES_KEY = context.getString(R.string.user_prefs_gestures_enabled);
         this.ENABLE_CLIP_ACCOMPLISHMENT_KEY = context.getString(R.string.user_prefs_clip_empty_lines);
         this.MAX_DAY_RATING_KEY = context.getString(R.string.user_prefs_num_day_ratings);
