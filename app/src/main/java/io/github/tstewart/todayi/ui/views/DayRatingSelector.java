@@ -11,6 +11,9 @@ import android.widget.LinearLayout;
 import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.helpers.ColorBlendHelper;
 
+/*
+Generic class for day rating selector views.
+ */
 public abstract class DayRatingSelector {
 
     final int[] mColors;

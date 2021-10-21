@@ -116,7 +116,11 @@ public class DatabaseHelper {
         return Database.getInstance(mContext).getReadableDatabase();
     }
 
-    /* Get date query with wildcard at the end, to match all records with the same date without the time */
+    /**
+     * Get date query with wildcard at the end, to match all records with the same date without the time
+     * @param date Date to check for records on
+     * @return A formatted query to check for records on the provided date
+     */
     public String getDateQueryWildcardFormat(LocalDate date) {
         DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT_NO_TIME);
 

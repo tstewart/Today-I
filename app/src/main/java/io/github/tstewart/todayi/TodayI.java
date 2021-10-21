@@ -28,7 +28,6 @@ import io.github.tstewart.todayi.helpers.db.DayRatingTableHelper;
 
 /*
  * Application class, called on application start
- * Manages automatic backup
  */
 public class TodayI extends Application {
     /*
@@ -101,12 +100,14 @@ public class TodayI extends Application {
 
     /* Get preferences from file and set this instance of the application's values */
     private void setInstancePreferences(UserPreferences preferences) {
+        boolean tutorialShown = (boolean) preferences.get(getString(R.string.user_prefs_tutorial_shown), true);
         boolean notificationsEnabled = (boolean) preferences.get(getString(R.string.user_prefs_notifications_enabled), false);
         boolean gesturesEnabled = (boolean) preferences.get(getString(R.string.user_prefs_gestures_enabled), true);
         String numRatings = (String) preferences.get(getString(R.string.user_prefs_num_day_ratings), "5");
         String notificationTimeString = (String) preferences.get(getString(R.string.user_prefs_notification_time), "18:00");
         boolean clipEmptyLines = (boolean) preferences.get(getString(R.string.user_prefs_clip_empty_lines), true);
 
+        UserPreferences.setTutorialShown(tutorialShown);
         UserPreferences.setEnableNotifications(notificationsEnabled);
         UserPreferences.setEnableGestures(gesturesEnabled);
         UserPreferences.setAccomplishmentClipEmptyLines(clipEmptyLines);

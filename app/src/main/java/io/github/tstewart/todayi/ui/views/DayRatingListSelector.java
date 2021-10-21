@@ -12,6 +12,9 @@ import io.github.tstewart.todayi.R;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
+/*
+Day rating selector view, as a list of ratings
+ */
 public class DayRatingListSelector extends DayRatingSelector {
 
     Button mRateButton;

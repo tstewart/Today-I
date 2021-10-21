@@ -9,12 +9,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.ui.fragments.SettingsFragment;
 
+/**
+ * Settings Activity. Inflates Settings fragment and handles Activity animation
+ */
 public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+        /* Inflate SettingsFragment */
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
@@ -29,10 +33,9 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-
         /* If back button pressed */
         if(item.getItemId() == android.R.id.home) {
-            onReturn();
+            finish();
         }
 
         return super.onOptionsItemSelected(item);
@@ -40,12 +43,13 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        onReturn();
+        finish();
         super.onBackPressed();
     }
 
-    private void onReturn() {
-        this.finish();
+    @Override
+    public void finish() {
+        super.finish();
         /* Add animation on Activity change, swipe out this activity and swipe in new activity */
         overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
     }

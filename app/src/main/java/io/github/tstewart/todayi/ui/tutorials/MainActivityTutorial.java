@@ -9,6 +9,9 @@ import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
 import uk.co.deanwild.materialshowcaseview.shape.NoShape;
 
+/*
+User interactive tutorial of the features of MainActivity
+ */
 public class MainActivityTutorial {
 
     /**

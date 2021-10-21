@@ -263,7 +263,7 @@ public class CalendarActivity extends AppCompatActivity {
         finish();
     }
 
-    /* Called on return to parent Activity without a provided response */
+    /* Override finish to override transition animation */
     @Override
     public void finish() {
         super.finish();

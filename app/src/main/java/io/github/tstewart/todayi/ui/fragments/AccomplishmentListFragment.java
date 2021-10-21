@@ -155,7 +155,10 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
         };
     }
 
-    /* Toggle indicator on or off if ListView can be scrolled */
+    /**
+     * Toggle indicator on or off if ListView can be scrolled
+     * @param indicator Indicator image to toggle
+     */
     private AbsListView.OnScrollListener toggleIndicatorOnScroll(ImageView indicator) {
         return new AbsListView.OnScrollListener() {
             @Override
@@ -221,6 +224,13 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
         }
     }
 
+    /**
+     * Get Accomplishment edit dialog with provided information attached
+     * @param content Accomplishment content
+     * @param datePosted Date and time the Accomplishment was posted on
+     * @param itemId Accomplishment position in the database
+     * @return Accomplishment AlertDialog to show to user
+     */
     private AlertDialog getEditAccomplishmentDialog(String content, LocalDateTime datePosted, long itemId) {
         return new AccomplishmentDialog(this.getContext())
                 .setText(content)
@@ -256,6 +266,10 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
                 .create();
     }
 
+    /**
+     * Get new Accomplishment dialog
+     * @return Accomplishment AlertDialog to show to user
+     */
     private AlertDialog getNewAccomplishmentDialog() {
         return new AccomplishmentDialog(getContext())
                 .setDialogType(AccomplishmentDialog.DialogType.NEW)

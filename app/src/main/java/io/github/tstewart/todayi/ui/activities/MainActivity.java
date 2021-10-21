@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,7 +33,7 @@ import io.github.tstewart.todayi.ui.fragments.AccomplishmentListFragment;
 import io.github.tstewart.todayi.ui.tutorials.MainActivityTutorial;
 
 /*
-Main Activity of the application (obviously), handles AccomplishmentListFragment and DayRatingFragment functionality
+Main Activity of the application, handles AccomplishmentListFragment and DayRatingFragment functionality
  */
 public class MainActivity extends AppCompatActivity implements OnDateChangedListener {
 
@@ -91,30 +92,28 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
 
         /* Set current date to System's current date */
         updateCurrentDate(LocalDate.now());
-
-        /*
-        Show tutorial after a set period of time
-        This is done to ensure all views have been initialised before the tutorial is shown
-         */
-        // TODO make this rely instead on when topbar menu is inflated
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            SharedPreferences sharedPrefs = getSharedPreferences(getString(R.string.user_prefs_file_location_key), MODE_PRIVATE);
-            UserPreferences userPrefs = new UserPreferences(sharedPrefs);
-
-            boolean hasTutorialShown = (boolean)userPrefs.get(getString(R.string.user_prefs_tutorial_shown), true);
-
-            if(!hasTutorialShown) {
-                showTutorial();
-                userPrefs.set(getString(R.string.user_prefs_tutorial_shown), true);
-            }
-        }, 200);
     }
 
     /* Inflate Main Activity's top bar */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main_nav, menu);
-        return super.onCreateOptionsMenu(menu);
+        super.onCreateOptionsMenu(menu);
+
+        /* After the options menu has been initialised, check to see if tutorial should be shown */
+        new Handler(Looper.getMainLooper()).post(() -> {
+
+            SharedPreferences sharedPrefs = getSharedPreferences(getString(R.string.user_prefs_file_location_key), MODE_PRIVATE);
+            UserPreferences userPrefs = new UserPreferences(sharedPrefs);
+
+            if(!UserPreferences.isTutorialShown()) {
+                showTutorial();
+                userPrefs.set(getString(R.string.user_prefs_tutorial_shown), true);
+            }
+
+        });
+
+        return true;
     }
 
     /* If an item on the top bar is selected */
@@ -144,6 +143,9 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Show first-use tutorial to show user's how to use the application
+     */
     public void showTutorial() {
         MainActivityTutorial tutorial = new MainActivityTutorial();
         tutorial.showTutorial(this);
@@ -199,6 +201,9 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
             mDayLabel.setText(new DateFormatter("MMMM d yyyy").formatWithDayIndicators(mSelectedDate));
 
         if(mRelativeDayLabel != null) {
+            /* Get relative date string
+            * E.g. if selected date is today, show "Today"
+            * If it was yesterday, show "Yesterday" etc. */
             mRelativeDayLabel.setText(RelativeDateHelper.getRelativeDaysSinceString(date));
         }
     }

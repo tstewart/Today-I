@@ -27,6 +27,7 @@ public class Accomplishment implements DatabaseObject {
 
     public Accomplishment(@NonNull LocalDateTime mDate, @NonNull String content) {
         this.mDate = mDate;
+        /* Set content, removing empty lines if this is required */
         setContent(content);
     }
 

@@ -10,6 +10,9 @@ import io.github.tstewart.todayi.R;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
+/*
+Day rating selector view, as selectable buttons
+ */
 public class DayRatingButtonSelector extends DayRatingSelector {
 
     Button[] mButtons;
