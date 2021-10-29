@@ -165,7 +165,6 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         int viewId = view.getId();
 
         LocalDate newDate = mSelectedDate;
-
         /* If selected button was Next or Previous, add or subtract one day from current */
         if (viewId == R.id.buttonNextDay || viewId == R.id.buttonPrevDay) {
 

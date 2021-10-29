@@ -95,6 +95,7 @@ public class TodayI extends Application {
             preferences.setDefaultValue(getString(R.string.user_prefs_gestures_enabled), true);
             preferences.setDefaultValue(getString(R.string.user_prefs_clip_empty_lines), true);
             preferences.setDefaultValue(getString(R.string.user_prefs_num_day_ratings), "5");
+            preferences.setDefaultValue(getString(R.string.user_prefs_time_selection_enabled), true);
         }
     }
 
@@ -106,11 +107,13 @@ public class TodayI extends Application {
         String numRatings = (String) preferences.get(getString(R.string.user_prefs_num_day_ratings), "5");
         String notificationTimeString = (String) preferences.get(getString(R.string.user_prefs_notification_time), "18:00");
         boolean clipEmptyLines = (boolean) preferences.get(getString(R.string.user_prefs_clip_empty_lines), true);
+        boolean timePickerEnabled = (boolean) preferences.get(getString(R.string.user_prefs_time_selection_enabled), true);
 
         UserPreferences.setTutorialShown(tutorialShown);
         UserPreferences.setEnableNotifications(notificationsEnabled);
         UserPreferences.setEnableGestures(gesturesEnabled);
         UserPreferences.setAccomplishmentClipEmptyLines(clipEmptyLines);
+        UserPreferences.setEnableTimePicker(timePickerEnabled);
         try {
             UserPreferences.setMaxDayRating(Integer.parseInt(numRatings));
         } catch(NumberFormatException e) {

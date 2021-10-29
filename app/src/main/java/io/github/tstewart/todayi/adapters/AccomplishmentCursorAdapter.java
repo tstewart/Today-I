@@ -15,6 +15,7 @@ import org.threeten.bp.LocalTime;
 
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.DBConstants;
+import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.helpers.DateFormatter;
 
 /**
@@ -50,8 +51,8 @@ public class AccomplishmentCursorAdapter extends CursorAdapter {
             LocalDateTime dateTime = new DateFormatter(DBConstants.DATE_FORMAT).parseDate(datePosted);
             if(dateTime != null) timePosted = dateTime.toLocalTime();
 
-            /* If there was a time posted, set date TextView to this. */
-            if(timePosted != null) {
+            /* If there was a time posted and time picking is enabled, set date TextView to this. */
+            if(timePosted != null && UserPreferences.isEnableTimePicker()) {
                 datePostedView.setText(new DateFormatter(DBConstants.TIME_FORMAT).format(timePosted));
             }
         }

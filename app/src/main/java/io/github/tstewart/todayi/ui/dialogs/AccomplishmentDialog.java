@@ -17,6 +17,7 @@ import org.threeten.bp.LocalTime;
 
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.DBConstants;
+import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.helpers.DateFormatter;
 
 /*
@@ -24,6 +25,8 @@ Dialog for adding and editing Accomplishments
  */
 public class AccomplishmentDialog extends AlertDialog.Builder {
 
+    /* Time selection layout */
+    private final LinearLayout mSelectedTimeLayout;
     /* Selected date / time */
     private LocalDateTime mSelectedDate;
     /* Time selection label */
@@ -53,13 +56,21 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
         mContext = context;
         mSelectedTimeLabel = view.findViewById(R.id.textViewSelectedTime);
         /* Time selection layout, acts as a button */
-        LinearLayout buttonTimeSelection = view.findViewById(R.id.linearLayoutTimeSelection);
+        mSelectedTimeLayout = view.findViewById(R.id.linearLayoutTimeSelection);
 
         mButtonDelete = view.findViewById(R.id.buttonDelete);
         mButtonConfirm = view.findViewById(R.id.buttonConfirm);
 
-        if(buttonTimeSelection != null)
-            buttonTimeSelection.setOnClickListener(this::setTimeSelectionButtonListener);
+        if(mSelectedTimeLayout != null) {
+            /* If time picker is enabled, add click functionality */
+            if (UserPreferences.isEnableTimePicker()) {
+                mSelectedTimeLayout.setOnClickListener(this::setTimeSelectionButtonListener);
+            }
+            /* If time picker is not enabled, hide time picker view */
+            else {
+                mSelectedTimeLayout.setVisibility(View.GONE);
+            }
+        }
     }
 
     @Override

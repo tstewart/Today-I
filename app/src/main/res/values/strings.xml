@@ -33,6 +33,8 @@
     <string name="setting_enable_gestures_summary">Allow swiping to change current day</string>
     <string name="setting_clip_accomplishments">Auto Clipping</string>
     <string name="setting_clip_accomplishments_summary">Remove empty lines from Accomplishment posts</string>
+    <string name="setting_time_selection">Time Selection</string>
+    <string name="setting_time_selection_summary">Allow time picking for Accomplishment posts</string>
     <string name="setting_day_ratings">Maximum Day Rating</string>
     <string name="setting_day_ratings_summary">Select your rating for the day from 1-%s</string>
 
@@ -107,6 +109,7 @@
     <string name="user_prefs_gestures_enabled">gestures_enabled</string>
     <string name="user_prefs_clip_empty_lines">clip_empty_lines</string>
     <string name="user_prefs_num_day_ratings">num_ratings</string>
+    <string name="user_prefs_time_selection_enabled">time_selection_enabled</string>
 
     <!-- Debug Activity -->
     <string name="debug_invalidate_backup">Invalidate backup</string>

@@ -14,6 +14,13 @@
             app:key="@string/user_prefs_clip_empty_lines"
             app:summary="@string/setting_clip_accomplishments_summary"
             app:title="@string/setting_clip_accomplishments" />
+        <SwitchPreferenceCompat
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:icon="@drawable/settings_icon_time"
+            app:key="@string/user_prefs_time_selection_enabled"
+            app:summary="@string/setting_time_selection_summary"
+            app:title="@string/setting_time_selection" />
         <ListPreference
             android:defaultValue="false"
             android:entries="@array/day_ratings_key"

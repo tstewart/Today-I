@@ -148,6 +148,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         if(preferenceKey.equals(mPreferenceKeys.ENABLE_CLIP_ACCOMPLISHMENT_KEY)) {
             UserPreferences.setAccomplishmentClipEmptyLines((boolean)newValue);
         }
+        else if(preferenceKey.equals(mPreferenceKeys.ENABLE_TIME_SELECTION_KEY)) {
+            UserPreferences.setEnableTimePicker((boolean)newValue);
+        }
         else if(preferenceKey.equals(mPreferenceKeys.ENABLE_GESTURES_KEY)) {
             UserPreferences.setEnableGestures((boolean)newValue);
         }
