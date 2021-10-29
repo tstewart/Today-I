@@ -21,6 +21,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.LocalTime;
@@ -43,6 +45,7 @@ import io.github.tstewart.todayi.interfaces.OnDatabaseInteractionListener;
 import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
 import io.github.tstewart.todayi.models.Accomplishment;
 import io.github.tstewart.todayi.ui.dialogs.AccomplishmentDialog;
+import io.github.tstewart.todayi.ui.dialogs.CalendarDialog;
 
 /**
  * Fragment for viewing, adding, editing, and deleting Accomplishments
@@ -92,15 +95,13 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
         }
 
         /* Get "+" button, to add a new Accomplishment on click */
-        ImageButton newAccomplishmentButton = new ImageButton(new ContextThemeWrapper(getContext(), R.style.AppTheme_NewAccomplishmentButton));
-        newAccomplishmentButton.setImageResource(R.drawable.ic_add);
+        FloatingActionButton newAccomplishmentButton = view.findViewById(R.id.buttonNewAccomplishment);
+        newAccomplishmentButton.setOnClickListener(this::onNewItemButtonPressed);
 
-        if(listView != null) {
-            /* Add click listener to new accomplishment button */
-            newAccomplishmentButton.setOnClickListener(this::onNewItemButtonPressed);
-            /* Append New Accomplishment button to parent ListView */
-            listView.addFooterView(newAccomplishmentButton);
-        }
+        /* Get the calendar button, to change days through a dialog */
+        FloatingActionButton calendarButton = view.findViewById(R.id.buttonCalendar);
+        calendarButton.setOnClickListener(v -> new CalendarDialog(getContext(), mSelectedDate).create().show());
+
         return view;
     }
 

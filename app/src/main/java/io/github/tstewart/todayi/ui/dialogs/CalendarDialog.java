@@ -1,12 +1,13 @@
-package io.github.tstewart.todayi.ui.activities;
+package io.github.tstewart.todayi.ui.dialogs;
 
-import android.app.Activity;
-import android.content.Intent;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.CalendarView;
 import android.widget.Toast;
 
 import com.prolificinteractive.materialcalendarview.CalendarDay;
@@ -20,10 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
@@ -34,52 +31,43 @@ import io.github.tstewart.todayi.ui.decorators.DayPostedDecorator;
 import io.github.tstewart.todayi.ui.decorators.DayRatedDecorator;
 import io.github.tstewart.todayi.ui.decorators.DayRatingSplitter;
 
-/*
-    Provides a calendar that the user can use to select a date to instantly jump to a date
-    Also provides an overview of days that Accomplishments were posted on and days rated
- */
-public class CalendarActivity extends AppCompatActivity {
+public class CalendarDialog extends AlertDialog.Builder {
+
     /*
      Log tag, used for Logging
      Represents class name
     */
-    private static final String CLASS_LOG_TAG = CalendarActivity.class.getSimpleName();
+    private static final String CLASS_LOG_TAG = CalendarDialog.class.getSimpleName();
+
+    /* Activity context */
+    private final Context mContext;
+    /* This dialog's instance. Set when create is called */
+    private AlertDialog mInstance;
 
     /* Calendar view */
     MaterialCalendarView mCalendarView;
 
-    /* Currently selected date (Application-wide, controlled by OnDateChangedListener) */
-    LocalDate mSelectedDate = LocalDate.now();
+    /* Currently selected date (Application-wide) */
+    LocalDate mSelectedDate;
 
     /* List of days posted on */
     List<CalendarDay> mDaysPostedOn;
     /* HashMap of days rated and their respective rating */
     HashMap<CalendarDay, Integer> mRatings;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_calendar);
+    public CalendarDialog(Context context, LocalDate currentDate) {
+        super(context);
 
-        /*
-         Check if this Activity was instantiated with a selected date
-         If it was, set the current date to the provided date
-         This will be instantiated with the calendar view later, so that the calendar view automatically scrolls to the current month
-        */
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            long selectedDate = extras.getLong("selectedDate");
-            if (selectedDate > 0) {
-                mSelectedDate = LocalDate.ofEpochDay(selectedDate);
-            }
-        }
-        /* If no date was provided with the Activity launch, set the current date to the System's time */
-        else {
-            mSelectedDate = LocalDate.now();
-        }
+        this.mContext = context;
+        this.mSelectedDate = currentDate;
+
+        /* Inflate dialog layout */
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        View view = inflater.inflate(R.layout.dialog_calendar, null);
+        this.setView(view);
 
         /* Get calendar view from Layout */
-        mCalendarView = findViewById(R.id.calendarView);
+        mCalendarView = view.findViewById(R.id.calendarView);
 
         if (mCalendarView != null) {
             /* Set action when a date is selected on the calendar view */
@@ -92,15 +80,15 @@ public class CalendarActivity extends AppCompatActivity {
             /* Draws a circle around the selected date */
             mCalendarView.setDateSelected(CalendarDay.from(mSelectedDate), true);
         }
-
-        /* Get the top bar, and set it's title correctly */
-        ActionBar supportBar = getSupportActionBar();
-        if (supportBar != null) supportBar.setTitle(R.string.activity_calendar);
     }
 
     @Override
-    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
+    public AlertDialog create() {
+
+        AlertDialog dialog = super.create();
+
+        /* Used for onclick control management */
+        this.mInstance = dialog;
 
         /* Get a list of days that Accomplishments were posted on from the Database */
         mDaysPostedOn = getPostedDates();
@@ -118,28 +106,13 @@ public class CalendarActivity extends AppCompatActivity {
         /* Get decorator for days posted */
         DayPostedDecorator daysPostedDecorator = new DayPostedDecorator(mDaysPostedOn);
         /* Get list of decorators for every rating */
-        List<DayRatedDecorator> dayRatedDecorators = new DayRatingSplitter(this).getDayRatingDecorators(mRatings);
+        List<DayRatedDecorator> dayRatedDecorators = new DayRatingSplitter(mContext).getDayRatingDecorators(mRatings);
 
         /* Set decorators */
         mCalendarView.addDecorator(daysPostedDecorator);
         mCalendarView.addDecorators(dayRatedDecorators);
-    }
 
-    /* Called if a button is pressed in the top bar */
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        /* If the item selected was the "back" button */
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onBackPressed() {
-        finish();
-        super.onBackPressed();
+        return dialog;
     }
 
     /**
@@ -148,7 +121,7 @@ public class CalendarActivity extends AppCompatActivity {
      */
     private List<CalendarDay> getPostedDates() {
 
-        Database db = Database.getInstance(this);
+        Database db = Database.getInstance(mContext);
         SQLiteDatabase sqlDb = db.getReadableDatabase();
 
         List<CalendarDay> dates = new ArrayList<>();
@@ -183,7 +156,7 @@ public class CalendarActivity extends AppCompatActivity {
 
                 } catch (DateTimeParseException e) {
                     /* Alert the user that date information may be corrupt in the Database */
-                    Toast.makeText(this, R.string.gather_dates_failed, Toast.LENGTH_LONG).show();
+                    Toast.makeText(mContext, R.string.gather_dates_failed, Toast.LENGTH_LONG).show();
                     Log.w(CLASS_LOG_TAG, e.getMessage(), e);
                 }
             }
@@ -208,7 +181,7 @@ public class CalendarActivity extends AppCompatActivity {
          Get a cursor for the SQL query
          Query gets all ratings
         */
-        Cursor cursor = new DayRatingTableHelper(this).getAll();
+        Cursor cursor = new DayRatingTableHelper(mContext).getAll();
 
         /* If database contains ratings */
         if (cursor.moveToFirst()) {
@@ -260,15 +233,10 @@ public class CalendarActivity extends AppCompatActivity {
         /* Alert subscribers that the date has changed */
         OnDateChanged.notifyDateChanged(localDate);
 
-        finish();
+        /* Close dialog */
+        if(mInstance != null) {
+            mInstance.dismiss();
+        }
     }
 
-    /* Override finish to override transition animation */
-    @Override
-    public void finish() {
-        super.finish();
-
-        /* Add animation on Activity change, swipe out this activity and swipe in new activity */
-        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
-    }
 }

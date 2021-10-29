@@ -210,8 +210,8 @@ public class DebugActivity extends AppCompatActivity {
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
                 0,
                 new Intent(this,
-                        CalendarActivity.class),
-                PendingIntent.FLAG_UPDATE_CURRENT);
+                        MainActivity.class),
+                PendingIntent.FLAG_IMMUTABLE);
 
         notificationSender.sendNotification(pendingIntent, true,"Debug", "Hello! This is a test!");
     }

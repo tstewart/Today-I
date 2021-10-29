@@ -39,7 +39,7 @@ public class MainActivityTutorial {
         View nextDayButton = tutorialActivity.findViewById(R.id.buttonNextDay);
         View accomplishmentListFragment = tutorialActivity.findViewById(R.id.listFragment);
         View dayRatingFragment = tutorialActivity.findViewById(R.id.fragment);
-        View calendarButton = tutorialActivity.findViewById(R.id.toolbar_calendar);
+        View calendarButton = tutorialActivity.findViewById(R.id.buttonCalendar);
 
         /* The first view is initialised without a focus shape, so the overlay takes up the whole screen */
         MaterialShowcaseView startOverlayView = new MaterialShowcaseView.Builder(tutorialActivity)
