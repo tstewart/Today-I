@@ -8,9 +8,8 @@
     <color name="colorTransparent">#00000000</color>
 
     <!-- Theme colors -->
-    <color name="colorSplashBackground">#8F76BC</color>
+    <color name="colorSplashBackground">?attr/colorOnSurfaceInverse</color>
     <color name="colorPrimary">#5F35AA</color>
-    <color name="colorPrimaryDark">#45267C</color>
     <color name="colorAccent">#578323</color>
     <color name="colorAccentDark">#112300</color>
     <color name="colorButtonBg">#DFDFDF</color>

@@ -1,7 +1,6 @@
 package io.github.tstewart.todayi.ui.fragments;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -30,6 +29,7 @@ import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.format.DateTimeParseException;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.ListFragment;
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.adapters.AccomplishmentCursorAdapter;
@@ -97,10 +97,6 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
         /* Get "+" button, to add a new Accomplishment on click */
         FloatingActionButton newAccomplishmentButton = view.findViewById(R.id.buttonNewAccomplishment);
         newAccomplishmentButton.setOnClickListener(this::onNewItemButtonPressed);
-
-        /* Get the calendar button, to change days through a dialog */
-        FloatingActionButton calendarButton = view.findViewById(R.id.buttonCalendar);
-        calendarButton.setOnClickListener(v -> new CalendarDialog(getContext(), mSelectedDate).create().show());
 
         return view;
     }

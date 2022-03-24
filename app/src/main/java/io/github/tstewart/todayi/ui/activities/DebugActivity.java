@@ -17,6 +17,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import org.threeten.bp.LocalDate;
 
 import java.util.Random;
@@ -83,7 +85,7 @@ public class DebugActivity extends AppCompatActivity {
 
     private void onPopulateAccomplishmentsButtonClicked() {
 
-        new AlertDialog.Builder(this)
+        new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.debug_populate_accomplishments)
                 .setMessage(R.string.debug_populate_confirmation)
                 .setPositiveButton(R.string.button_yes, (dialog, which) -> {
@@ -115,7 +117,7 @@ public class DebugActivity extends AppCompatActivity {
     }
 
     private void onPopulateRatingsButtonClicked() {
-        new AlertDialog.Builder(this)
+        new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.debug_populate_ratings)
                 .setMessage(R.string.debug_populate_confirmation)
                 .setPositiveButton(R.string.button_yes, (dialog, which) -> {
@@ -146,7 +148,7 @@ public class DebugActivity extends AppCompatActivity {
         numberPicker.setMinValue(1);
         numberPicker.setMaxValue(100);
 
-        new AlertDialog.Builder(this)
+        new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.debug_override_max_rating)
                 .setView(numberPicker)
                 .setPositiveButton("Ok", (dialog, which) -> {
@@ -171,7 +173,7 @@ public class DebugActivity extends AppCompatActivity {
         numberPicker.setMaxValue(0);
         numberPicker.setMaxValue(100);
 
-        new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AppTheme))
+        new MaterialAlertDialogBuilder(new ContextThemeWrapper(this, R.style.AppTheme))
                 .setView(numberPicker)
                 .setPositiveButton("Ok", (dialog, which) -> {
                     int numSelection = numberPicker.getValue();
@@ -193,7 +195,7 @@ public class DebugActivity extends AppCompatActivity {
                         resultView.addView(colorView);
                     }
 
-                    new AlertDialog.Builder(this)
+                    new MaterialAlertDialogBuilder(this)
                             .setView(scrollView)
                             .create()
                             .show();

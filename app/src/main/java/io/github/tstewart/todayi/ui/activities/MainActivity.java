@@ -19,7 +19,10 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.threeten.bp.LocalDate;
 
@@ -29,6 +32,7 @@ import io.github.tstewart.todayi.events.OnDateChanged;
 import io.github.tstewart.todayi.helpers.DateFormatter;
 import io.github.tstewart.todayi.helpers.RelativeDateHelper;
 import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
+import io.github.tstewart.todayi.ui.dialogs.CalendarDialog;
 import io.github.tstewart.todayi.ui.fragments.AccomplishmentListFragment;
 import io.github.tstewart.todayi.ui.tutorials.MainActivityTutorial;
 
@@ -71,10 +75,16 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
             nextButton.setOnClickListener(this::onDayChangeButtonClicked);
         if(mLayoutDayLabel != null)
             /* If day label (parent layout) is long pressed, reset current day */
-            mLayoutDayLabel.setOnLongClickListener(this::onDayLabelLongPressed);
+            mLayoutDayLabel.setOnClickListener(v -> new CalendarDialog(this, mSelectedDate).create().show());
+
 
         /* Register for date changed events */
         OnDateChanged.addListener(this);
+
+        /* Set custom toolbar */
+        Toolbar mToolbar = findViewById(R.id.topAppBar);
+        setSupportActionBar(mToolbar);
+
     }
 
     @Override
@@ -92,15 +102,8 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
 
         /* Set current date to System's current date */
         updateCurrentDate(LocalDate.now());
-    }
 
-    /* Inflate Main Activity's top bar */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main_nav, menu);
-        super.onCreateOptionsMenu(menu);
-
-        /* After the options menu has been initialised, check to see if tutorial should be shown */
+        /* Once activity is initialised, check to see if tutorial should be shown */
         new Handler(Looper.getMainLooper()).post(() -> {
 
             SharedPreferences sharedPrefs = getSharedPreferences(getString(R.string.user_prefs_file_location_key), MODE_PRIVATE);
@@ -112,7 +115,13 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
             }
 
         });
+    }
 
+    /* Inflate Main Activity's top bar */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main_nav, menu);
+        super.onCreateOptionsMenu(menu);
         return true;
     }
 

@@ -17,6 +17,9 @@ import java.util.GregorianCalendar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+
+import com.google.android.material.color.DynamicColors;
+
 import io.github.tstewart.todayi.data.LocalDatabaseIO;
 import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ExportFailedException;
@@ -42,6 +45,9 @@ public class TodayI extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        /* Apply dynamic colors */
+        DynamicColors.applyToActivitiesIfAvailable(this);
 
         SharedPreferences sharedPrefs = getSharedPreferences(getString(R.string.user_prefs_file_location_key), MODE_PRIVATE);
         UserPreferences preferences = new UserPreferences(sharedPrefs);

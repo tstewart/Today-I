@@ -25,6 +25,9 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.SwitchPreferenceCompat;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
@@ -242,7 +245,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     private boolean onRestoreBackupClicked(Preference preference) {
         /* Open an alert dialog to confirm if the user wishes to restore from backup */
-        new AlertDialog.Builder(getContext())
+        new MaterialAlertDialogBuilder(getContext())
                 .setTitle(R.string.setting_restore_backup)
                 .setMessage(R.string.restore_backup_confirmation)
                 .setPositiveButton(R.string.button_yes, new DialogInterface.OnClickListener() {
@@ -270,7 +273,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     }
 
     private boolean onForceBackupClicked(Preference preference) {
-        new AlertDialog.Builder(getContext())
+        new MaterialAlertDialogBuilder(getContext())
                 .setTitle(R.string.setting_force_backup)
                 .setMessage(R.string.force_backup_confirmation)
                 .setPositiveButton(R.string.button_yes, (dialog, which) -> {
@@ -301,7 +304,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         Context context = getContext();
         if(context != null) {
             /* Open an alert dialog to confirm if the user wishes to erase all data */
-            new AlertDialog.Builder(getContext())
+            new MaterialAlertDialogBuilder(getContext())
                     .setTitle(R.string.erase_all_warning_dialog_title)
                     .setMessage(R.string.erase_all_warning_dialog_message)
                     .setPositiveButton(R.string.button_yes, (dialogInterface, which) -> {

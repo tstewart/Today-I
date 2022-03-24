@@ -12,6 +12,8 @@ import io.github.tstewart.todayi.R;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 /*
 Day rating selector view, as a list of ratings
  */
@@ -42,7 +44,7 @@ public class DayRatingListSelector extends DayRatingSelector {
             items[i] = String.valueOf(i+1);
         }
 
-        new AlertDialog.Builder(mContext)
+        new MaterialAlertDialogBuilder(mContext)
                 .setItems(items, (dialog, which) -> updateRating(which+1))
                 .create()
                 .show();

@@ -1,6 +1,5 @@
 package io.github.tstewart.todayi.ui.dialogs;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -10,6 +9,9 @@ import android.view.View;
 import android.widget.CalendarView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
@@ -31,7 +33,7 @@ import io.github.tstewart.todayi.ui.decorators.DayPostedDecorator;
 import io.github.tstewart.todayi.ui.decorators.DayRatedDecorator;
 import io.github.tstewart.todayi.ui.decorators.DayRatingSplitter;
 
-public class CalendarDialog extends AlertDialog.Builder {
+public class CalendarDialog extends MaterialAlertDialogBuilder {
 
     /*
      Log tag, used for Logging

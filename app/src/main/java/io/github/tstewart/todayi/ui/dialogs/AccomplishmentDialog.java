@@ -1,6 +1,5 @@
 package io.github.tstewart.todayi.ui.dialogs;
 
-import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -11,6 +10,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.LocalTime;
@@ -23,7 +26,7 @@ import io.github.tstewart.todayi.helpers.DateFormatter;
 /*
 Dialog for adding and editing Accomplishments
  */
-public class AccomplishmentDialog extends AlertDialog.Builder {
+public class AccomplishmentDialog extends MaterialAlertDialogBuilder {
 
     /* Time selection layout */
     private final LinearLayout mSelectedTimeLayout;
@@ -191,7 +194,7 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
     private void onDeletePressed(View view) {
         if(mInstance != null) mInstance.dismiss();
 
-        new AlertDialog.Builder(mContext)
+        new MaterialAlertDialogBuilder(mContext)
                 .setTitle(R.string.confirm_delete)
                 .setPositiveButton(R.string.button_yes, ((dialog, which) ->  {
                     if(mDeleteListener != null) {
@@ -213,7 +216,7 @@ public class AccomplishmentDialog extends AlertDialog.Builder {
     }
 
     @Override
-    public AlertDialog.Builder setView(View view) {
+    public MaterialAlertDialogBuilder setView(View view) {
         super.setView(view);
         this.mView = view;
 

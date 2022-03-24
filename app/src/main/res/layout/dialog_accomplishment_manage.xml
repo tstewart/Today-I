@@ -6,21 +6,28 @@
     android:orientation="vertical"
     android:splitMotionEvents="false">
 
-    <EditText
-        android:id="@+id/editTextAccomplishmentManage"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/text_input_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:autofillHints="Content"
-        android:ems="10"
-        android:importantForAutofill="no"
-        android:inputType="textMultiLine|textCapSentences"
-        android:labelFor="@id/editTextAccomplishmentManage"
-        android:maxLength="200"
-        android:maxLines="10"
-        android:paddingStart="16dp">
+        android:layout_margin="4dp">
 
-        <requestFocus />
-    </EditText>
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextAccomplishmentManage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints="Content"
+            android:ems="10"
+            android:importantForAutofill="no"
+            android:inputType="textMultiLine|textCapSentences"
+            android:labelFor="@id/editTextAccomplishmentManage"
+            android:maxLength="200"
+            android:maxLines="10"
+            android:paddingStart="16dp">
+
+            <requestFocus />
+        </com.google.android.material.textfield.TextInputEditText>
+    </com.google.android.material.textfield.TextInputLayout>
 
     <LinearLayout
         android:id="@+id/linearLayoutTimeSelection"
@@ -37,15 +44,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingStart="16dp"
-            android:text="@string/current_accomplishment_time"
-            android:theme="@style/AppTheme.TimeSelectionTitle" />
+            android:text="@string/current_accomplishment_time" />
 
         <TextView
             android:id="@+id/textViewSelectedTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="16dp"
-            android:theme="@style/AppTheme.TimeSelectionText" />
+            android:paddingStart="16dp"/>
 
     </LinearLayout>
 
@@ -57,22 +62,22 @@
 
         <Button
             android:id="@+id/buttonDelete"
-            style="@style/Widget.AppCompat.Button.Borderless"
+            style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/button_delete"
-            android:textColor="@color/colorWarning"
+            android:textColor="?attr/colorPrimary"
             tools:visibility="gone" />
 
         <Button
             android:id="@+id/buttonConfirm"
-            style="@style/Widget.AppCompat.Button.Borderless"
+            style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/button_confirm"
-            android:textColor="@color/colorAccent" />
+            android:textColor="?attr/colorPrimary" />
 
         <!--<Button
             android:id="@+id/buttonCancel"

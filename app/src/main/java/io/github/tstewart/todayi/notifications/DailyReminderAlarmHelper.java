@@ -102,13 +102,13 @@ public class DailyReminderAlarmHelper {
 
         if(!overrideCurrent) {
             PendingIntent existsCheck = PendingIntent.getBroadcast(context, 0,
-                    serviceIntent, PendingIntent.FLAG_NO_CREATE);
+                    serviceIntent, PendingIntent.FLAG_IMMUTABLE);
 
             /* If the current alarm should not be overwritten, but FLAG_NO_CREATE has indicated that an alarm already exists
              * (by not returning null), then return null so that we do not register a new alarm of this type */
             if (existsCheck != null) return null;
         }
         return PendingIntent.getBroadcast(context,0,
-                serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                serviceIntent, PendingIntent.FLAG_IMMUTABLE);
     }
 }
