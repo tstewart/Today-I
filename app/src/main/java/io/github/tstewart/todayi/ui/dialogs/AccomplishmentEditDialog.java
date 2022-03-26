@@ -18,32 +18,36 @@ import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.helpers.DateFormatter;
 import io.github.tstewart.todayi.models.Accomplishment;
 
-public class AccomplishmentNewDialog extends AccomplishmentDialog {
+public class AccomplishmentEditDialog extends AccomplishmentDialog {
 
-    public AccomplishmentNewDialog(LocalDate currentDate){
-        mSelectedDate = currentDate;
+    String mTitle;
+    long mDatabaseId;
+
+    public AccomplishmentEditDialog(long id, String title, LocalDateTime selectedDate){
+        mDatabaseId = id;
+        mTitle = title;
+        mSelectedDate = selectedDate.toLocalDate();
+        mSelectedTime = selectedDate.toLocalTime();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mToolbar.setTitle(R.string.new_accomplishment_dialog_title);
+        mToolbar.setTitle(R.string.edit_accomplishment_dialog_title);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
 
-        // Set default times for date and time input
-        mSelectedTime = LocalTime.now();
+        mTitleInput.setText(mTitle);
+
         DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT_NO_TIME);
         mDateInput.setText(dateFormatter.format(mSelectedDate));
 
         DateFormatter timeFormatter = new DateFormatter(DBConstants.TIME_FORMAT);
         mTimeInput.setText(timeFormatter.format(mSelectedTime));
 
-        // Hide delete button
-        mDeleteButton.setVisibility(View.GONE);
         return view;
     }
 
@@ -55,10 +59,11 @@ public class AccomplishmentNewDialog extends AccomplishmentDialog {
 
         try {
             /* Insert Accomplishment into Database */
-            mTableHelper.insert(accomplishment);
+            mTableHelper.update(accomplishment, mDatabaseId);
             this.dismiss();
         } catch (ValidationFailedException e) {
             Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
+
 }

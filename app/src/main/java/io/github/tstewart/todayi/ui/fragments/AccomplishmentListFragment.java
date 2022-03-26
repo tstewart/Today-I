@@ -28,6 +28,7 @@ import org.threeten.bp.format.DateTimeParseException;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.ListFragment;
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.adapters.AccomplishmentCursorAdapter;
@@ -41,9 +42,8 @@ import io.github.tstewart.todayi.events.OnSwipePerformedListener;
 import io.github.tstewart.todayi.helpers.db.AccomplishmentTableHelper;
 import io.github.tstewart.todayi.interfaces.OnDatabaseInteractionListener;
 import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
-import io.github.tstewart.todayi.models.Accomplishment;
-import io.github.tstewart.todayi.ui.dialogs.AccomplishmentDialogOld;
 import io.github.tstewart.todayi.ui.dialogs.AccomplishmentDialog;
+import io.github.tstewart.todayi.ui.dialogs.AccomplishmentEditDialog;
 import io.github.tstewart.todayi.ui.dialogs.AccomplishmentNewDialog;
 
 /**
@@ -62,7 +62,7 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
     private AccomplishmentCursorAdapter mCursorAdapter;
 
     /* Current dialog, restricts multiple dialogs from opening at once */
-    private AlertDialog mDialog;
+    private AccomplishmentDialog mDialog;
 
     /* Currently selected date (Application-wide) */
     private LocalDate mSelectedDate = LocalDate.now();
@@ -214,89 +214,10 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
             */
             dismissCurrentDialog();
 
-            this.mDialog = getEditAccomplishmentDialog(itemContent, selectedDate, id);
+            this.mDialog = new AccomplishmentEditDialog(id, itemContent, selectedDate);
 
-            this.mDialog.show();
+            this.mDialog.display(getParentFragmentManager());
         }
-    }
-
-    /**
-     * Get Accomplishment edit dialog with provided information attached
-     * @param content Accomplishment content
-     * @param datePosted Date and time the Accomplishment was posted on
-     * @param itemId Accomplishment position in the database
-     * @return Accomplishment AlertDialog to show to user
-     */
-    private AlertDialog getEditAccomplishmentDialog(String content, LocalDateTime datePosted, long itemId) {
-        return new AccomplishmentDialogOld(this.getContext())
-                .setText(content)
-                .setDialogType(AccomplishmentDialogOld.DialogType.EDIT)
-                .setSelectedTime(datePosted)
-                .setConfirmClickListener((dialogView -> {
-                    EditText input = dialogView.getRootView().findViewById(R.id.editTextAccomplishmentManage);
-                    TextView timeLabel = dialogView.getRootView().findViewById(R.id.textViewSelectedTime);
-
-                    if (input != null) {
-
-                        LocalDateTime newSelectedDate;
-
-                        if(timeLabel != null)
-                            newSelectedDate = parseDate(timeLabel.getText().toString());
-                        else
-                            newSelectedDate = LocalDateTime.of(mSelectedDate, LocalTime.now());
-
-                        /* Create Accomplishment object from new values */
-                        if(newSelectedDate != null) {
-                            Accomplishment accomplishment = new Accomplishment(newSelectedDate, input.getText().toString());
-
-                            try {
-                                /* Update Database entry with new content */
-                                mTableHelper.update(accomplishment, itemId);
-                            } catch (ValidationFailedException e) {
-                                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }
-                }))
-                .setDeleteButtonListener((dialogView -> mTableHelper.delete(itemId)))
-                .create();
-    }
-
-    /**
-     * Get new Accomplishment dialog
-     * @return Accomplishment AlertDialog to show to user
-     */
-    private AlertDialog getNewAccomplishmentDialog() {
-        return new AccomplishmentDialogOld(getContext())
-                .setDialogType(AccomplishmentDialogOld.DialogType.NEW)
-                .setConfirmClickListener(dialogView -> {
-                    EditText input = dialogView.getRootView().findViewById(R.id.editTextAccomplishmentManage);
-                    TextView timeLabel = dialogView.getRootView().findViewById(R.id.textViewSelectedTime);
-
-                    if (input != null) {
-
-                        LocalDateTime selectedDate;
-
-                        if(timeLabel != null)
-                            selectedDate = parseDate(timeLabel.getText().toString());
-                        else
-                            selectedDate = LocalDateTime.of(mSelectedDate, LocalTime.now());
-
-
-                        if(selectedDate != null) {
-                            /* Create Accomplishment object from new values */
-                            Accomplishment accomplishment = new Accomplishment(selectedDate, input.getText().toString());
-
-                            try {
-                                /* Insert Accomplishment into Database */
-                                mTableHelper.insert(accomplishment);
-                            } catch (ValidationFailedException e) {
-                                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }
-                })
-                .create();
     }
 
     private void onNewItemButtonPressed(View view) {
@@ -305,13 +226,11 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
          Dismiss current dialog if one is currently open
          Prevents multiple dialogs from opening
         */
-        //dismissCurrentDialog();
+        dismissCurrentDialog();
 
-        //this.mDialog = getNewAccomplishmentDialog();
+        this.mDialog = new AccomplishmentNewDialog(mSelectedDate);
 
-        //.mDialog.show();
-        AccomplishmentDialog dialog = new AccomplishmentNewDialog();
-        dialog.display(getParentFragmentManager());
+        mDialog.display(getParentFragmentManager());
     }
 
     /* Parse time posted response from dialog */
