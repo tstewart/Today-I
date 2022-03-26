@@ -9,7 +9,15 @@
     <com.prolificinteractive.materialcalendarview.MaterialCalendarView
         android:id="@+id/calendarView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         tools:mcv_selectionColor="#FFFFFF" />
+
+    <Button
+        android:id="@+id/buttonToday"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/button_today"
+        android:textColor="?attr/colorPrimary" />
 
 </LinearLayout>

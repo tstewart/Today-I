@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.Toast;
 
@@ -70,6 +71,12 @@ public class CalendarDialog extends MaterialAlertDialogBuilder {
 
         /* Get calendar view from Layout */
         mCalendarView = view.findViewById(R.id.calendarView);
+
+        /* Get today button view from layout */
+        Button todayButton = view.findViewById(R.id.buttonToday);
+        if(todayButton != null) {
+            todayButton.setOnClickListener(this::onTodayButtonClicked);
+        }
 
         if (mCalendarView != null) {
             /* Set action when a date is selected on the calendar view */
@@ -225,6 +232,14 @@ public class CalendarDialog extends MaterialAlertDialogBuilder {
         cursor.close();
 
         return ratings;
+    }
+
+
+    private void onTodayButtonClicked(View view) {
+        OnDateChanged.notifyDateChanged(LocalDate.now());
+        if(mInstance != null) {
+            mInstance.dismiss();
+        }
     }
 
     private void onCalendarClick(MaterialCalendarView view, CalendarDay date, boolean b) {
