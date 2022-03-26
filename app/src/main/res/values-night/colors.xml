@@ -3,8 +3,6 @@
     <color name="colorTransparent">#00000000</color>
 
     <!-- Theme colors -->
-    <color name="colorSplashBackground">#4C3771</color>
-    <color name="colorPrimary">#3E226E</color>
     <color name="colorCalendarSelection">#4C4C4C</color>
     <color name="colorButtonBg">#2c2c2c</color>
 

@@ -7,14 +7,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -44,8 +42,9 @@ import io.github.tstewart.todayi.helpers.db.AccomplishmentTableHelper;
 import io.github.tstewart.todayi.interfaces.OnDatabaseInteractionListener;
 import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
 import io.github.tstewart.todayi.models.Accomplishment;
+import io.github.tstewart.todayi.ui.dialogs.AccomplishmentDialogOld;
 import io.github.tstewart.todayi.ui.dialogs.AccomplishmentDialog;
-import io.github.tstewart.todayi.ui.dialogs.CalendarDialog;
+import io.github.tstewart.todayi.ui.dialogs.AccomplishmentNewDialog;
 
 /**
  * Fragment for viewing, adding, editing, and deleting Accomplishments
@@ -229,9 +228,9 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
      * @return Accomplishment AlertDialog to show to user
      */
     private AlertDialog getEditAccomplishmentDialog(String content, LocalDateTime datePosted, long itemId) {
-        return new AccomplishmentDialog(this.getContext())
+        return new AccomplishmentDialogOld(this.getContext())
                 .setText(content)
-                .setDialogType(AccomplishmentDialog.DialogType.EDIT)
+                .setDialogType(AccomplishmentDialogOld.DialogType.EDIT)
                 .setSelectedTime(datePosted)
                 .setConfirmClickListener((dialogView -> {
                     EditText input = dialogView.getRootView().findViewById(R.id.editTextAccomplishmentManage);
@@ -268,8 +267,8 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
      * @return Accomplishment AlertDialog to show to user
      */
     private AlertDialog getNewAccomplishmentDialog() {
-        return new AccomplishmentDialog(getContext())
-                .setDialogType(AccomplishmentDialog.DialogType.NEW)
+        return new AccomplishmentDialogOld(getContext())
+                .setDialogType(AccomplishmentDialogOld.DialogType.NEW)
                 .setConfirmClickListener(dialogView -> {
                     EditText input = dialogView.getRootView().findViewById(R.id.editTextAccomplishmentManage);
                     TextView timeLabel = dialogView.getRootView().findViewById(R.id.textViewSelectedTime);
@@ -306,11 +305,13 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
          Dismiss current dialog if one is currently open
          Prevents multiple dialogs from opening
         */
-        dismissCurrentDialog();
+        //dismissCurrentDialog();
 
-        this.mDialog = getNewAccomplishmentDialog();
+        //this.mDialog = getNewAccomplishmentDialog();
 
-        this.mDialog.show();
+        //.mDialog.show();
+        AccomplishmentDialog dialog = new AccomplishmentNewDialog();
+        dialog.display(getParentFragmentManager());
     }
 
     /* Parse time posted response from dialog */

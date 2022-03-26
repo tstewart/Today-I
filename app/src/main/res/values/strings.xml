@@ -19,8 +19,13 @@
     <string name="rate_day">Rate your day…</string>
 
     <!-- Accomplishment dialog -->
-    <string name="new_accomplishment_dialog_title">Enter your new accomplishment:</string>
-    <string name="edit_accomplishment_dialog_title">Edit accomplishment:</string>
+    <string name="new_accomplishment_dialog_title">New Accomplishment</string>
+    <string name="edit_accomplishment_dialog_title">Edit Accomplishment</string>
+    <string name="accomplishment_title_hint">Title</string>
+    <string name="accomplishment_description_hint">Description (optional)</string>
+    <string name="accomplishment_date_hint">Date</string>
+    <string name="accomplishment_time_toggle">Include time?</string>
+    <string name="accomplishment_time_hint">Time</string>
     <string name="current_accomplishment_time">Set time</string>
     <string name="button_set_custom_time">Set time…</string>
     <string name="confirm_delete">Delete this Accomplishment?</string>
@@ -94,7 +99,9 @@
 
     <!-- Other -->
     <string name="button_confirm">Confirm</string>
+    <string name="button_save">Save</string>
     <string name="button_delete">Delete</string>
+    <string name="button_cancel">Cancel</string>
     <string name="button_yes">Yes</string>
     <string name="button_no">No</string>
     <string name="new_accomplishment_invalid_text">Your accomplishment must be between 1 and 200 characters.</string>

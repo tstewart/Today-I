@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         if(nextButton != null)
             nextButton.setOnClickListener(this::onDayChangeButtonClicked);
         if(mLayoutDayLabel != null)
-            /* If day label (parent layout) is long pressed, reset current day */
+            /* If day label (parent layout) is pressed, open calendar to change days */
             mLayoutDayLabel.setOnClickListener(v -> new CalendarDialog(this, mSelectedDate).create().show());
 
 
@@ -182,13 +182,6 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         /* Dismiss accomplishment fragment dialog if exists */
         if (mListFragment != null) mListFragment.dismissCurrentDialog();
 
-    }
-
-
-    /* Reset day to today on long press day label */
-    private boolean onDayLabelLongPressed(View view) {
-        updateCurrentDate(LocalDate.now());
-        return true;
     }
 
     @Override

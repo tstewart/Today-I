@@ -22,7 +22,6 @@
 
     <style name="FullscreenActionBarStyle" parent="Widget.AppCompat.ActionBar">
         <item name="android:background">@color/black_overlay</item>
-        <item name="android:titleTextColor">@color/colorWhite</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -30,12 +29,19 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="AppTheme.FullScreenDialog" parent="ThemeOverlay.Material3.MaterialCalendar.Fullscreen">
+        <item name="android:windowIsFloating">false</item>
+
+        <item name="android:windowBackground">?attr/colorOnSurfaceInverse</item>
+
+        <item name="android:windowEnterAnimation">@anim/enter_from_bottom</item>
+    </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="AppTheme.TimeSelectionTitle">
-        <item name="android:textColor">@color/colorBlack</item>
         <item name="android:textSize">18sp</item>
     </style>
 
@@ -44,7 +50,6 @@
     </style>
 
     <style name="AppTheme.ListItemText" parent="Widget.AppCompat.ListView">
-        <item name="android:textColor">@color/colorBlack</item>
         <item name="android:textSize">18sp</item>
     </style>
 

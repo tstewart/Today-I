@@ -1,233 +1,185 @@
 package io.github.tstewart.todayi.ui.dialogs;
 
-import android.app.TimePickerDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.CheckBox;
 
-import androidx.appcompat.app.AlertDialog;
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.timepicker.MaterialTimePicker;
+import com.google.android.material.timepicker.TimeFormat;
 
-import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.Instant;
+import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalTime;
+import org.threeten.bp.ZoneId;
+import org.threeten.bp.temporal.ChronoField;
 
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.DBConstants;
-import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.helpers.DateFormatter;
+import io.github.tstewart.todayi.helpers.db.AccomplishmentTableHelper;
 
-/*
-Dialog for adding and editing Accomplishments
- */
-public class AccomplishmentDialog extends MaterialAlertDialogBuilder {
+public class AccomplishmentDialog extends DialogFragment {
 
-    /* Time selection layout */
-    private final LinearLayout mSelectedTimeLayout;
-    /* Selected date / time */
-    private LocalDateTime mSelectedDate;
-    /* Time selection label */
-    private final TextView mSelectedTimeLabel;
+    /* Selected date and time */
+    LocalDate mSelectedDate;
+    LocalTime mSelectedTime;
 
+    /* Currently active picker dialog, to prevent opening multiple date/time dialogs */
+    DialogFragment mOpenPickerDialog;
+
+    /* Dialog title toolbar */
+    Toolbar mToolbar;
+    /* Title input */
+    TextInputEditText mTitleInput;
+    /* Description input */
+    TextInputEditText mDescriptionInput;
+    /* Date input */
+    TextInputEditText mDateInput;
+    /* Time toggle checkbox */
+    CheckBox mTimeToggle;
+    /* Time input */
+    TextInputEditText mTimeInput;
     /* Delete button */
-    private final Button mButtonDelete;
-    /* Listener called on delete pressed */
-    private View.OnClickListener mDeleteListener;
+    Button mDeleteButton;
+    /* Cancel button */
+    Button mCancelButton;
     /* Confirm button */
-    private final Button mButtonConfirm;
-    /* This dialog's view */
-    private View mView;
-    /* Activity context */
-    private final Context mContext;
-    /* This dialog's instance. Set when create is called */
-    private AlertDialog mInstance;
+    Button mConfirmButton;
 
-    public AccomplishmentDialog(Context context) {
-        super(context);
+    /* Database helper, for inserting and editing Accomplishments */
+    AccomplishmentTableHelper mTableHelper;
 
-        /* Inflate dialog layout */
-        LayoutInflater inflater = LayoutInflater.from(getContext());
-        View view = inflater.inflate(R.layout.dialog_accomplishment_manage, null);
-        this.setView(view);
+    // Internal constructor to prevent initialisation
+    AccomplishmentDialog(){}
 
-        mContext = context;
-        mSelectedTimeLabel = view.findViewById(R.id.textViewSelectedTime);
-        /* Time selection layout, acts as a button */
-        mSelectedTimeLayout = view.findViewById(R.id.linearLayoutTimeSelection);
-
-        mButtonDelete = view.findViewById(R.id.buttonDelete);
-        mButtonConfirm = view.findViewById(R.id.buttonConfirm);
-
-        if(mSelectedTimeLayout != null) {
-            /* If time picker is enabled, add click functionality */
-            if (UserPreferences.isEnableTimePicker()) {
-                mSelectedTimeLayout.setOnClickListener(this::setTimeSelectionButtonListener);
-            }
-            /* If time picker is not enabled, hide time picker view */
-            else {
-                mSelectedTimeLayout.setVisibility(View.GONE);
-            }
-        }
+    public void display(FragmentManager fragmentManager) {
+        this.show(fragmentManager, "accomplishment_dialog");
     }
 
     @Override
-    public AlertDialog create() {
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.AppTheme_FullScreenDialog);
 
-        /* If current selected time was not set, set to current time */
-        if(mSelectedTimeLabel != null && mSelectedTimeLabel.getText().length()==0) {
-            setSelectedTime(LocalDateTime.now());
-        }
-
-        AlertDialog dialog = super.create();
-
-        /* Used for onclick control management */
-        this.mInstance = dialog;
-
-        Window window = dialog.getWindow();
-        if (window != null) {
-            /* Set input mode to auto open keyboard on dialog open */
-            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-        }
-
-        /* Set delete listener */
-        mButtonDelete.setOnClickListener(this::onDeletePressed);
-
-        return dialog;
-    }
-
-    public AccomplishmentDialog setDialogType(DialogType dialogType) {
-        /* If dialog type is new, set dialog to create a new Accomplishment */
-        if (dialogType == DialogType.NEW) {
-            this.setTitle(R.string.new_accomplishment_dialog_title);
-
-            if (mButtonDelete != null) {
-                /* Hide delete button when creating an Accomplishment */
-                mButtonDelete.setVisibility(View.GONE);
-            }
-        }
-        /* If dialog type is edit, set dialog to edit an existing Accomplishment */
-        else if (dialogType == DialogType.EDIT) {
-            this.setTitle(R.string.edit_accomplishment_dialog_title);
-
-            if (mButtonDelete != null) {
-                /* Show delete button when creating an Accomplishment */
-                mButtonDelete.setVisibility(View.VISIBLE);
-            }
-        }
-        return this;
-    }
-
-    /* Set EditText view to provided string */
-    public AccomplishmentDialog setText(String content) {
-        EditText editText = this.getView().findViewById(R.id.editTextAccomplishmentManage);
-
-        if (editText != null) {
-            editText.setText(content);
-            /* Set cursor position to the end of the string */
-            editText.setSelection(content.length());
-        }
-        return this;
-    }
-
-    /* Set selected time */
-    public AccomplishmentDialog setSelectedTime(LocalDateTime date) {
-        if(mSelectedTimeLabel != null && date != null) {
-            DateFormatter dateFormatter = new DateFormatter(DBConstants.TIME_FORMAT);
-            mSelectedTimeLabel.setText(dateFormatter.format(date));
-
-            mSelectedDate = date;
-        }
-        return this;
-    }
-
-    private void setTimeSelectionButtonListener(View view) {
+        Context mContext = getActivity();
         if(mContext != null) {
-
-            /* If already provided a time, set the time picker default value to this selected time */
-            if(mSelectedDate == null)
-                mSelectedDate = LocalDateTime.now();
-
-            LocalTime currentTime = mSelectedDate.toLocalTime();
-
-            /* If this Accomplishment dialog is still showing (has not been cancelled) */
-            if(mInstance.isShowing()) {
-                /* Get time picker dialog */
-                new TimePickerDialog(mContext, (timeView, hourOfDay, minute) -> {
-                    LocalTime newTime = LocalTime.of(hourOfDay, minute);
-
-                    mSelectedDate = mSelectedDate.with(newTime);
-
-                    setSelectedTime(mSelectedDate);
-
-                }, currentTime.getHour(), currentTime.getMinute(),
-                        true)
-                        .show();
-            }
+            mTableHelper = new AccomplishmentTableHelper(getActivity());
         }
-    }
-
-    public AccomplishmentDialog setConfirmClickListener(View.OnClickListener listener) {
-        if (mButtonConfirm != null) {
-            mButtonConfirm.setOnClickListener(v -> {
-                listener.onClick(v);
-                if (this.mInstance != null) mInstance.dismiss();
-            });
-        }
-        return this;
-    }
-
-    public AccomplishmentDialog setDeleteButtonListener(View.OnClickListener listener) {
-        if (mButtonDelete != null) {
-            this.mDeleteListener = listener;
-        }
-        return this;
-    }
-
-    /* Called when the delete button is pressed
-    * Hide the current dialog and show a new delete confirmation dialog */
-    private void onDeletePressed(View view) {
-        if(mInstance != null) mInstance.dismiss();
-
-        new MaterialAlertDialogBuilder(mContext)
-                .setTitle(R.string.confirm_delete)
-                .setPositiveButton(R.string.button_yes, ((dialog, which) ->  {
-                    if(mDeleteListener != null) {
-                        mDeleteListener.onClick(view);
-                        /* Dismiss parent dialog, if it has been reopened (e.g. by pressing No at the same time as pressing Yes) */
-                        if(mInstance.isShowing()) mInstance.dismiss();
-                    }
-                }))
-                .setNegativeButton(R.string.button_no, (dialog, which) -> {
-                    if(mInstance != null) mInstance.show();
-                })
-                .setCancelable(false)
-                .create()
-                .show();
-    }
-
-    public View getView() {
-        return this.mView;
     }
 
     @Override
-    public MaterialAlertDialogBuilder setView(View view) {
-        super.setView(view);
-        this.mView = view;
-
-        return this;
+    public void onStart() {
+        super.onStart();
+        Dialog dialog = getDialog();
+        if (dialog != null) {
+            int width = ViewGroup.LayoutParams.MATCH_PARENT;
+            int height = ViewGroup.LayoutParams.MATCH_PARENT;
+            dialog.getWindow().setLayout(width, height);
+            //dialog.getWindow().setWindowAnimations(R.anim.enter_from_bottom);
+        }
     }
 
-    /**
-     * Type of current dialog
-     */
-    public enum DialogType {
-        NEW,
-        EDIT
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        View view = inflater.inflate(R.layout.dialog_accomplishment_fullscreen, container, false);
+
+        mToolbar = view.findViewById(R.id.toolbar);
+        mTitleInput = view.findViewById(R.id.editTextAccomplishmentTitle);
+        mDescriptionInput = view.findViewById(R.id.editTextAccomplishmentDescription);
+        mDateInput = view.findViewById(R.id.editTextAccomplishmentDate);
+        //mTimeToggle = view.findViewById(R.id.accomplishmentTimeToggle);
+        mTimeInput = view.findViewById(R.id.editTextAccomplishmentTime);
+        mDeleteButton = view.findViewById(R.id.buttonDelete);
+        mCancelButton = view.findViewById(R.id.buttonCancel);
+        mConfirmButton = view.findViewById(R.id.buttonConfirm);
+
+        //mCancelButton.setVisibility((mDialogType == DialogType.NEW) ? View.VISIBLE : View.GONE);
+
+        // Set date/time click listeners
+        mDateInput.setOnClickListener(this::onDateSelectionClicked);
+        mTimeInput.setOnClickListener(this::onTimeSelectionClicked);
+
+        // Set button click listeners
+        mCancelButton.setOnClickListener(this::onCancelButtonClicked);
+        mConfirmButton.setOnClickListener(this::onConfirmButtonClicked);
+
+        return view;
     }
+
+    @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mToolbar.setNavigationOnClickListener(v -> dismiss());
+    }
+
+    private void onDateSelectionClicked(View view) {
+        MaterialDatePicker.Builder<Long> mDatePickerBuilder = MaterialDatePicker.Builder.datePicker();
+
+        if(mSelectedDate != null) {
+            mDatePickerBuilder.setSelection(mSelectedDate.toEpochDay()*86400000);
+        }
+
+        MaterialDatePicker<Long> mDatePicker = mDatePickerBuilder.build();
+
+        mDatePicker.addOnPositiveButtonClickListener((MaterialPickerOnPositiveButtonClickListener<Object>) selection -> {
+            Long dateSelection = mDatePicker.getSelection();
+            if(dateSelection != null) {
+                mSelectedDate = Instant.ofEpochMilli(mDatePicker.getSelection()).atZone(ZoneId.systemDefault()).toLocalDate();
+
+                DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT_NO_TIME);
+                mDateInput.setText(dateFormatter.format(mSelectedDate));
+            }
+        });
+        openDialogIfNoneOpen(mDatePicker);
+    }
+
+    private void onTimeSelectionClicked(View view) {
+        MaterialTimePicker.Builder mTimePickerBuilder = new MaterialTimePicker.Builder()
+                .setTimeFormat(TimeFormat.CLOCK_24H);
+
+        if(mSelectedTime != null) {
+            mTimePickerBuilder.setHour(mSelectedTime.getHour());
+            mTimePickerBuilder.setMinute(mSelectedTime.getMinute());
+        }
+
+        MaterialTimePicker mTimePicker = mTimePickerBuilder.build();
+
+        mTimePicker.addOnPositiveButtonClickListener(view1 -> {
+            mSelectedTime = LocalTime.of(mTimePicker.getHour(), mTimePicker.getMinute());
+
+            DateFormatter dateFormatter = new DateFormatter(DBConstants.TIME_FORMAT);
+            mTimeInput.setText(dateFormatter.format(mSelectedTime));
+        });
+        openDialogIfNoneOpen(mTimePicker);
+    }
+
+    void openDialogIfNoneOpen(DialogFragment dialog) {
+        if(mOpenPickerDialog == null || !mOpenPickerDialog.isVisible()) {
+            mOpenPickerDialog = dialog;
+            dialog.show(getChildFragmentManager(), dialog.getTag());
+        }
+    }
+
+    public void onConfirmButtonClicked(View view) {
+        // Do nothing when using generic dialog
+    }
+
+    private void onCancelButtonClicked(View view) {
+        this.dismiss();
+    }
+
 }
