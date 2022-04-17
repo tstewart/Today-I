@@ -49,8 +49,9 @@
         <item name="android:textSize">16sp</item>
     </style>
 
-    <style name="AppTheme.ListItemText" parent="Widget.AppCompat.ListView">
+    <style name="AppTheme.ListItemTitle" parent="Widget.AppCompat.ListView">
         <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="AppTheme.NewAccomplishmentButton" parent="Widget.AppCompat.Button.Borderless">

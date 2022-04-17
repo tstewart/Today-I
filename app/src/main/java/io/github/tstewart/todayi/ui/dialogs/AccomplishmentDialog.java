@@ -107,8 +107,6 @@ public class AccomplishmentDialog extends DialogFragment {
         mCancelButton = view.findViewById(R.id.buttonCancel);
         mConfirmButton = view.findViewById(R.id.buttonConfirm);
 
-        //mCancelButton.setVisibility((mDialogType == DialogType.NEW) ? View.VISIBLE : View.GONE);
-
         // Set date/time click listeners
         mDateInput.setOnClickListener(this::onDateSelectionClicked);
         mTimeInput.setOnClickListener(this::onTimeSelectionClicked);

@@ -25,10 +25,18 @@ public class Accomplishment implements DatabaseObject {
     /* Content of Accomplishment */
     private String mContent;
 
-    public Accomplishment(@NonNull LocalDateTime mDate, @NonNull String content) {
-        this.mDate = mDate;
-        /* Set content, removing empty lines if this is required */
-        setContent(content);
+    public Accomplishment(@NonNull LocalDateTime date, @NonNull String content) {
+        this.mDate = date;
+        this.mContent = content;
+    }
+
+    /* Create new Accomplishment for inserting into database. Clips Accomplishment content if enabled. */
+    public static Accomplishment create(@NonNull LocalDateTime date, @NonNull String content) {
+        Accomplishment accomplishment = new Accomplishment(date, content);
+        /* Clip content if enabled */
+        accomplishment.setContent(content);
+
+        return accomplishment;
     }
 
     /**

@@ -7,6 +7,9 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
@@ -48,6 +51,8 @@ public class AccomplishmentEditDialog extends AccomplishmentDialog {
         DateFormatter timeFormatter = new DateFormatter(DBConstants.TIME_FORMAT);
         mTimeInput.setText(timeFormatter.format(mSelectedTime));
 
+        mDeleteButton.setOnClickListener(this::onDeleteButtonClicked);
+
         return view;
     }
 
@@ -55,7 +60,7 @@ public class AccomplishmentEditDialog extends AccomplishmentDialog {
     public void onConfirmButtonClicked(View view) {
         /* Create Accomplishment object from new values */
         LocalDateTime accomplishmentDate = LocalDateTime.of(mSelectedDate, mSelectedTime);
-        Accomplishment accomplishment = new Accomplishment(accomplishmentDate, mTitleInput.getText().toString());
+        Accomplishment accomplishment = Accomplishment.create(accomplishmentDate, mTitleInput.getText().toString());
 
         try {
             /* Insert Accomplishment into Database */
@@ -64,6 +69,23 @@ public class AccomplishmentEditDialog extends AccomplishmentDialog {
         } catch (ValidationFailedException e) {
             Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    /* Called when the delete button is pressed
+     * Hide the current dialog and show a new delete confirmation dialog */
+    private void onDeleteButtonClicked(View view) {
+        AlertDialog deleteDialog = new MaterialAlertDialogBuilder(getContext())
+                .setTitle(R.string.confirm_delete)
+                .setPositiveButton(R.string.button_yes, ((dialog, which) ->  {
+                    mTableHelper.delete(mDatabaseId);
+                    this.dismiss();
+                }))
+                .setNegativeButton(R.string.button_no, (dialog, which) -> {
+                    dialog.dismiss();
+                })
+                .create();
+
+        deleteDialog.show();
     }
 
 }

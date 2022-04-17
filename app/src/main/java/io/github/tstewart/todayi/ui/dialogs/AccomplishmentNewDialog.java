@@ -51,7 +51,7 @@ public class AccomplishmentNewDialog extends AccomplishmentDialog {
     public void onConfirmButtonClicked(View view) {
         /* Create Accomplishment object from new values */
         LocalDateTime accomplishmentDate = LocalDateTime.of(mSelectedDate, mSelectedTime);
-        Accomplishment accomplishment = new Accomplishment(accomplishmentDate, mTitleInput.getText().toString());
+        Accomplishment accomplishment = Accomplishment.create(accomplishmentDate, mTitleInput.getText().toString());
 
         try {
             /* Insert Accomplishment into Database */

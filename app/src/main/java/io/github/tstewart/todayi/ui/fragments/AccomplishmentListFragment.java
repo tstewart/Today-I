@@ -109,7 +109,7 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
         if(context != null) {
             this.mTableHelper = new AccomplishmentTableHelper(context);
 
-            this.mCursorAdapter = new AccomplishmentCursorAdapter(context, null);
+            this.mCursorAdapter = new AccomplishmentCursorAdapter(this, context, null);
 
             setListAdapter(mCursorAdapter);
         }
