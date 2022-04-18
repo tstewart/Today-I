@@ -207,7 +207,7 @@ public class CalendarDialog extends MaterialAlertDialogBuilder {
 
                 try {
                     /* Try and parse the date string from Database format to a LocalDate object */
-                    LocalDate date = LocalDate.parse(dateString, DateTimeFormatter.ofPattern(DBConstants.DATE_FORMAT_NO_TIME));
+                    LocalDate date = LocalDate.parse(dateString, DateTimeFormatter.ofPattern(DBConstants.DATE_FORMAT));
 
                     /* If successful, the LocalDate object must be converted to an object that MaterialCalendarView understands */
                     if (date != null) {

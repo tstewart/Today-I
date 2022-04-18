@@ -37,7 +37,7 @@ public class DayRatingTableHelper extends DatabaseHelper {
 
             SQLiteDatabase db = getDatabase();
             /* Format the date to database requirements */
-            String dateFormatted = new DateFormatter(DBConstants.DATE_FORMAT_NO_TIME).format(date);
+            String dateFormatted = new DateFormatter(DBConstants.DATE_FORMAT).format(date);
             /* Get a cursor with the provided date, to check if the Ratings table already contains a value for this date */
             Cursor existingRowCheck = db.rawQuery(DBConstants.DAY_RATING_QUERY, new String[]{dateFormatted});
 
@@ -67,7 +67,7 @@ public class DayRatingTableHelper extends DatabaseHelper {
             SQLiteDatabase db = getDatabase();
 
             /* Format the date to database requirements */
-            String dateFormatted = new DateFormatter(DBConstants.DATE_FORMAT_NO_TIME).format(date);
+            String dateFormatted = new DateFormatter(DBConstants.DATE_FORMAT).format(date);
             /* Get a cursor with the provided date, to check if the Ratings table contains a value for this date */
             Cursor cursor = db.rawQuery(DBConstants.DAY_RATING_QUERY, new String[]{dateFormatted});
 

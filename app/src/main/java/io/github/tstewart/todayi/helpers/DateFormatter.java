@@ -1,5 +1,6 @@
 package io.github.tstewart.todayi.helpers;
 
+import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.format.DateTimeParseException;
@@ -25,10 +26,10 @@ public class DateFormatter {
         this.mFormatPattern = dateFormat;
     }
 
-    /* Parse database date/time to a LocalDateTime object */
-    public LocalDateTime parseDate(String date) {
+    /* Parse database date to a LocalDate object */
+    public LocalDate parseDate(String date) {
         try {
-            return LocalDateTime.parse(date, DateTimeFormatter.ofPattern(mFormatPattern));
+            return LocalDate.parse(date, DateTimeFormatter.ofPattern(mFormatPattern));
         } catch (DateTimeParseException e) { return null; }
     }
 

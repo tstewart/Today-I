@@ -31,8 +31,7 @@ public class AccomplishmentEditDialog extends AccomplishmentDialog {
         mDatabaseId = id;
         mTitle = accomplishment.getTitle();
         mDescription = accomplishment.getDescription();
-        mSelectedDate = accomplishment.getDate().toLocalDate();
-        mSelectedTime = accomplishment.getDate().toLocalTime();
+        mSelectedDate = accomplishment.getDate();
     }
 
     @Override
@@ -49,11 +48,8 @@ public class AccomplishmentEditDialog extends AccomplishmentDialog {
 
         mDescriptionInput.setText(mDescription);
 
-        DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT_NO_TIME);
+        DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT);
         mDateInput.setText(dateFormatter.format(mSelectedDate));
-
-        DateFormatter timeFormatter = new DateFormatter(DBConstants.TIME_FORMAT);
-        mTimeInput.setText(timeFormatter.format(mSelectedTime));
 
         mDeleteButton.setOnClickListener(this::onDeleteButtonClicked);
 
@@ -63,8 +59,7 @@ public class AccomplishmentEditDialog extends AccomplishmentDialog {
     @Override
     public void onConfirmButtonClicked(View view) {
         /* Create Accomplishment object from new values */
-        LocalDateTime accomplishmentDate = LocalDateTime.of(mSelectedDate, mSelectedTime);
-        Accomplishment accomplishment = Accomplishment.create(accomplishmentDate, mTitleInput.getText().toString(), mDescriptionInput.getText().toString());
+        Accomplishment accomplishment = Accomplishment.create(mSelectedDate, mTitleInput.getText().toString(), mDescriptionInput.getText().toString());
 
         try {
             /* Insert Accomplishment into Database */

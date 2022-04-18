@@ -117,15 +117,15 @@ public class DatabaseHelper {
     }
 
     /**
-     * Get date query with wildcard at the end, to match all records with the same date without the time
+     * Get date query, to match all records with the same date
      * @param date Date to check for records on
      * @return A formatted query to check for records on the provided date
      */
-    public String getDateQueryWildcardFormat(LocalDate date) {
-        DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT_NO_TIME);
+    public String getDateQuery(LocalDate date) {
+        DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT);
 
         if(date != null) {
-            return dateFormatter.format(date) + "%";
+            return dateFormatter.format(date);
         }
         return null;
     }

@@ -4,24 +4,17 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.threeten.bp.LocalDate;
-import org.threeten.bp.LocalDateTime;
-import org.threeten.bp.LocalTime;
-import org.threeten.bp.format.DateTimeFormatter;
-import org.threeten.bp.format.DateTimeParseException;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.ListFragment;
@@ -37,7 +30,6 @@ import io.github.tstewart.todayi.helpers.db.AccomplishmentTableHelper;
 import io.github.tstewart.todayi.interfaces.OnDatabaseInteractionListener;
 import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
 import io.github.tstewart.todayi.ui.dialogs.AccomplishmentDialog;
-import io.github.tstewart.todayi.ui.dialogs.AccomplishmentEditDialog;
 import io.github.tstewart.todayi.ui.dialogs.AccomplishmentNewDialog;
 
 /**
@@ -182,19 +174,6 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
         mDialog.display(getParentFragmentManager());
     }
 
-    /* Parse time posted response from dialog */
-    private LocalDateTime parseDate(String timeString) {
-        try {
-            LocalTime time = LocalTime.parse(timeString, DateTimeFormatter.ofPattern(DBConstants.TIME_FORMAT));
-
-            return LocalDateTime.of(mSelectedDate, time);
-        }
-        catch(DateTimeParseException e) {
-            Log.w(CLASS_LOG_TAG, e.getMessage(), e);
-            return null;
-        }
-    }
-
     /**
      * Refresh current cursor
      * Checks Database for entries on the selected date again
@@ -212,7 +191,7 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
             SQLiteDatabase db = Database.getInstance(getContext()).getWritableDatabase();
 
             /* Format current date to database format with wildcard to pattern match */
-            String dateFormatted = mTableHelper.getDateQueryWildcardFormat(mSelectedDate);
+            String dateFormatted = mTableHelper.getDateQuery(mSelectedDate);
 
             if(db.isOpen())
                 return db.rawQuery(DBConstants.ACCOMPLISHMENT_QUERY,new String[]{dateFormatted});

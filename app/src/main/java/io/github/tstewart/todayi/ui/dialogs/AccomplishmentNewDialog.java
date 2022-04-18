@@ -34,13 +34,9 @@ public class AccomplishmentNewDialog extends AccomplishmentDialog {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
 
-        // Set default times for date and time input
-        mSelectedTime = LocalTime.now();
-        DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT_NO_TIME);
+        // Set default date for date input
+        DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT);
         mDateInput.setText(dateFormatter.format(mSelectedDate));
-
-        DateFormatter timeFormatter = new DateFormatter(DBConstants.TIME_FORMAT);
-        mTimeInput.setText(timeFormatter.format(mSelectedTime));
 
         // Hide delete button
         mDeleteButton.setVisibility(View.GONE);
@@ -50,8 +46,7 @@ public class AccomplishmentNewDialog extends AccomplishmentDialog {
     @Override
     public void onConfirmButtonClicked(View view) {
         /* Create Accomplishment object from new values */
-        LocalDateTime accomplishmentDate = LocalDateTime.of(mSelectedDate, mSelectedTime);
-        Accomplishment accomplishment = Accomplishment.create(accomplishmentDate, mTitleInput.getText().toString(), mDescriptionInput.getText().toString());
+        Accomplishment accomplishment = Accomplishment.create(mSelectedDate, mTitleInput.getText().toString(), mDescriptionInput.getText().toString());
 
         try {
             /* Insert Accomplishment into Database */

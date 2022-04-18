@@ -2,6 +2,7 @@ package io.github.tstewart.todayi.models;
 
 import android.content.ContentValues;
 
+import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
 
 import androidx.annotation.NonNull;
@@ -23,20 +24,20 @@ public class Accomplishment implements DatabaseObject {
     private static final int MAX_DESCRIPTION_LENGTH = 1000;
 
     /* Date Accomplishment was created on */
-    private LocalDateTime mDate;
+    private LocalDate mDate;
     /* Title of Accomplishment */
     private final String mTitle;
     /* Description of Accomplishment */
     private String mDescription;
 
-    public Accomplishment(@NonNull LocalDateTime date, @NonNull String title, String description) {
+    public Accomplishment(@NonNull LocalDate date, @NonNull String title, String description) {
         this.mDate = date;
         this.mTitle = title;
         this.mDescription = description;
     }
 
     /* Create new Accomplishment for inserting into database. Clips Accomplishment content if enabled. */
-    public static Accomplishment create(@NonNull LocalDateTime date, @NonNull String title, String description) {
+    public static Accomplishment create(@NonNull LocalDate date, @NonNull String title, String description) {
         Accomplishment accomplishment = new Accomplishment(date, title, description);
         /* Clip content if enabled */
         accomplishment.setContent(description);
@@ -89,11 +90,11 @@ public class Accomplishment implements DatabaseObject {
         return contentValues;
     }
 
-    public LocalDateTime getDate() {
+    public LocalDate getDate() {
         return mDate;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(LocalDate date) {
         this.mDate = date;
     }
 

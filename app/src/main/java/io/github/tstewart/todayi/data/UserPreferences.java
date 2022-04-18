@@ -28,9 +28,6 @@ public class UserPreferences {
     /* Whether or not to remove empty lines from Accomplishment content */
     private static boolean sAccomplishmentClipEmptyLines = true;
 
-    /* Whether or not to add time picking to Accomplishments */
-    private static boolean sEnableTimePicker = true;
-
     /* Preferences location to check */
     private final SharedPreferences mPreferences;
 
@@ -137,13 +134,5 @@ public class UserPreferences {
 
     public static void setAccomplishmentClipEmptyLines(boolean accomplishmentClipEmptyLines) {
         UserPreferences.sAccomplishmentClipEmptyLines = accomplishmentClipEmptyLines;
-    }
-
-    public static boolean isEnableTimePicker() {
-        return sEnableTimePicker;
-    }
-
-    public static void setEnableTimePicker(boolean enableTimePicker) {
-        sEnableTimePicker = enableTimePicker;
     }
 }

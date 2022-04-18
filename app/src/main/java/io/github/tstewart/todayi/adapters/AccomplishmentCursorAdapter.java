@@ -18,6 +18,7 @@ import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
 
 import io.github.tstewart.todayi.R;
@@ -57,28 +58,22 @@ public class AccomplishmentCursorAdapter extends CursorAdapter {
         TextView titleView = view.findViewById(R.id.textViewTitle);
         /* Get description TextView from layout */
         TextView descriptionView = view.findViewById(R.id.textViewDescription);
-        /* Get time posted TextView from layout */
-        TextView datePostedView = view.findViewById(R.id.textViewTimePosted);
         /* Get the title of the next item in the Accomplishment table */
         String title = cursor.getString(cursor.getColumnIndexOrThrow(DBConstants.COLUMN_TITLE));
         /* Get the description of the next item in the Accomplishment table */
         String description = cursor.getString(cursor.getColumnIndexOrThrow(DBConstants.COLUMN_DESCRIPTION));
         /* Get Accomplishment id of this entry in the Accomplishment table */
         int id = cursor.getInt(cursor.getColumnIndexOrThrow(DBConstants.COLUMN_ID));
-        /* As older versions of the database may not have been updated, try and get the timePosted string but if it fails, don't add it. */
-        LocalDateTime datePosted = null;
+        /* Get date posted of this entry in the Accomplishment table */
+        LocalDate datePosted = null;
 
         try {
-            /* Get the time posted of the next item in the Accomplishment table */
+            /* Get the date posted of the next item in the Accomplishment table */
             String datePostedText = cursor.getString(cursor.getColumnIndexOrThrow(DBConstants.COLUMN_DATE));
 
-            /* Parse database date to LocalTime object */
+            /* Parse database date to LocalDate object */
             datePosted = new DateFormatter(DBConstants.DATE_FORMAT).parseDate(datePostedText);
 
-            /* If there was a time posted and time picking is enabled, set date TextView to this. */
-            if(datePosted != null && UserPreferences.isEnableTimePicker()) {
-                datePostedView.setText(new DateFormatter(DBConstants.TIME_FORMAT).format(datePosted));
-            }
         }
         catch(SQLiteException | IllegalArgumentException e) {
             Log.w(AccomplishmentCursorAdapter.class.getSimpleName(), e.getMessage(), e);

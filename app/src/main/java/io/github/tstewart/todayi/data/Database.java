@@ -57,8 +57,7 @@ public class Database extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        /* If upgrading database, delete Accomplishment table and try and recreate it
-        * Fixes old database models not containing proper time-based Accomplishment data */
+        /* If upgrading database, delete Accomplishment table and try and recreate it */
         try {
             db.execSQL("DROP TABLE IF EXISTS " + DBConstants.ACCOMPLISHMENT_TABLE);
             db.execSQL(CREATE_TABLE_ACCOMPLISHMENT);

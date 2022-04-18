@@ -33,9 +33,8 @@ import io.github.tstewart.todayi.helpers.db.AccomplishmentTableHelper;
 
 public class AccomplishmentDialog extends DialogFragment {
 
-    /* Selected date and time */
+    /* Selected date */
     LocalDate mSelectedDate;
-    LocalTime mSelectedTime;
 
     /* Currently active picker dialog, to prevent opening multiple date/time dialogs */
     DialogFragment mOpenPickerDialog;
@@ -48,10 +47,6 @@ public class AccomplishmentDialog extends DialogFragment {
     TextInputEditText mDescriptionInput;
     /* Date input */
     TextInputEditText mDateInput;
-    /* Time toggle checkbox */
-    CheckBox mTimeToggle;
-    /* Time input */
-    TextInputEditText mTimeInput;
     /* Delete button */
     Button mDeleteButton;
     /* Cancel button */
@@ -101,15 +96,12 @@ public class AccomplishmentDialog extends DialogFragment {
         mTitleInput = view.findViewById(R.id.editTextAccomplishmentTitle);
         mDescriptionInput = view.findViewById(R.id.editTextAccomplishmentDescription);
         mDateInput = view.findViewById(R.id.editTextAccomplishmentDate);
-        //mTimeToggle = view.findViewById(R.id.accomplishmentTimeToggle);
-        mTimeInput = view.findViewById(R.id.editTextAccomplishmentTime);
         mDeleteButton = view.findViewById(R.id.buttonDelete);
         mCancelButton = view.findViewById(R.id.buttonCancel);
         mConfirmButton = view.findViewById(R.id.buttonConfirm);
 
         // Set date/time click listeners
         mDateInput.setOnClickListener(this::onDateSelectionClicked);
-        mTimeInput.setOnClickListener(this::onTimeSelectionClicked);
 
         // Set button click listeners
         mCancelButton.setOnClickListener(this::onCancelButtonClicked);
@@ -138,31 +130,11 @@ public class AccomplishmentDialog extends DialogFragment {
             if(dateSelection != null) {
                 mSelectedDate = Instant.ofEpochMilli(mDatePicker.getSelection()).atZone(ZoneId.systemDefault()).toLocalDate();
 
-                DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT_NO_TIME);
+                DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT);
                 mDateInput.setText(dateFormatter.format(mSelectedDate));
             }
         });
         openDialogIfNoneOpen(mDatePicker);
-    }
-
-    private void onTimeSelectionClicked(View view) {
-        MaterialTimePicker.Builder mTimePickerBuilder = new MaterialTimePicker.Builder()
-                .setTimeFormat(TimeFormat.CLOCK_24H);
-
-        if(mSelectedTime != null) {
-            mTimePickerBuilder.setHour(mSelectedTime.getHour());
-            mTimePickerBuilder.setMinute(mSelectedTime.getMinute());
-        }
-
-        MaterialTimePicker mTimePicker = mTimePickerBuilder.build();
-
-        mTimePicker.addOnPositiveButtonClickListener(view1 -> {
-            mSelectedTime = LocalTime.of(mTimePicker.getHour(), mTimePicker.getMinute());
-
-            DateFormatter dateFormatter = new DateFormatter(DBConstants.TIME_FORMAT);
-            mTimeInput.setText(dateFormatter.format(mSelectedTime));
-        });
-        openDialogIfNoneOpen(mTimePicker);
     }
 
     void openDialogIfNoneOpen(DialogFragment dialog) {

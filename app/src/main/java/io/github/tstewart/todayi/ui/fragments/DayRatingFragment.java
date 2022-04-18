@@ -163,7 +163,7 @@ public class DayRatingFragment extends Fragment implements OnDateChangedListener
             /* Check existing rating, if it is the same as this rating, assume the rating is being cancelled */
             int existingRating = mTableHelper.getRating(mSelectedDate, -1);
             if(existingRating>0 && existingRating==rating) {
-                String currentDateString = mSelectedDate.format(DateTimeFormatter.ofPattern(DBConstants.DATE_FORMAT_NO_TIME));
+                String currentDateString = mSelectedDate.format(DateTimeFormatter.ofPattern(DBConstants.DATE_FORMAT));
                 mTableHelper.delete(DBConstants.COLUMN_DATE+"=?", new String[]{currentDateString});
                 mRatingSelector.setRating(-1);
             }

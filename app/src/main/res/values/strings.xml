@@ -24,10 +24,6 @@
     <string name="accomplishment_title_hint">Title</string>
     <string name="accomplishment_description_hint">Description (optional)</string>
     <string name="accomplishment_date_hint">Date</string>
-    <string name="accomplishment_time_toggle">Include time?</string>
-    <string name="accomplishment_time_hint">Time</string>
-    <string name="current_accomplishment_time">Set time</string>
-    <string name="button_set_custom_time">Set time…</string>
     <string name="confirm_delete">Delete this Accomplishment?</string>
 
     <!-- Options Activity -->
@@ -117,7 +113,6 @@
     <string name="user_prefs_gestures_enabled">gestures_enabled</string>
     <string name="user_prefs_clip_empty_lines">clip_empty_lines</string>
     <string name="user_prefs_num_day_ratings">num_ratings</string>
-    <string name="user_prefs_time_selection_enabled">time_selection_enabled</string>
 
     <!-- Debug Activity -->
     <string name="debug_invalidate_backup">Invalidate backup</string>

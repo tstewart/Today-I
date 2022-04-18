@@ -7,7 +7,7 @@ public class DBConstants {
 
     /* Meta table data */
     public static final String DB_NAME = "todayi_db";
-    public static final int DB_VERSION = 7;
+    public static final int DB_VERSION = 8;
 
     /* Table names */
     public static final String ACCOMPLISHMENT_TABLE = "accomplishments";
@@ -23,10 +23,7 @@ public class DBConstants {
     /*
      Default date format, all dates should be formatted to this to be accepted
     */
-    public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm";
-    public static final String DATE_FORMAT_NO_TIME = "yyyy-MM-dd";
-    /* Time format, used when date is not required to be shown */
-    public static final String TIME_FORMAT = "HH:mm";
+    public static final String DATE_FORMAT = "yyyy-MM-dd";
 
 
     /* Helper queries to fetch data */

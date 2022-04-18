@@ -99,7 +99,7 @@ public class DebugActivity extends AppCompatActivity {
                             int numPosts = random.nextInt(5);
 
                             for (int i = 0; i < numPosts; i++) {
-                                Accomplishment accomplishment = new Accomplishment(currentDate.atStartOfDay(), "DUMMY CONTENT!", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
+                                Accomplishment accomplishment = new Accomplishment(currentDate, "DUMMY CONTENT!", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
 
                                 try {
                                     helper.insert(accomplishment);
