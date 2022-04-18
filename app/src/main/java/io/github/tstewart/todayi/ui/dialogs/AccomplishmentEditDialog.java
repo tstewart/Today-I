@@ -24,13 +24,15 @@ import io.github.tstewart.todayi.models.Accomplishment;
 public class AccomplishmentEditDialog extends AccomplishmentDialog {
 
     String mTitle;
+    String mDescription;
     long mDatabaseId;
 
-    public AccomplishmentEditDialog(long id, String title, LocalDateTime selectedDate){
+    public AccomplishmentEditDialog(long id, Accomplishment accomplishment){
         mDatabaseId = id;
-        mTitle = title;
-        mSelectedDate = selectedDate.toLocalDate();
-        mSelectedTime = selectedDate.toLocalTime();
+        mTitle = accomplishment.getTitle();
+        mDescription = accomplishment.getDescription();
+        mSelectedDate = accomplishment.getDate().toLocalDate();
+        mSelectedTime = accomplishment.getDate().toLocalTime();
     }
 
     @Override
@@ -44,6 +46,8 @@ public class AccomplishmentEditDialog extends AccomplishmentDialog {
         View view = super.onCreateView(inflater, container, savedInstanceState);
 
         mTitleInput.setText(mTitle);
+
+        mDescriptionInput.setText(mDescription);
 
         DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT_NO_TIME);
         mDateInput.setText(dateFormatter.format(mSelectedDate));
@@ -60,7 +64,7 @@ public class AccomplishmentEditDialog extends AccomplishmentDialog {
     public void onConfirmButtonClicked(View view) {
         /* Create Accomplishment object from new values */
         LocalDateTime accomplishmentDate = LocalDateTime.of(mSelectedDate, mSelectedTime);
-        Accomplishment accomplishment = Accomplishment.create(accomplishmentDate, mTitleInput.getText().toString());
+        Accomplishment accomplishment = Accomplishment.create(accomplishmentDate, mTitleInput.getText().toString(), mDescriptionInput.getText().toString());
 
         try {
             /* Insert Accomplishment into Database */

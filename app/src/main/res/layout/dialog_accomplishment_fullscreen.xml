@@ -45,9 +45,10 @@
                 android:autofillHints="Content"
                 android:ems="10"
                 android:importantForAutofill="no"
-                android:inputType="textMultiLine|textCapSentences"
+                android:inputType="text|textCapSentences"
                 android:labelFor="@id/editTextAccomplishmentTitle"
-                android:maxLength="200">
+                android:maxLines="1"
+                android:maxLength="100">
 
             </com.google.android.material.textfield.TextInputEditText>
         </com.google.android.material.textfield.TextInputLayout>

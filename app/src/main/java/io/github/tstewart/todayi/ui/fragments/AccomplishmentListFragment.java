@@ -12,11 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -27,15 +24,12 @@ import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.format.DateTimeParseException;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.ListFragment;
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.adapters.AccomplishmentCursorAdapter;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
 import io.github.tstewart.todayi.data.UserPreferences;
-import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.events.OnDatabaseInteracted;
 import io.github.tstewart.todayi.events.OnDateChanged;
 import io.github.tstewart.todayi.events.OnSwipePerformedListener;
@@ -114,8 +108,6 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
             setListAdapter(mCursorAdapter);
         }
 
-        getListView().setOnItemClickListener(this::onListItemClick);
-
         /* Add listener to notify fragment of database updates */
         OnDatabaseInteracted.addListener(this);
         /* Add listener to notify fragment of date changes */
@@ -175,49 +167,6 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
                 }
             }
         };
-    }
-
-    private void onListItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        if (mCursorAdapter == null) {
-            Log.w(this.getClass().getName(), "List item click called before adapter initialised.");
-            return;
-        }
-
-        /* Get cursor for currently selected Accomplishment */
-        Cursor cursor = (Cursor) mCursorAdapter.getItem(position);
-
-        /* Position of the item clicked must be less than the total number of rows in the cursor */
-        if (cursor.getCount() > position) {
-
-            /* Get content of the currently selected Accomplishment */
-            String itemContent = cursor.getString(cursor.getColumnIndex(DBConstants.COLUMN_CONTENT));
-
-            /* Get time posted if available, otherwise default to current time */
-            LocalDateTime selectedDate = null;
-            String timePosted;
-            try {
-                /* Get time posted and attempt to parse into a date object */
-                timePosted = cursor.getString(cursor.getColumnIndex(DBConstants.COLUMN_DATE));
-
-                if(timePosted != null) {
-                    selectedDate = LocalDateTime.parse(timePosted, DateTimeFormatter.ofPattern(DBConstants.DATE_FORMAT));
-                }
-            }
-            /* If failed, ignore this error and set selected date to default */
-            catch(SQLiteException | DateTimeParseException ignore) {
-                selectedDate = LocalDateTime.now();
-            }
-
-            /*
-             Dismiss current dialog if one is currently open
-             Prevents multiple dialogs from opening
-            */
-            dismissCurrentDialog();
-
-            this.mDialog = new AccomplishmentEditDialog(id, itemContent, selectedDate);
-
-            this.mDialog.display(getParentFragmentManager());
-        }
     }
 
     private void onNewItemButtonPressed(View view) {

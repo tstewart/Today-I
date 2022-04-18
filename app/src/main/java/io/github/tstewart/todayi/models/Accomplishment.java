@@ -17,46 +17,53 @@ import io.github.tstewart.todayi.interfaces.DatabaseObject;
  */
 public class Accomplishment implements DatabaseObject {
 
-    /* Maximum length of an Accomplishment body */
-    private static final int MAX_CONTENT_LENGTH = 200;
+    /* Maximum length of an Accomplishment title */
+    private static final int MAX_TITLE_LENGTH = 100;
+    /* Maximum length of an Accomplishment description */
+    private static final int MAX_DESCRIPTION_LENGTH = 1000;
 
     /* Date Accomplishment was created on */
     private LocalDateTime mDate;
-    /* Content of Accomplishment */
-    private String mContent;
+    /* Title of Accomplishment */
+    private final String mTitle;
+    /* Description of Accomplishment */
+    private String mDescription;
 
-    public Accomplishment(@NonNull LocalDateTime date, @NonNull String content) {
+    public Accomplishment(@NonNull LocalDateTime date, @NonNull String title, String description) {
         this.mDate = date;
-        this.mContent = content;
+        this.mTitle = title;
+        this.mDescription = description;
     }
 
     /* Create new Accomplishment for inserting into database. Clips Accomplishment content if enabled. */
-    public static Accomplishment create(@NonNull LocalDateTime date, @NonNull String content) {
-        Accomplishment accomplishment = new Accomplishment(date, content);
+    public static Accomplishment create(@NonNull LocalDateTime date, @NonNull String title, String description) {
+        Accomplishment accomplishment = new Accomplishment(date, title, description);
         /* Clip content if enabled */
-        accomplishment.setContent(content);
+        accomplishment.setContent(description);
 
         return accomplishment;
     }
 
     /**
      * Validates the Accomplishment to Database standards.
-     * @throws IllegalArgumentException If the validation failed for any reason (e.g. Length was longer than MAX_CONTENT_LENGTH)
+     * @throws IllegalArgumentException If the validation failed for any reason (e.g. Length was longer than MAX_TITLE_LENGTH)
      */
     @Override
     public void validate() throws ValidationFailedException {
 
         /* If the content has been assigned as null (through setContent) */
-        if(mContent == null) {
+        if(mTitle == null) {
             throw new ValidationFailedException("Content cannot be null.");
         }
 
         /* If the content string is empty with spaces removed */
-        if (mContent.trim().isEmpty()) {
+        if (mTitle.trim().isEmpty()) {
             throw new ValidationFailedException("Accomplishment must not be empty.");
             /* If the content string is larger than the maximum content length */
-        } else if (mContent.length() > MAX_CONTENT_LENGTH) {
-            throw new ValidationFailedException("Accomplishment can not be longer than " + MAX_CONTENT_LENGTH + " characters.");
+        } else if (mTitle.length() > MAX_TITLE_LENGTH) {
+            throw new ValidationFailedException("Accomplishment title can not be longer than " + MAX_TITLE_LENGTH + " characters.");
+        } else if (mDescription.length() > MAX_DESCRIPTION_LENGTH) {
+            throw new ValidationFailedException("Accomplishment description can not be longer than " + MAX_DESCRIPTION_LENGTH + " characters.");
         }
     }
 
@@ -75,7 +82,9 @@ public class Accomplishment implements DatabaseObject {
             contentValues.put(DBConstants.COLUMN_DATE, dateFormatter.format(mDate));
         }
 
-        contentValues.put(DBConstants.COLUMN_CONTENT, mContent);
+        contentValues.put(DBConstants.COLUMN_TITLE, mTitle);
+
+        contentValues.put(DBConstants.COLUMN_DESCRIPTION, mDescription);
 
         return contentValues;
     }
@@ -88,8 +97,16 @@ public class Accomplishment implements DatabaseObject {
         this.mDate = date;
     }
 
-    public String getContent() {
-        return mContent;
+    public String getTitle() {
+        return mTitle;
+    }
+
+    public String getDescription() {
+        return mDescription;
+    }
+
+    public void setDescription(String description) {
+        this.mDescription = description;
     }
 
     public void setContent(String content) {
@@ -97,7 +114,7 @@ public class Accomplishment implements DatabaseObject {
         if(content != null && UserPreferences.isAccomplishmentClipEmptyLines()) {
             content = content.replaceAll("(?m)^[ \t]*\r?\n", "");
         }
-        this.mContent = content;
+        this.mDescription = content;
     }
 
 }

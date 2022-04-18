@@ -1,6 +1,5 @@
 package io.github.tstewart.todayi.adapters;
 
-import android.app.Application;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
@@ -12,21 +11,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
-import org.threeten.bp.LocalTime;
-import org.threeten.bp.format.DateTimeFormatter;
-import org.threeten.bp.format.DateTimeParseException;
 
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.DBConstants;
@@ -61,12 +53,16 @@ public class AccomplishmentCursorAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
 
-        /* Get content TextView from layout */
-        TextView contentView = view.findViewById(R.id.textViewContent);
+        /* Get title TextView from layout */
+        TextView titleView = view.findViewById(R.id.textViewTitle);
+        /* Get description TextView from layout */
+        TextView descriptionView = view.findViewById(R.id.textViewDescription);
         /* Get time posted TextView from layout */
         TextView datePostedView = view.findViewById(R.id.textViewTimePosted);
-        /* Get the content of the next item in the Accomplishment table */
-        String content = cursor.getString(cursor.getColumnIndexOrThrow(DBConstants.COLUMN_CONTENT));
+        /* Get the title of the next item in the Accomplishment table */
+        String title = cursor.getString(cursor.getColumnIndexOrThrow(DBConstants.COLUMN_TITLE));
+        /* Get the description of the next item in the Accomplishment table */
+        String description = cursor.getString(cursor.getColumnIndexOrThrow(DBConstants.COLUMN_DESCRIPTION));
         /* Get Accomplishment id of this entry in the Accomplishment table */
         int id = cursor.getInt(cursor.getColumnIndexOrThrow(DBConstants.COLUMN_ID));
         /* As older versions of the database may not have been updated, try and get the timePosted string but if it fails, don't add it. */
@@ -87,8 +83,10 @@ public class AccomplishmentCursorAdapter extends CursorAdapter {
         catch(SQLiteException | IllegalArgumentException e) {
             Log.w(AccomplishmentCursorAdapter.class.getSimpleName(), e.getMessage(), e);
         }
-        /* Set Accomplishment TextView content */
-        contentView.setText(content);
+        /* Set Accomplishment TextView title */
+        titleView.setText(title);
+        /* Set Accomplishment TextView description */
+        descriptionView.setText(description);
 
         /* Get expanded details layout */
         LinearLayout accomplishmentDetailsExpanded = view.findViewById(R.id.layoutAccomplishmentExpanded);
@@ -108,7 +106,7 @@ public class AccomplishmentCursorAdapter extends CursorAdapter {
         }
 
         /* Create Accomplishment from these values */
-        Accomplishment accomplishment = new Accomplishment(datePosted, content);
+        Accomplishment accomplishment = new Accomplishment(datePosted, title, description);
 
         /* Add edit button clicked listener */
         Button editAccomplishmentButton = view.findViewById(R.id.buttonEditAccomplishment);
@@ -129,7 +127,7 @@ public class AccomplishmentCursorAdapter extends CursorAdapter {
     }
 
     private void onEditButtonClicked(Accomplishment accomplishment, int id) {
-        AccomplishmentDialog dialog = new AccomplishmentEditDialog(id, accomplishment.getContent(), accomplishment.getDate());
+        AccomplishmentDialog dialog = new AccomplishmentEditDialog(id, accomplishment);
 
         dialog.show(mParent.getParentFragmentManager(), dialog.getClass().getSimpleName());
     }
