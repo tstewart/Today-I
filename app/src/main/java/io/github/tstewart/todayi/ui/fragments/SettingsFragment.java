@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import org.threeten.bp.LocalTime;
@@ -27,6 +28,8 @@ import androidx.preference.PreferenceScreen;
 import androidx.preference.SwitchPreferenceCompat;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.timepicker.MaterialTimePicker;
+import com.google.android.material.timepicker.TimeFormat;
 
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.DBConstants;
@@ -214,27 +217,29 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             currentNotificationTime = LocalTime.of(18,0);
         }
 
-        /* Show a time picker */
-        new TimePickerDialog(getContext(),
-                (timeView, hourOfDay, minute) -> {
-                    LocalTime selectedTime = LocalTime.of(hourOfDay,minute);
-                    String selectedTimeString = selectedTime.format(DateTimeFormatter.ofPattern("HH:mm"));
+        MaterialTimePicker timePicker = new MaterialTimePicker.Builder()
+                .setTimeFormat(TimeFormat.CLOCK_24H)
+                .setHour(currentNotificationTime.getHour())
+                .setMinute(currentNotificationTime.getMinute())
+                .build();
 
-                    /* Set summary text for this preference to the selected time */
-                    preference.setSummary(selectedTimeString);
+        timePicker.addOnPositiveButtonClickListener(picker -> {
+            LocalTime selectedTime = LocalTime.of(timePicker.getHour(),timePicker.getMinute());
+            String selectedTimeString = selectedTime.format(DateTimeFormatter.ofPattern("HH:mm"));
 
-                    /* Set notification time value in settings */
-                    if(mUserPreferences != null)
-                        mUserPreferences.set(mPreferenceKeys.NOTIFICATION_TIME_KEY, selectedTimeString);
+            /* Set summary text for this preference to the selected time */
+            preference.setSummary(selectedTimeString);
 
-                    /* Restart notification alarm */
-                    if(getContext() != null)
-                        DailyReminderAlarmHelper.updateAlarm(getContext(),selectedTime);
-                },
-                currentNotificationTime.getHour(),
-                currentNotificationTime.getMinute(),
-                true)
-                .show();
+            /* Set notification time value in settings */
+            if(mUserPreferences != null)
+                mUserPreferences.set(mPreferenceKeys.NOTIFICATION_TIME_KEY, selectedTimeString);
+
+            /* Restart notification alarm */
+            if(getContext() != null)
+                DailyReminderAlarmHelper.updateAlarm(getContext(),selectedTime);
+        });
+
+        timePicker.show(getParentFragmentManager(), timePicker.getClass().getSimpleName());
 
         return true;
     }
