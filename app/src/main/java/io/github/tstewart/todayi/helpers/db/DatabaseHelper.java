@@ -8,6 +8,9 @@ import android.database.sqlite.SQLiteDatabase;
 import org.threeten.bp.LocalDate;
 
 import androidx.annotation.NonNull;
+
+import java.util.Date;
+
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
 import io.github.tstewart.todayi.events.OnDatabaseInteracted;
@@ -22,9 +25,9 @@ public class DatabaseHelper {
     /* Application environment context */
     final Context mContext;
     /* Table of database to read/write data from */
-    private final String mTable;
+    final String mTable;
     /* Database to read/write data from */
-    private SQLiteDatabase mDb;
+    SQLiteDatabase mDb;
 
     public DatabaseHelper(@NonNull Context context, @NonNull String table) {
         this.mContext = context;
@@ -68,6 +71,7 @@ public class DatabaseHelper {
 
         /* If the ContentValues were generated successfully, insert into table */
         if (cv != null) {
+
             mDb.insert(this.mTable, null, cv);
         }
 
@@ -81,12 +85,18 @@ public class DatabaseHelper {
      * @param whereClause Replace records that match clause
      * @param whereArgs Replaces '?' wildcards in whereClause
      */
-    public void update(@NonNull DatabaseObject object, String whereClause, String[] whereArgs) {
-        mDb = getDatabase();
+    public void updateDBObject(@NonNull DatabaseObject object, String whereClause, String[] whereArgs) {
         ContentValues cv = object.createCV();
+
+        update(cv, whereClause, whereArgs);
+    }
+
+    public void update(ContentValues cv, String whereClause, String[] whereArgs) {
+        mDb = getDatabase();
 
         /* If the ContentValues were generated successfully, update record */
         if (cv != null) {
+
             mDb.update(this.mTable, cv, whereClause, whereArgs);
         }
 

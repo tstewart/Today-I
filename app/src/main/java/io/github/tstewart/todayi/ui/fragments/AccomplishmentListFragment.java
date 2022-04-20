@@ -10,9 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.LinearLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.mobeta.android.dslv.DragSortController;
+import com.mobeta.android.dslv.DragSortListView;
 
 import org.threeten.bp.LocalDate;
 
@@ -64,9 +66,14 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
         View view = inflater.inflate(R.layout.fragment_accomplishment_list, container, false);
 
         /* Add gesture support, allowing user to change dates by swiping the ListView */
-        ListView listView = view.findViewById(android.R.id.list);
+        DragSortListView listView = view.findViewById(android.R.id.list);
+        LinearLayout accomplishmentListLayout = view.findViewById(R.id.listLayout);
+
+        if(accomplishmentListLayout != null) {
+            accomplishmentListLayout.setOnTouchListener(changeDayOnSwipe());
+        }
+
         if(listView != null) {
-            listView.setOnTouchListener(changeDayOnSwipe());
             /* Get indicator imageView */
             ImageView indicator = view.findViewById(R.id.imageViewListDownIndicator);
 
@@ -77,6 +84,15 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
                 /* Add onClickListener to indicator to auto scroll to bottom of ListView */
                 indicator.setOnClickListener(v -> listView.setSelection(listView.getCount()-1));
             }
+
+            DragSortController controller = new DragSortController(listView);
+            controller.setDragHandleId(R.id.drag_handle);
+            controller.setDragInitMode(1);
+            controller.setBackgroundColor(R.color.colorTransparent);
+
+            listView.setFloatViewManager(controller);
+            listView.setOnTouchListener(controller);
+            listView.setDragEnabled(true);
         }
 
         /* Get "+" button, to add a new Accomplishment on click */
@@ -111,6 +127,12 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
         super.onResume();
         /* Prevents dialogs remaining open if the user changes activities while a dialog is open */
         dismissCurrentDialog();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mCursorAdapter.persistPositions();
     }
 
     /* Return listener action to change current day when view is swiped */
@@ -185,7 +207,7 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
     /*
      * Get new cursor by checking Database for Accomplishments on selected date
      */
-    private Cursor getNewCursor() {
+    public Cursor getNewCursor() {
         Context context = getContext();
         if(context != null) {
             SQLiteDatabase db = Database.getInstance(getContext()).getWritableDatabase();
@@ -203,8 +225,8 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
        Set cursor to new cursor, closing current cursor
      */
     private void setCursor(Cursor cursor) {
-        Cursor currentCursor = mCursorAdapter.getCursor();
-        if (currentCursor != null) currentCursor.close();
+        //Cursor currentCursor = mCursorAdapter.getCursor();
+        //if (currentCursor != null) currentCursor.close();
 
         mCursorAdapter.swapCursor(cursor);
     }
@@ -225,6 +247,7 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
     @Override
     public void onDateChanged(LocalDate date) {
         this.mSelectedDate = date;
+        if(mCursorAdapter.getCursor() != null) mCursorAdapter.persistPositions();
         refreshCursor();
     }
 }

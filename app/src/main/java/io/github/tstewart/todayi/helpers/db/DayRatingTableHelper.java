@@ -44,7 +44,7 @@ public class DayRatingTableHelper extends DatabaseHelper {
             /* If the cursor is able to move to a record for this date, then a record already exists */
             if (existingRowCheck.moveToFirst()) {
                 /* Update the existing record */
-                super.update( dayRating, DBConstants.COLUMN_DATE + "=?", new String[]{dateFormatted});
+                super.updateDBObject( dayRating, DBConstants.COLUMN_DATE + "=?", new String[]{dateFormatted});
             } else {
                 /* Insert a new record for this date */
                 super.insert(dayRating);

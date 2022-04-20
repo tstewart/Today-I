@@ -13,18 +13,22 @@
         android:id="@+id/listLayout">
 
         <FrameLayout
+            android:id="@+id/frameLayoutAccomplishmentList"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:clickable="false">
 
-            <ListView
+            <com.mobeta.android.dslv.DragSortListView xmlns:dslv="http://schemas.android.com/apk/res-auto"
                 android:id="@android:id/list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:divider="@null"
-                android:listSelector="@color/colorTransparent">
-            </ListView>
+                android:listSelector="@color/colorTransparent"
+                dslv:drag_enabled="true"
+                dslv:drag_handle_id="@id/drag_handle"
+                dslv:drag_start_mode="onMove"
+                dslv:float_background_color="@color/colorTransparent" />
 
             <ImageView
                 android:id="@+id/imageViewListDownIndicator"

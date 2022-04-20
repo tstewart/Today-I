@@ -17,9 +17,14 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.mobeta.android.dslv.DragSortCursorAdapter;
+import com.mobeta.android.dslv.SimpleDragSortCursorAdapter;
 
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.DBConstants;
@@ -34,14 +39,14 @@ import io.github.tstewart.todayi.ui.fragments.AccomplishmentListFragment;
 /**
  * Pulls data from the Accomplishments table of the database, and converts it's data into a ListItem
  */
-public class AccomplishmentCursorAdapter extends CursorAdapter {
+public class AccomplishmentCursorAdapter extends DragSortCursorAdapter {
 
     AccomplishmentListFragment mParent;
     AccomplishmentTableHelper mTableHelper;
 
     /* Flags for CursorAdapter constructor are set to 0 to prevent use of Deprecated constructor that utilises AUTO_QUERY */
     public AccomplishmentCursorAdapter(AccomplishmentListFragment parent, Context context, Cursor c) {
-        super(context, c, 0);
+        super(context, c);
         this.mParent = parent;
         this.mTableHelper = new AccomplishmentTableHelper(parent.getContext());
     }
@@ -87,12 +92,14 @@ public class AccomplishmentCursorAdapter extends CursorAdapter {
         LinearLayout accomplishmentDetailsExpanded = view.findViewById(R.id.layoutAccomplishmentExpanded);
         /* Get Accomplishment card view */
         MaterialCardView accomplishmentCardView = view.findViewById(R.id.cardViewAccomplishment);
+        /* Get Accomplishment card content view */
+        LinearLayout accomplishmentContentLayout = view.findViewById(R.id.linearLayoutContent);
         if(accomplishmentDetailsExpanded != null && accomplishmentCardView != null) {
             /* Hide expanded details by default */
             accomplishmentDetailsExpanded.setVisibility(View.GONE);
-            /* Set onclick listener to CardView to expand details panel
+            /* Set onclick listener to content layout to expand details panel
             * Requires an inline function */
-            accomplishmentCardView.setOnClickListener(card -> {
+            accomplishmentContentLayout.setOnClickListener(card -> {
                 TransitionManager.beginDelayedTransition(accomplishmentCardView);
                 int visibility = accomplishmentDetailsExpanded.getVisibility();
 
@@ -144,4 +151,24 @@ public class AccomplishmentCursorAdapter extends CursorAdapter {
         deleteDialog.show();
     }
 
+    @Override
+    public void drop(int from, int to) {
+        super.drop(from, to);
+        Cursor droppedCursor = (Cursor) getItem(from);
+        Log.e("TAG", droppedCursor.getString(droppedCursor.getColumnIndexOrThrow(DBConstants.COLUMN_TITLE)));
+    }
+
+    public void persistPositions() {
+        Cursor cursor = getCursor();
+        cursor.moveToPosition(-1);
+
+        ArrayList<Integer> cursorPositions = getCursorPositions();
+
+        for(int i = 0; i < cursorPositions.size(); i++) {
+            cursor.moveToPosition(cursorPositions.get(i));
+
+            long id = cursor.getLong(cursor.getColumnIndexOrThrow(DBConstants.COLUMN_ID));
+            mTableHelper.updatePosition(id, i);
+        }
+    }
 }

@@ -53,7 +53,7 @@ public class Accomplishment implements DatabaseObject {
     public void validate() throws ValidationFailedException {
 
         /* If the content has been assigned as null (through setContent) */
-        if(mTitle == null) {
+        if(mDescription == null) {
             throw new ValidationFailedException("Content cannot be null.");
         }
 

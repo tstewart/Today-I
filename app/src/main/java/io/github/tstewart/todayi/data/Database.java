@@ -20,7 +20,8 @@ public class Database extends SQLiteOpenHelper {
             + DBConstants.COLUMN_ID + " integer primary key autoincrement, "
             + DBConstants.COLUMN_DATE + " string not null, "
             + DBConstants.COLUMN_TITLE + " text not null,"
-            + DBConstants.COLUMN_DESCRIPTION + " text"
+            + DBConstants.COLUMN_DESCRIPTION + " text,"
+            + DBConstants.COLUMN_POSITION + " integer"
             + ")";
 
     /* SQL command to create Ratings table */

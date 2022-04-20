@@ -1,5 +1,6 @@
 package io.github.tstewart.todayi.helpers.db;
 
+import android.content.ContentValues;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
@@ -41,7 +42,14 @@ public class AccomplishmentTableHelper extends DatabaseHelper {
         accomplishment.validate();
 
         /* Insert into database, overwriting existing */
-        super.update(accomplishment, DBConstants.COLUMN_ID + "=? ", new String[]{String.valueOf(id)});
+        super.updateDBObject(accomplishment, DBConstants.COLUMN_ID + "=? ", new String[]{String.valueOf(id)});
+    }
+
+    public void updatePosition(long id, int position) {
+        ContentValues cv = new ContentValues();
+        cv.put(DBConstants.COLUMN_POSITION, position);
+
+        super.update(cv, DBConstants.COLUMN_ID + "=?", new String[]{String.valueOf(id)});
     }
 
     /**
