@@ -42,6 +42,16 @@
     <PreferenceCategory app:title="@string/setting_data_management_title">
 
         <Preference
+            app:key="importFromDL"
+            app:title="@string/setting_restore_from_downloads"
+            app:summary="@string/setting_restore_from_downloads_summary"/>
+
+        <Preference
+            app:key="exportToDL"
+            app:title="@string/setting_force_backup_to_downloads"
+            app:summary="@string/setting_force_backup_to_downloads_summary"/>
+
+        <Preference
             app:key="import"
             app:title="@string/setting_restore_backup"
             app:summary="@string/setting_restore_backup_summary"/>

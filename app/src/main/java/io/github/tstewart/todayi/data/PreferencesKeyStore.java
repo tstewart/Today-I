@@ -19,6 +19,10 @@ public class PreferencesKeyStore {
     public final String ENABLE_NOTIFICATIONS_KEY;
     /* Notification time key */
     public final String NOTIFICATION_TIME_KEY;
+    /* Import from downloads data key */
+    public static final String IMPORT_FROM_DL_DATA_KEY = "importFromDL";
+    /* Export to downloads data key */
+    public static final String EXPORT_TO_DL_DATA_KEY = "exportToDL";
     /* Import data key */
     public static final String IMPORT_DATA_KEY = "import";
     /* Export data key */

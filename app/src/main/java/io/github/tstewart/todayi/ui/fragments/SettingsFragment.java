@@ -1,7 +1,5 @@
 package io.github.tstewart.todayi.ui.fragments;
 
-import android.app.AlertDialog;
-import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,7 +9,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import org.threeten.bp.LocalTime;
@@ -41,6 +38,7 @@ import io.github.tstewart.todayi.errors.ExportFailedException;
 import io.github.tstewart.todayi.errors.ImportFailedException;
 import io.github.tstewart.todayi.notifications.DailyReminderAlarmHelper;
 import io.github.tstewart.todayi.ui.activities.DebugActivity;
+import io.github.tstewart.todayi.ui.activities.BackupFileSelectorActivity;
 
 /*
 Fragment of settings views and their functionality.
@@ -135,10 +133,16 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     }
 
     private void setDataManagementListeners() {
+        Preference importFromDLData = findPreference(PreferencesKeyStore.IMPORT_FROM_DL_DATA_KEY);
+        Preference exportFromDLData = findPreference(PreferencesKeyStore.EXPORT_TO_DL_DATA_KEY);
         Preference importData = findPreference(PreferencesKeyStore.IMPORT_DATA_KEY);
         Preference exportData = findPreference(PreferencesKeyStore.EXPORT_DATA_KEY);
         Preference eraseData = findPreference(PreferencesKeyStore.ERASE_DATA_KEY);
 
+        if(importFromDLData != null)
+            importFromDLData.setOnPreferenceClickListener(this::onRestoreBackupFromDLClicked);
+        if(exportFromDLData != null)
+            exportFromDLData.setOnPreferenceClickListener(this::onForceBackupToDLClicked);
         if(importData != null)
             importData.setOnPreferenceClickListener(this::onRestoreBackupClicked);
         if(exportData != null)
@@ -245,6 +249,48 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     }
 
 
+    private boolean onForceBackupToDLClicked(Preference preference) {
+        Context context = getContext();
+
+        new MaterialAlertDialogBuilder(context)
+                .setTitle(R.string.setting_force_backup_to_downloads)
+                .setMessage(R.string.force_backup_to_dl_confirmation)
+                .setPositiveButton(R.string.button_yes, (dialog, which) -> {
+                    try {
+                        /* Force backup database to downloads */
+                        LocalDatabaseIO.backupDbToFile(context, DBConstants.DB_NAME);
+                    } catch (ExportFailedException e) {
+                        /* If failed, alert user and log */
+                        Log.w(this.getClass().getSimpleName(), e.getMessage(), e);
+                        Toast.makeText(getContext(), String.format(getString(R.string.setting_force_backup_failed), e.getMessage()), Toast.LENGTH_LONG).show();
+                    }
+                })
+                .setNegativeButton(R.string.button_no, null)
+                .create()
+                .show();
+
+        return true;
+    }
+
+    private boolean onRestoreBackupFromDLClicked(Preference preference) {
+        Context context = getContext();
+
+        new MaterialAlertDialogBuilder(context)
+                .setTitle(R.string.setting_restore_from_downloads)
+                .setMessage(R.string.restore_backup_to_dl_confirmation)
+                .setPositiveButton(R.string.button_yes, (dialog, which) -> {
+                    Intent fileSelector = new Intent(getActivity(), BackupFileSelectorActivity.class);
+                    startActivity(fileSelector);
+
+                    Toast.makeText(context, R.string.setting_restore_backup_success, Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton(R.string.button_no, null)
+                .create()
+                .show();
+
+        return true;
+    }
+
     private boolean onRestoreBackupClicked(Preference preference) {
         /* Open an alert dialog to confirm if the user wishes to restore from backup */
         new MaterialAlertDialogBuilder(getContext())
@@ -256,7 +302,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         Context context = getContext();
                         try {
                             /* Try and load from backup */
-                            LocalDatabaseIO.importBackupDb(context, DBConstants.DB_NAME);
+                            LocalDatabaseIO.importBackupDb(context);
 
                             Toast.makeText(context, R.string.setting_restore_backup_success, Toast.LENGTH_SHORT).show();
 
@@ -281,7 +327,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 .setPositiveButton(R.string.button_yes, (dialog, which) -> {
                     try {
                         /* Force backup database to file */
-                        LocalDatabaseIO.backupDb(getContext(), DBConstants.DB_NAME);
+                        LocalDatabaseIO.backupDb(getContext());
                         /* Update last backed up */
                         mUserPreferences.set(getString(R.string.user_prefs_last_backed_up_key),System.currentTimeMillis());
 

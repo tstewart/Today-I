@@ -32,11 +32,11 @@
 
     <string name="setting_enable_gestures">Gestures</string>
     <string name="setting_enable_gestures_summary">Allow swiping to change current day</string>
-    <string name="setting_clip_accomplishments">Auto Clipping</string>
+    <string name="setting_clip_accomplishments">Auto clipping</string>
     <string name="setting_clip_accomplishments_summary">Remove empty lines from Accomplishment posts</string>
     <string name="setting_time_selection">Time Selection</string>
     <string name="setting_time_selection_summary">Allow time picking for Accomplishment posts</string>
-    <string name="setting_day_ratings">Maximum Day Rating</string>
+    <string name="setting_day_ratings">Maximum day rating</string>
     <string name="setting_day_ratings_summary">Select your rating for the day from 1-%s</string>
 
     <!-- Notification Settings -->
@@ -50,14 +50,18 @@
 
     <!-- Data Management Settings -->
     <string name="setting_data_management_title">Data Management</string>
-    <string name="setting_restore_backup">Restore Backup</string>
+    <string name="setting_restore_backup">Restore backup</string>
     <string name="setting_restore_backup_summary">Reset application data to your most recent backup</string>
     <string name="setting_restore_backup_success">Backup restored successfully!</string>
     <string name="setting_restore_backup_failed">Failed to import backup: %s</string>
-    <string name="setting_force_backup">Force Backup</string>
+    <string name="setting_force_backup">Force backup</string>
     <string name="setting_force_backup_summary">Backup all application data. Replaces existing backup</string>
     <string name="setting_force_backup_success">Backed up successfully!</string>
     <string name="setting_force_backup_failed">Backup failed: %s</string>
+    <string name="setting_restore_from_downloads">Import from file</string>
+    <string name="setting_force_backup_to_downloads">Export to file</string>
+    <string name="setting_force_backup_to_downloads_summary">Export the database to the downloads folder.</string>
+    <string name="setting_restore_from_downloads_summary">Import the database from the downloads folder.</string>
     <string name="about_last_backed_up">Last backed up</string>
     <string name="setting_erase_all_data">Erase all data</string>
 
@@ -74,6 +78,8 @@
     <string name="erase_all_warning_dialog_message">This cannot be undone.</string>
     <string name="restore_backup_confirmation">Are you sure you want to restore from backup? All data not backed up will be removed.</string>
     <string name="force_backup_confirmation">Are you sure you want to force backup? Your current backup will be overwritten.</string>
+    <string name="force_backup_to_dl_confirmation">Are you sure you want to export backup to downloads? Any previously exported backup will be overwritten.</string>
+    <string name="restore_backup_to_dl_confirmation">Are you sure you want to restore backup from downloads? Your current data will be overwritten.</string>
     <string name="erase_all_confirmed">All data erased.</string>
 
     <!-- Notifications -->
@@ -128,5 +134,4 @@
 
     <!-- Accessibility -->
     <string name="application_logo_description">Application logo</string>
-
 </resources>

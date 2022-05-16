@@ -75,7 +75,7 @@ public class TodayI extends Application {
                 /* If there was a reason to backup */
                     try {
                         /* Backup to local storage */
-                        LocalDatabaseIO.backupDb(this, DBConstants.DB_NAME);
+                        LocalDatabaseIO.backupDb(this);
 
                         /* Set last time backed up */
                         preferences.set(getString(R.string.user_prefs_last_backed_up_key),System.currentTimeMillis());
