@@ -36,7 +36,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
-            android:hint="@string/accomplishment_title_hint">
+            android:hint="@string/accomplishment_title_hint"
+            app:counterEnabled="true"
+            app:counterMaxLength="100">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/editTextAccomplishmentTitle"
@@ -58,7 +60,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
-            android:hint="@string/accomplishment_description_hint">
+            android:hint="@string/accomplishment_description_hint"
+            app:counterEnabled="true"
+            app:counterMaxLength="200">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/editTextAccomplishmentDescription"
