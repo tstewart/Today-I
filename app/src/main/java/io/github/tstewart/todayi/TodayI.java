@@ -240,6 +240,7 @@ public class TodayI extends Application {
 
         void goToLogin() {
             Intent intent = new Intent(getApplicationContext(), PasswordActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }

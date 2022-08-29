@@ -19,6 +19,7 @@
         <activity
             android:name=".PasswordActivity"
             android:exported="false"
+            android:launchMode="singleInstance"
             android:label="@string/title_activity_password" />
         <activity
             android:name=".ui.activities.SettingsActivity"

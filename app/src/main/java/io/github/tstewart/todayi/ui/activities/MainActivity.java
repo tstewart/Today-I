@@ -32,6 +32,8 @@ import io.github.tstewart.todayi.events.OnDateChanged;
 import io.github.tstewart.todayi.helpers.DateFormatter;
 import io.github.tstewart.todayi.helpers.RelativeDateHelper;
 import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
+import io.github.tstewart.todayi.ui.dialogs.AccomplishmentDialog;
+import io.github.tstewart.todayi.ui.dialogs.AccomplishmentNewDialog;
 import io.github.tstewart.todayi.ui.dialogs.CalendarDialog;
 import io.github.tstewart.todayi.ui.fragments.AccomplishmentListFragment;
 import io.github.tstewart.todayi.ui.tutorials.MainActivityTutorial;
@@ -60,6 +62,14 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        /* If MainActivity launched with CREATE_POST flag, launch new Accomplishment dialog */
+        Intent thisIntent = getIntent();
+        if(thisIntent.getAction().equals("io.github.tstewart.todayi.CREATE_POST")) {
+            AccomplishmentDialog dialog = new AccomplishmentNewDialog(LocalDate.now());
+
+            dialog.display(getSupportFragmentManager());
+        }
 
         /* Get bottom bar buttons for controlling date */
         ImageButton prevButton = findViewById(R.id.buttonPrevDay);
