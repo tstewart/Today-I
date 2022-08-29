@@ -19,6 +19,10 @@ public class PreferencesKeyStore {
     public final String ENABLE_NOTIFICATIONS_KEY;
     /* Notification time key */
     public final String NOTIFICATION_TIME_KEY;
+    /* Password protection key */
+    public final String ENABLE_PASSWORD_PROTECTION;
+    /* Auto lock key */
+    public final String ENABLE_AUTO_LOCK;
     /* Import from downloads data key */
     public static final String IMPORT_FROM_DL_DATA_KEY = "importFromDL";
     /* Export to downloads data key */
@@ -42,5 +46,7 @@ public class PreferencesKeyStore {
         this.MAX_DAY_RATING_KEY = context.getString(R.string.user_prefs_num_day_ratings);
         this.ENABLE_NOTIFICATIONS_KEY = context.getString(R.string.user_prefs_notifications_enabled);
         this.NOTIFICATION_TIME_KEY = context.getString(R.string.user_prefs_notification_time);
+        this.ENABLE_PASSWORD_PROTECTION = context.getString(R.string.user_prefs_password_protection);
+        this.ENABLE_AUTO_LOCK = context.getString(R.string.user_prefs_auto_lock);
     }
 }

@@ -1,11 +1,14 @@
 package io.github.tstewart.todayi;
 
+import android.app.Activity;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -16,7 +19,11 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.lifecycle.DefaultLifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.google.android.material.color.DynamicColors;
 
@@ -28,6 +35,8 @@ import io.github.tstewart.todayi.helpers.db.AccomplishmentTableHelper;
 import io.github.tstewart.todayi.notifications.DailyReminderAlarmHelper;
 import io.github.tstewart.todayi.notifications.NotificationSender;
 import io.github.tstewart.todayi.helpers.db.DayRatingTableHelper;
+import io.github.tstewart.todayi.ui.activities.PasswordActivity;
+import io.github.tstewart.todayi.ui.activities.SettingsActivity;
 
 /*
  * Application class, called on application start
@@ -89,6 +98,9 @@ public class TodayI extends Application {
                     Log.i(CLASS_LOG_TAG, "Application data did not need to backup.");
                 }
         }
+
+        /* Watch for app start/stop events */
+        ProcessLifecycleOwner.get().getLifecycle().addObserver(new AppLifecycleListener());
     }
 
     /* Set default preference values if certain preferences do not exist yet
@@ -96,6 +108,8 @@ public class TodayI extends Application {
     private void setDefaultPreferences(UserPreferences preferences) {
         if(preferences != null) {
             preferences.setDefaultValue(getString(R.string.user_prefs_tutorial_shown), false);
+            preferences.setDefaultValue(getString(R.string.user_prefs_password_protection), false);
+            preferences.setDefaultValue(getString(R.string.user_prefs_auto_lock), false);
             preferences.setDefaultValue(getString(R.string.user_prefs_notifications_enabled), false);
             preferences.setDefaultValue(getString(R.string.user_prefs_notification_time), "18:00");
             preferences.setDefaultValue(getString(R.string.user_prefs_gestures_enabled), true);
@@ -107,6 +121,8 @@ public class TodayI extends Application {
     /* Get preferences from file and set this instance of the application's values */
     private void setInstancePreferences(UserPreferences preferences) {
         boolean tutorialShown = (boolean) preferences.get(getString(R.string.user_prefs_tutorial_shown), true);
+        boolean passwordProtection = (boolean) preferences.get(getString(R.string.user_prefs_password_protection), false);
+        boolean autoLock = (boolean) preferences.get(getString(R.string.user_prefs_auto_lock), false);
         boolean notificationsEnabled = (boolean) preferences.get(getString(R.string.user_prefs_notifications_enabled), false);
         boolean gesturesEnabled = (boolean) preferences.get(getString(R.string.user_prefs_gestures_enabled), true);
         String numRatings = (String) preferences.get(getString(R.string.user_prefs_num_day_ratings), "5");
@@ -114,6 +130,8 @@ public class TodayI extends Application {
         boolean clipEmptyLines = (boolean) preferences.get(getString(R.string.user_prefs_clip_empty_lines), true);
 
         UserPreferences.setTutorialShown(tutorialShown);
+        UserPreferences.setEnablePasswordProtection(passwordProtection);
+        UserPreferences.setEnableAutoLock(autoLock);
         UserPreferences.setEnableNotifications(notificationsEnabled);
         UserPreferences.setEnableGestures(gesturesEnabled);
         UserPreferences.setAccomplishmentClipEmptyLines(clipEmptyLines);
@@ -198,5 +216,32 @@ public class TodayI extends Application {
         c.add(Calendar.HOUR, -BACKUP_EVERY_HOURS);
 
         return lastBackedUp <= c.getTime().getTime();
+    }
+
+    class AppLifecycleListener implements DefaultLifecycleObserver {
+
+        AppLifecycleListener() {
+            if(UserPreferences.isEnablePasswordProtection()) {
+                Log.i(this.getClass().getSimpleName(), "Starting initial login.");
+                goToLogin();
+            }
+        }
+
+        @Override
+        public void onStart(@NonNull LifecycleOwner owner) {
+            DefaultLifecycleObserver.super.onStart(owner);
+
+            if(UserPreferences.isEnablePasswordProtection() && UserPreferences.isEnableAutoLock()) {
+                Log.i(this.getClass().getSimpleName(), "Returning to login page from application resume.");
+                goToLogin();
+
+            }
+        }
+
+        void goToLogin() {
+            Intent intent = new Intent(getApplicationContext(), PasswordActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
     }
 }

@@ -16,6 +16,12 @@ public class UserPreferences {
     /* Has tutorial been shown */
     private static boolean sTutorialShown =  true;
 
+    /* Whether or not to enable password protection */
+    private static boolean sEnablePasswordProtection = false;
+
+    /* Whether or not to enable auto lock */
+    private static boolean sEnableAutoLock = false;
+
     /* Whether or not to enable daily notifications */
     private static boolean sEnableNotifications = false;
 
@@ -134,5 +140,21 @@ public class UserPreferences {
 
     public static void setAccomplishmentClipEmptyLines(boolean accomplishmentClipEmptyLines) {
         UserPreferences.sAccomplishmentClipEmptyLines = accomplishmentClipEmptyLines;
+    }
+
+    public static boolean isEnablePasswordProtection() {
+        return sEnablePasswordProtection;
+    }
+
+    public static void setEnablePasswordProtection(boolean sEnablePasswordProtection) {
+        UserPreferences.sEnablePasswordProtection = sEnablePasswordProtection;
+    }
+
+    public static boolean isEnableAutoLock() {
+        return sEnableAutoLock;
+    }
+
+    public static void setEnableAutoLock(boolean sEnableAutoLock) {
+        UserPreferences.sEnableAutoLock = sEnableAutoLock;
     }
 }

@@ -195,6 +195,16 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 Toast.makeText(getContext(), R.string.setting_update_failed, Toast.LENGTH_LONG).show();
             }
         }
+        else if(preferenceKey.equals(mPreferenceKeys.ENABLE_PASSWORD_PROTECTION)) {
+            boolean passwordEnabled = (boolean)newValue;
+
+            UserPreferences.setEnablePasswordProtection(passwordEnabled);
+        }
+        else if(preferenceKey.equals(mPreferenceKeys.ENABLE_AUTO_LOCK)) {
+            boolean autoLockEnabled = (boolean)newValue;
+
+            UserPreferences.setEnableAutoLock(autoLockEnabled);
+        }
 
         return true;
     }
