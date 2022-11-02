@@ -3,7 +3,7 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:buttonStyle">@style/AppTheme.ButtonTheme</item>
-        <item name="colorPrimary">?android:attr/colorPrimary</item>
+        <item name="colorPrimary">?attr/colorPrimary</item>
         <item name="colorPrimaryDark">?attr/colorOnSurfaceInverse</item>
         <item name="colorError">?attr/colorOnError</item>
 

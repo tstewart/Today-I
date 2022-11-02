@@ -22,6 +22,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.ListFragment;
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.adapters.AccomplishmentCursorAdapter;
+import io.github.tstewart.todayi.controllers.AccomplishmentDragSortController;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
 import io.github.tstewart.todayi.data.UserPreferences;
@@ -85,7 +86,7 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
                 indicator.setOnClickListener(v -> listView.setSelection(listView.getCount()-1));
             }
 
-            DragSortController controller = new DragSortController(listView);
+            AccomplishmentDragSortController controller = new AccomplishmentDragSortController(getContext(), listView);
             controller.setDragHandleId(R.id.drag_handle);
             controller.setDragInitMode(1);
             controller.setBackgroundColor(R.color.colorTransparent);

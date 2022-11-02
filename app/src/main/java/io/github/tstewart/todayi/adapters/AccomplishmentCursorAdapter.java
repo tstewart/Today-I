@@ -151,13 +151,6 @@ public class AccomplishmentCursorAdapter extends DragSortCursorAdapter {
         deleteDialog.show();
     }
 
-    @Override
-    public void drop(int from, int to) {
-        super.drop(from, to);
-        Cursor droppedCursor = (Cursor) getItem(from);
-        Log.e("TAG", droppedCursor.getString(droppedCursor.getColumnIndexOrThrow(DBConstants.COLUMN_TITLE)));
-    }
-
     public void persistPositions() {
         Cursor cursor = getCursor();
         cursor.moveToPosition(-1);
