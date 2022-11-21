@@ -29,6 +29,7 @@
     <string name="accomplishment_description_hint">Description (optional)</string>
     <string name="accomplishment_date_hint">Date</string>
     <string name="confirm_delete">Delete this Accomplishment?</string>
+    <string name="button_choose_img">Select image…</string>
 
     <!-- Options Activity -->
     <!-- General Settings -->
@@ -153,4 +154,7 @@
     <string name="application_logo_description">Application logo</string>
 
     <string name="password_protection_failed_no_biometrics">Failed to lock the application. Missing biometrics or password on this device.</string>
+    <string name="button_change_img">Change Image</string>
+    <string name="button_delete_img">Delete Image</string>
+    <string name="image_location_description">Images are currently stored as a reference to the image location. If the image is moved or deleted, it will be removed from the Accomplishment.</string>
 </resources>

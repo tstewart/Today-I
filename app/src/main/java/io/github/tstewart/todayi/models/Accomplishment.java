@@ -29,20 +29,34 @@ public class Accomplishment implements DatabaseObject {
     private final String mTitle;
     /* Description of Accomplishment */
     private String mDescription;
+    /* Accomplishment image location */
+    private String mImageLocation;
 
     public Accomplishment(@NonNull LocalDate date, @NonNull String title, String description) {
         this.mDate = date;
         this.mTitle = title;
         this.mDescription = description;
+        mImageLocation = null;
+    }
+
+    public Accomplishment(@NonNull LocalDate mDate, @NonNull String mTitle, String mDescription, String imageLocation) {
+        this.mDate = mDate;
+        this.mTitle = mTitle;
+        this.mDescription = mDescription;
+        this.mImageLocation = imageLocation;
     }
 
     /* Create new Accomplishment for inserting into database. Clips Accomplishment content if enabled. */
-    public static Accomplishment create(@NonNull LocalDate date, @NonNull String title, String description) {
-        Accomplishment accomplishment = new Accomplishment(date, title, description);
+    public static Accomplishment create(@NonNull LocalDate date, @NonNull String title, String description, String imageLocation) {
+        Accomplishment accomplishment = new Accomplishment(date, title, description, imageLocation);
         /* Clip content if enabled */
         accomplishment.setContent(description);
 
         return accomplishment;
+    }
+
+    public static Accomplishment create(@NonNull LocalDate date, @NonNull String title, String description) {
+        return create(date, title, description, null);
     }
 
     /**
@@ -87,6 +101,8 @@ public class Accomplishment implements DatabaseObject {
 
         contentValues.put(DBConstants.COLUMN_DESCRIPTION, mDescription);
 
+        contentValues.put(DBConstants.COLUMN_IMAGE, mImageLocation);
+
         return contentValues;
     }
 
@@ -105,6 +121,10 @@ public class Accomplishment implements DatabaseObject {
     public String getDescription() {
         return mDescription;
     }
+
+    public String getImageLocation() { return mImageLocation; }
+
+    public void setImageLocation(String imageLocation) { this.mImageLocation = imageLocation; }
 
     public void setDescription(String description) {
         this.mDescription = description;

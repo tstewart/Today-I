@@ -124,13 +124,6 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        /* Prevents dialogs remaining open if the user changes activities while a dialog is open */
-        dismissCurrentDialog();
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         mCursorAdapter.persistPositions();

@@ -3,6 +3,9 @@ package io.github.tstewart.todayi.adapters;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CursorAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -23,6 +27,8 @@ import com.mobeta.android.dslv.SimpleDragSortCursorAdapter;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -67,6 +73,8 @@ public class AccomplishmentCursorAdapter extends DragSortCursorAdapter {
         String title = cursor.getString(cursor.getColumnIndexOrThrow(DBConstants.COLUMN_TITLE));
         /* Get the description of the next item in the Accomplishment table */
         String description = cursor.getString(cursor.getColumnIndexOrThrow(DBConstants.COLUMN_DESCRIPTION));
+        /* Get the image location of the next item in the Accomplishment table */
+        String imageLocation = cursor.getString(cursor.getColumnIndexOrThrow(DBConstants.COLUMN_IMAGE));
         /* Get Accomplishment id of this entry in the Accomplishment table */
         int id = cursor.getInt(cursor.getColumnIndexOrThrow(DBConstants.COLUMN_ID));
         /* Get date posted of this entry in the Accomplishment table */
@@ -108,7 +116,21 @@ public class AccomplishmentCursorAdapter extends DragSortCursorAdapter {
         }
 
         /* Create Accomplishment from these values */
-        Accomplishment accomplishment = new Accomplishment(datePosted, title, description);
+        Accomplishment accomplishment = new Accomplishment(datePosted, title, description, imageLocation);
+
+        /* Set Accomplishment image if exists */
+        ImageView accomplishmentImage = view.findViewById(R.id.imageViewAccomplishmentImage);
+        if(imageLocation != null) {
+            try {
+                Bitmap image = MediaStore.Images.Media.getBitmap(mParent.getContext().getContentResolver(), Uri.fromFile(new File(imageLocation)));
+                accomplishmentImage.setImageBitmap(image);
+            } catch (IOException e) {
+                e.printStackTrace();
+                //TODO use default image if failed to load
+            }
+        } else {
+            accomplishmentImage.setVisibility(View.GONE);
+        }
 
         /* Add edit button clicked listener */
         Button editAccomplishmentButton = view.findViewById(R.id.buttonEditAccomplishment);

@@ -21,6 +21,7 @@ public class Database extends SQLiteOpenHelper {
             + DBConstants.COLUMN_DATE + " string not null, "
             + DBConstants.COLUMN_TITLE + " text not null,"
             + DBConstants.COLUMN_DESCRIPTION + " text,"
+            + DBConstants.COLUMN_IMAGE + " string,"
             + DBConstants.COLUMN_POSITION + " integer"
             + ")";
 

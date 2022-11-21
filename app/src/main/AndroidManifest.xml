@@ -51,6 +51,7 @@
                 android:resource="@xml/shortcuts" />
         </activity>
         <activity android:name=".ui.activities.BackupFileSelectorActivity" />
+        <activity android:name=".helpers.ImageSelectorActivityResult" />
         <activity android:name=".ui.activities.PasswordActivity" />
 
         <receiver

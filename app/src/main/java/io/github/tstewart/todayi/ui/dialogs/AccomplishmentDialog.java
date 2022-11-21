@@ -2,13 +2,19 @@ package io.github.tstewart.todayi.ui.dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
@@ -17,21 +23,20 @@ import androidx.fragment.app.FragmentManager;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.timepicker.MaterialTimePicker;
-import com.google.android.material.timepicker.TimeFormat;
 
 import org.threeten.bp.Instant;
 import org.threeten.bp.LocalDate;
-import org.threeten.bp.LocalTime;
 import org.threeten.bp.ZoneId;
-import org.threeten.bp.temporal.ChronoField;
 
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.helpers.DateFormatter;
+import io.github.tstewart.todayi.helpers.ImageSelectorActivityResult;
 import io.github.tstewart.todayi.helpers.db.AccomplishmentTableHelper;
 
 public class AccomplishmentDialog extends DialogFragment {
+
+    private static final int IMAGE_SELECTION_REQ_CODE = 500;
 
     /* Selected date */
     LocalDate mSelectedDate;
@@ -47,6 +52,8 @@ public class AccomplishmentDialog extends DialogFragment {
     TextInputEditText mDescriptionInput;
     /* Date input */
     TextInputEditText mDateInput;
+    /* Image button */
+    Button mSelectImageButton;
     /* Delete button */
     Button mDeleteButton;
     /* Cancel button */
@@ -57,8 +64,21 @@ public class AccomplishmentDialog extends DialogFragment {
     /* Database helper, for inserting and editing Accomplishments */
     AccomplishmentTableHelper mTableHelper;
 
-    // Internal constructor to prevent initialisation
-    AccomplishmentDialog(){}
+    ActivityResultLauncher<Intent> mImageSelectionResultLauncher;
+
+    public LinearLayout mImageLinearLayout;
+
+    public ImageView mImageView;
+
+    Button mChangeImageButton;
+
+    Button mDeleteImageButton;
+
+    /* Image data */
+    public String mImageLocation = null;
+    public Bitmap mImage = null;
+
+    public AccomplishmentDialog(){}
 
     public void display(FragmentManager fragmentManager) {
         this.show(fragmentManager, "accomplishment_dialog");
@@ -68,6 +88,33 @@ public class AccomplishmentDialog extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NORMAL, R.style.AppTheme_FullScreenDialog);
+
+        mImageSelectionResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                new ImageSelectorActivityResult(getContext().getContentResolver()) {
+                    @Override
+                    public void onImageSelectionError(String error) {
+                        if(error != null) {
+                            Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onImageSelectionSuccess(String location, Bitmap image) {
+                        if(image != null && location != null) {
+                            if(mImageLinearLayout != null && mImageView != null) {
+                                mImageView.setImageBitmap(image);
+                                mImageLinearLayout.setVisibility(View.VISIBLE);
+                                mSelectImageButton.setVisibility(View.GONE);
+
+                                mImageLocation = location;
+                                mImage = image;
+                            }
+                        }
+                        else {
+                            Toast.makeText(getContext(), "Failed to select image.", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
 
         Context mContext = getActivity();
         if(mContext != null) {
@@ -96,12 +143,26 @@ public class AccomplishmentDialog extends DialogFragment {
         mTitleInput = view.findViewById(R.id.editTextAccomplishmentTitle);
         mDescriptionInput = view.findViewById(R.id.editTextAccomplishmentDescription);
         mDateInput = view.findViewById(R.id.editTextAccomplishmentDate);
+        mSelectImageButton = view.findViewById(R.id.buttonAddImage);
         mDeleteButton = view.findViewById(R.id.buttonDelete);
         mCancelButton = view.findViewById(R.id.buttonCancel);
         mConfirmButton = view.findViewById(R.id.buttonConfirm);
 
+        /* Image controls */
+        mImageLinearLayout = view.findViewById(R.id.linearLayoutAccomplishmentImage);
+       mImageView = view.findViewById(R.id.imageViewAccomplishmentDialogImage);
+       mChangeImageButton = view.findViewById(R.id.buttonChangeImage);
+       mDeleteImageButton = view.findViewById(R.id.buttonDeleteImage);
+
         // Set date/time click listeners
         mDateInput.setOnClickListener(this::onDateSelectionClicked);
+
+        // Set image selection click listener
+        mSelectImageButton.setOnClickListener(this::onSelectImageButtonClicked);
+        mChangeImageButton.setOnClickListener(this::onSelectImageButtonClicked);
+
+        // Set image delete click listener
+        mDeleteImageButton.setOnClickListener(this::onDeleteImageButtonClicked);
 
         // Set button click listeners
         mCancelButton.setOnClickListener(this::onCancelButtonClicked);
@@ -137,6 +198,20 @@ public class AccomplishmentDialog extends DialogFragment {
         openDialogIfNoneOpen(mDatePicker);
     }
 
+    private void onSelectImageButtonClicked(View view) {
+        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+        photoPickerIntent.setType("image/*");
+        mImageSelectionResultLauncher.launch(photoPickerIntent);
+    }
+
+    public void onDeleteImageButtonClicked(View view) {
+        mImageLocation = null;
+        if(mImageLinearLayout != null) {
+            mImageLinearLayout.setVisibility(View.GONE);
+            mSelectImageButton.setVisibility(View.VISIBLE);
+        }
+    }
+
     void openDialogIfNoneOpen(DialogFragment dialog) {
         if(mOpenPickerDialog == null || !mOpenPickerDialog.isVisible()) {
             mOpenPickerDialog = dialog;
@@ -151,5 +226,4 @@ public class AccomplishmentDialog extends DialogFragment {
     private void onCancelButtonClicked(View view) {
         this.dismiss();
     }
-
 }

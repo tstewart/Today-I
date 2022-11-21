@@ -7,7 +7,7 @@ public class DBConstants {
 
     /* Meta table data */
     public static final String DB_NAME = "todayi_db";
-    public static final int DB_VERSION = 15;
+    public static final int DB_VERSION = 16;
 
     /* Table names */
     public static final String ACCOMPLISHMENT_TABLE = "accomplishments";
@@ -18,6 +18,7 @@ public class DBConstants {
     public static final String COLUMN_DATE = "date";
     public static final String COLUMN_TITLE = "title";
     public static final String COLUMN_DESCRIPTION = "description";
+    public static final String COLUMN_IMAGE = "image_location";
     public static final String COLUMN_RATING = "rating";
     public static final String COLUMN_POSITION = "position";
 
