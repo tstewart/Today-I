@@ -28,7 +28,12 @@ import org.threeten.bp.Instant;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.ZoneId;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.UUID;
+
 import io.github.tstewart.todayi.R;
+import io.github.tstewart.todayi.data.AccomplishmentImageIO;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.helpers.DateFormatter;
 import io.github.tstewart.todayi.helpers.ImageSelectorActivityResult;
@@ -106,7 +111,7 @@ public class AccomplishmentDialog extends DialogFragment {
                                 mImageLinearLayout.setVisibility(View.VISIBLE);
                                 mSelectImageButton.setVisibility(View.GONE);
 
-                                mImageLocation = location;
+                                setCurrentImageLocation(location);
                                 mImage = image;
                             }
                         }
@@ -198,14 +203,14 @@ public class AccomplishmentDialog extends DialogFragment {
         openDialogIfNoneOpen(mDatePicker);
     }
 
-    private void onSelectImageButtonClicked(View view) {
+    public void onSelectImageButtonClicked(View view) {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
         photoPickerIntent.setType("image/*");
         mImageSelectionResultLauncher.launch(photoPickerIntent);
     }
 
     public void onDeleteImageButtonClicked(View view) {
-        mImageLocation = null;
+        setCurrentImageLocation(null);
         if(mImageLinearLayout != null) {
             mImageLinearLayout.setVisibility(View.GONE);
             mSelectImageButton.setVisibility(View.VISIBLE);
@@ -225,5 +230,42 @@ public class AccomplishmentDialog extends DialogFragment {
 
     private void onCancelButtonClicked(View view) {
         this.dismiss();
+    }
+
+    public void setCurrentImageLocation(String newImageLocation) {
+        this.mImageLocation = newImageLocation;
+    }
+
+
+    public String saveImageFile() throws IOException {
+        if(mImage != null) {
+            /* Create file path to save image */
+            File directory = getContext().getDir("img", Context.MODE_PRIVATE);
+            File outputFile = new File(directory, UUID.randomUUID().toString() + ".jpeg");
+
+            /* Attempt to save image file */
+            new AccomplishmentImageIO(getContext(), outputFile).saveImage(mImage);
+
+            return outputFile.getAbsoluteFile().getPath();
+        }
+        else {
+            return null;
+        }
+    }
+
+    public String saveImageThumbnailFile() throws IOException {
+        if(mImage != null) {
+            /* Create file path to save image */
+            File directory = getContext().getDir("img_thumb", Context.MODE_PRIVATE);
+            File outputFile = new File(directory, UUID.randomUUID().toString() + ".jpeg");
+
+            /* Attempt to save image file */
+            new AccomplishmentImageIO(getContext(), outputFile).saveImageThumbnail(mImage);
+
+            return outputFile.getAbsoluteFile().getPath();
+        }
+        else {
+            return null;
+        }
     }
 }

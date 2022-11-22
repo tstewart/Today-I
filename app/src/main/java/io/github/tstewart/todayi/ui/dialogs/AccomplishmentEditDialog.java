@@ -37,9 +37,14 @@ public class AccomplishmentEditDialog extends AccomplishmentDialog {
     String mDescription;
     long mDatabaseId;
 
-    /* Image location when this dialog was opened.
-    * If the image is edited, the original image will be deleted and replaced. */
+    /* Location of the original image file */
     String mOriginalImageLocation;
+    /* Location of the original thumbnail file */
+    String mOriginalImageThumbnailLocation;
+    /* If the Accomplishment being edited had an image already */
+    boolean mHasExistingImage;
+    /* If the Accomplishment image has been edited (replaced or removed) */
+    boolean mImageReplaced = false;
 
     public AccomplishmentEditDialog(long id, Accomplishment accomplishment){
         mDatabaseId = id;
@@ -47,7 +52,9 @@ public class AccomplishmentEditDialog extends AccomplishmentDialog {
         mDescription = accomplishment.getDescription();
         mSelectedDate = accomplishment.getDate();
         mImageLocation = accomplishment.getImageLocation();
+        mOriginalImageThumbnailLocation = accomplishment.getImageThumbnailLocation();
         mOriginalImageLocation = mImageLocation;
+        mHasExistingImage = mImageLocation != null;
     }
 
     @Override
@@ -85,54 +92,59 @@ public class AccomplishmentEditDialog extends AccomplishmentDialog {
         return view;
     }
 
+    @Override
+    public void setCurrentImageLocation(String newImageLocation) {
+        super.setCurrentImageLocation(newImageLocation);
+        mImageReplaced = true;
+    }
+
     //TODO simplify image save/delete
     @Override
     public void onConfirmButtonClicked(View view) {
         Accomplishment accomplishment = Accomplishment.create(mSelectedDate, mTitleInput.getText().toString(), mDescriptionInput.getText().toString());
-        File outputLocation = null;
-        boolean imageChanged = false;
 
-        /* If image location has been changed in editing this Accomplishment, replace existing image */
-        /* Also equates to true if an image was added to an Accomplishment that didn't have one before editing. */
-        if((mImageLocation != null && mOriginalImageLocation != null && !mOriginalImageLocation.equals(mImageLocation))
-            || (mOriginalImageLocation == null && mImageLocation != null)) {
-            imageChanged = true;
-
-            File directory = getContext().getDir("img", Context.MODE_PRIVATE);
-
-            deleteExistingImage();
-
-            /* Save new image file */
-            outputLocation = new File(directory, UUID.randomUUID().toString() + ".jpeg");
-
-            accomplishment.setImageLocation(outputLocation.getPath());
+        /* Validate Accomplishment text and description, alert user of any failed validation */
+        try {
+            accomplishment.validate();
+        } catch (ValidationFailedException e) {
+            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            return;
         }
-        else if(mOriginalImageLocation != null
-            && mImageLocation == null) {
-            /* In this case, the image was deleted */
-            deleteExistingImage();
-            accomplishment.setImageLocation(null);
+
+        String imageFileLocation = null;
+        String imageThumbnailLocation = null;
+
+        /* Image was replaced or deleted, delete existing image */
+        if(mImageReplaced) {
+            deleteExistingImage(mOriginalImageLocation);
+            deleteExistingImage(mOriginalImageThumbnailLocation);
         }
+
+        /* Image was replaced, not deleted. Save new file */
+        if(mImageReplaced && mImageLocation != null) {
+            try {
+                imageFileLocation = saveImageFile();
+                imageThumbnailLocation = saveImageThumbnailFile();
+            } catch (IOException e) {
+                Toast.makeText(getContext(), "Failed to save Accomplishment image.", Toast.LENGTH_LONG).show();
+                e.printStackTrace();
+            }
+        }
+        /* Image was not replaced */
         else {
-            accomplishment.setImageLocation(mOriginalImageLocation);
+            imageFileLocation = mOriginalImageLocation;
+            imageThumbnailLocation = mOriginalImageThumbnailLocation;
         }
+
+        /* Set Accomplishment image file location */
+        accomplishment.setImageLocation(imageFileLocation);
+        accomplishment.setImageThumbnailLocation(imageThumbnailLocation);
 
         try {
             /* Insert Accomplishment into Database */
             mTableHelper.update(accomplishment, mDatabaseId);
-
-            /* Save new image file if required */
-            if(imageChanged) {
-                new AccomplishmentImageIO(getContext(), outputLocation).saveImage(mImage);
-            }
-
             this.dismiss();
-        } catch (ValidationFailedException e) {
-            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-        } catch (IOException e) {
-            Toast.makeText(getContext(), "Failed to save Accomplishment image.", Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        }
+        } catch (ValidationFailedException ignore) {}
     }
 
     /* Called when the delete button is pressed
@@ -152,9 +164,9 @@ public class AccomplishmentEditDialog extends AccomplishmentDialog {
         deleteDialog.show();
     }
 
-    void deleteExistingImage() {
-        if(mOriginalImageLocation != null) {
-            File originalFile = new File(mOriginalImageLocation);
+    void deleteExistingImage(String imageFileLocation) {
+        if(imageFileLocation != null) {
+            File originalFile = new File(imageFileLocation);
             boolean deleted = new AccomplishmentImageIO(getContext(), originalFile).deleteImage();
 
             if (!deleted) {

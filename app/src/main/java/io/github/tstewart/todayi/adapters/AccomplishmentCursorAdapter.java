@@ -75,6 +75,8 @@ public class AccomplishmentCursorAdapter extends DragSortCursorAdapter {
         String description = cursor.getString(cursor.getColumnIndexOrThrow(DBConstants.COLUMN_DESCRIPTION));
         /* Get the image location of the next item in the Accomplishment table */
         String imageLocation = cursor.getString(cursor.getColumnIndexOrThrow(DBConstants.COLUMN_IMAGE));
+        /* Get the image thumbnail location of the next item in the Accomplishment table */
+        String imageThumbnailLocation = cursor.getString(cursor.getColumnIndexOrThrow(DBConstants.COLUMN_THUMBNAIL));
         /* Get Accomplishment id of this entry in the Accomplishment table */
         int id = cursor.getInt(cursor.getColumnIndexOrThrow(DBConstants.COLUMN_ID));
         /* Get date posted of this entry in the Accomplishment table */
@@ -116,13 +118,13 @@ public class AccomplishmentCursorAdapter extends DragSortCursorAdapter {
         }
 
         /* Create Accomplishment from these values */
-        Accomplishment accomplishment = new Accomplishment(datePosted, title, description, imageLocation);
+        Accomplishment accomplishment = new Accomplishment(datePosted, title, description, imageLocation, imageThumbnailLocation);
 
         /* Set Accomplishment image if exists */
         ImageView accomplishmentImage = view.findViewById(R.id.imageViewAccomplishmentImage);
         if(imageLocation != null) {
             try {
-                Bitmap image = MediaStore.Images.Media.getBitmap(mParent.getContext().getContentResolver(), Uri.fromFile(new File(imageLocation)));
+                Bitmap image = MediaStore.Images.Media.getBitmap(mParent.getContext().getContentResolver(), Uri.fromFile(new File(imageThumbnailLocation)));
                 accomplishmentImage.setImageBitmap(image);
             } catch (IOException e) {
                 e.printStackTrace();

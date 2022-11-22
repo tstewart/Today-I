@@ -31,24 +31,28 @@ public class Accomplishment implements DatabaseObject {
     private String mDescription;
     /* Accomplishment image location */
     private String mImageLocation;
+    /* Accomplishment image thumbnail location */
+    private String mImageThumbnailLocation;
 
     public Accomplishment(@NonNull LocalDate date, @NonNull String title, String description) {
         this.mDate = date;
         this.mTitle = title;
         this.mDescription = description;
         mImageLocation = null;
+        mImageThumbnailLocation = null;
     }
 
-    public Accomplishment(@NonNull LocalDate mDate, @NonNull String mTitle, String mDescription, String imageLocation) {
+    public Accomplishment(@NonNull LocalDate mDate, @NonNull String mTitle, String mDescription, String imageLocation, String imageThumbnailLocation) {
         this.mDate = mDate;
         this.mTitle = mTitle;
         this.mDescription = mDescription;
         this.mImageLocation = imageLocation;
+        this.mImageThumbnailLocation = imageThumbnailLocation;
     }
 
     /* Create new Accomplishment for inserting into database. Clips Accomplishment content if enabled. */
-    public static Accomplishment create(@NonNull LocalDate date, @NonNull String title, String description, String imageLocation) {
-        Accomplishment accomplishment = new Accomplishment(date, title, description, imageLocation);
+    public static Accomplishment create(@NonNull LocalDate date, @NonNull String title, String description, String imageLocation, String imageThumbnailLocation) {
+        Accomplishment accomplishment = new Accomplishment(date, title, description, imageLocation, imageThumbnailLocation);
         /* Clip content if enabled */
         accomplishment.setContent(description);
 
@@ -56,7 +60,7 @@ public class Accomplishment implements DatabaseObject {
     }
 
     public static Accomplishment create(@NonNull LocalDate date, @NonNull String title, String description) {
-        return create(date, title, description, null);
+        return create(date, title, description, null, null);
     }
 
     /**
@@ -103,6 +107,8 @@ public class Accomplishment implements DatabaseObject {
 
         contentValues.put(DBConstants.COLUMN_IMAGE, mImageLocation);
 
+        contentValues.put(DBConstants.COLUMN_THUMBNAIL, mImageThumbnailLocation);
+
         return contentValues;
     }
 
@@ -125,6 +131,14 @@ public class Accomplishment implements DatabaseObject {
     public String getImageLocation() { return mImageLocation; }
 
     public void setImageLocation(String imageLocation) { this.mImageLocation = imageLocation; }
+
+    public String getImageThumbnailLocation() {
+        return mImageThumbnailLocation;
+    }
+
+    public void setImageThumbnailLocation(String imageThumbnailLocation) {
+        this.mImageThumbnailLocation = imageThumbnailLocation;
+    }
 
     public void setDescription(String description) {
         this.mDescription = description;

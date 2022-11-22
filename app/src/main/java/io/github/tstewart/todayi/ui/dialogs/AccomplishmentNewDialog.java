@@ -54,35 +54,35 @@ public class AccomplishmentNewDialog extends AccomplishmentDialog {
 
     @Override
     public void onConfirmButtonClicked(View view) {
-        Accomplishment accomplishment;
-        File outputLocation = null;
+        Accomplishment accomplishment = Accomplishment.create(mSelectedDate, mTitleInput.getText().toString(), mDescriptionInput.getText().toString());
 
-        if(mImage != null) {
-            /* Create file path to save image */
-            File directory = getContext().getDir("img", Context.MODE_PRIVATE);
-            outputLocation = new File(directory, UUID.randomUUID().toString() + ".jpeg");
-
-            /* Create Accomplishment object from new values */
-            accomplishment = Accomplishment.create(mSelectedDate, mTitleInput.getText().toString(), mDescriptionInput.getText().toString(), outputLocation.getPath());
-        }
-        else {
-            /* Create Accomplishment object from new values */
-            accomplishment = Accomplishment.create(mSelectedDate, mTitleInput.getText().toString(), mDescriptionInput.getText().toString());
-        }
-
+        /* Validate Accomplishment text and description, alert user of any failed validation */
         try {
-            /* Insert Accomplishment into Database */
-            mTableHelper.insert(accomplishment);
-
-            /* Attempt to save image file */
-            new AccomplishmentImageIO(getContext(), outputLocation).saveImage(mImage);
-
-            this.dismiss();
+            accomplishment.validate();
         } catch (ValidationFailedException e) {
             Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        /* Attempt to save provided image, if exists */
+        String savedImageFileLocation = null;
+        String savedImageThumbnailLocation = null;
+        try {
+            savedImageFileLocation = saveImageFile();
+            savedImageThumbnailLocation = saveImageThumbnailFile();
         } catch (IOException e) {
             Toast.makeText(getContext(), "Failed to save Accomplishment image.", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
+
+        /* Set Accomplishment image file location */
+        accomplishment.setImageLocation(savedImageFileLocation);
+        accomplishment.setImageThumbnailLocation(savedImageThumbnailLocation);
+
+        try {
+            /* Insert Accomplishment into Database */
+            mTableHelper.insert(accomplishment);
+            this.dismiss();
+        } catch (ValidationFailedException ignore) {}
     }
 }
