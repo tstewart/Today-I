@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.transition.TransitionManager;
 import android.util.Log;
@@ -12,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -22,25 +22,22 @@ import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.mobeta.android.dslv.DragSortCursorAdapter;
-import com.mobeta.android.dslv.SimpleDragSortCursorAdapter;
 
 import org.threeten.bp.LocalDate;
-import org.threeten.bp.LocalDateTime;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.DBConstants;
-import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.helpers.DateFormatter;
 import io.github.tstewart.todayi.helpers.db.AccomplishmentTableHelper;
 import io.github.tstewart.todayi.models.Accomplishment;
 import io.github.tstewart.todayi.ui.dialogs.AccomplishmentDialog;
 import io.github.tstewart.todayi.ui.dialogs.AccomplishmentEditDialog;
 import io.github.tstewart.todayi.ui.fragments.AccomplishmentListFragment;
+import io.github.tstewart.todayi.ui.dialogs.ImageFullscreenDialog;
 
 /**
  * Pulls data from the Accomplishments table of the database, and converts it's data into a ListItem
@@ -133,6 +130,21 @@ public class AccomplishmentCursorAdapter extends DragSortCursorAdapter {
         } else {
             accomplishmentImage.setVisibility(View.GONE);
         }
+
+        /* Add click listener to expand image to fullscreen on click */
+        accomplishmentImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ImageFullscreenDialog dialog = new ImageFullscreenDialog();
+
+                Bundle args = new Bundle();
+                args.putString("image_location", imageLocation);
+
+                dialog.setArguments(args);
+
+                dialog.show(mParent.getParentFragmentManager(), dialog.getClass().getSimpleName());
+            }
+        });
 
         /* Add edit button clicked listener */
         Button editAccomplishmentButton = view.findViewById(R.id.buttonEditAccomplishment);
