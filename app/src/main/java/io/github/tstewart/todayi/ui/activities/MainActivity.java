@@ -36,7 +36,6 @@ import io.github.tstewart.todayi.ui.dialogs.AccomplishmentDialog;
 import io.github.tstewart.todayi.ui.dialogs.AccomplishmentNewDialog;
 import io.github.tstewart.todayi.ui.dialogs.CalendarDialog;
 import io.github.tstewart.todayi.ui.fragments.AccomplishmentListFragment;
-import io.github.tstewart.todayi.ui.tutorials.MainActivityTutorial;
 
 /*
 Main Activity of the application, handles AccomplishmentListFragment and DayRatingFragment functionality
@@ -112,19 +111,6 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
 
         /* Set current date to System's current date */
         updateCurrentDate(LocalDate.now());
-
-        /* Once activity is initialised, check to see if tutorial should be shown */
-        new Handler(Looper.getMainLooper()).post(() -> {
-
-            SharedPreferences sharedPrefs = getSharedPreferences(getString(R.string.user_prefs_file_location_key), MODE_PRIVATE);
-            UserPreferences userPrefs = new UserPreferences(sharedPrefs);
-
-            if(!UserPreferences.isTutorialShown()) {
-                showTutorial();
-                userPrefs.set(getString(R.string.user_prefs_tutorial_shown), true);
-            }
-
-        });
     }
 
     /* Inflate Main Activity's top bar */
@@ -154,14 +140,6 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * Show first-use tutorial to show user's how to use the application
-     */
-    public void showTutorial() {
-        MainActivityTutorial tutorial = new MainActivityTutorial();
-        tutorial.showTutorial(this);
     }
 
     /*
