@@ -99,18 +99,22 @@
     <string name="daily_reminder_notification_title">Daily Reminder</string>
     <string name="daily_reminder_notification_content">What have you done today?</string>
 
-    <!-- Tutorial -->
-    <string name="tutorial_next">Next</string>
-    <string name="tutorial_start">Start!</string>
-    <string name="tutorial_welcome">Welcome to Today I, a mini application to track your accomplishments for the day, as well rate your overall feeling of each day.</string>
-    <string name="tutorial_new_accomplishment">To add new Accomplishments, select the New button.</string>
-    <string name="tutorial_current_day">The current selected day is shown here.</string>
-    <string name="tutorial_previous_day">You can change to the previous day by selecting this button.</string>
-    <string name="tutorial_next_day">You can change to the next day by selecting this button.</string>
-    <string name="tutorial_gesture">You can also swipe left and right to change days (If this is enabled in Settings.)</string>
-    <string name="tutorial_day_rating">You can rate your day on a scale from 1–5 by selecting a rating.</string>
-    <string name="tutorial_calendar">You can view past day ratings and quickly find Accomplishments from previous days in the calendar.</string>
-
+    <!-- Onboarding -->
+    <string name="ob_intro_title">Welcome to Today I</string>
+    <string name="ob_intro_description">A mini application to track your accomplishments and day ratings, created by Taylor Stewart.</string>
+    <string name="ob_accomplishments_title">Accomplishments</string>
+    <string name="ob_accomplishments_description">Add accomplishments by pressing the + button on the bottom right.</string>
+    <string name="ob_editor_title">Editor</string>
+    <string name="ob_editor_description">You can give your accomplishment a title, description, and an image.</string>
+    <string name="ob_accomp_card_title">Managing your Accomplishment</string>
+    <string name="ob_accomp_card_description">Once an accomplishment is added, you can manage it by clicking the card to show additional options.</string>
+    <string name="ob_reordering_title">Re-ordering</string>
+    <string name="ob_reordering_description">You can re-order an accomplishment by pressing and dragging on the icon on the top right of an accomplishment card.</string>
+    <string name="ob_rating_title">Ratings</string>
+    <string name="ob_rating_description">Rate your day by pressing one of the numbers located below the date. (You can adjust this scale in settings).</string>
+    <string name="ob_calendar_title">Calendar</string>
+    <string name="ob_calendar_description">Click the date to show the calendar view. This gives you an overview of ratings, as well as showing days you have added accomplishments to. You can also use this to quickly change between dates.</string>
+    <string name="ob_end_dialog">End Onboarding?</string>
     <!-- Other -->
     <string name="button_confirm">Confirm</string>
     <string name="button_save">Save</string>
@@ -119,13 +123,20 @@
     <string name="button_cancel">Cancel</string>
     <string name="button_yes">Yes</string>
     <string name="button_no">No</string>
+    <string name="button_skip">Skip</string>
+    <string name="button_next">Next</string>
+    <string name="button_previous">Previous</string>
+    <string name="button_change_img">Change Image</string>
+    <string name="button_delete_img">Delete Image</string>
+    <string name="button_end">End</string>
+
     <string name="new_accomplishment_invalid_text">Your accomplishment must be between 1 and 200 characters.</string>
     <string name="automatic_backup_failed">Automatic backup failed: %s</string>
 
     <!-- User Preferences keys -->
     <string name="user_prefs_file_location_key">io.github.tstewart.todayi.userprefs</string>
     <string name="user_prefs_last_backed_up_key">last_backed_up</string>
-    <string name="user_prefs_tutorial_shown">tutorial_shown</string>
+    <string name="user_prefs_onboarding_shown">onboarding_shown</string>
     <string name="user_prefs_password_protection">password_protection_enabled</string>
     <string name="user_prefs_auto_lock">auto_lock</string>
     <string name="user_prefs_notifications_enabled">notifications_enabled</string>
@@ -143,7 +154,7 @@
     <string name="debug_get_accomplishments">Get all Accomplishments</string>
     <string name="debug_get_ratings">Get all Ratings</string>
     <string name="debug_send_notification">Send test notification</string>
-    <string name="debug_show_tutorial">Show tutorial</string>
+    <string name="debug_show_onboarding">Show onboarding</string>
     <string name="debug_back">Back</string>
 
     <!-- Shortcuts -->
@@ -152,9 +163,5 @@
 
     <!-- Accessibility -->
     <string name="application_logo_description">Application logo</string>
-
     <string name="password_protection_failed_no_biometrics">Failed to lock the application. Missing biometrics or password on this device.</string>
-    <string name="button_change_img">Change Image</string>
-    <string name="button_delete_img">Delete Image</string>
-    <string name="image_location_description">Images are currently stored as a reference to the image location. If the image is moved or deleted, it will be removed from the Accomplishment.</string>
 </resources>

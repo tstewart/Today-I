@@ -21,6 +21,7 @@ import java.util.GregorianCalendar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ProcessLifecycleOwner;
@@ -107,7 +108,7 @@ public class TodayI extends Application {
     * E.g. on first run, the application needs to set default values */
     private void setDefaultPreferences(UserPreferences preferences) {
         if(preferences != null) {
-            preferences.setDefaultValue(getString(R.string.user_prefs_tutorial_shown), false);
+            preferences.setDefaultValue(getString(R.string.user_prefs_onboarding_shown), false);
             preferences.setDefaultValue(getString(R.string.user_prefs_password_protection), false);
             preferences.setDefaultValue(getString(R.string.user_prefs_auto_lock), false);
             preferences.setDefaultValue(getString(R.string.user_prefs_notifications_enabled), false);
@@ -120,7 +121,7 @@ public class TodayI extends Application {
 
     /* Get preferences from file and set this instance of the application's values */
     private void setInstancePreferences(UserPreferences preferences) {
-        boolean tutorialShown = (boolean) preferences.get(getString(R.string.user_prefs_tutorial_shown), true);
+        boolean onboardingShown = (boolean) preferences.get(getString(R.string.user_prefs_onboarding_shown), true);
         boolean passwordProtection = (boolean) preferences.get(getString(R.string.user_prefs_password_protection), false);
         boolean autoLock = (boolean) preferences.get(getString(R.string.user_prefs_auto_lock), false);
         boolean notificationsEnabled = (boolean) preferences.get(getString(R.string.user_prefs_notifications_enabled), false);
@@ -129,7 +130,7 @@ public class TodayI extends Application {
         String notificationTimeString = (String) preferences.get(getString(R.string.user_prefs_notification_time), "18:00");
         boolean clipEmptyLines = (boolean) preferences.get(getString(R.string.user_prefs_clip_empty_lines), true);
 
-        UserPreferences.setTutorialShown(tutorialShown);
+        UserPreferences.setOnboardingShown(onboardingShown);
         UserPreferences.setEnablePasswordProtection(passwordProtection);
         UserPreferences.setEnableAutoLock(autoLock);
         UserPreferences.setEnableNotifications(notificationsEnabled);

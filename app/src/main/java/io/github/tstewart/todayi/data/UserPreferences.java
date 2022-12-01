@@ -13,8 +13,8 @@ public class UserPreferences {
     /* Maximum rating allowed on sliding day rating scale */
     private static int sMaxDayRating = 5;
 
-    /* Has tutorial been shown */
-    private static boolean sTutorialShown =  true;
+    /* Has onboarding been shown */
+    private static boolean sOnboardingShown =  true;
 
     /* Whether or not to enable password protection */
     private static boolean sEnablePasswordProtection = false;
@@ -102,12 +102,12 @@ public class UserPreferences {
         UserPreferences.sMaxDayRating = maxDayRating;
     }
 
-    public static boolean isTutorialShown() {
-        return sTutorialShown;
+    public static boolean isOnboardingShown() {
+        return sOnboardingShown;
     }
 
-    public static void setTutorialShown(boolean sTutorialShown) {
-        UserPreferences.sTutorialShown = sTutorialShown;
+    public static void setOnboardingShown(boolean sOnboardingShown) {
+        UserPreferences.sOnboardingShown = sOnboardingShown;
     }
 
     public static boolean isEnableNotifications() {

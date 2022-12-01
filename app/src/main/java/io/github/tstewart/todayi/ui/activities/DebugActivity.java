@@ -66,7 +66,7 @@ public class DebugActivity extends AppCompatActivity {
         else if(id == R.id.debug_override_max_rating) onOverrideMaxRatingButtonClicked();
         else if(id == R.id.debug_color_test) onColorTestButtonClicked();
         else if(id == R.id.debug_send_notification) onSendNotificationButtonClicked();
-        else if(id == R.id.debugShowTutorial) onShowTutorialButtonClicked();
+        else if(id == R.id.debugShowOnboarding) onShowOnboardingButtonClicked();
         else if(id == R.id.debugBack) this.finish();
     }
 
@@ -219,11 +219,8 @@ public class DebugActivity extends AppCompatActivity {
     }
 
 
-    private void onShowTutorialButtonClicked() {
-        UserPreferences userPrefs = new UserPreferences(getSharedPreferences(getString(R.string.user_prefs_file_location_key), MODE_PRIVATE));
-        userPrefs.set(getString(R.string.user_prefs_tutorial_shown), false);
-
-        Intent intent = new Intent(this, MainActivity.class);
+    private void onShowOnboardingButtonClicked() {
+        Intent intent = new Intent(this, OnboardingActivity.class);
         startActivity(intent);
     }
 }

@@ -111,6 +111,12 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
 
         /* Set current date to System's current date */
         updateCurrentDate(LocalDate.now());
+
+        /* Check to see if onboarding needs to be shown (if user is new) */
+        if(!UserPreferences.isOnboardingShown()) {
+            Intent onboardingIntent = new Intent(getApplicationContext(), OnboardingActivity.class);
+            startActivity(onboardingIntent);
+        }
     }
 
     /* Inflate Main Activity's top bar */
