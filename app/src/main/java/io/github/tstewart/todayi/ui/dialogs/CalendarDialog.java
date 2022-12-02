@@ -3,6 +3,8 @@ package io.github.tstewart.todayi.ui.dialogs;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.TextAppearanceSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,8 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.DayViewDecorator;
+import com.prolificinteractive.materialcalendarview.DayViewFacade;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 import org.threeten.bp.LocalDate;
@@ -65,7 +69,7 @@ public class CalendarDialog extends MaterialAlertDialogBuilder {
         this.mSelectedDate = currentDate;
 
         /* Inflate dialog layout */
-        LayoutInflater inflater = LayoutInflater.from(getContext());
+        LayoutInflater inflater = LayoutInflater.from(mContext);
         View view = inflater.inflate(R.layout.dialog_calendar, null);
         this.setView(view);
 
@@ -79,6 +83,9 @@ public class CalendarDialog extends MaterialAlertDialogBuilder {
         }
 
         if (mCalendarView != null) {
+            /* Set calendar arrow drawables */
+            mCalendarView.setLeftArrow(R.drawable.navigation_previous);
+            mCalendarView.setRightArrow(R.drawable.navigation_next);
             /* Set action when a date is selected on the calendar view */
             mCalendarView.setOnDateChangedListener(this::onCalendarClick);
             /*
@@ -116,6 +123,20 @@ public class CalendarDialog extends MaterialAlertDialogBuilder {
         DayPostedDecorator daysPostedDecorator = new DayPostedDecorator(mDaysPostedOn);
         /* Get list of decorators for every rating */
         List<DayRatedDecorator> dayRatedDecorators = new DayRatingSplitter(mContext).getDayRatingDecorators(mRatings);
+
+        /* Add text span so that label text changes colour on theme change
+        * This is added before other decorators as TextColor might be overridden */
+        mCalendarView.addDecorator(new DayViewDecorator() {
+            @Override
+            public boolean shouldDecorate(CalendarDay day) {
+                return true;
+            }
+
+            @Override
+            public void decorate(DayViewFacade view) {
+                view.addSpan(new TextAppearanceSpan(mContext, R.style.AppTheme_CalendarDateText));
+            }
+        });
 
         /* Set decorators */
         mCalendarView.addDecorator(daysPostedDecorator);

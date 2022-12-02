@@ -12,5 +12,35 @@
         <item name="colorSurface">?attr/colorSurface</item>
         <item name="colorOnSurface">?attr/colorOnSurface</item>
         <item name="android:navigationBarColor">?attr/colorOnSurfaceInverse</item>
+
+        <item name="alertDialogTheme">@style/AppTheme.AlertDialogTheme</item>
+        <item name="dialogCornerRadius">28dp</item>
+    </style>
+    <!-- Calendar activity -->
+    <style name="AppTheme.CalendarTheme">
+        <item name="mcv_selectionColor">@color/colorCalendarSelection</item>
+        <item name="mcv_dateTextAppearance">?textAppearanceLabelSmall</item>
+        <item name="mcv_headerTextAppearance">@style/AppTheme.CalendarHeaderText</item>
+        <item name="mcv_weekDayTextAppearance">@style/AppTheme.CalendarMonthLabelText</item>
+        <item name="mcv_leftArrow">@drawable/navigation_previous</item>
+        <item name="mcv_rightArrow">@drawable/navigation_next</item>
+    </style>
+
+    <style name="AppTheme.CalendarDateText">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
+    </style>
+
+    <style name="AppTheme.CalendarHeaderText">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="AppTheme.CalendarMonthLabelText">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="AppTheme.AlertDialogTheme" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="dialogCornerRadius">20dp</item>
     </style>
 </resources>

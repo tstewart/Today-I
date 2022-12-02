@@ -85,7 +85,7 @@ public class OnboardingActivity extends AppCompatActivity {
             mOnboardingPages.add(new OnboardingItem(R.string.ob_reordering_title, R.string.ob_reordering_description, R.drawable.onboarding_reordering));
             mOnboardingPages.add(new OnboardingItem(R.string.ob_rating_title, R.string.ob_rating_description, R.drawable.onboarding_rating));
             mOnboardingPages.add(new OnboardingItem(R.string.ob_calendar_title, R.string.ob_calendar_description, R.drawable.onboarding_calendar));
-            mViewPager.setAdapter(new OnboardingItemAdapter(getApplicationContext(), mOnboardingPages));
+            mViewPager.setAdapter(new OnboardingItemAdapter(this, mOnboardingPages));
         }
     }
 

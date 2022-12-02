@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
 
         /* Check to see if onboarding needs to be shown (if user is new) */
         if(!UserPreferences.isOnboardingShown()) {
-            Intent onboardingIntent = new Intent(getApplicationContext(), OnboardingActivity.class);
+            Intent onboardingIntent = new Intent(this, OnboardingActivity.class);
             startActivity(onboardingIntent);
         }
     }
