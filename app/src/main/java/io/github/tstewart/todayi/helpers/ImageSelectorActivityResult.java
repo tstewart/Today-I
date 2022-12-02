@@ -31,7 +31,7 @@ public abstract class ImageSelectorActivityResult implements ActivityResultCallb
 
     public abstract void onImageSelectionError(String error);
 
-    public abstract void onImageSelectionSuccess(String location, Bitmap image);
+    public abstract void onImageSelectionSuccess(Uri location, Bitmap image);
 
     @Override
     public void onActivityResult(ActivityResult result) {
@@ -44,7 +44,7 @@ public abstract class ImageSelectorActivityResult implements ActivityResultCallb
                 try {
                     Bitmap imageFile = MediaStore.Images.Media.getBitmap(mContentResolver, selectedImage);
 
-                    onImageSelectionSuccess(selectedImage.getPath(), imageFile);
+                    onImageSelectionSuccess(selectedImage, imageFile);
                 } catch (IOException e) {
                     onImageSelectionError("Image not found or was unreadable.");
                     e.printStackTrace();

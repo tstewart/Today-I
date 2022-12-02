@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
@@ -29,8 +30,36 @@ import io.github.tstewart.todayi.models.Accomplishment;
 
 public class AccomplishmentNewDialog extends AccomplishmentDialog {
 
+    /* Internal storage of title and description inputs. only used to restore values on restore instance state */
+    private String mTitle = null;
+    private String mDescription = null;
+
+    public AccomplishmentNewDialog(){};
+
     public AccomplishmentNewDialog(LocalDate currentDate){
         mSelectedDate = currentDate;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if(savedInstanceState != null) {
+            mTitle = savedInstanceState.getString("acc_title");
+            mDescription = savedInstanceState.getString("acc_desc");
+            mSelectedDate = LocalDate.ofEpochDay(savedInstanceState.getLong("acc_date"));
+            mImageLocation = savedInstanceState.getString("acc_img_location");
+            mImageInternalLocation = savedInstanceState.getParcelable("acc_img_location_internal");
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("acc_title", mTitleInput.getText().toString());
+        outState.putString("acc_desc", mDescriptionInput.getText().toString());
+        outState.putLong("acc_date", mSelectedDate.toEpochDay());
+        outState.putString("acc_img_location", mImageLocation);
+        outState.putParcelable("acc_img_location_internal", mImageInternalLocation);
     }
 
     @Override
@@ -46,6 +75,10 @@ public class AccomplishmentNewDialog extends AccomplishmentDialog {
         // Set default date for date input
         DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT);
         mDateInput.setText(dateFormatter.format(mSelectedDate));
+
+        // Restore title/description state if restoring from saved instance
+        if(mTitle != null) mTitleInput.setText(mTitle);
+        if(mDescription != null) mDescriptionInput.setText(mDescription);
 
         // Hide delete button
         mDeleteButton.setVisibility(View.GONE);

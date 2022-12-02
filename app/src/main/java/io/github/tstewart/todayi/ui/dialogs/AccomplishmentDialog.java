@@ -4,7 +4,10 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,9 +84,12 @@ public class AccomplishmentDialog extends DialogFragment {
 
     /* Image data */
     public String mImageLocation = null;
+    /* Internal URI, used for restoring from instance state */
+    public Uri mImageInternalLocation = null;
     public Bitmap mImage = null;
 
-    public AccomplishmentDialog(){}
+    public AccomplishmentDialog(){
+    }
 
     public void display(FragmentManager fragmentManager) {
         this.show(fragmentManager, "accomplishment_dialog");
@@ -104,14 +110,15 @@ public class AccomplishmentDialog extends DialogFragment {
                     }
 
                     @Override
-                    public void onImageSelectionSuccess(String location, Bitmap image) {
+                    public void onImageSelectionSuccess(Uri location, Bitmap image) {
                         if(image != null && location != null) {
                             if(mImageLinearLayout != null && mImageView != null) {
                                 mImageView.setImageBitmap(image);
                                 mImageLinearLayout.setVisibility(View.VISIBLE);
                                 mSelectImageButton.setVisibility(View.GONE);
 
-                                setCurrentImageLocation(location);
+                                setCurrentImageLocation(location.getPath());
+                                mImageInternalLocation = location;
                                 mImage = image;
                             }
                         }
@@ -172,6 +179,27 @@ public class AccomplishmentDialog extends DialogFragment {
         // Set button click listeners
         mCancelButton.setOnClickListener(this::onCancelButtonClicked);
         mConfirmButton.setOnClickListener(this::onConfirmButtonClicked);
+
+        // Set image view content
+        if(mImageLocation != null) {
+            mImageLinearLayout.setVisibility(View.VISIBLE);
+            mSelectImageButton.setVisibility(View.GONE);
+
+            try {
+                Bitmap image;
+                if(mImageInternalLocation != null) {
+                    image = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), mImageInternalLocation);
+                }
+                else {
+                    image = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), Uri.fromFile(new File(mImageLocation)));
+                }
+
+                mImageView.setImageBitmap(image);
+            } catch (IOException e) {
+                Toast.makeText(getContext(), "Failed to load image. It may be missing or deleted.", Toast.LENGTH_LONG).show();
+                e.printStackTrace();
+            }
+        }
 
         return view;
     }

@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +47,8 @@ public class AccomplishmentEditDialog extends AccomplishmentDialog {
     /* If the Accomplishment image has been edited (replaced or removed) */
     boolean mImageReplaced = false;
 
+    public AccomplishmentEditDialog(){}
+
     public AccomplishmentEditDialog(long id, Accomplishment accomplishment){
         mDatabaseId = id;
         mTitle = accomplishment.getTitle();
@@ -55,6 +58,36 @@ public class AccomplishmentEditDialog extends AccomplishmentDialog {
         mOriginalImageThumbnailLocation = accomplishment.getImageThumbnailLocation();
         mOriginalImageLocation = mImageLocation;
         mHasExistingImage = mImageLocation != null;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if(savedInstanceState != null) {
+            mDatabaseId = savedInstanceState.getLong("acc_id");
+            mTitle = savedInstanceState.getString("acc_title");
+            mDescription = savedInstanceState.getString("acc_desc");
+            mSelectedDate = LocalDate.ofEpochDay(savedInstanceState.getLong("acc_date"));
+            mImageLocation = savedInstanceState.getString("acc_img_location");
+            mOriginalImageThumbnailLocation = savedInstanceState.getString("acc_thumb_location_orig");
+            mOriginalImageLocation = savedInstanceState.getString("acc_img_location_orig");
+            mHasExistingImage = savedInstanceState.getBoolean("acc_has_existing_img");
+            mImageInternalLocation = savedInstanceState.getParcelable("acc_img_location_internal");
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong("acc_id", mDatabaseId);
+        outState.putString("acc_title", mTitle);
+        outState.putString("acc_desc", mDescription);
+        outState.putLong("acc_date", mSelectedDate.toEpochDay());
+        outState.putString("acc_img_location", mImageLocation);
+        outState.putString("acc_thumb_location_orig", mOriginalImageThumbnailLocation);
+        outState.putString("acc_img_location_orig", mOriginalImageLocation);
+        outState.putBoolean("acc_has_existing_img", mHasExistingImage);
+        outState.putParcelable("acc_img_location_internal", mImageInternalLocation);
     }
 
     @Override
@@ -70,19 +103,6 @@ public class AccomplishmentEditDialog extends AccomplishmentDialog {
         mTitleInput.setText(mTitle);
 
         mDescriptionInput.setText(mDescription);
-
-        if(mImageLocation != null) {
-            mImageLinearLayout.setVisibility(View.VISIBLE);
-            mSelectImageButton.setVisibility(View.GONE);
-
-            try {
-                Bitmap image = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), Uri.fromFile(new File(mImageLocation)));
-                mImageView.setImageBitmap(image);
-            } catch (IOException e) {
-                Toast.makeText(getContext(), "Failed to load image. It may be missing or deleted.", Toast.LENGTH_LONG).show();
-                e.printStackTrace();
-            }
-        }
 
         DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT);
         mDateInput.setText(dateFormatter.format(mSelectedDate));
