@@ -9,8 +9,6 @@ import io.github.tstewart.todayi.R;
 * Certain preference keys are always the same, and these keys are static */
 public class PreferencesKeyStore {
 
-    /* Enable gestures key */
-    public final String ENABLE_GESTURES_KEY;
     /* Enable clip accomplishments key */
     public final String ENABLE_CLIP_ACCOMPLISHMENT_KEY;
     /* Maximum day ratings key */
@@ -41,7 +39,6 @@ public class PreferencesKeyStore {
     public PreferencesKeyStore(@NonNull Context context) {
 
         /* Search application resources for these keys  */
-        this.ENABLE_GESTURES_KEY = context.getString(R.string.user_prefs_gestures_enabled);
         this.ENABLE_CLIP_ACCOMPLISHMENT_KEY = context.getString(R.string.user_prefs_clip_empty_lines);
         this.MAX_DAY_RATING_KEY = context.getString(R.string.user_prefs_num_day_ratings);
         this.ENABLE_NOTIFICATIONS_KEY = context.getString(R.string.user_prefs_notifications_enabled);
