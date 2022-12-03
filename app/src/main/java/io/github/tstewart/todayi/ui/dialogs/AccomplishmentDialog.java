@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 import io.github.tstewart.todayi.R;
+import io.github.tstewart.todayi.TodayI;
 import io.github.tstewart.todayi.data.AccomplishmentImageIO;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.helpers.DateFormatter;
@@ -237,6 +238,8 @@ public class AccomplishmentDialog extends DialogFragment {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
         photoPickerIntent.setType("image/*");
         mImageSelectionResultLauncher.launch(photoPickerIntent);
+        /* Prevent auto lock */
+        TodayI.sIsFileSelecting = true;
     }
 
     public void onDeleteImageButtonClicked(View view) {

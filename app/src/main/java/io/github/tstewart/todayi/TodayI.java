@@ -54,6 +54,10 @@ public class TodayI extends Application {
     /* Backup Database every x hours */
     private static final int BACKUP_EVERY_HOURS = 24;
 
+    /* If user is currently selecting a file
+    * This is used in Lifecycle observer to prevent auto lock when returning from selecting an image/file */
+    public static boolean sIsFileSelecting = false;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -230,6 +234,12 @@ public class TodayI extends Application {
         @Override
         public void onStart(@NonNull LifecycleOwner owner) {
             DefaultLifecycleObserver.super.onStart(owner);
+
+            /* If returning from a file selection intent, don't attempt to lock application */
+            if(sIsFileSelecting) {
+                sIsFileSelecting = false;
+                return;
+            }
 
             if(UserPreferences.isEnablePasswordProtection() && UserPreferences.isEnableAutoLock()) {
                 Log.i(this.getClass().getSimpleName(), "Returning to login page from application resume.");

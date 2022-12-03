@@ -29,6 +29,7 @@ import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
 
 import io.github.tstewart.todayi.R;
+import io.github.tstewart.todayi.TodayI;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
 import io.github.tstewart.todayi.data.LocalDatabaseIO;
@@ -288,6 +289,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 .setPositiveButton(R.string.button_yes, (dialog, which) -> {
                     Intent fileSelector = new Intent(getActivity(), BackupFileSelectorActivity.class);
                     startActivity(fileSelector);
+
+                    /* Prevent auto lock */
+                    TodayI.sIsFileSelecting = true;
 
                     Toast.makeText(context, R.string.setting_restore_backup_success, Toast.LENGTH_SHORT).show();
                 })
