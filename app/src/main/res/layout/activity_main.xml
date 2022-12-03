@@ -21,7 +21,8 @@
                 android:id="@+id/topAppBar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorOnSurfaceInverse"
+                android:background="?attr/colorSurface"
+                android:elevation="3dp"
                 app:menu="@menu/menu_main_nav"
                 app:title="@string/app_name" />
 

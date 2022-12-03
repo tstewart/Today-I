@@ -2,11 +2,14 @@ package io.github.tstewart.todayi.ui.activities;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.Window;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import com.google.android.material.elevation.SurfaceColors;
 
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.ui.fragments.SettingsFragment;
@@ -33,6 +36,14 @@ public class SettingsActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
+        /* Apply status bar/navigation bar colors */
+        int color = SurfaceColors.SURFACE_2.getColor(this);
+        Window window = getWindow();
+        if(window != null) {
+            window.setStatusBarColor(color);
+            window.setNavigationBarColor(color);
         }
     }
 

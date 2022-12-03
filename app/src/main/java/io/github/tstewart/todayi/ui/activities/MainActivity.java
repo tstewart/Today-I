@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -22,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.elevation.SurfaceColors;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.threeten.bp.LocalDate;
@@ -94,6 +96,8 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         Toolbar mToolbar = findViewById(R.id.topAppBar);
         setSupportActionBar(mToolbar);
 
+        /* Set status/navigation bar colors to match topbar */
+        setSystemBarColors();
     }
 
     @Override
@@ -117,6 +121,13 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
             Intent onboardingIntent = new Intent(this, OnboardingActivity.class);
             startActivity(onboardingIntent);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        /* Set status/navigation bar colors to match topbar */
+        setSystemBarColors();
     }
 
     /* Inflate Main Activity's top bar */
@@ -194,6 +205,16 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
             * E.g. if selected date is today, show "Today"
             * If it was yesterday, show "Yesterday" etc. */
             mRelativeDayLabel.setText(RelativeDateHelper.getRelativeDaysSinceString(date));
+        }
+    }
+
+    void setSystemBarColors() {
+        /* Apply status bar/navigation bar colors */
+        int color = SurfaceColors.SURFACE_2.getColor(this);
+        Window window = getWindow();
+        if(window != null) {
+            window.setStatusBarColor(color);
+            window.setNavigationBarColor(color);
         }
     }
 }
