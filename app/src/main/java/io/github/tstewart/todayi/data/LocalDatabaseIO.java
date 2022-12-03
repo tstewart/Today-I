@@ -68,7 +68,6 @@ public class LocalDatabaseIO {
      * @throws ExportFailedException If the export process was interrupted (e.g. If the database could not be read)
      */
     private static void exportDb(Context context, String newFileName, File exportFolder) throws ExportFailedException {
-
         /* Location of existing database file */
         File currentDatabaseFile = context.getDatabasePath(DATABASE_FILE_NAME);
         /* Location to write backup database to */
@@ -76,12 +75,12 @@ public class LocalDatabaseIO {
 
         /* Check if it is possible to write to the backup folder */
         if (!exportFolder.canWrite()) {
-            throw new ExportFailedException("Backup failed. Cannot write to internal storage.");
+            throw new ExportFailedException("Cannot write to downloads folder. Check your permissions.");
         }
 
         /* If the existing database file exists */
         if (!currentDatabaseFile.exists()) {
-            throw new ExportFailedException("Backup failed. Database file to copy does not exist.");
+            throw new ExportFailedException("Database file to copy does not exist.");
         }
 
         try {

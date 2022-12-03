@@ -71,6 +71,7 @@
     <string name="setting_restore_from_downloads">Import from file</string>
     <string name="setting_force_backup_to_downloads">Export to file</string>
     <string name="setting_force_backup_to_downloads_summary">Export the database to the downloads folder</string>
+    <string name="setting_export_backup_success">Backup exported successfully!</string>
     <string name="setting_restore_from_downloads_summary">Import the database from the downloads folder</string>
     <string name="about_last_backed_up">Last backed up</string>
     <string name="setting_erase_all_data">Erase all data</string>

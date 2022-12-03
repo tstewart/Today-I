@@ -1,5 +1,6 @@
 package io.github.tstewart.todayi.ui.fragments;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import org.threeten.bp.format.DateTimeParseException;
 
 import java.util.Objects;
 
+import androidx.core.app.ActivityCompat;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
@@ -260,6 +262,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private boolean onForceBackupToDLClicked(Preference preference) {
         Context context = getContext();
 
+        requestStoragePermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
         new MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.setting_force_backup_to_downloads)
                 .setMessage(R.string.force_backup_to_dl_confirmation)
@@ -267,6 +271,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     try {
                         /* Force backup database to downloads */
                         LocalDatabaseIO.backupDbToFile(context, DBConstants.DB_NAME);
+
+                        Toast.makeText(context, R.string.setting_export_backup_success, Toast.LENGTH_SHORT).show();
                     } catch (ExportFailedException e) {
                         /* If failed, alert user and log */
                         Log.w(this.getClass().getSimpleName(), e.getMessage(), e);
@@ -283,6 +289,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private boolean onRestoreBackupFromDLClicked(Preference preference) {
         Context context = getContext();
 
+        requestStoragePermission(Manifest.permission.READ_EXTERNAL_STORAGE);
+
         new MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.setting_restore_from_downloads)
                 .setMessage(R.string.restore_backup_to_dl_confirmation)
@@ -292,8 +300,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
                     /* Prevent auto lock */
                     TodayI.sIsFileSelecting = true;
-
-                    Toast.makeText(context, R.string.setting_restore_backup_success, Toast.LENGTH_SHORT).show();
                 })
                 .setNegativeButton(R.string.button_no, null)
                 .create()
@@ -452,6 +458,16 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         }
         /* If version could not be received from PackageInfo, return default value */
         return "Unknown";
+    }
+
+    public void requestStoragePermission(String permission) {;
+        int permissionStatus = getContext().checkCallingOrSelfPermission(permission);
+
+        if(permissionStatus != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this.getActivity(),
+                    new String[]{permission},
+                    1);
+        }
     }
 
 }
