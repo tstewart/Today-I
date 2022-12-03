@@ -4,6 +4,12 @@
     <PreferenceCategory app:title="@string/setting_general_title">
 
         <SwitchPreferenceCompat
+            app:icon="@drawable/settings_icon_gesture"
+            app:key="@string/user_prefs_gestures_enabled"
+            app:summary="@string/setting_enable_gestures_summary"
+            app:title="@string/setting_enable_gestures" />
+
+        <SwitchPreferenceCompat
             app:icon="@drawable/settings_icon_clip"
             app:key="@string/user_prefs_clip_empty_lines"
             app:summary="@string/setting_clip_accomplishments_summary"

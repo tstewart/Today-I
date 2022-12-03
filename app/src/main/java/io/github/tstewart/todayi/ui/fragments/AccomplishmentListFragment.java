@@ -29,6 +29,7 @@ import io.github.tstewart.todayi.data.Database;
 import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.events.OnDatabaseInteracted;
 import io.github.tstewart.todayi.events.OnDateChanged;
+import io.github.tstewart.todayi.events.OnSwipePerformedListener;
 import io.github.tstewart.todayi.helpers.db.AccomplishmentTableHelper;
 import io.github.tstewart.todayi.interfaces.OnDatabaseInteractionListener;
 import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
@@ -66,7 +67,13 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
 
         View view = inflater.inflate(R.layout.fragment_accomplishment_list, container, false);
 
+        /* Add gesture support, allowing user to change dates by swiping the ListView */
         DragSortListView listView = view.findViewById(android.R.id.list);
+        LinearLayout accomplishmentListLayout = view.findViewById(R.id.listLayout);
+
+        if(accomplishmentListLayout != null) {
+            accomplishmentListLayout.setOnTouchListener(changeDayOnSwipe());
+        }
 
         if(listView != null) {
             /* Get indicator imageView */
@@ -121,6 +128,28 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
     public void onPause() {
         super.onPause();
         mCursorAdapter.persistPositions();
+    }
+
+    /* Return listener action to change current day when view is swiped */
+    private OnSwipePerformedListener changeDayOnSwipe() {
+        return new OnSwipePerformedListener(getContext()) {
+            @Override
+            public void onSwipe(SwipeDirection direction) {
+                /* If we should do anything with swipe gestures (controlled by settings) */
+                if(UserPreferences.isGesturesEnabled()) {
+
+                    if (mSelectedDate == null) mSelectedDate = LocalDate.now();
+
+                    if (direction == SwipeDirection.LEFT) {
+                        mSelectedDate = mSelectedDate.plusDays(1);
+                    } else {
+                        mSelectedDate = mSelectedDate.minusDays(1);
+                    }
+
+                    OnDateChanged.notifyDateChanged(mSelectedDate);
+                }
+            }
+        };
     }
 
     /**

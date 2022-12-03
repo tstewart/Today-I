@@ -35,6 +35,8 @@
     <!-- General Settings -->
     <string name="setting_general_title">General</string>
 
+    <string name="setting_enable_gestures">Gestures</string>
+    <string name="setting_enable_gestures_summary">Allow swiping to change current day</string>
     <string name="setting_clip_accomplishments">Auto clipping</string>
     <string name="setting_clip_accomplishments_summary">Remove empty lines from Accomplishment posts</string>
     <string name="setting_time_selection">Time Selection</string>
@@ -140,6 +142,7 @@
     <string name="user_prefs_auto_lock">auto_lock</string>
     <string name="user_prefs_notifications_enabled">notifications_enabled</string>
     <string name="user_prefs_notification_time">notification_time</string>
+    <string name="user_prefs_gestures_enabled">gestures_enabled</string>
     <string name="user_prefs_clip_empty_lines">clip_empty_lines</string>
     <string name="user_prefs_num_day_ratings">num_ratings</string>
 

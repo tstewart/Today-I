@@ -119,6 +119,7 @@ public class TodayI extends Application {
             preferences.setDefaultValue(getString(R.string.user_prefs_auto_lock), false);
             preferences.setDefaultValue(getString(R.string.user_prefs_notifications_enabled), false);
             preferences.setDefaultValue(getString(R.string.user_prefs_notification_time), "18:00");
+            preferences.setDefaultValue(getString(R.string.user_prefs_gestures_enabled), true);
             preferences.setDefaultValue(getString(R.string.user_prefs_clip_empty_lines), true);
             preferences.setDefaultValue(getString(R.string.user_prefs_num_day_ratings), "5");
         }
@@ -130,6 +131,7 @@ public class TodayI extends Application {
         boolean passwordProtection = (boolean) preferences.get(getString(R.string.user_prefs_password_protection), false);
         boolean autoLock = (boolean) preferences.get(getString(R.string.user_prefs_auto_lock), false);
         boolean notificationsEnabled = (boolean) preferences.get(getString(R.string.user_prefs_notifications_enabled), false);
+        boolean gesturesEnabled = (boolean) preferences.get(getString(R.string.user_prefs_gestures_enabled), true);
         String numRatings = (String) preferences.get(getString(R.string.user_prefs_num_day_ratings), "5");
         String notificationTimeString = (String) preferences.get(getString(R.string.user_prefs_notification_time), "18:00");
         boolean clipEmptyLines = (boolean) preferences.get(getString(R.string.user_prefs_clip_empty_lines), true);
@@ -138,6 +140,7 @@ public class TodayI extends Application {
         UserPreferences.setEnablePasswordProtection(passwordProtection);
         UserPreferences.setEnableAutoLock(autoLock);
         UserPreferences.setEnableNotifications(notificationsEnabled);
+        UserPreferences.setEnableGestures(gesturesEnabled);
         UserPreferences.setAccomplishmentClipEmptyLines(clipEmptyLines);
         try {
             UserPreferences.setMaxDayRating(Integer.parseInt(numRatings));

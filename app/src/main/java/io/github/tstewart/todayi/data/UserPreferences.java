@@ -28,6 +28,9 @@ public class UserPreferences {
     /* Daily notification time */
     private static LocalTime sNotificationTime = null;
 
+    /* Whether or not to enable gesture navigation */
+    private static boolean sEnableGestures = true;
+
     /* Whether or not to remove empty lines from Accomplishment content */
     private static boolean sAccomplishmentClipEmptyLines = true;
 
@@ -121,6 +124,14 @@ public class UserPreferences {
 
     public static void setNotificationTime(LocalTime notificationTime) {
         sNotificationTime = notificationTime;
+    }
+
+    public static boolean isGesturesEnabled() {
+        return sEnableGestures;
+    }
+
+    public static void setEnableGestures(boolean enableGestures) {
+        UserPreferences.sEnableGestures = enableGestures;
     }
 
     public static boolean isAccomplishmentClipEmptyLines() {

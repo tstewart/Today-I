@@ -161,6 +161,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         if(preferenceKey.equals(mPreferenceKeys.ENABLE_CLIP_ACCOMPLISHMENT_KEY)) {
             UserPreferences.setAccomplishmentClipEmptyLines((boolean)newValue);
         }
+        else if(preferenceKey.equals(mPreferenceKeys.ENABLE_GESTURES_KEY)) {
+            UserPreferences.setEnableGestures((boolean)newValue);
+        }
         else if(preferenceKey.equals(mPreferenceKeys.MAX_DAY_RATING_KEY)) {
             try {
                 /* Try and cast string response from preference to an integer value */
