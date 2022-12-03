@@ -54,7 +54,8 @@ public class PasswordActivity extends AppCompatActivity {
             case BiometricManager.BIOMETRIC_ERROR_UNSUPPORTED:
             case BiometricManager.BIOMETRIC_STATUS_UNKNOWN:
                 Toast.makeText(this, R.string.password_protection_failed_no_biometrics, Toast.LENGTH_LONG).show();
-                break;
+                finish();
+                return;
             case BiometricManager.BIOMETRIC_SUCCESS:
                 openBiometricPopup();
                 break;
