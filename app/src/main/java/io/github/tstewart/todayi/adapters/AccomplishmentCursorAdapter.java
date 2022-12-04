@@ -123,6 +123,7 @@ public class AccomplishmentCursorAdapter extends DragSortCursorAdapter {
             try {
                 Bitmap image = MediaStore.Images.Media.getBitmap(mParent.getContext().getContentResolver(), Uri.fromFile(new File(imageThumbnailLocation)));
                 accomplishmentImage.setImageBitmap(image);
+                accomplishmentImage.setVisibility(View.VISIBLE);
             } catch (IOException e) {
                 e.printStackTrace();
                 //TODO use default image if failed to load
@@ -132,18 +133,15 @@ public class AccomplishmentCursorAdapter extends DragSortCursorAdapter {
         }
 
         /* Add click listener to expand image to fullscreen on click */
-        accomplishmentImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ImageFullscreenDialog dialog = new ImageFullscreenDialog();
+        accomplishmentImage.setOnClickListener(view1 -> {
+            ImageFullscreenDialog dialog = new ImageFullscreenDialog();
 
-                Bundle args = new Bundle();
-                args.putString("image_location", imageLocation);
+            Bundle args = new Bundle();
+            args.putString("image_location", imageLocation);
 
-                dialog.setArguments(args);
+            dialog.setArguments(args);
 
-                dialog.show(mParent.getParentFragmentManager(), dialog.getClass().getSimpleName());
-            }
+            dialog.show(mParent.getParentFragmentManager(), dialog.getClass().getSimpleName());
         });
 
         /* Add edit button clicked listener */

@@ -220,9 +220,6 @@ public class AccomplishmentListFragment extends ListFragment implements OnDataba
        Set cursor to new cursor, closing current cursor
      */
     private void setCursor(Cursor cursor) {
-        //Cursor currentCursor = mCursorAdapter.getCursor();
-        //if (currentCursor != null) currentCursor.close();
-
         mCursorAdapter.swapCursor(cursor);
     }
 
