@@ -3,6 +3,7 @@
     android:color="@color/colorWhite">
     <item android:id="@android:id/mask">
         <shape android:shape="rectangle">
+            <corners android:radius="7dp"/>
             <solid android:color="@color/design_default_color_primary" />
         </shape>
     </item>

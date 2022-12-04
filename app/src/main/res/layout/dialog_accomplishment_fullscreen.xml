@@ -113,7 +113,9 @@
 
         <Button
             android:id="@+id/buttonAddImage"
-            android:layout_width="match_parent"
+            style="@style/Widget.Material3.Button.ElevatedButton"
+            android:gravity="center"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="20dp"
             android:text="@string/button_choose_img" />
@@ -141,6 +143,7 @@
 
                     <Button
                         android:id="@+id/buttonChangeImage"
+                        style="@style/Widget.Material3.Button.TextButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -148,6 +151,7 @@
 
                     <Button
                         android:id="@+id/buttonDeleteImage"
+                        style="@style/Widget.Material3.Button.TextButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -163,7 +167,7 @@
 
             <Button
                 android:id="@+id/buttonDelete"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/Widget.Material3.Button.ElevatedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -172,7 +176,7 @@
 
             <Button
                 android:id="@+id/buttonCancel"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/Widget.Material3.Button.ElevatedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -181,7 +185,7 @@
 
             <Button
                 android:id="@+id/buttonConfirm"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/Widget.Material3.Button.ElevatedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
