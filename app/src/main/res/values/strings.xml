@@ -46,9 +46,9 @@
 
     <!-- Privacy Settings -->
     <string name="setting_privacy_title">Privacy</string>
-    <string name="setting_enable_password_protection">Password Protection</string>
+    <string name="setting_enable_password_protection">Password protection</string>
     <string name="setting_enable_password_protection_summary">Require your password or biometrics to initially unlock the application</string>
-    <string name="setting_enable_auto_lock">Auto Lock</string>
+    <string name="setting_enable_auto_lock">Auto lock</string>
     <string name="setting_enable_auto_lock_summary">Lock application automatically when not in focus</string>
 
     <!-- Notification Settings -->
