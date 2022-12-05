@@ -32,6 +32,9 @@
 
         <item name="alertDialogTheme">@style/AppTheme.AlertDialogTheme</item>
         <item name="dialogCornerRadius">28dp</item>
+
+        <item name="switchStyle">@style/AppTheme.SettingsSwitch</item>
+        <item name="preferenceCategoryTitleTextAppearance">?textAppearanceTitleMedium</item>
     </style>
     <!-- Calendar activity -->
     <style name="AppTheme.CalendarTheme">
@@ -60,5 +63,10 @@
     <style name="AppTheme.AlertDialogTheme" parent="Theme.Material3.Dark.Dialog.Alert">
         <item name="dialogCornerRadius">20dp</item>
         <item name="backgroundTint">@color/md_theme_dark_surfaceTint</item>
+    </style>
+
+    <style name="AppTheme.SettingsSwitch" parent="Widget.Material3.CompoundButton.MaterialSwitch">
+        <item name="track">@drawable/switch_track</item>
+        <item name="android:thumb">@drawable/switch_thumb</item>
     </style>
 </resources>

@@ -35,6 +35,8 @@
         <item name="android:windowLightStatusBar">true</item>
 
         <item name="alertDialogTheme">@style/AppTheme.AlertDialogTheme</item>
+        <item name="switchStyle">@style/AppTheme.SettingsSwitch</item>
+        <item name="preferenceCategoryTitleTextAppearance">?textAppearanceTitleMedium</item>
     </style>
 
     <style name="AppTheme.FullScreenDialog" parent="ThemeOverlay.Material3.MaterialCalendar.Fullscreen">
@@ -117,5 +119,10 @@
     <style name="AppTheme.AlertDialogTheme" parent="Theme.Material3.Light.Dialog.Alert">
         <item name="dialogCornerRadius">20dp</item>
         <item name="backgroundTint">@color/md_theme_light_surfaceTint</item>
+    </style>
+
+    <style name="AppTheme.SettingsSwitch" parent="Widget.Material3.CompoundButton.MaterialSwitch">
+        <item name="track">@drawable/switch_track</item>
+        <item name="android:thumb">@drawable/switch_thumb</item>
     </style>
 </resources>
