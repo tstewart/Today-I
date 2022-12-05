@@ -54,7 +54,8 @@
                     android:name="android.app.shortcuts"
                     android:resource="@xml/shortcuts" />
         </activity>
-        <activity android:name=".ui.activities.BackupFileSelectorActivity" />
+        <activity android:name=".ui.activities.BackupImportActivity" />
+        <activity android:name=".ui.activities.BackupExportActivity" />
         <receiver
                 android:name=".notifications.receivers.WakeUpAlarmReceiver"
                 android:enabled="true"

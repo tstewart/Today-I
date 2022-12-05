@@ -7,7 +7,10 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -40,8 +43,9 @@ import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ExportFailedException;
 import io.github.tstewart.todayi.errors.ImportFailedException;
 import io.github.tstewart.todayi.notifications.DailyReminderAlarmHelper;
+import io.github.tstewart.todayi.ui.activities.BackupExportActivity;
 import io.github.tstewart.todayi.ui.activities.DebugActivity;
-import io.github.tstewart.todayi.ui.activities.BackupFileSelectorActivity;
+import io.github.tstewart.todayi.ui.activities.BackupImportActivity;
 
 /*
 Fragment of settings views and their functionality.
@@ -271,16 +275,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 .setTitle(R.string.setting_force_backup_to_downloads)
                 .setMessage(R.string.force_backup_to_dl_confirmation)
                 .setPositiveButton(R.string.button_yes, (dialog, which) -> {
-                    try {
-                        /* Force backup database to downloads */
-                        LocalDatabaseIO.backupDbToFile(context, DBConstants.DB_NAME);
+                    Intent fileSelector = new Intent(getActivity(), BackupExportActivity.class);
+                    startActivity(fileSelector);
 
-                        Toast.makeText(context, R.string.setting_export_backup_success, Toast.LENGTH_SHORT).show();
-                    } catch (ExportFailedException e) {
-                        /* If failed, alert user and log */
-                        Log.w(this.getClass().getSimpleName(), e.getMessage(), e);
-                        Toast.makeText(getContext(), String.format(getString(R.string.setting_force_backup_failed), e.getMessage()), Toast.LENGTH_LONG).show();
-                    }
+                    /* Prevent auto lock */
+                    TodayI.sIsFileSelecting = true;
                 })
                 .setNegativeButton(R.string.button_no, null)
                 .create()
@@ -296,9 +295,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         new MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.setting_restore_from_downloads)
-                .setMessage(R.string.restore_backup_to_dl_confirmation)
+                .setMessage(R.string.restore_backup_from_dl_confirmation)
                 .setPositiveButton(R.string.button_yes, (dialog, which) -> {
-                    Intent fileSelector = new Intent(getActivity(), BackupFileSelectorActivity.class);
+                    Intent fileSelector = new Intent(getActivity(), BackupImportActivity.class);
                     startActivity(fileSelector);
 
                     /* Prevent auto lock */

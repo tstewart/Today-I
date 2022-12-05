@@ -1,7 +1,10 @@
 package io.github.tstewart.todayi.data;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.icu.util.Output;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 
@@ -10,6 +13,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 
 import io.github.tstewart.todayi.errors.ExportFailedException;
@@ -49,19 +54,16 @@ public class LocalDatabaseIO {
     }
 
     /**
-     * Export the provided database to the user's downloads folder
+     * Export the provided database to the chosen location
      * @param context Environment context, provides the location of objects at runtime
-     * @param databaseName Name of the database to be backed up
+     * @param backupLocation Location to back up the database to
      */
-    public static void backupDbToFile(Context context, String databaseName) throws ExportFailedException {
-        /* Location of folder to write backup file to */
-        File downloadsBackupFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-
-        exportDb(context, databaseName+".db", downloadsBackupFolder);
+    public static void exportDbToFile(Context context, File backupLocation) throws ExportFailedException {
+        exportDb(context, backupLocation.getName(), new File(backupLocation.getParent()));
     }
 
     /**
-     * Exports the provided database to the application's default backup location
+     * Exports the provided database to the provided export folder
      * @param context Environment context, provides the location of objects at runtime
      * @param newFileName Name of the new backup file
      * @param exportFolder Folder to export database to
@@ -85,7 +87,7 @@ public class LocalDatabaseIO {
 
         try {
             /* Try and write existing database file to backup location */
-            writeToPath(currentDatabaseFile, databaseBackupFile);
+            writeToPath(currentDatabaseFile, databaseBackupFile, context);
 
             /* If, after the write process is complete the file does not exist in the new location */
             if (!databaseBackupFile.exists()) {
@@ -96,6 +98,7 @@ public class LocalDatabaseIO {
             }
         } catch (IOException e) {
             /* Catch IOException, caused by an error in writing the file */
+            e.printStackTrace();
             throw new ExportFailedException(e.getMessage());
         }
     }
@@ -138,11 +141,6 @@ public class LocalDatabaseIO {
         /* Location of the existing database file */
         File currentDatabaseFile = context.getDatabasePath(DATABASE_FILE_NAME);
 
-        /* Check if the database backup file can be read */
-        if (!backupFile.canRead()) {
-            throw new ImportFailedException("Database to import does not exist or could not be read.");
-        }
-
         /* Check if the existing database file can be written */
         if (!currentDatabaseFile.canWrite()) {
             throw new ImportFailedException("Could not write to existing database.");
@@ -156,7 +154,7 @@ public class LocalDatabaseIO {
         /* If the database and backup file was valid, attempt backup */
         try {
             /* Replace existing database with backup database */
-            writeToPath(backupFile, currentDatabaseFile);
+            writeToPath(backupFile, currentDatabaseFile, context);
             /* Notify activities that the existing database has been replaced */
             OnDatabaseInteracted.notifyDatabaseInteracted();
 
@@ -174,7 +172,21 @@ public class LocalDatabaseIO {
      * @param outputPath File to write to
      * @throws IOException If an error occurred in writing the file
      */
-    private static void writeToPath(File inputPath, File outputPath) throws IOException {
+    private static void writeToPath(File inputPath, File outputPath, Context context) throws IOException {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            final ContentResolver resolver = context.getContentResolver();
+            try (InputStream in = resolver.openInputStream(Uri.fromFile(inputPath));
+                OutputStream out = resolver.openOutputStream(Uri.fromFile(outputPath))) {
+
+                byte[] buffer = new byte[1024];
+                int len = in.read(buffer);
+                while (len != -1) {
+                    out.write(buffer, 0, len);
+                    len = in.read(buffer);
+                }
+            }
+        }
 
         /* Use try with resources to auto close input and output stream */
         try (FileChannel input = new FileInputStream(inputPath).getChannel();
@@ -196,11 +208,6 @@ public class LocalDatabaseIO {
      */
     public static boolean isValidSQLite(String dbPath) {
         File databaseFile = new File(dbPath);
-
-        /* If the file doesn't exist or can't be read, then don't check it */
-        if (!databaseFile.exists() || !databaseFile.canRead()) {
-            return false;
-        }
 
         /* Use try with resources to auto close FileReader */
         try (FileReader fr = new FileReader(databaseFile)) {
