@@ -20,10 +20,10 @@ public abstract class OnSwipePerformedListener implements View.OnTouchListener {
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        /* Still perform a click on the view, so this gesture doesn't absorb all click events */
-        v.performClick();
         return mGestureDetector.onTouchEvent(event);
     }
+
+    public abstract boolean onTouch(MotionEvent event);
 
     /**
      * Called when a swipe was detected
@@ -45,6 +45,16 @@ public abstract class OnSwipePerformedListener implements View.OnTouchListener {
         public SwipeGestureDetector(Context context, OnSwipePerformedListener listener) {
             this.mContext = context;
             this.mListener = listener;
+        }
+
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return true;
+        }
+
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            return mListener.onTouch(e);
         }
 
         @Override

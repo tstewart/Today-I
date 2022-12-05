@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageButton;
@@ -19,18 +20,18 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.elevation.SurfaceColors;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import org.threeten.bp.LocalDate;
 
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.events.OnDateChanged;
+import io.github.tstewart.todayi.events.OnSwipePerformedListener;
 import io.github.tstewart.todayi.helpers.DateFormatter;
 import io.github.tstewart.todayi.helpers.RelativeDateHelper;
 import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
@@ -59,6 +60,9 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
     /* Text label, shows current date in a relative time span from system date */
     TextView mRelativeDayLabel;
 
+    /* Calendar Dialog */
+    AlertDialog mCalendarDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,9 +89,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         if(nextButton != null)
             nextButton.setOnClickListener(this::onDayChangeButtonClicked);
         if(mLayoutDayLabel != null)
-            /* If day label (parent layout) is pressed, open calendar to change days */
-            mLayoutDayLabel.setOnClickListener(v -> new CalendarDialog(this, mSelectedDate).create().show());
-
+            mLayoutDayLabel.setOnTouchListener(changeDayOnSwipe());
 
         /* Register for date changed events */
         OnDateChanged.addListener(this);
@@ -216,5 +218,37 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
             window.setStatusBarColor(color);
             window.setNavigationBarColor(color);
         }
+    }
+
+    /* Return listener action to change current day when view is swiped */
+    private OnSwipePerformedListener changeDayOnSwipe() {
+        return new OnSwipePerformedListener(this) {
+            @Override
+            public boolean onTouch(MotionEvent e) {
+                /* If touch event is recognised (i.e. a swipe that is too small), open calendar to change days */
+                if(mCalendarDialog == null || !mCalendarDialog.isShowing()) {
+                    mCalendarDialog = new CalendarDialog(MainActivity.this, mSelectedDate).create();
+                    mCalendarDialog.show();
+                }
+                return true;
+            }
+
+            @Override
+            public void onSwipe(SwipeDirection direction) {
+                /* If we should do anything with swipe gestures (controlled by settings) */
+                if(UserPreferences.isGesturesEnabled()) {
+
+                    if (mSelectedDate == null) mSelectedDate = LocalDate.now();
+
+                    if (direction == SwipeDirection.LEFT) {
+                        mSelectedDate = mSelectedDate.plusDays(1);
+                    } else {
+                        mSelectedDate = mSelectedDate.minusDays(1);
+                    }
+
+                    OnDateChanged.notifyDateChanged(mSelectedDate);
+                }
+            }
+        };
     }
 }
