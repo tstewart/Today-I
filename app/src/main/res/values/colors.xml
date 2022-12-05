@@ -6,20 +6,6 @@
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorTransparent">#00000000</color>
 
-    <color name="colorDragHoverBackground">#bfbfbf</color>
-
-    <!-- Theme colors -->
-    <color name="colorSplashBackground">?attr/colorOnSurfaceInverse</color>
-    <color name="colorButtonBg">#DFDFDF</color>
-    <color name="colorCalendarSelection">#CDCDCD</color>
-
-    <!-- Erase data warning color -->
-    <color name="colorWarning">#8B0000</color>
-
-    <!-- Day Rating colors -->
-    <color name="colorRatingRed">#90FF0000</color>
-    <color name="colorRatingGreen">#9000FF00</color>
-
     <!-- Default colors for Material elements, if dynamic theming did not take effect -->
     <color name="seed">#703bb4</color>
     <color name="md_theme_light_primary">#7641BA</color>

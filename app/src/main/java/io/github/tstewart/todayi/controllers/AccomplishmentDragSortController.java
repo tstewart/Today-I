@@ -58,7 +58,7 @@ public class AccomplishmentDragSortController extends DragSortController {
                 if (mImageView == null) {
                     mImageView = new ImageView(mListView.getContext());
                 }
-                mImageView.setBackgroundColor(mContext.getColor(R.color.colorDragHoverBackground));
+                mImageView.setBackgroundColor(mContext.getColor(R.color.md_theme_light_inverseOnSurface));
                 mImageView.setPadding(0, 0, 0, 0);
                 mImageView.setImageBitmap(mFloatBitmap);
                 mImageView.setLayoutParams(new ViewGroup.LayoutParams(view.getWidth(), targetHiddenHeight));

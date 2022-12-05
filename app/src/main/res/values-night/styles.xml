@@ -2,7 +2,6 @@
 <resources>
 
     <style name="AppTheme" parent="Theme.Material3.Dark.NoActionBar">
-        <item name="android:buttonStyle">@style/AppTheme.ButtonTheme</item>
         <item name="colorPrimary">@color/md_theme_dark_primary</item>
         <item name="colorOnPrimary">@color/md_theme_dark_onPrimary</item>
         <item name="colorPrimaryContainer">@color/md_theme_dark_primaryContainer</item>
@@ -33,12 +32,14 @@
         <item name="alertDialogTheme">@style/AppTheme.AlertDialogTheme</item>
         <item name="dialogCornerRadius">28dp</item>
 
+        <item name="android:statusBarColor">@android:color/transparent</item>
+
         <item name="switchStyle">@style/AppTheme.SettingsSwitch</item>
         <item name="preferenceCategoryTitleTextAppearance">?textAppearanceTitleMedium</item>
     </style>
     <!-- Calendar activity -->
     <style name="AppTheme.CalendarTheme">
-        <item name="mcv_selectionColor">@color/colorCalendarSelection</item>
+        <item name="mcv_selectionColor">?attr/colorOnSecondaryContainer</item>
         <item name="mcv_dateTextAppearance">?textAppearanceLabelSmall</item>
         <item name="mcv_headerTextAppearance">@style/AppTheme.CalendarHeaderText</item>
         <item name="mcv_weekDayTextAppearance">@style/AppTheme.CalendarMonthLabelText</item>

@@ -26,9 +26,7 @@
                 android:divider="@null"
                 android:listSelector="@color/colorTransparent"
                 dslv:drag_enabled="true"
-                dslv:drag_handle_id="@id/drag_handle"
-                dslv:drag_start_mode="onMove"
-                dslv:float_background_color="@color/colorTransparent" />
+                dslv:drag_start_mode="onMove" />
 
             <ImageView
                 android:id="@+id/imageViewListDownIndicator"

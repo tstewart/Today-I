@@ -100,18 +100,20 @@ public class AccomplishmentCursorAdapter extends DragSortCursorAdapter {
         /* Get Accomplishment card view */
         MaterialCardView accomplishmentCardView = view.findViewById(R.id.cardViewAccomplishment);
         /* Get Accomplishment card content view */
-        LinearLayout accomplishmentContentLayout = view.findViewById(R.id.linearLayoutContent);
         if(accomplishmentDetailsExpanded != null && accomplishmentCardView != null) {
             /* Hide expanded details by default */
             accomplishmentDetailsExpanded.setVisibility(View.GONE);
-            /* Set onclick listener to content layout to expand details panel
+            /* Set onclick listener to title/description views to expand details panel
             * Requires an inline function */
-            accomplishmentContentLayout.setOnClickListener(card -> {
+            View.OnClickListener expandDetails = (card -> {
                 TransitionManager.beginDelayedTransition(accomplishmentCardView);
                 int visibility = accomplishmentDetailsExpanded.getVisibility();
 
                 accomplishmentDetailsExpanded.setVisibility(visibility == View.VISIBLE ? View.GONE : View.VISIBLE);
             });
+
+            titleView.setOnClickListener(expandDetails);
+            descriptionView.setOnClickListener(expandDetails);
         }
 
         /* Create Accomplishment from these values */
