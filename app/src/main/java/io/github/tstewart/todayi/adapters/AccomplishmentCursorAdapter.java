@@ -128,7 +128,7 @@ public class AccomplishmentCursorAdapter extends DragSortCursorAdapter {
                 accomplishmentImage.setVisibility(View.VISIBLE);
             } catch (IOException e) {
                 e.printStackTrace();
-                //TODO use default image if failed to load
+                accomplishmentImage.setImageResource(R.drawable.ic_image_not_found);
             }
         } else {
             accomplishmentImage.setVisibility(View.GONE);

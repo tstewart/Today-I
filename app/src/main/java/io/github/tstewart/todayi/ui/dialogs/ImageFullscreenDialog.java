@@ -23,7 +23,6 @@ import io.github.tstewart.todayi.R;
 
 public class ImageFullscreenDialog extends DialogFragment {
 
-    private FrameLayout mMainLayout;
     private ImageView mImageView;
 
     private String mImageLocation = null;
@@ -44,7 +43,6 @@ public class ImageFullscreenDialog extends DialogFragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mMainLayout = view.findViewById(R.id.frameLayoutFullscreenImageContent);
         mImageView = view.findViewById(R.id.imageViewFullscreenImage);
 
         /* Get image location from bundle, if this doesn't exist close the fragment. */

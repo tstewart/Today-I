@@ -226,6 +226,7 @@ public class AccomplishmentDialog extends DialogFragment {
                 mImageView.setImageBitmap(image);
                 mImage = image;
             } catch (IOException e) {
+                mImageView.setImageResource(R.drawable.ic_image_not_found);
                 Toast.makeText(getContext(), "Failed to load image. It may be missing or deleted.", Toast.LENGTH_LONG).show();
                 e.printStackTrace();
             }

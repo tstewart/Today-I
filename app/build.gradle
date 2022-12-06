@@ -6,8 +6,8 @@ android {
         applicationId "io.github.tstewart.todayi"
         minSdkVersion 23
         targetSdkVersion 32
-        versionCode 16
-        versionName "2.0-rc-2"
+        versionCode 17
+        versionName "2.0-rc-3"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
