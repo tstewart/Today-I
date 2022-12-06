@@ -120,6 +120,12 @@ public class AccomplishmentEditDialog extends AccomplishmentDialog {
         mImageReplaced = true;
     }
 
+    @Override
+    public void onRotateImageButtonClicked(View view) {
+        super.onRotateImageButtonClicked(view);
+        mImageReplaced = true;
+    }
+
     //TODO simplify image save/delete
     @Override
     public void onConfirmButtonClicked(View view) {

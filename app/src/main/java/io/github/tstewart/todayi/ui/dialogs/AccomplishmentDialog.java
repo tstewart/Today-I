@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -87,6 +89,8 @@ public class AccomplishmentDialog extends DialogFragment {
     Button mChangeImageButton;
 
     Button mDeleteImageButton;
+
+    ImageButton mRotateImageButton;
 
     /* Image data */
     public String mImageLocation = null;
@@ -186,6 +190,7 @@ public class AccomplishmentDialog extends DialogFragment {
        mImageView = view.findViewById(R.id.imageViewAccomplishmentDialogImage);
        mChangeImageButton = view.findViewById(R.id.buttonChangeImage);
        mDeleteImageButton = view.findViewById(R.id.buttonDeleteImage);
+       mRotateImageButton = view.findViewById(R.id.imageButtonRotateImage);
 
         // Set date/time click listeners
         mDateInput.setOnClickListener(this::onDateSelectionClicked);
@@ -200,6 +205,9 @@ public class AccomplishmentDialog extends DialogFragment {
         // Set button click listeners
         mCancelButton.setOnClickListener(this::onCancelButtonClicked);
         mConfirmButton.setOnClickListener(this::onConfirmButtonClicked);
+
+        // Set rotate image button click listeners
+        mRotateImageButton.setOnClickListener(this::onRotateImageButtonClicked);
 
         // Set image view content
         if(mImageLocation != null) {
@@ -216,6 +224,7 @@ public class AccomplishmentDialog extends DialogFragment {
                 }
 
                 mImageView.setImageBitmap(image);
+                mImage = image;
             } catch (IOException e) {
                 Toast.makeText(getContext(), "Failed to load image. It may be missing or deleted.", Toast.LENGTH_LONG).show();
                 e.printStackTrace();
@@ -270,7 +279,7 @@ public class AccomplishmentDialog extends DialogFragment {
             onSelectImageTypeButtonClicked(ImageType.GALLERY);
         });
 
-        dialogBuilder.create().show();
+        mImageTypeDialog.show();
     }
 
     private void onSelectImageTypeButtonClicked(ImageType type) {
@@ -302,6 +311,18 @@ public class AccomplishmentDialog extends DialogFragment {
 
             /* Prevent auto lock */
             TodayI.sIsFileSelecting = true;
+        }
+    }
+
+
+    public void onRotateImageButtonClicked(View view) {
+        if(mImage != null) {
+            Matrix matrix = new Matrix();
+            matrix.postRotate(90);
+
+            Bitmap rotatedImage =  Bitmap.createBitmap(mImage, 0, 0, mImage.getWidth(), mImage.getHeight(), matrix, true);
+            mImageView.setImageBitmap(rotatedImage);
+            mImage = rotatedImage;
         }
     }
 
