@@ -7,11 +7,9 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -20,13 +18,15 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
-import com.google.android.material.elevation.SurfaceColors;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 
 import org.threeten.bp.Instant;
@@ -72,6 +72,9 @@ public class AccomplishmentDialog extends DialogFragment {
     /* Confirm button */
     Button mConfirmButton;
 
+    /* Current image type dialog */
+    AlertDialog mImageTypeDialog = null;
+
     /* Database helper, for inserting and editing Accomplishments */
     AccomplishmentTableHelper mTableHelper;
 
@@ -113,16 +116,31 @@ public class AccomplishmentDialog extends DialogFragment {
                     }
 
                     @Override
-                    public void onImageSelectionSuccess(Uri location, Bitmap image) {
+                    public void onCameraImageSelectionSuccess(Bitmap image) {
+                        mImage = image;
+                        setCurrentImageLocation(null);
+
+                        onImageAddedSuccess(image);
+                    }
+
+                    private void onImageAddedSuccess(Bitmap image) {
+                        mImageView.setImageBitmap(image);
+                        mImageLinearLayout.setVisibility(View.VISIBLE);
+                        mSelectImageButton.setVisibility(View.GONE);
+                        mImage = image;
+
+                        if(mImageTypeDialog != null) {
+                            mImageTypeDialog.dismiss();
+                        }
+                    }
+
+                    @Override
+                    public void onGalleryImageSelectionSuccess(Uri location, Bitmap image) {
                         if(image != null && location != null) {
                             if(mImageLinearLayout != null && mImageView != null) {
-                                mImageView.setImageBitmap(image);
-                                mImageLinearLayout.setVisibility(View.VISIBLE);
-                                mSelectImageButton.setVisibility(View.GONE);
-
                                 setCurrentImageLocation(location.getPath());
                                 mImageInternalLocation = location;
-                                mImage = image;
+                                onImageAddedSuccess(image);
                             }
                         }
                         else {
@@ -235,15 +253,61 @@ public class AccomplishmentDialog extends DialogFragment {
     }
 
     public void onSelectImageButtonClicked(View view) {
-        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-        photoPickerIntent.setType("image/*");
-        mImageSelectionResultLauncher.launch(photoPickerIntent);
-        /* Prevent auto lock */
-        TodayI.sIsFileSelecting = true;
+        /* Open dialog to select gallery or camera picker */
+        MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(getContext());
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_select_image_type, (ViewGroup) getActivity().findViewById(R.id.linearLayoutSelectImageDialog));
+        dialogBuilder.setView(dialogView);
+
+        mImageTypeDialog = dialogBuilder.create();
+
+        Button cameraButton = dialogView.findViewById(R.id.buttonCamera);
+        Button galleryButton = dialogView.findViewById(R.id.buttonGallery);
+
+        cameraButton.setOnClickListener(view1 -> {
+            onSelectImageTypeButtonClicked(ImageType.CAMERA);
+        });
+        galleryButton.setOnClickListener(view1 -> {
+            onSelectImageTypeButtonClicked(ImageType.GALLERY);
+        });
+
+        dialogBuilder.create().show();
+    }
+
+    private void onSelectImageTypeButtonClicked(ImageType type) {
+        Intent intent = null;
+        if(type == ImageType.CAMERA) {
+            File tempFile;
+            try {
+                tempFile = AccomplishmentImageIO.createTemporaryFile(getContext(), "capture", ".jpeg");
+                tempFile.delete();
+
+                Uri tempFileUri = FileProvider.getUriForFile(getContext(), "io.github.tstewart.todayi.fileprovider", tempFile);
+                intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, tempFileUri);
+
+                /* Alert Intent response listener that there is a new temporary file */
+                ImageSelectorActivityResult.setTempCameraImageLocation(tempFileUri);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(getContext(), "Failed to initialize camera. Couldn't create required temporary file.", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            intent = new Intent(Intent.ACTION_PICK);
+            intent.setType("image/*");
+        }
+
+        if(intent != null) {
+            mImageSelectionResultLauncher.launch(intent);
+
+            /* Prevent auto lock */
+            TodayI.sIsFileSelecting = true;
+        }
     }
 
     public void onDeleteImageButtonClicked(View view) {
         setCurrentImageLocation(null);
+        mImage = null;
         if(mImageLinearLayout != null) {
             mImageLinearLayout.setVisibility(View.GONE);
             mSelectImageButton.setVisibility(View.VISIBLE);
@@ -300,5 +364,10 @@ public class AccomplishmentDialog extends DialogFragment {
         else {
             return null;
         }
+    }
+
+    private enum ImageType {
+        CAMERA,
+        GALLERY
     }
 }

@@ -67,6 +67,16 @@
         <receiver
                 android:name=".notifications.receivers.DailyAlarmReceiver"
                 android:enabled="true" />
+
+        <provider
+                android:name="androidx.core.content.FileProvider"
+                android:authorities="io.github.tstewart.todayi.fileprovider"
+                android:grantUriPermissions="true"
+                android:exported="false">
+            <meta-data
+                    android:name="android.support.FILE_PROVIDER_PATHS"
+                    android:resource="@xml/filepaths" />
+        </provider>
     </application>
 
 </manifest>

@@ -1,9 +1,13 @@
 package io.github.tstewart.todayi.data;
 
+import static android.os.Environment.DIRECTORY_PICTURES;
+
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
+import android.os.Environment;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.io.File;
@@ -44,5 +48,21 @@ public class AccomplishmentImageIO {
             return mFilePath.getAbsoluteFile().delete();
         }
         return false;
+    }
+
+    /* Author: Barmaley
+    * Link: https://stackoverflow.com/a/6449092 */
+    public static File createTemporaryFile(Context context, String name, String ext) throws IOException
+    {
+        File tempDir = context.getExternalFilesDir(DIRECTORY_PICTURES);
+        tempDir=new File(tempDir.getAbsolutePath()+"/.temp/");
+        if(!tempDir.exists())
+        {
+            boolean created = tempDir.mkdirs();
+            if(!created) {
+                Log.w(AccomplishmentImageIO.class.getSimpleName(),"Couldn't create temporary directory.");
+            }
+        }
+        return File.createTempFile(name, ext, tempDir);
     }
 }

@@ -141,9 +141,14 @@ public class AccomplishmentEditDialog extends AccomplishmentDialog {
             deleteExistingImage(mOriginalImageLocation);
             deleteExistingImage(mOriginalImageThumbnailLocation);
         }
+        /* Image was not replaced */
+        else {
+            imageFileLocation = mOriginalImageLocation;
+            imageThumbnailLocation = mOriginalImageThumbnailLocation;
+        }
 
         /* Image was replaced, not deleted. Save new file */
-        if(mImageReplaced && mImageLocation != null) {
+        if(mImageReplaced && mImage != null) {
             try {
                 imageFileLocation = saveImageFile();
                 imageThumbnailLocation = saveImageThumbnailFile();
@@ -151,11 +156,6 @@ public class AccomplishmentEditDialog extends AccomplishmentDialog {
                 Toast.makeText(getContext(), "Failed to save Accomplishment image.", Toast.LENGTH_LONG).show();
                 e.printStackTrace();
             }
-        }
-        /* Image was not replaced */
-        else {
-            imageFileLocation = mOriginalImageLocation;
-            imageThumbnailLocation = mOriginalImageThumbnailLocation;
         }
 
         /* Set Accomplishment image file location */
@@ -192,7 +192,7 @@ public class AccomplishmentEditDialog extends AccomplishmentDialog {
             boolean deleted = new AccomplishmentImageIO(getContext(), originalFile).deleteImage();
 
             if (!deleted) {
-                Toast.makeText(getContext(), "Failed to properly delete existing image.", Toast.LENGTH_LONG).show();
+                Log.w(AccomplishmentEditDialog.class.getSimpleName(), "Failed to properly delete existing image.");
             }
         }
     }

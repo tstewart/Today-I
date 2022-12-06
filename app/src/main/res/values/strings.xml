@@ -30,6 +30,7 @@
     <string name="accomplishment_date_hint">Date</string>
     <string name="confirm_delete">Delete this Accomplishment?</string>
     <string name="button_choose_img">Select image…</string>
+    <string name="dialog_select_image_title">Select Image</string>
 
     <!-- Options Activity -->
     <!-- General Settings -->
@@ -130,6 +131,8 @@
     <string name="button_change_img">Change Image</string>
     <string name="button_delete_img">Delete Image</string>
     <string name="button_end">End</string>
+    <string name="button_camera">Camera</string>
+    <string name="button_gallery">Gallery</string>
 
     <string name="new_accomplishment_invalid_text">Your accomplishment must be between 1 and 200 characters.</string>
     <string name="automatic_backup_failed">Automatic backup failed: %s</string>

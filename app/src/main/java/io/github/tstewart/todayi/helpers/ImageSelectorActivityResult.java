@@ -3,25 +3,20 @@ package io.github.tstewart.todayi.helpers;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Bundle;
 import android.provider.MediaStore;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-
-import io.github.tstewart.todayi.ui.dialogs.AccomplishmentDialog;
 
 public abstract class ImageSelectorActivityResult implements ActivityResultCallback<ActivityResult> {
+
+    /* Store the most recent temporary image file location
+    * This is retrieved when ACTION_IMAGE_CAPTURE is completed successfully. */
+    private static Uri sTempCameraImageLocation = null;
 
     private ContentResolver mContentResolver = null;
 
@@ -31,24 +26,45 @@ public abstract class ImageSelectorActivityResult implements ActivityResultCallb
 
     public abstract void onImageSelectionError(String error);
 
-    public abstract void onImageSelectionSuccess(Uri location, Bitmap image);
+    public abstract void onCameraImageSelectionSuccess(Bitmap image);
+
+    public abstract void onGalleryImageSelectionSuccess(Uri location, Bitmap image);
 
     @Override
     public void onActivityResult(ActivityResult result) {
 
         Intent data = result.getData();
 
-        if (data != null) {
-                Uri selectedImage = data.getData();
+        if (data != null && result.getResultCode() != Activity.RESULT_CANCELED) {
+                Uri galleryImage = data.getData();
 
-                try {
-                    Bitmap imageFile = MediaStore.Images.Media.getBitmap(mContentResolver, selectedImage);
+                if(galleryImage == null) {
+                    try {
+                        Bitmap image = getImageFromTempFile();
+                        onCameraImageSelectionSuccess(image);
+                    } catch (IOException e) {
+                        onImageSelectionError("Couldn't retrieve taken picture.");
+                    }
+                } else {
 
-                    onImageSelectionSuccess(selectedImage, imageFile);
-                } catch (IOException e) {
-                    onImageSelectionError("Image not found or was unreadable.");
-                    e.printStackTrace();
+                    try {
+                        Bitmap imageFile = MediaStore.Images.Media.getBitmap(mContentResolver, galleryImage);
+
+                        onGalleryImageSelectionSuccess(galleryImage, imageFile);
+                    } catch (IOException e) {
+                        onImageSelectionError("Image not found or was unreadable.");
+                        e.printStackTrace();
+                    }
                 }
         }
+    }
+
+    private Bitmap getImageFromTempFile() throws IOException {
+        return android.provider.MediaStore.Images.Media.getBitmap(mContentResolver, sTempCameraImageLocation);
+    }
+
+    //TODO refactor this, this class shouldn't need to store this value
+    public static void setTempCameraImageLocation(Uri tempCameraImageLocation) {
+        sTempCameraImageLocation = tempCameraImageLocation;
     }
 }
