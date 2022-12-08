@@ -88,10 +88,10 @@ public class DatabaseHelper {
     public void updateDBObject(@NonNull DatabaseObject object, String whereClause, String[] whereArgs) {
         ContentValues cv = object.createCV();
 
-        update(cv, whereClause, whereArgs);
+        update(cv, whereClause, whereArgs, true);
     }
 
-    public void update(ContentValues cv, String whereClause, String[] whereArgs) {
+    public void update(ContentValues cv, String whereClause, String[] whereArgs, boolean notifyUpdate) {
         mDb = getDatabase();
 
         /* If the ContentValues were generated successfully, update record */
@@ -100,8 +100,10 @@ public class DatabaseHelper {
             mDb.update(this.mTable, cv, whereClause, whereArgs);
         }
 
-        /* Notify event listeners that the database was interacted with */
-        OnDatabaseInteracted.notifyDatabaseInteracted();
+        if(notifyUpdate) {
+            /* Notify event listeners that the database was interacted with */
+            OnDatabaseInteracted.notifyDatabaseInteracted();
+        }
     }
 
     /**

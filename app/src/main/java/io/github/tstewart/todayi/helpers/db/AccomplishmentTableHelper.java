@@ -49,7 +49,7 @@ public class AccomplishmentTableHelper extends DatabaseHelper {
         ContentValues cv = new ContentValues();
         cv.put(DBConstants.COLUMN_POSITION, position);
 
-        super.update(cv, DBConstants.COLUMN_ID + "=?", new String[]{String.valueOf(id)});
+        super.update(cv, DBConstants.COLUMN_ID + "=?", new String[]{String.valueOf(id)}, false);
     }
 
     /**
