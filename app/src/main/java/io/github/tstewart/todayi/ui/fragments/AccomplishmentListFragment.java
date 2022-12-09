@@ -2,37 +2,31 @@ package io.github.tstewart.todayi.ui.fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.threeten.bp.LocalDate;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.ListFragment;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.adapters.AccomplishmentAdapter;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
-import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.events.OnDatabaseInteracted;
 import io.github.tstewart.todayi.events.OnDateChanged;
-import io.github.tstewart.todayi.events.OnSwipePerformedListener;
 import io.github.tstewart.todayi.helpers.db.AccomplishmentTableHelper;
 import io.github.tstewart.todayi.interfaces.OnDatabaseInteractionListener;
 import io.github.tstewart.todayi.interfaces.OnDateChangedListener;
@@ -77,7 +71,7 @@ public class AccomplishmentListFragment extends Fragment implements OnDatabaseIn
 
         /* Get indicator imageView */
         ImageView indicator = view.findViewById(R.id.imageViewListDownIndicator);
-        if(indicator != null) {
+        if (indicator != null) {
             /* Add listener for scroll events on RecyclerView
              * Show or hide the indicator that tells the user if the RecyclerView overflows off screen */
             mRecyclerView.setOnScrollListener(toggleIndicatorOnScroll(indicator));
@@ -98,7 +92,7 @@ public class AccomplishmentListFragment extends Fragment implements OnDatabaseIn
 
         Context context = getContext();
 
-        if(context != null) {
+        if (context != null) {
             this.mTableHelper = new AccomplishmentTableHelper(context);
 
             this.mAdapter = new AccomplishmentAdapter(this, mTableHelper, getNewCursor());
@@ -112,11 +106,11 @@ public class AccomplishmentListFragment extends Fragment implements OnDatabaseIn
             mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         }
 
-            /* Add listener to notify fragment of database updates */
-            OnDatabaseInteracted.addListener(this);
-            /* Add listener to notify fragment of date changes */
-            OnDateChanged.addListener(this);
-        }
+        /* Add listener to notify fragment of database updates */
+        OnDatabaseInteracted.addListener(this);
+        /* Add listener to notify fragment of date changes */
+        OnDateChanged.addListener(this);
+    }
 
 
     @Override
@@ -127,6 +121,7 @@ public class AccomplishmentListFragment extends Fragment implements OnDatabaseIn
 
     /**
      * Toggle indicator on or off if ListView can be scrolled
+     *
      * @param indicator Indicator image to toggle
      */
     private RecyclerView.OnScrollListener toggleIndicatorOnScroll(ImageView indicator) {
@@ -175,14 +170,14 @@ public class AccomplishmentListFragment extends Fragment implements OnDatabaseIn
      */
     public Cursor getNewCursor() {
         Context context = getContext();
-        if(context != null) {
+        if (context != null) {
             SQLiteDatabase db = Database.getInstance(getContext()).getWritableDatabase();
 
             /* Format current date to database format with wildcard to pattern match */
             String dateFormatted = mTableHelper.getDateQuery(mSelectedDate);
 
-            if(db.isOpen())
-                return db.rawQuery(DBConstants.ACCOMPLISHMENT_QUERY,new String[]{dateFormatted});
+            if (db.isOpen())
+                return db.rawQuery(DBConstants.ACCOMPLISHMENT_QUERY, new String[]{dateFormatted});
         }
         return null;
     }

@@ -44,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
                 android:contentDescription="Previous Day"
-                android:src="@drawable/navigation_previous"
+                android:src="@drawable/ic_navigation_previous"
                 android:theme="@style/AppTheme.ButtonNavigation" />
 
             <LinearLayout
@@ -80,7 +80,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
                 android:contentDescription="Next Day"
-                android:src="@drawable/navigation_next"
+                android:src="@drawable/ic_navigation_next"
                 android:theme="@style/AppTheme.ButtonNavigation" />
         </LinearLayout>
 

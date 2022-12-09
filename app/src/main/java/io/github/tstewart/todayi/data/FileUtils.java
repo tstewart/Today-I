@@ -3,7 +3,6 @@ package io.github.tstewart.todayi.data;
 import android.annotation.SuppressLint;
 import android.content.ContentUris;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -13,29 +12,25 @@ import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
 import android.util.Log;
-import android.webkit.MimeTypeMap;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 /* This class is an edited class sourced from StackOverflow
-* Author: S.A.Parkhid
-* Link: https://stackoverflow.com/a/60642994 */
+ * Author: S.A.Parkhid
+ * Link: https://stackoverflow.com/a/60642994 */
 public class FileUtils {
     private static Uri contentUri = null;
 
     @SuppressLint("NewApi")
-    public static String getPath( final Uri uri, Context context) {
+    public static String getPath(final Uri uri, Context context) {
         // check here to KITKAT or new version
         final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
         String selection = null;
         String[] selectionArgs = null;
         // DocumentProvider
-        if (isKitKat ) {
+        if (isKitKat) {
             // ExternalStorageProvider
 
             if (isExternalStorageDocument(uri)) {
@@ -68,8 +63,7 @@ public class FileUtils {
                                 return path;
                             }
                         }
-                    }
-                    finally {
+                    } finally {
                         if (cursor != null)
                             cursor.close();
                     }
@@ -96,8 +90,7 @@ public class FileUtils {
 
 
                     }
-                }
-                else {
+                } else {
                     final String id = DocumentsContract.getDocumentId(uri);
 
                     if (id.startsWith("raw:")) {
@@ -106,8 +99,7 @@ public class FileUtils {
                     try {
                         contentUri = ContentUris.withAppendedId(
                                 Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
-                    }
-                    catch (NumberFormatException e) {
+                    } catch (NumberFormatException e) {
                         e.printStackTrace();
                     }
                     if (contentUri != null) {
@@ -145,7 +137,7 @@ public class FileUtils {
                 return getDriveFilePath(uri, context);
             }
 
-            if(isWhatsAppFile(uri)){
+            if (isWhatsAppFile(uri)) {
                 return getFilePathForWhatsApp(uri, context);
             }
 
@@ -158,15 +150,12 @@ public class FileUtils {
                 if (isGoogleDriveUri(uri)) {
                     return getDriveFilePath(uri, context);
                 }
-                if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-                {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
 
                     // return getFilePathFromURI(context,uri);
-                    return copyFileToInternalStorage(uri,"userfiles", context);
+                    return copyFileToInternalStorage(uri, "userfiles", context);
                     // return getRealPathFromURI(context,uri);
-                }
-                else
-                {
+                } else {
                     return getDataColumn(context, uri, null, null);
                 }
 
@@ -174,10 +163,9 @@ public class FileUtils {
             if ("file".equalsIgnoreCase(uri.getScheme())) {
                 return uri.getPath();
             }
-        }
-        else {
+        } else {
 
-            if(isWhatsAppFile(uri)){
+            if (isWhatsAppFile(uri)) {
                 return getFilePathForWhatsApp(uri, context);
             }
 
@@ -196,14 +184,12 @@ public class FileUtils {
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
-                    if(cursor != null) {
+                    if (cursor != null) {
                         cursor.close();
                     }
                 }
             }
         }
-
-
 
 
         return null;
@@ -299,7 +285,7 @@ public class FileUtils {
         Uri returnUri = uri;
 
         Cursor returnCursor = context.getContentResolver().query(returnUri, new String[]{
-                OpenableColumns.DISPLAY_NAME,OpenableColumns.SIZE
+                OpenableColumns.DISPLAY_NAME, OpenableColumns.SIZE
         }, null, null, null);
 
 
@@ -315,14 +301,13 @@ public class FileUtils {
         String size = (Long.toString(returnCursor.getLong(sizeIndex)));
 
         File output;
-        if(!newDirName.equals("")) {
+        if (!newDirName.equals("")) {
             File dir = new File(context.getFilesDir() + "/" + newDirName);
             if (!dir.exists()) {
                 dir.mkdir();
             }
             output = new File(context.getFilesDir() + "/" + newDirName + "/" + name);
-        }
-        else{
+        } else {
             output = new File(context.getFilesDir() + "/" + name);
         }
         try {
@@ -338,8 +323,7 @@ public class FileUtils {
             inputStream.close();
             outputStream.close();
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
 
             Log.e("Exception", e.getMessage());
         }
@@ -347,8 +331,8 @@ public class FileUtils {
         return output.getPath();
     }
 
-    private static String getFilePathForWhatsApp(Uri uri, Context context){
-        return  copyFileToInternalStorage(uri,"whatsapp", context);
+    private static String getFilePathForWhatsApp(Uri uri, Context context) {
+        return copyFileToInternalStorage(uri, "whatsapp", context);
     }
 
     private static String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
@@ -364,8 +348,7 @@ public class FileUtils {
                 final int index = cursor.getColumnIndexOrThrow(column);
                 return cursor.getString(index);
             }
-        }
-        finally {
+        } finally {
             if (cursor != null)
                 cursor.close();
         }
@@ -389,7 +372,7 @@ public class FileUtils {
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
     }
 
-    public static boolean isWhatsAppFile(Uri uri){
+    public static boolean isWhatsAppFile(Uri uri) {
         return "com.whatsapp.provider.media".equals(uri.getAuthority());
     }
 

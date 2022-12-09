@@ -31,7 +31,6 @@ import org.threeten.bp.LocalDate;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import io.github.tstewart.todayi.R;
@@ -62,7 +61,7 @@ public class AccomplishmentAdapter extends RecyclerView.Adapter<AccomplishmentAd
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_accomplishment,parent,false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_accomplishment, parent, false);
         return new ViewHolder(itemView);
     }
 
@@ -90,8 +89,7 @@ public class AccomplishmentAdapter extends RecyclerView.Adapter<AccomplishmentAd
             /* Parse database date to LocalDate object */
             datePosted = new DateFormatter(DBConstants.DATE_FORMAT).parseDate(datePostedText);
 
-        }
-        catch(SQLiteException | IllegalArgumentException e) {
+        } catch (SQLiteException | IllegalArgumentException e) {
             Log.w(AccomplishmentAdapter.class.getSimpleName(), e.getMessage(), e);
         }
 
@@ -103,7 +101,7 @@ public class AccomplishmentAdapter extends RecyclerView.Adapter<AccomplishmentAd
         holder.mDescriptionView.setText(description);
 
         /* Get Accomplishment card content view */
-        if(holder.mExpandedDetailsView != null && holder.mCardView != null) {
+        if (holder.mExpandedDetailsView != null && holder.mCardView != null) {
             /* Hide expanded details by default */
             holder.mExpandedDetailsView.setVisibility(View.GONE);
             /* Set onclick listener to title/description views to expand details panel
@@ -122,7 +120,7 @@ public class AccomplishmentAdapter extends RecyclerView.Adapter<AccomplishmentAd
         Accomplishment accomplishment = new Accomplishment(datePosted, title, description, imageLocation, imageThumbnailLocation);
 
         /* Set Accomplishment image if exists */
-        if(imageLocation != null) {
+        if (imageLocation != null) {
             try {
                 Bitmap image = MediaStore.Images.Media.getBitmap(mParent.getContext().getContentResolver(), Uri.fromFile(new File(imageThumbnailLocation)));
                 holder.mImageView.setImageBitmap(image);
@@ -148,7 +146,7 @@ public class AccomplishmentAdapter extends RecyclerView.Adapter<AccomplishmentAd
         });
 
         /* Add edit button clicked listener */
-        if(holder.mEditButton != null) {
+        if (holder.mEditButton != null) {
             holder.mEditButton.setOnClickListener(button -> {
                 /* Pass cursor with current item details to create dialog */
                 this.onEditButtonClicked(accomplishment, id);
@@ -156,7 +154,7 @@ public class AccomplishmentAdapter extends RecyclerView.Adapter<AccomplishmentAd
         }
 
         /* Add delete button clicked listener */
-        if(holder.mDeleteButton != null) {
+        if (holder.mDeleteButton != null) {
             holder.mDeleteButton.setOnClickListener(button -> {
                 onDeleteButtonClicked(id);
             });
@@ -178,7 +176,7 @@ public class AccomplishmentAdapter extends RecyclerView.Adapter<AccomplishmentAd
 
         AlertDialog deleteDialog = new MaterialAlertDialogBuilder(mParent.getContext())
                 .setTitle(R.string.confirm_delete)
-                .setPositiveButton(R.string.button_yes, ((dialog, which) ->  {
+                .setPositiveButton(R.string.button_yes, ((dialog, which) -> {
                     mTableHelper.delete(id);
                 }))
                 .setNegativeButton(R.string.button_no, (dialog, which) -> {
@@ -195,16 +193,15 @@ public class AccomplishmentAdapter extends RecyclerView.Adapter<AccomplishmentAd
     }
 
 
-
     public void persistPositions() {
         mCursor.moveToPosition(-1);
 
-        for(int i = 0; i < mCursor.getCount(); i++) {
+        for (int i = 0; i < mCursor.getCount(); i++) {
             mCursor.moveToPosition(i);
 
             long id = mCursor.getLong(mCursor.getColumnIndexOrThrow(DBConstants.COLUMN_ID));
-            Integer newPos = mCursorPositions.get((int)id);
-            if(newPos != null) {
+            Integer newPos = mCursorPositions.get((int) id);
+            if (newPos != null) {
                 mTableHelper.updatePosition(id, newPos);
             } else {
                 mTableHelper.updatePosition(id, i);
@@ -213,7 +210,7 @@ public class AccomplishmentAdapter extends RecyclerView.Adapter<AccomplishmentAd
     }
 
     public void setCursor(Cursor cursor) {
-        if(mCursor != null) {
+        if (mCursor != null) {
             /* If cursor already exists, update card positions in db */
             persistPositions();
         }

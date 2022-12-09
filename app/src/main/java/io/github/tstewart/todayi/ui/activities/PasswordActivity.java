@@ -1,18 +1,14 @@
 package io.github.tstewart.todayi.ui.activities;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.biometric.BiometricManager;
-import androidx.core.content.ContextCompat;
-
-import android.content.Intent;
-import androidx.biometric.BiometricPrompt;
-import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.biometric.BiometricManager;
+import androidx.biometric.BiometricPrompt;
+import androidx.core.content.ContextCompat;
 
 import java.util.concurrent.Executor;
 
@@ -30,7 +26,7 @@ public class PasswordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_password);
 
-        if(UserPreferences.isEnablePasswordProtection()) {
+        if (UserPreferences.isEnablePasswordProtection()) {
             openLoginPopup();
         }
 
@@ -63,7 +59,7 @@ public class PasswordActivity extends AppCompatActivity {
     }
 
     void openBiometricPopup() {
-        if(biometricPrompt != null) {
+        if (biometricPrompt != null) {
             biometricPrompt.authenticate(promptInfo);
             return;
         }

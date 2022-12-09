@@ -2,7 +2,7 @@
     <shortcut
         android:shortcutId="compose"
         android:enabled="true"
-        android:icon="@drawable/ic_baseline_create_24"
+        android:icon="@drawable/ic_create"
         android:shortcutShortLabel="@string/shortcut_create_short"
         android:shortcutLongLabel="@string/shortcut_create_long">
         <intent

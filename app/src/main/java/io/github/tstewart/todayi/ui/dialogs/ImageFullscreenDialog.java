@@ -1,6 +1,5 @@
 package io.github.tstewart.todayi.ui.dialogs;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,7 +7,6 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -47,7 +45,7 @@ public class ImageFullscreenDialog extends DialogFragment {
 
         /* Get image location from bundle, if this doesn't exist close the fragment. */
         Bundle bundle = this.getArguments();
-        if(bundle != null) {
+        if (bundle != null) {
             mImageLocation = bundle.getString("image_location", null);
         }
 
@@ -56,7 +54,7 @@ public class ImageFullscreenDialog extends DialogFragment {
             Bitmap image = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), Uri.fromFile(new File(mImageLocation)));
             mImageView.setImageBitmap(image);
         } catch (IOException e) {
-            Toast.makeText(getContext(), "Could not open original image.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Could not open original image.", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
             this.dismiss();
         }

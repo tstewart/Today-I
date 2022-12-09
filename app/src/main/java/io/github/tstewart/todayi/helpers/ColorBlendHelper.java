@@ -36,12 +36,13 @@ public class ColorBlendHelper {
 
     /**
      * Blend the provided number of colors from red-green
+     *
      * @return An array of colors matching the number required
      */
     public int[] blendColors() {
 
         /* If the provided number was less than or equal to 0, don't generate any */
-        if(mNumColorsGenerated <= 0)
+        if (mNumColorsGenerated <= 0)
             return new int[]{};
 
         mColors = new int[mNumColorsGenerated];
@@ -52,7 +53,7 @@ public class ColorBlendHelper {
         float currentBlend = 0f;
 
         /* HSV values to generate a color based on
-        * The saturation and brightness remain the same, but the blend of hue will increase */
+         * The saturation and brightness remain the same, but the blend of hue will increase */
         float[] hsvValues = {currentBlend, HSV_SATURATION, HSV_BRIGHTNESS};
 
         for (int i = 0; i < mNumColorsGenerated; i++) {

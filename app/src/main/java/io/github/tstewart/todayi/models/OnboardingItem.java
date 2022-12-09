@@ -2,9 +2,9 @@ package io.github.tstewart.todayi.models;
 
 public class OnboardingItem {
 
-    private int mPageTitleRes;
-    private int mImageRes;
-    private int mPageBodyRes;
+    private final int mPageTitleRes;
+    private final int mImageRes;
+    private final int mPageBodyRes;
 
     public OnboardingItem(int pageTitleRes, int pageBodyRes, int imageRes) {
         this.mPageTitleRes = pageTitleRes;

@@ -50,13 +50,17 @@ import io.github.tstewart.todayi.helpers.db.AccomplishmentTableHelper;
 public class AccomplishmentDialog extends DialogFragment {
 
     private static final int IMAGE_SELECTION_REQ_CODE = 500;
-
+    public LinearLayout mImageLinearLayout;
+    public ImageView mImageView;
+    /* Image data */
+    public String mImageLocation = null;
+    /* Internal URI, used for restoring from instance state */
+    public Uri mImageInternalLocation = null;
+    public Bitmap mImage = null;
     /* Selected date */
     LocalDate mSelectedDate;
-
     /* Currently active picker dialog, to prevent opening multiple date/time dialogs */
     DialogFragment mOpenPickerDialog;
-
     /* Dialog title toolbar */
     Toolbar mToolbar;
     /* Title input */
@@ -73,32 +77,16 @@ public class AccomplishmentDialog extends DialogFragment {
     Button mCancelButton;
     /* Confirm button */
     Button mConfirmButton;
-
     /* Current image type dialog */
     AlertDialog mImageTypeDialog = null;
-
     /* Database helper, for inserting and editing Accomplishments */
     AccomplishmentTableHelper mTableHelper;
-
     ActivityResultLauncher<Intent> mImageSelectionResultLauncher;
-
-    public LinearLayout mImageLinearLayout;
-
-    public ImageView mImageView;
-
     Button mChangeImageButton;
-
     Button mDeleteImageButton;
-
     ImageButton mRotateImageButton;
 
-    /* Image data */
-    public String mImageLocation = null;
-    /* Internal URI, used for restoring from instance state */
-    public Uri mImageInternalLocation = null;
-    public Bitmap mImage = null;
-
-    public AccomplishmentDialog(){
+    public AccomplishmentDialog() {
     }
 
     public void display(FragmentManager fragmentManager) {
@@ -114,7 +102,7 @@ public class AccomplishmentDialog extends DialogFragment {
                 new ImageSelectorActivityResult(getContext().getContentResolver()) {
                     @Override
                     public void onImageSelectionError(String error) {
-                        if(error != null) {
+                        if (error != null) {
                             Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
                         }
                     }
@@ -133,28 +121,27 @@ public class AccomplishmentDialog extends DialogFragment {
                         mSelectImageButton.setVisibility(View.GONE);
                         mImage = image;
 
-                        if(mImageTypeDialog != null) {
+                        if (mImageTypeDialog != null) {
                             mImageTypeDialog.dismiss();
                         }
                     }
 
                     @Override
                     public void onGalleryImageSelectionSuccess(Uri location, Bitmap image) {
-                        if(image != null && location != null) {
-                            if(mImageLinearLayout != null && mImageView != null) {
+                        if (image != null && location != null) {
+                            if (mImageLinearLayout != null && mImageView != null) {
                                 setCurrentImageLocation(location.getPath());
                                 mImageInternalLocation = location;
                                 onImageAddedSuccess(image);
                             }
-                        }
-                        else {
+                        } else {
                             Toast.makeText(getContext(), "Failed to select image.", Toast.LENGTH_LONG).show();
                         }
                     }
                 });
 
         Context mContext = getActivity();
-        if(mContext != null) {
+        if (mContext != null) {
             mTableHelper = new AccomplishmentTableHelper(getActivity());
         }
     }
@@ -187,10 +174,10 @@ public class AccomplishmentDialog extends DialogFragment {
 
         /* Image controls */
         mImageLinearLayout = view.findViewById(R.id.linearLayoutAccomplishmentImage);
-       mImageView = view.findViewById(R.id.imageViewAccomplishmentDialogImage);
-       mChangeImageButton = view.findViewById(R.id.buttonChangeImage);
-       mDeleteImageButton = view.findViewById(R.id.buttonDeleteImage);
-       mRotateImageButton = view.findViewById(R.id.imageButtonRotateImage);
+        mImageView = view.findViewById(R.id.imageViewAccomplishmentDialogImage);
+        mChangeImageButton = view.findViewById(R.id.buttonChangeImage);
+        mDeleteImageButton = view.findViewById(R.id.buttonDeleteImage);
+        mRotateImageButton = view.findViewById(R.id.imageButtonRotateImage);
 
         // Set date/time click listeners
         mDateInput.setOnClickListener(this::onDateSelectionClicked);
@@ -210,16 +197,15 @@ public class AccomplishmentDialog extends DialogFragment {
         mRotateImageButton.setOnClickListener(this::onRotateImageButtonClicked);
 
         // Set image view content
-        if(mImageLocation != null) {
+        if (mImageLocation != null) {
             mImageLinearLayout.setVisibility(View.VISIBLE);
             mSelectImageButton.setVisibility(View.GONE);
 
             try {
                 Bitmap image;
-                if(mImageInternalLocation != null) {
+                if (mImageInternalLocation != null) {
                     image = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), mImageInternalLocation);
-                }
-                else {
+                } else {
                     image = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), Uri.fromFile(new File(mImageLocation)));
                 }
 
@@ -244,15 +230,15 @@ public class AccomplishmentDialog extends DialogFragment {
     private void onDateSelectionClicked(View view) {
         MaterialDatePicker.Builder<Long> mDatePickerBuilder = MaterialDatePicker.Builder.datePicker();
 
-        if(mSelectedDate != null) {
-            mDatePickerBuilder.setSelection(mSelectedDate.toEpochDay()*86400000);
+        if (mSelectedDate != null) {
+            mDatePickerBuilder.setSelection(mSelectedDate.toEpochDay() * 86400000);
         }
 
         MaterialDatePicker<Long> mDatePicker = mDatePickerBuilder.build();
 
         mDatePicker.addOnPositiveButtonClickListener((MaterialPickerOnPositiveButtonClickListener<Object>) selection -> {
             Long dateSelection = mDatePicker.getSelection();
-            if(dateSelection != null) {
+            if (dateSelection != null) {
                 mSelectedDate = Instant.ofEpochMilli(mDatePicker.getSelection()).atZone(ZoneId.systemDefault()).toLocalDate();
 
                 DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT);
@@ -265,7 +251,7 @@ public class AccomplishmentDialog extends DialogFragment {
     public void onSelectImageButtonClicked(View view) {
         /* Open dialog to select gallery or camera picker */
         MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(getContext());
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_select_image_type, (ViewGroup) getActivity().findViewById(R.id.linearLayoutSelectImageDialog));
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_select_image_type, getActivity().findViewById(R.id.linearLayoutSelectImageDialog));
         dialogBuilder.setView(dialogView);
 
         mImageTypeDialog = dialogBuilder.create();
@@ -285,7 +271,7 @@ public class AccomplishmentDialog extends DialogFragment {
 
     private void onSelectImageTypeButtonClicked(ImageType type) {
         Intent intent = null;
-        if(type == ImageType.CAMERA) {
+        if (type == ImageType.CAMERA) {
             File tempFile;
             try {
                 tempFile = AccomplishmentImageIO.createTemporaryFile(getContext(), "capture", ".jpeg");
@@ -307,7 +293,7 @@ public class AccomplishmentDialog extends DialogFragment {
             intent.setType("image/*");
         }
 
-        if(intent != null) {
+        if (intent != null) {
             mImageSelectionResultLauncher.launch(intent);
 
             /* Prevent auto lock */
@@ -317,11 +303,11 @@ public class AccomplishmentDialog extends DialogFragment {
 
 
     public void onRotateImageButtonClicked(View view) {
-        if(mImage != null) {
+        if (mImage != null) {
             Matrix matrix = new Matrix();
             matrix.postRotate(90);
 
-            Bitmap rotatedImage =  Bitmap.createBitmap(mImage, 0, 0, mImage.getWidth(), mImage.getHeight(), matrix, true);
+            Bitmap rotatedImage = Bitmap.createBitmap(mImage, 0, 0, mImage.getWidth(), mImage.getHeight(), matrix, true);
             mImageView.setImageBitmap(rotatedImage);
             mImage = rotatedImage;
         }
@@ -330,14 +316,14 @@ public class AccomplishmentDialog extends DialogFragment {
     public void onDeleteImageButtonClicked(View view) {
         setCurrentImageLocation(null);
         mImage = null;
-        if(mImageLinearLayout != null) {
+        if (mImageLinearLayout != null) {
             mImageLinearLayout.setVisibility(View.GONE);
             mSelectImageButton.setVisibility(View.VISIBLE);
         }
     }
 
     void openDialogIfNoneOpen(DialogFragment dialog) {
-        if(mOpenPickerDialog == null || !mOpenPickerDialog.isVisible()) {
+        if (mOpenPickerDialog == null || !mOpenPickerDialog.isVisible()) {
             mOpenPickerDialog = dialog;
             dialog.show(getChildFragmentManager(), dialog.getTag());
         }
@@ -357,7 +343,7 @@ public class AccomplishmentDialog extends DialogFragment {
 
 
     public String saveImageFile() throws IOException {
-        if(mImage != null) {
+        if (mImage != null) {
             /* Create file path to save image */
             File directory = getContext().getDir("img", Context.MODE_PRIVATE);
             File outputFile = new File(directory, UUID.randomUUID().toString() + ".jpeg");
@@ -366,14 +352,13 @@ public class AccomplishmentDialog extends DialogFragment {
             new AccomplishmentImageIO(getContext(), outputFile).saveImage(mImage);
 
             return outputFile.getAbsoluteFile().getPath();
-        }
-        else {
+        } else {
             return null;
         }
     }
 
     public String saveImageThumbnailFile() throws IOException {
-        if(mImage != null) {
+        if (mImage != null) {
             /* Create file path to save image */
             File directory = getContext().getDir("img_thumb", Context.MODE_PRIVATE);
             File outputFile = new File(directory, UUID.randomUUID().toString() + ".jpeg");
@@ -382,8 +367,7 @@ public class AccomplishmentDialog extends DialogFragment {
             new AccomplishmentImageIO(getContext(), outputFile).saveImageThumbnail(mImage);
 
             return outputFile.getAbsoluteFile().getPath();
-        }
-        else {
+        } else {
             return null;
         }
     }

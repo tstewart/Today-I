@@ -36,18 +36,18 @@ public class Database extends SQLiteOpenHelper {
 
     private static Database mInstance = null;
 
-    /* Restrict database access to a single instance
-    * Prevents threads opening a database instance and not closing it */
-    public static Database getInstance(@NonNull Context context) {
-        if(mInstance == null) {
-            mInstance = new Database(context.getApplicationContext());
-        }
-        return mInstance;
-    }
-
     /* Initialize database with default settings */
     private Database(@Nullable Context context) {
         super(context, DBConstants.DB_NAME, null, DBConstants.DB_VERSION);
+    }
+
+    /* Restrict database access to a single instance
+     * Prevents threads opening a database instance and not closing it */
+    public static Database getInstance(@NonNull Context context) {
+        if (mInstance == null) {
+            mInstance = new Database(context.getApplicationContext());
+        }
+        return mInstance;
     }
 
     @Override
@@ -64,15 +64,15 @@ public class Database extends SQLiteOpenHelper {
         try {
             db.execSQL("DROP TABLE IF EXISTS " + DBConstants.ACCOMPLISHMENT_TABLE);
             db.execSQL(CREATE_TABLE_ACCOMPLISHMENT);
-        }
-        catch(SQLiteException e) {
+        } catch (SQLiteException e) {
             Log.w(Database.class.getSimpleName(), e.getMessage(), e);
         }
     }
 
     /**
      * Deletes all data from the provided table
-     * @param db Database to delete from
+     *
+     * @param db    Database to delete from
      * @param table Table to delete from
      */
     public void eraseAllData(SQLiteDatabase db, String table) {

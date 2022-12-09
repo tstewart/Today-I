@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.models.OnboardingItem;
 
-public class OnboardingItemAdapter extends RecyclerView.Adapter<OnboardingItemAdapter.OnboardingViewHolder>{
+public class OnboardingItemAdapter extends RecyclerView.Adapter<OnboardingItemAdapter.OnboardingViewHolder> {
 
     Context mContext;
     ArrayList<OnboardingItem> mItemList;
@@ -35,7 +35,7 @@ public class OnboardingItemAdapter extends RecyclerView.Adapter<OnboardingItemAd
     @Override
     public void onBindViewHolder(@NonNull OnboardingViewHolder holder, int position) {
         OnboardingItem onboardingItem = mItemList.get(position);
-        if(onboardingItem != null) {
+        if (onboardingItem != null) {
             holder.mTitle.setText(onboardingItem.getPageTitleRes());
             holder.mBody.setText(onboardingItem.getPageBodyRes());
             holder.mImage.setImageResource(onboardingItem.getImageRes());

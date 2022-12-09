@@ -1,7 +1,6 @@
 package io.github.tstewart.todayi.helpers;
 
 import org.threeten.bp.LocalDate;
-import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.format.DateTimeParseException;
 import org.threeten.bp.temporal.ChronoField;
@@ -30,11 +29,14 @@ public class DateFormatter {
     public LocalDate parseDate(String date) {
         try {
             return LocalDate.parse(date, DateTimeFormatter.ofPattern(mFormatPattern));
-        } catch (DateTimeParseException e) { return null; }
+        } catch (DateTimeParseException e) {
+            return null;
+        }
     }
 
     /**
      * Formats provided Date to string that matches the dateFormat.
+     *
      * @param date Date to be formatted
      *             TemporalAccessor is used to allow for LocalDate, LocalDateTime support
      * @return Formatted date
@@ -45,13 +47,14 @@ public class DateFormatter {
 
     /**
      * Formats the date, returning days with day indicators attached (1st, 2nd, 3rd, etc)
+     *
      * @param date Date to be formatted
      *             TemporalAccessor is used to allow for LocalDate, LocalDateTime support
      * @return Formatted date with day indicators
      */
     public String formatWithDayIndicators(TemporalAccessor date) {
         /* Get date format pattern */
-        if(mFormatPattern != null) {
+        if (mFormatPattern != null) {
             /* Get the position of the date option in the formatter pattern */
             int indicatorPosition = mFormatPattern.indexOf("d ");
 
@@ -81,10 +84,11 @@ public class DateFormatter {
     }
 
     /**
-    getOrdinal provided by:
-    https://stackoverflow.com/a/6810409
-
+     * getOrdinal provided by:
+     * https://stackoverflow.com/a/6810409
+     * <p>
      * Get the ordinal for the provided number.
+     *
      * @param i Number to get the ordinal for
      * @return Number ordinal (e.g. 1 = 1st, 2 = 2nd, 3 = 3rd)
      */

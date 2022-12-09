@@ -45,8 +45,8 @@
         <item name="mcv_dateTextAppearance">?textAppearanceLabelSmall</item>
         <item name="mcv_headerTextAppearance">@style/AppTheme.CalendarHeaderText</item>
         <item name="mcv_weekDayTextAppearance">@style/AppTheme.CalendarMonthLabelText</item>
-        <item name="mcv_leftArrow">@drawable/navigation_previous</item>
-        <item name="mcv_rightArrow">@drawable/navigation_next</item>
+        <item name="mcv_leftArrow">@drawable/ic_navigation_previous</item>
+        <item name="mcv_rightArrow">@drawable/ic_navigation_next</item>
     </style>
 
     <style name="AppTheme.CalendarDateText">

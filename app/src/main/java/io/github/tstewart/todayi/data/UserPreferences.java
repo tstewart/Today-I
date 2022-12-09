@@ -14,7 +14,7 @@ public class UserPreferences {
     private static int sMaxDayRating = 5;
 
     /* Has onboarding been shown */
-    private static boolean sOnboardingShown =  true;
+    private static boolean sOnboardingShown = true;
 
     /* Whether or not to enable password protection */
     private static boolean sEnablePasswordProtection = false;
@@ -39,59 +39,6 @@ public class UserPreferences {
 
     public UserPreferences(SharedPreferences prefs) {
         this.mPreferences = prefs;
-    }
-
-    /**
-     * Get user preference from SharedPreference, or return default
-     * @param key Key to return value from
-     * @param defaultValue Returned if the provided key had no value
-     * @return Value from provided key or default value
-     */
-    public Object get(String key, Object defaultValue) {
-        if(mPreferences != null) {
-            Object value = mPreferences.getAll().get(key);
-            /* Return default value if not found, otherwise return found value */
-            return (value == null) ? defaultValue : value;
-        }
-        return defaultValue;
-    }
-
-    /**
-     * Save value to SharedPreference
-     * @param key Key to set value for
-     * @param value Value to set for provided key
-     * @return True if the value was saved, otherwise returns false
-     */
-    public boolean set(String key, Object value) {
-        /* Shared Preferences will only allow saving of these specific types */
-
-        SharedPreferences.Editor editor = mPreferences.edit();
-
-        if(value instanceof String) editor.putString(key, (String) value);
-        else if(value instanceof Boolean) editor.putBoolean(key, (Boolean) value);
-        else if(value instanceof Long) editor.putLong(key, (Long) value);
-        else if(value instanceof Float) editor.putFloat(key, (Float) value);
-        else return false;
-
-        editor.apply();
-        return true;
-    }
-
-    /**
-     * Set default preference value, if the value doesn't already exist in SharedPreference
-     * @param key Key to set default value for
-     * @param value Default value
-     * @return True if a default value was set (i.e. there was not an existing value for this preference).
-     */
-    public boolean setDefaultValue(String key, Object value) {
-        if(!mPreferences.contains(key)) {
-            return set(key,value);
-        }
-        return false;
-    }
-
-    public boolean contains(String key) {
-        return mPreferences.contains(key);
     }
 
     public static int getMaxDayRating() {
@@ -156,5 +103,61 @@ public class UserPreferences {
 
     public static void setEnableAutoLock(boolean sEnableAutoLock) {
         UserPreferences.sEnableAutoLock = sEnableAutoLock;
+    }
+
+    /**
+     * Get user preference from SharedPreference, or return default
+     *
+     * @param key          Key to return value from
+     * @param defaultValue Returned if the provided key had no value
+     * @return Value from provided key or default value
+     */
+    public Object get(String key, Object defaultValue) {
+        if (mPreferences != null) {
+            Object value = mPreferences.getAll().get(key);
+            /* Return default value if not found, otherwise return found value */
+            return (value == null) ? defaultValue : value;
+        }
+        return defaultValue;
+    }
+
+    /**
+     * Save value to SharedPreference
+     *
+     * @param key   Key to set value for
+     * @param value Value to set for provided key
+     * @return True if the value was saved, otherwise returns false
+     */
+    public boolean set(String key, Object value) {
+        /* Shared Preferences will only allow saving of these specific types */
+
+        SharedPreferences.Editor editor = mPreferences.edit();
+
+        if (value instanceof String) editor.putString(key, (String) value);
+        else if (value instanceof Boolean) editor.putBoolean(key, (Boolean) value);
+        else if (value instanceof Long) editor.putLong(key, (Long) value);
+        else if (value instanceof Float) editor.putFloat(key, (Float) value);
+        else return false;
+
+        editor.apply();
+        return true;
+    }
+
+    /**
+     * Set default preference value, if the value doesn't already exist in SharedPreference
+     *
+     * @param key   Key to set default value for
+     * @param value Default value
+     * @return True if a default value was set (i.e. there was not an existing value for this preference).
+     */
+    public boolean setDefaultValue(String key, Object value) {
+        if (!mPreferences.contains(key)) {
+            return set(key, value);
+        }
+        return false;
+    }
+
+    public boolean contains(String key) {
+        return mPreferences.contains(key);
     }
 }

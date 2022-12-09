@@ -41,7 +41,7 @@ public class SettingsActivity extends AppCompatActivity {
         /* Apply status bar/navigation bar colors */
         int color = SurfaceColors.SURFACE_2.getColor(this);
         Window window = getWindow();
-        if(window != null) {
+        if (window != null) {
             window.setStatusBarColor(color);
             window.setNavigationBarColor(color);
         }
@@ -50,7 +50,7 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         /* If back button pressed */
-        if(item.getItemId() == android.R.id.home) {
+        if (item.getItemId() == android.R.id.home) {
             finish();
         }
 

@@ -1,12 +1,7 @@
 package io.github.tstewart.todayi.ui.activities;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -16,8 +11,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -26,7 +19,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.elevation.SurfaceColors;
+
 import org.threeten.bp.LocalDate;
+
+import java.util.List;
 
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.UserPreferences;
@@ -70,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
 
         /* If MainActivity launched with CREATE_POST flag, launch new Accomplishment dialog */
         Intent thisIntent = getIntent();
-        if(thisIntent.getAction().equals("io.github.tstewart.todayi.CREATE_POST")) {
+        if (thisIntent.getAction().equals("io.github.tstewart.todayi.CREATE_POST")) {
             AccomplishmentDialog dialog = new AccomplishmentNewDialog(LocalDate.now());
 
             dialog.display(getSupportFragmentManager());
@@ -84,11 +80,11 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         mRelativeDayLabel = findViewById(R.id.textViewRelativeDay);
 
         /* Set functionality of bottom bar buttons */
-        if(prevButton != null)
+        if (prevButton != null)
             prevButton.setOnClickListener(this::onDayChangeButtonClicked);
-        if(nextButton != null)
+        if (nextButton != null)
             nextButton.setOnClickListener(this::onDayChangeButtonClicked);
-        if(mLayoutDayLabel != null)
+        if (mLayoutDayLabel != null)
             mLayoutDayLabel.setOnTouchListener(changeDayOnSwipe());
 
         /* Register for date changed events */
@@ -119,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         updateCurrentDate(LocalDate.now());
 
         /* Check to see if onboarding needs to be shown (if user is new) */
-        if(!UserPreferences.isOnboardingShown()) {
+        if (!UserPreferences.isOnboardingShown()) {
             Intent onboardingIntent = new Intent(this, OnboardingActivity.class);
             startActivity(onboardingIntent);
         }
@@ -148,11 +144,11 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         /*
          Depending on the selected item, set the Intent Activity
         */
-        if(itemId == R.id.toolbar_settings) {
+        if (itemId == R.id.toolbar_settings) {
             intent = new Intent(this, SettingsActivity.class);
         }
 
-        if(intent != null)  {
+        if (intent != null) {
             startActivity(intent);
             /* Add animation on Activity change, swipe out this activity and swipe in new activity */
             overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
@@ -199,13 +195,13 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
          Update date label to currently selected date
          Include day indicators (i.e. 1st, 2nd, 3rd)
         */
-        if(mDayLabel != null)
+        if (mDayLabel != null)
             mDayLabel.setText(new DateFormatter("MMMM d yyyy").formatWithDayIndicators(mSelectedDate));
 
-        if(mRelativeDayLabel != null) {
+        if (mRelativeDayLabel != null) {
             /* Get relative date string
-            * E.g. if selected date is today, show "Today"
-            * If it was yesterday, show "Yesterday" etc. */
+             * E.g. if selected date is today, show "Today"
+             * If it was yesterday, show "Yesterday" etc. */
             mRelativeDayLabel.setText(RelativeDateHelper.getRelativeDaysSinceString(date));
         }
     }
@@ -214,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
         /* Apply status bar/navigation bar colors */
         int color = SurfaceColors.SURFACE_2.getColor(this);
         Window window = getWindow();
-        if(window != null) {
+        if (window != null) {
             window.setStatusBarColor(color);
             window.setNavigationBarColor(color);
         }
@@ -226,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
             @Override
             public boolean onTouch(MotionEvent e) {
                 /* If touch event is recognised (i.e. a swipe that is too small), open calendar to change days */
-                if(mCalendarDialog == null || !mCalendarDialog.isShowing()) {
+                if (mCalendarDialog == null || !mCalendarDialog.isShowing()) {
                     mCalendarDialog = new CalendarDialog(MainActivity.this, mSelectedDate).create();
                     mCalendarDialog.show();
                 }
@@ -236,7 +232,7 @@ public class MainActivity extends AppCompatActivity implements OnDateChangedList
             @Override
             public void onSwipe(SwipeDirection direction) {
                 /* If we should do anything with swipe gestures (controlled by settings) */
-                if(UserPreferences.isGesturesEnabled()) {
+                if (UserPreferences.isGesturesEnabled()) {
 
                     if (mSelectedDate == null) mSelectedDate = LocalDate.now();
 

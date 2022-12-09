@@ -2,10 +2,10 @@ package io.github.tstewart.todayi.models;
 
 import android.content.ContentValues;
 
-import org.threeten.bp.LocalDate;
-import org.threeten.bp.LocalDateTime;
-
 import androidx.annotation.NonNull;
+
+import org.threeten.bp.LocalDate;
+
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ValidationFailedException;
@@ -22,11 +22,10 @@ public class Accomplishment implements DatabaseObject {
     private static final int MAX_TITLE_LENGTH = 100;
     /* Maximum length of an Accomplishment description */
     private static final int MAX_DESCRIPTION_LENGTH = 1000;
-
-    /* Date Accomplishment was created on */
-    private LocalDate mDate;
     /* Title of Accomplishment */
     private final String mTitle;
+    /* Date Accomplishment was created on */
+    private LocalDate mDate;
     /* Description of Accomplishment */
     private String mDescription;
     /* Accomplishment image location */
@@ -65,13 +64,14 @@ public class Accomplishment implements DatabaseObject {
 
     /**
      * Validates the Accomplishment to Database standards.
+     *
      * @throws IllegalArgumentException If the validation failed for any reason (e.g. Length was longer than MAX_TITLE_LENGTH)
      */
     @Override
     public void validate() throws ValidationFailedException {
 
         /* If the content has been assigned as null (through setContent) */
-        if(mDescription == null) {
+        if (mDescription == null) {
             throw new ValidationFailedException("Content cannot be null.");
         }
 
@@ -88,6 +88,7 @@ public class Accomplishment implements DatabaseObject {
 
     /**
      * Bundle variables into ContentValues object, for insertion into Database
+     *
      * @return ContentValues instance with variables bundled
      */
     @Override
@@ -128,9 +129,17 @@ public class Accomplishment implements DatabaseObject {
         return mDescription;
     }
 
-    public String getImageLocation() { return mImageLocation; }
+    public void setDescription(String description) {
+        this.mDescription = description;
+    }
 
-    public void setImageLocation(String imageLocation) { this.mImageLocation = imageLocation; }
+    public String getImageLocation() {
+        return mImageLocation;
+    }
+
+    public void setImageLocation(String imageLocation) {
+        this.mImageLocation = imageLocation;
+    }
 
     public String getImageThumbnailLocation() {
         return mImageThumbnailLocation;
@@ -140,13 +149,9 @@ public class Accomplishment implements DatabaseObject {
         this.mImageThumbnailLocation = imageThumbnailLocation;
     }
 
-    public void setDescription(String description) {
-        this.mDescription = description;
-    }
-
     public void setContent(String content) {
         /* If empty lines should be removed when creating Accomplishments */
-        if(content != null && UserPreferences.isAccomplishmentClipEmptyLines()) {
+        if (content != null && UserPreferences.isAccomplishmentClipEmptyLines()) {
             content = content.replaceAll("(?m)^[ \t]*\r?\n", "");
         }
         this.mDescription = content;

@@ -1,14 +1,12 @@
 package io.github.tstewart.todayi.ui.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager2.widget.ViewPager2;
-
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.Button;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -21,13 +19,11 @@ import io.github.tstewart.todayi.models.OnboardingItem;
 
 public class OnboardingActivity extends AppCompatActivity {
 
+    ArrayList<OnboardingItem> mOnboardingPages;
     private ViewPager2 mViewPager;
     private Button mSkipButton;
     private Button mNextButton;
     private Button mPreviousButton;
-
-    ArrayList<OnboardingItem> mOnboardingPages;
-
     private UserPreferences mUserPrefs;
 
     @Override
@@ -55,28 +51,28 @@ public class OnboardingActivity extends AppCompatActivity {
     }
 
     private void onNextButtonClicked(View view) {
-        int newPos = mViewPager.getCurrentItem()+1;
-        int maxPos = mOnboardingPages.size()-1;
+        int newPos = mViewPager.getCurrentItem() + 1;
+        int maxPos = mOnboardingPages.size() - 1;
 
         mViewPager.setCurrentItem(newPos);
         mNextButton.setText(newPos >= maxPos ? R.string.button_end : R.string.button_next);
         mPreviousButton.setClickable(true);
 
-        if(newPos > maxPos) {
+        if (newPos > maxPos) {
             finishOnboarding();
         }
     }
 
     private void onPreviousButtonClicked(View view) {
-        int newPos = mViewPager.getCurrentItem()-1;
+        int newPos = mViewPager.getCurrentItem() - 1;
 
         mViewPager.setCurrentItem(newPos);
         mNextButton.setText(R.string.button_next);
-        mPreviousButton.setClickable(newPos>0);
+        mPreviousButton.setClickable(newPos > 0);
     }
 
     private void setViewPagerContent() {
-        if(this.mViewPager != null) {
+        if (this.mViewPager != null) {
             mOnboardingPages = new ArrayList<>();
             mOnboardingPages.add(new OnboardingItem(R.string.ob_intro_title, R.string.ob_intro_description, R.drawable.splash_logo));
             mOnboardingPages.add(new OnboardingItem(R.string.ob_accomplishments_title, R.string.ob_accomplishments_description, R.drawable.onboarding_add));
@@ -93,7 +89,7 @@ public class OnboardingActivity extends AppCompatActivity {
         new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.ob_end_dialog)
                 .setPositiveButton(R.string.button_yes, (dialogInterface, i) -> {
-                    if(mUserPrefs != null) {
+                    if (mUserPrefs != null) {
                         mUserPrefs.set(getString(R.string.user_prefs_onboarding_shown), true);
                         UserPreferences.setOnboardingShown(true);
                     }

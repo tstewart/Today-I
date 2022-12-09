@@ -10,8 +10,6 @@ import com.prolificinteractive.materialcalendarview.DayViewFacade;
 
 import java.util.List;
 
-import io.github.tstewart.todayi.R;
-
 /*
 Decorates day views from MaterialCalendarView
 Sets day background to the provided Drawable

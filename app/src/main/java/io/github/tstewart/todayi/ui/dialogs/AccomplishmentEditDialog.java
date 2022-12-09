@@ -1,31 +1,21 @@
 package io.github.tstewart.todayi.ui.dialogs;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.elevation.SurfaceColors;
 
 import org.threeten.bp.LocalDate;
-import org.threeten.bp.LocalDateTime;
-import org.threeten.bp.LocalTime;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.UUID;
 
 import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.AccomplishmentImageIO;
@@ -49,9 +39,10 @@ public class AccomplishmentEditDialog extends AccomplishmentDialog {
     /* If the Accomplishment image has been edited (replaced or removed) */
     boolean mImageReplaced = false;
 
-    public AccomplishmentEditDialog(){}
+    public AccomplishmentEditDialog() {
+    }
 
-    public AccomplishmentEditDialog(long id, Accomplishment accomplishment){
+    public AccomplishmentEditDialog(long id, Accomplishment accomplishment) {
         mDatabaseId = id;
         mTitle = accomplishment.getTitle();
         mDescription = accomplishment.getDescription();
@@ -65,7 +56,7 @@ public class AccomplishmentEditDialog extends AccomplishmentDialog {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             mDatabaseId = savedInstanceState.getLong("acc_id");
             mTitle = savedInstanceState.getString("acc_title");
             mDescription = savedInstanceState.getString("acc_desc");
@@ -143,7 +134,7 @@ public class AccomplishmentEditDialog extends AccomplishmentDialog {
         String imageThumbnailLocation = null;
 
         /* Image was replaced or deleted, delete existing image */
-        if(mImageReplaced) {
+        if (mImageReplaced) {
             deleteExistingImage(mOriginalImageLocation);
             deleteExistingImage(mOriginalImageThumbnailLocation);
         }
@@ -154,7 +145,7 @@ public class AccomplishmentEditDialog extends AccomplishmentDialog {
         }
 
         /* Image was replaced, not deleted. Save new file */
-        if(mImageReplaced && mImage != null) {
+        if (mImageReplaced && mImage != null) {
             try {
                 imageFileLocation = saveImageFile();
                 imageThumbnailLocation = saveImageThumbnailFile();
@@ -172,7 +163,8 @@ public class AccomplishmentEditDialog extends AccomplishmentDialog {
             /* Insert Accomplishment into Database */
             mTableHelper.update(accomplishment, mDatabaseId);
             this.dismiss();
-        } catch (ValidationFailedException ignore) {}
+        } catch (ValidationFailedException ignore) {
+        }
     }
 
     /* Called when the delete button is pressed
@@ -180,7 +172,7 @@ public class AccomplishmentEditDialog extends AccomplishmentDialog {
     private void onDeleteButtonClicked(View view) {
         AlertDialog deleteDialog = new MaterialAlertDialogBuilder(getContext())
                 .setTitle(R.string.confirm_delete)
-                .setPositiveButton(R.string.button_yes, ((dialog, which) ->  {
+                .setPositiveButton(R.string.button_yes, ((dialog, which) -> {
                     mTableHelper.delete(mDatabaseId);
                     this.dismiss();
                 }))
@@ -193,7 +185,7 @@ public class AccomplishmentEditDialog extends AccomplishmentDialog {
     }
 
     void deleteExistingImage(String imageFileLocation) {
-        if(imageFileLocation != null) {
+        if (imageFileLocation != null) {
             File originalFile = new File(imageFileLocation);
             boolean deleted = new AccomplishmentImageIO(getContext(), originalFile).deleteImage();
 

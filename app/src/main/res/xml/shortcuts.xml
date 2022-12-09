@@ -1,7 +1,7 @@
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
     <shortcut
         android:enabled="true"
-        android:icon="@drawable/ic_baseline_create_24">
+        android:icon="@drawable/ic_create">
         <intent
             android:action="io.github.tstewart.todayi.CREATE_POST"
             android:targetPackage="io.github.tstewart.todayi"

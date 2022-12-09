@@ -2,7 +2,6 @@ package io.github.tstewart.todayi.data;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.icu.util.Output;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -41,6 +40,7 @@ public class LocalDatabaseIO {
 
     /**
      * Export the provided database to the default backup location with the default name for backups (backup_(filename))
+     *
      * @param context Environment context, provides the location of objects at runtime
      * @throws ExportFailedException If the export process was interrupted (e.g. If the database could not be read)
      */
@@ -55,7 +55,8 @@ public class LocalDatabaseIO {
 
     /**
      * Export the provided database to the chosen location
-     * @param context Environment context, provides the location of objects at runtime
+     *
+     * @param context        Environment context, provides the location of objects at runtime
      * @param backupLocation Location to back up the database to
      */
     public static void exportDbToFile(Context context, File backupLocation) throws ExportFailedException {
@@ -64,8 +65,9 @@ public class LocalDatabaseIO {
 
     /**
      * Exports the provided database to the provided export folder
-     * @param context Environment context, provides the location of objects at runtime
-     * @param newFileName Name of the new backup file
+     *
+     * @param context      Environment context, provides the location of objects at runtime
+     * @param newFileName  Name of the new backup file
      * @param exportFolder Folder to export database to
      * @throws ExportFailedException If the export process was interrupted (e.g. If the database could not be read)
      */
@@ -105,6 +107,7 @@ public class LocalDatabaseIO {
 
     /**
      * Import the provided database from the default backup location with the default name for backups (backup_(filename))
+     *
      * @param context Environment context, provides the location of objects at runtime
      * @throws ImportFailedException If the import process was interrupted (e.g. If the database could not be read)
      */
@@ -121,7 +124,8 @@ public class LocalDatabaseIO {
 
     /**
      * Import the provided database from the provided backup file
-     * @param context Environment context, provides the location of objects at runtime
+     *
+     * @param context      Environment context, provides the location of objects at runtime
      * @param databaseFile Database file to import into the application
      * @throws ImportFailedException If the import process was interrupted (e.g. If the database could not be read)
      */
@@ -132,7 +136,8 @@ public class LocalDatabaseIO {
 
     /**
      * Import the provided database from the application's default backup location
-     * @param context Environment context, provides the location of objects at runtime
+     *
+     * @param context    Environment context, provides the location of objects at runtime
      * @param backupFile Path of the backup to import
      * @throws ImportFailedException If the import process was interrupted (e.g. If the database could not be read)
      */
@@ -168,7 +173,8 @@ public class LocalDatabaseIO {
 
     /**
      * Write file to output path
-     * @param inputPath File to read from
+     *
+     * @param inputPath  File to read from
      * @param outputPath File to write to
      * @throws IOException If an error occurred in writing the file
      */
@@ -177,7 +183,7 @@ public class LocalDatabaseIO {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             final ContentResolver resolver = context.getContentResolver();
             try (InputStream in = resolver.openInputStream(Uri.fromFile(inputPath));
-                OutputStream out = resolver.openOutputStream(Uri.fromFile(outputPath))) {
+                 OutputStream out = resolver.openOutputStream(Uri.fromFile(outputPath))) {
 
                 byte[] buffer = new byte[1024];
                 int len = in.read(buffer);
@@ -201,8 +207,9 @@ public class LocalDatabaseIO {
     /**
      * isValidSQLite provided by:
      * https://stackoverflow.com/questions/39576646/android-check-if-a-file-is-a-valid-sqlite-database
-     *
+     * <p>
      * Checks if the file at the provided path is a valid SQLite database or not.
+     *
      * @param dbPath Path of file to check
      * @return True if the file is a valid SQLite database, false if not.
      */
@@ -217,7 +224,7 @@ public class LocalDatabaseIO {
             int bytesRead = fr.read(buffer, 0, 16);
 
             /* If 16 bytes could be read */
-            if(bytesRead >= 16) {
+            if (bytesRead >= 16) {
                 String str = String.valueOf(buffer);
 
                 /* If the first 16 chars equal the SQLite header, it is most likely a SQLite db. */

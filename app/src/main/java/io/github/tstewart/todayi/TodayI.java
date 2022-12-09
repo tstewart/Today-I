@@ -1,17 +1,22 @@
 package io.github.tstewart.todayi;
 
-import android.app.Activity;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Build;
-import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.lifecycle.DefaultLifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.ProcessLifecycleOwner;
+
+import com.google.android.material.color.DynamicColors;
 
 import org.threeten.bp.LocalTime;
 import org.threeten.bp.format.DateTimeParseException;
@@ -19,44 +24,29 @@ import org.threeten.bp.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.lifecycle.DefaultLifecycleObserver;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.ProcessLifecycleOwner;
-
-import com.google.android.material.color.DynamicColors;
-import com.google.android.material.elevation.SurfaceColors;
-
 import io.github.tstewart.todayi.data.LocalDatabaseIO;
 import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ExportFailedException;
-import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.helpers.db.AccomplishmentTableHelper;
+import io.github.tstewart.todayi.helpers.db.DayRatingTableHelper;
 import io.github.tstewart.todayi.notifications.DailyReminderAlarmHelper;
 import io.github.tstewart.todayi.notifications.NotificationSender;
-import io.github.tstewart.todayi.helpers.db.DayRatingTableHelper;
 import io.github.tstewart.todayi.ui.activities.PasswordActivity;
-import io.github.tstewart.todayi.ui.activities.SettingsActivity;
 
 /*
  * Application class, called on application start
  */
 public class TodayI extends Application {
+    /* Backup Database every x hours */
+    private static final int BACKUP_EVERY_HOURS = 24;
+    /* If user is currently selecting a file
+     * This is used in Lifecycle observer to prevent auto lock when returning from selecting an image/file */
+    public static boolean sIsFileSelecting = false;
     /*
      Log tag, used for Logging
      Represents class name
     */
     private final String CLASS_LOG_TAG = this.getClass().getSimpleName();
-
-    /* Backup Database every x hours */
-    private static final int BACKUP_EVERY_HOURS = 24;
-
-    /* If user is currently selecting a file
-    * This is used in Lifecycle observer to prevent auto lock when returning from selecting an image/file */
-    public static boolean sIsFileSelecting = false;
 
     @Override
     public void onCreate() {
@@ -75,7 +65,7 @@ public class TodayI extends Application {
         setInstancePreferences(preferences);
 
         /* Toggle notification alarm on, if notifications are enabled */
-        if(UserPreferences.isEnableNotifications())
+        if (UserPreferences.isEnableNotifications())
             DailyReminderAlarmHelper.registerAlarm(this, UserPreferences.getNotificationTime(), false);
 
         /* Setup notification channel if required */
@@ -87,23 +77,23 @@ public class TodayI extends Application {
         Context context = getApplicationContext();
 
         if (context != null && sharedPrefs != null) {
-            if(shouldBackup(context, preferences)) {
+            if (shouldBackup(context, preferences)) {
                 /* If there was a reason to backup */
-                    try {
-                        /* Backup to local storage */
-                        LocalDatabaseIO.backupDb(this);
+                try {
+                    /* Backup to local storage */
+                    LocalDatabaseIO.backupDb(this);
 
-                        /* Set last time backed up */
-                        preferences.set(getString(R.string.user_prefs_last_backed_up_key),System.currentTimeMillis());
-                        Log.i(CLASS_LOG_TAG, "Application data backed up!");
+                    /* Set last time backed up */
+                    preferences.set(getString(R.string.user_prefs_last_backed_up_key), System.currentTimeMillis());
+                    Log.i(CLASS_LOG_TAG, "Application data backed up!");
 
-                    } catch (ExportFailedException e) {
-                        Log.w(CLASS_LOG_TAG, e.getMessage(), e);
-                        Toast.makeText(this, String.format(getString(R.string.automatic_backup_failed), e.getMessage()), Toast.LENGTH_LONG).show();
-                    }
-                } else {
-                    Log.i(CLASS_LOG_TAG, "Application data did not need to backup.");
+                } catch (ExportFailedException e) {
+                    Log.w(CLASS_LOG_TAG, e.getMessage(), e);
+                    Toast.makeText(this, String.format(getString(R.string.automatic_backup_failed), e.getMessage()), Toast.LENGTH_LONG).show();
                 }
+            } else {
+                Log.i(CLASS_LOG_TAG, "Application data did not need to backup.");
+            }
         }
 
         /* Watch for app start/stop events */
@@ -111,9 +101,9 @@ public class TodayI extends Application {
     }
 
     /* Set default preference values if certain preferences do not exist yet
-    * E.g. on first run, the application needs to set default values */
+     * E.g. on first run, the application needs to set default values */
     private void setDefaultPreferences(UserPreferences preferences) {
-        if(preferences != null) {
+        if (preferences != null) {
             preferences.setDefaultValue(getString(R.string.user_prefs_onboarding_shown), false);
             preferences.setDefaultValue(getString(R.string.user_prefs_password_protection), false);
             preferences.setDefaultValue(getString(R.string.user_prefs_auto_lock), false);
@@ -144,8 +134,8 @@ public class TodayI extends Application {
         UserPreferences.setAccomplishmentClipEmptyLines(clipEmptyLines);
         try {
             UserPreferences.setMaxDayRating(Integer.parseInt(numRatings));
-        } catch(NumberFormatException e) {
-            Log.w(CLASS_LOG_TAG,"Failed to parse current max day rating. Defaulting to 5.");
+        } catch (NumberFormatException e) {
+            Log.w(CLASS_LOG_TAG, "Failed to parse current max day rating. Defaulting to 5.");
             UserPreferences.setMaxDayRating(5);
         }
 
@@ -155,8 +145,8 @@ public class TodayI extends Application {
             notificationTime = LocalTime.parse(notificationTimeString);
         } catch (DateTimeParseException e) {
             /* Default to 6PM */
-            Log.w(CLASS_LOG_TAG,"Failed to parse current notification time. Defaulting to 6pm.");
-            notificationTime = LocalTime.of(18,0);
+            Log.w(CLASS_LOG_TAG, "Failed to parse current notification time. Defaulting to 6pm.");
+            notificationTime = LocalTime.of(18, 0);
         }
         UserPreferences.setNotificationTime(notificationTime);
     }
@@ -164,7 +154,7 @@ public class TodayI extends Application {
     /* Checks if the application needs to run a backup */
     private boolean shouldBackup(Context appContext, UserPreferences preferences) {
         if (preferences.contains(getString(R.string.user_prefs_last_backed_up_key))) {
-            long lastBackedUp = (Long)preferences.get(getString(R.string.user_prefs_last_backed_up_key), -1);
+            long lastBackedUp = (Long) preferences.get(getString(R.string.user_prefs_last_backed_up_key), -1);
                 /* If the default value is selected, the app should attempt to backup data.
                 If the last backup time is in the future (due to time modifications then we should backup anyway. (This may be changed)
                 Additionally, If the app hasn't backed up within the number of hours defined in BACKUP_EVERY_HOURS, the app should attempt to backup data */
@@ -177,10 +167,10 @@ public class TodayI extends Application {
     }
 
     /* Create notification channel for daily reminder notifications.
-    * This is required to show notifications in Android O and above. */
+     * This is required to show notifications in Android O and above. */
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void createReminderNotificationChannel() {
-        NotificationManager manager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         /* Channel id */
         String channelId = NotificationSender.DAILY_REMINDERS_CHANNEL_ID;
@@ -190,7 +180,7 @@ public class TodayI extends Application {
         /* Importance of the notification */
         int importance = NotificationManager.IMPORTANCE_DEFAULT;
 
-        NotificationChannel dailyReminderChannel = new NotificationChannel(channelId,channelName, importance);
+        NotificationChannel dailyReminderChannel = new NotificationChannel(channelId, channelName, importance);
 
         dailyReminderChannel.enableVibration(true);
         dailyReminderChannel.setVibrationPattern(new long[]{100, 300});
@@ -200,6 +190,7 @@ public class TodayI extends Application {
 
     /**
      * If there are no entries in either table of the database
+     *
      * @param context Application context
      * @return True if tables are empty
      */
@@ -213,6 +204,7 @@ public class TodayI extends Application {
     /**
      * If the difference between the current date and the date last backed up
      * is greater than the time required between backups, return true
+     *
      * @param lastBackedUp Time last backed up
      * @return True if the time between backups is greater than BACKUP_EVERY_HOURS
      */
@@ -228,7 +220,7 @@ public class TodayI extends Application {
     class AppLifecycleListener implements DefaultLifecycleObserver {
 
         AppLifecycleListener() {
-            if(UserPreferences.isEnablePasswordProtection()) {
+            if (UserPreferences.isEnablePasswordProtection()) {
                 Log.i(this.getClass().getSimpleName(), "Starting initial login.");
                 goToLogin();
             }
@@ -239,12 +231,12 @@ public class TodayI extends Application {
             DefaultLifecycleObserver.super.onStart(owner);
 
             /* If returning from a file selection intent, don't attempt to lock application */
-            if(sIsFileSelecting) {
+            if (sIsFileSelecting) {
                 sIsFileSelecting = false;
                 return;
             }
 
-            if(UserPreferences.isEnablePasswordProtection() && UserPreferences.isEnableAutoLock()) {
+            if (UserPreferences.isEnablePasswordProtection() && UserPreferences.isEnableAutoLock()) {
                 Log.i(this.getClass().getSimpleName(), "Returning to login page from application resume.");
                 goToLogin();
 

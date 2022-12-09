@@ -14,7 +14,6 @@ import java.io.File;
 import io.github.tstewart.todayi.data.FileUtils;
 import io.github.tstewart.todayi.data.LocalDatabaseIO;
 import io.github.tstewart.todayi.errors.ExportFailedException;
-import io.github.tstewart.todayi.errors.ImportFailedException;
 
 public class BackupExportActivity extends FragmentActivity {
     private static final int FILE_REQUEST_CODE = 2;
@@ -31,7 +30,7 @@ public class BackupExportActivity extends FragmentActivity {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode,Intent resultData) {
+    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
         super.onActivityResult(requestCode, resultCode, resultData);
         this.finish();
 

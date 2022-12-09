@@ -29,7 +29,7 @@ public class BackupImportActivity extends FragmentActivity {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode,Intent resultData) {
+    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
         super.onActivityResult(requestCode, resultCode, resultData);
         this.finish();
 

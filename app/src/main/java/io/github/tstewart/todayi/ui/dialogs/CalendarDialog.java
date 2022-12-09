@@ -3,13 +3,11 @@ package io.github.tstewart.todayi.ui.dialogs;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.text.style.ForegroundColorSpan;
 import android.text.style.TextAppearanceSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CalendarView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -48,19 +46,16 @@ public class CalendarDialog extends MaterialAlertDialogBuilder {
 
     /* Activity context */
     private final Context mContext;
-    /* This dialog's instance. Set when create is called */
-    private AlertDialog mInstance;
-
     /* Calendar view */
     MaterialCalendarView mCalendarView;
-
     /* Currently selected date (Application-wide) */
     LocalDate mSelectedDate;
-
     /* List of days posted on */
     List<CalendarDay> mDaysPostedOn;
     /* HashMap of days rated and their respective rating */
     HashMap<CalendarDay, Integer> mRatings;
+    /* This dialog's instance. Set when create is called */
+    private AlertDialog mInstance;
 
     public CalendarDialog(Context context, LocalDate currentDate) {
         super(context);
@@ -78,14 +73,14 @@ public class CalendarDialog extends MaterialAlertDialogBuilder {
 
         /* Get today button view from layout */
         Button todayButton = view.findViewById(R.id.buttonToday);
-        if(todayButton != null) {
+        if (todayButton != null) {
             todayButton.setOnClickListener(this::onTodayButtonClicked);
         }
 
         if (mCalendarView != null) {
             /* Set calendar arrow drawables */
-            mCalendarView.setLeftArrow(R.drawable.navigation_previous);
-            mCalendarView.setRightArrow(R.drawable.navigation_next);
+            mCalendarView.setLeftArrow(R.drawable.ic_navigation_previous);
+            mCalendarView.setRightArrow(R.drawable.ic_navigation_next);
             /* Set action when a date is selected on the calendar view */
             mCalendarView.setOnDateChangedListener(this::onCalendarClick);
             /*
@@ -125,7 +120,7 @@ public class CalendarDialog extends MaterialAlertDialogBuilder {
         List<DayRatedDecorator> dayRatedDecorators = new DayRatingSplitter(mContext).getDayRatingDecorators(mRatings);
 
         /* Add text span so that label text changes colour on theme change
-        * This is added before other decorators as TextColor might be overridden */
+         * This is added before other decorators as TextColor might be overridden */
         mCalendarView.addDecorator(new DayViewDecorator() {
             @Override
             public boolean shouldDecorate(CalendarDay day) {
@@ -147,6 +142,7 @@ public class CalendarDialog extends MaterialAlertDialogBuilder {
 
     /**
      * Get days posted on from Database
+     *
      * @return A list of events matching dates that Accomplishments have been posted on
      */
     private List<CalendarDay> getPostedDates() {
@@ -202,6 +198,7 @@ public class CalendarDialog extends MaterialAlertDialogBuilder {
 
     /**
      * Get days rated from Database
+     *
      * @return A HashMap of days rated and their ratings
      */
     private HashMap<CalendarDay, Integer> getDaysRated() {
@@ -258,7 +255,7 @@ public class CalendarDialog extends MaterialAlertDialogBuilder {
 
     private void onTodayButtonClicked(View view) {
         OnDateChanged.notifyDateChanged(LocalDate.now());
-        if(mInstance != null) {
+        if (mInstance != null) {
             mInstance.dismiss();
         }
     }
@@ -272,7 +269,7 @@ public class CalendarDialog extends MaterialAlertDialogBuilder {
         OnDateChanged.notifyDateChanged(localDate);
 
         /* Close dialog */
-        if(mInstance != null) {
+        if (mInstance != null) {
             mInstance.dismiss();
         }
     }

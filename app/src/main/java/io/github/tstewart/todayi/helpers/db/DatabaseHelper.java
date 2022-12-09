@@ -5,11 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import org.threeten.bp.LocalDate;
-
 import androidx.annotation.NonNull;
 
-import java.util.Date;
+import org.threeten.bp.LocalDate;
 
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
@@ -36,6 +34,7 @@ public class DatabaseHelper {
 
     /**
      * Checks if the table has no records
+     *
      * @return True if the table has no records
      */
     public boolean isEmpty() {
@@ -54,6 +53,7 @@ public class DatabaseHelper {
 
     /**
      * Get all records from the table
+     *
      * @return Cursor containing all records for the table
      */
     public Cursor getAll() {
@@ -62,6 +62,7 @@ public class DatabaseHelper {
 
     /**
      * Insert DatabaseObject into table
+     *
      * @param object DatabaseObject to be inserted into table
      */
     public void insert(@NonNull DatabaseObject object) {
@@ -81,9 +82,10 @@ public class DatabaseHelper {
 
     /**
      * Update DatabaseObject from table
-     * @param object DatabaseObject to update existing record with
+     *
+     * @param object      DatabaseObject to update existing record with
      * @param whereClause Replace records that match clause
-     * @param whereArgs Replaces '?' wildcards in whereClause
+     * @param whereArgs   Replaces '?' wildcards in whereClause
      */
     public void updateDBObject(@NonNull DatabaseObject object, String whereClause, String[] whereArgs) {
         ContentValues cv = object.createCV();
@@ -100,7 +102,7 @@ public class DatabaseHelper {
             mDb.update(this.mTable, cv, whereClause, whereArgs);
         }
 
-        if(notifyUpdate) {
+        if (notifyUpdate) {
             /* Notify event listeners that the database was interacted with */
             OnDatabaseInteracted.notifyDatabaseInteracted();
         }
@@ -108,8 +110,9 @@ public class DatabaseHelper {
 
     /**
      * Delete record from table
+     *
      * @param whereClause Delete records that match clause
-     * @param whereArgs Replaces '?' wildcards in whereClause
+     * @param whereArgs   Replaces '?' wildcards in whereClause
      */
     public void delete(String whereClause, String[] whereArgs) {
         mDb = getDatabase();
@@ -122,6 +125,7 @@ public class DatabaseHelper {
 
     /**
      * Get a database instance from the provided context environment.
+     *
      * @return Returns a SQLiteDatabase instance
      */
     public SQLiteDatabase getDatabase() {
@@ -130,13 +134,14 @@ public class DatabaseHelper {
 
     /**
      * Get date query, to match all records with the same date
+     *
      * @param date Date to check for records on
      * @return A formatted query to check for records on the provided date
      */
     public String getDateQuery(LocalDate date) {
         DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT);
 
-        if(date != null) {
+        if (date != null) {
             return dateFormatter.format(date);
         }
         return null;

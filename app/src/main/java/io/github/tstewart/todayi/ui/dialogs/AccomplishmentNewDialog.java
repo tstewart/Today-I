@@ -1,31 +1,18 @@
 package io.github.tstewart.todayi.ui.dialogs;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatDelegate;
-
-import com.google.android.material.elevation.SurfaceColors;
 
 import org.threeten.bp.LocalDate;
-import org.threeten.bp.LocalDateTime;
-import org.threeten.bp.LocalTime;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.util.UUID;
 
 import io.github.tstewart.todayi.R;
-import io.github.tstewart.todayi.data.AccomplishmentImageIO;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.helpers.DateFormatter;
@@ -37,16 +24,17 @@ public class AccomplishmentNewDialog extends AccomplishmentDialog {
     private String mTitle = null;
     private String mDescription = null;
 
-    public AccomplishmentNewDialog(){};
+    public AccomplishmentNewDialog() {
+    }
 
-    public AccomplishmentNewDialog(LocalDate currentDate){
+    public AccomplishmentNewDialog(LocalDate currentDate) {
         mSelectedDate = currentDate;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             mTitle = savedInstanceState.getString("acc_title");
             mDescription = savedInstanceState.getString("acc_desc");
             mSelectedDate = LocalDate.ofEpochDay(savedInstanceState.getLong("acc_date"));
@@ -80,8 +68,8 @@ public class AccomplishmentNewDialog extends AccomplishmentDialog {
         mDateInput.setText(dateFormatter.format(mSelectedDate));
 
         // Restore title/description state if restoring from saved instance
-        if(mTitle != null) mTitleInput.setText(mTitle);
-        if(mDescription != null) mDescriptionInput.setText(mDescription);
+        if (mTitle != null) mTitleInput.setText(mTitle);
+        if (mDescription != null) mDescriptionInput.setText(mDescription);
 
         // Hide delete button
         mDeleteButton.setVisibility(View.GONE);
@@ -119,6 +107,7 @@ public class AccomplishmentNewDialog extends AccomplishmentDialog {
             /* Insert Accomplishment into Database */
             mTableHelper.insert(accomplishment);
             this.dismiss();
-        } catch (ValidationFailedException ignore) {}
+        } catch (ValidationFailedException ignore) {
+        }
     }
 }

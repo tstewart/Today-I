@@ -14,7 +14,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -27,11 +26,11 @@ import io.github.tstewart.todayi.R;
 import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.helpers.ColorBlendHelper;
-import io.github.tstewart.todayi.notifications.NotificationSender;
 import io.github.tstewart.todayi.helpers.db.AccomplishmentTableHelper;
 import io.github.tstewart.todayi.helpers.db.DayRatingTableHelper;
 import io.github.tstewart.todayi.models.Accomplishment;
 import io.github.tstewart.todayi.models.DayRating;
+import io.github.tstewart.todayi.notifications.NotificationSender;
 
 /*
 Debug functions for messing with the internals of the app
@@ -47,9 +46,9 @@ public class DebugActivity extends AppCompatActivity {
 
         LinearLayout debugLayout = findViewById(R.id.debugLayout);
 
-        if(debugLayout != null) {
+        if (debugLayout != null) {
             for (View v : debugLayout.getTouchables()) {
-                if(v instanceof Button) {
+                if (v instanceof Button) {
                     v.setOnClickListener(this::onButtonClicked);
                 }
             }
@@ -60,14 +59,15 @@ public class DebugActivity extends AppCompatActivity {
     public void onButtonClicked(View view) {
         int id = view.getId();
 
-        if(id == R.id.debugInvalidateBackupTime) onInvalidateBackupButtonClicked();
-        else if(id == R.id.debug_populate_accomplishments) onPopulateAccomplishmentsButtonClicked();
-        else if(id == R.id.debug_populate_ratings) onPopulateRatingsButtonClicked();
-        else if(id == R.id.debug_override_max_rating) onOverrideMaxRatingButtonClicked();
-        else if(id == R.id.debug_color_test) onColorTestButtonClicked();
-        else if(id == R.id.debug_send_notification) onSendNotificationButtonClicked();
-        else if(id == R.id.debugShowOnboarding) onShowOnboardingButtonClicked();
-        else if(id == R.id.debugBack) this.finish();
+        if (id == R.id.debugInvalidateBackupTime) onInvalidateBackupButtonClicked();
+        else if (id == R.id.debug_populate_accomplishments)
+            onPopulateAccomplishmentsButtonClicked();
+        else if (id == R.id.debug_populate_ratings) onPopulateRatingsButtonClicked();
+        else if (id == R.id.debug_override_max_rating) onOverrideMaxRatingButtonClicked();
+        else if (id == R.id.debug_color_test) onColorTestButtonClicked();
+        else if (id == R.id.debug_send_notification) onSendNotificationButtonClicked();
+        else if (id == R.id.debugShowOnboarding) onShowOnboardingButtonClicked();
+        else if (id == R.id.debugBack) this.finish();
     }
 
     private void onInvalidateBackupButtonClicked() {
@@ -89,27 +89,27 @@ public class DebugActivity extends AppCompatActivity {
                 .setTitle(R.string.debug_populate_accomplishments)
                 .setMessage(R.string.debug_populate_confirmation)
                 .setPositiveButton(R.string.button_yes, (dialog, which) -> {
-                        Random random = new Random();
-                        LocalDate targetDate = LocalDate.now();
-                        LocalDate currentDate = targetDate.minusDays(31);
+                    Random random = new Random();
+                    LocalDate targetDate = LocalDate.now();
+                    LocalDate currentDate = targetDate.minusDays(31);
 
-                        AccomplishmentTableHelper helper = new AccomplishmentTableHelper(this);
+                    AccomplishmentTableHelper helper = new AccomplishmentTableHelper(this);
 
-                        while (currentDate.isBefore(targetDate)) {
-                            int numPosts = random.nextInt(5);
+                    while (currentDate.isBefore(targetDate)) {
+                        int numPosts = random.nextInt(5);
 
-                            for (int i = 0; i < numPosts; i++) {
-                                Accomplishment accomplishment = new Accomplishment(currentDate, "DUMMY CONTENT!", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
+                        for (int i = 0; i < numPosts; i++) {
+                            Accomplishment accomplishment = new Accomplishment(currentDate, "DUMMY CONTENT!", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
 
-                                try {
-                                    helper.insert(accomplishment);
-                                } catch (ValidationFailedException e) {
-                                    Log.w("debug", e.getMessage(), e);
-                                }
+                            try {
+                                helper.insert(accomplishment);
+                            } catch (ValidationFailedException e) {
+                                Log.w("debug", e.getMessage(), e);
                             }
-
-                            currentDate = currentDate.plusDays(1);
                         }
+
+                        currentDate = currentDate.plusDays(1);
+                    }
                 })
                 .setNegativeButton(R.string.button_no, null)
                 .create()
@@ -128,9 +128,9 @@ public class DebugActivity extends AppCompatActivity {
                     DayRatingTableHelper helper = new DayRatingTableHelper(this);
 
                     while (currentDate.isBefore(targetDate)) {
-                        int rating = random.nextInt(UserPreferences.getMaxDayRating())+1;
+                        int rating = random.nextInt(UserPreferences.getMaxDayRating()) + 1;
 
-                        DayRating dayRating = new DayRating(currentDate,rating);
+                        DayRating dayRating = new DayRating(currentDate, rating);
                         helper.insert(dayRating);
 
                         currentDate = currentDate.plusDays(1);
@@ -154,14 +154,13 @@ public class DebugActivity extends AppCompatActivity {
                 .setPositiveButton("Ok", (dialog, which) -> {
                     int numSelection = numberPicker.getValue();
 
-                    if(numSelection>0 && numSelection<=100) {
+                    if (numSelection > 0 && numSelection <= 100) {
                         UserPreferences preferences = new UserPreferences(getSharedPreferences(getString(R.string.user_prefs_file_location_key), MODE_PRIVATE));
                         preferences.set(getString(R.string.user_prefs_num_day_ratings), String.valueOf(numSelection));
 
                         UserPreferences.setMaxDayRating(numSelection);
-                        Toast.makeText(this,"Updated max rating!", Toast.LENGTH_SHORT).show();
-                    }
-                    else Toast.makeText(this,"Failed to update.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Updated max rating!", Toast.LENGTH_SHORT).show();
+                    } else Toast.makeText(this, "Failed to update.", Toast.LENGTH_SHORT).show();
                 })
                 .create()
                 .show();
@@ -215,7 +214,7 @@ public class DebugActivity extends AppCompatActivity {
                         MainActivity.class),
                 PendingIntent.FLAG_IMMUTABLE);
 
-        notificationSender.sendNotification(pendingIntent, true,"Debug", "Hello! This is a test!");
+        notificationSender.sendNotification(pendingIntent, true, "Debug", "Hello! This is a test!");
     }
 
 

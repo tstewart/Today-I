@@ -3,26 +3,13 @@ package io.github.tstewart.todayi.data;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+
 import io.github.tstewart.todayi.R;
 
 /* Helper class. Searches application resource files for the keys to specific preferences
-* Certain preference keys are always the same, and these keys are static */
+ * Certain preference keys are always the same, and these keys are static */
 public class PreferencesKeyStore {
 
-    /* Enable gestures key */
-    public final String ENABLE_GESTURES_KEY;
-    /* Enable clip accomplishments key */
-    public final String ENABLE_CLIP_ACCOMPLISHMENT_KEY;
-    /* Maximum day ratings key */
-    public final String MAX_DAY_RATING_KEY;
-    /* Enable notifications key */
-    public final String ENABLE_NOTIFICATIONS_KEY;
-    /* Notification time key */
-    public final String NOTIFICATION_TIME_KEY;
-    /* Password protection key */
-    public final String ENABLE_PASSWORD_PROTECTION;
-    /* Auto lock key */
-    public final String ENABLE_AUTO_LOCK;
     /* Import from downloads data key */
     public static final String IMPORT_FROM_DL_DATA_KEY = "importFromDL";
     /* Export to downloads data key */
@@ -37,6 +24,20 @@ public class PreferencesKeyStore {
     public static final String LAST_BACKED_UP_KEY = "last_backed_up";
     /* Version key */
     public static final String VERSION_KEY = "version";
+    /* Enable gestures key */
+    public final String ENABLE_GESTURES_KEY;
+    /* Enable clip accomplishments key */
+    public final String ENABLE_CLIP_ACCOMPLISHMENT_KEY;
+    /* Maximum day ratings key */
+    public final String MAX_DAY_RATING_KEY;
+    /* Enable notifications key */
+    public final String ENABLE_NOTIFICATIONS_KEY;
+    /* Notification time key */
+    public final String NOTIFICATION_TIME_KEY;
+    /* Password protection key */
+    public final String ENABLE_PASSWORD_PROTECTION;
+    /* Auto lock key */
+    public final String ENABLE_AUTO_LOCK;
 
     public PreferencesKeyStore(@NonNull Context context) {
 

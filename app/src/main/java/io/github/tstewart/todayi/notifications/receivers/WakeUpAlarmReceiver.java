@@ -10,7 +10,7 @@ import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.notifications.DailyReminderAlarmHelper;
 
 /* Receives broadcasts when the user's device has woken up from being offline.
-* In this case, the alarm must be reactivated. */
+ * In this case, the alarm must be reactivated. */
 public class WakeUpAlarmReceiver extends BroadcastReceiver {
 
     /*
@@ -23,8 +23,8 @@ public class WakeUpAlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         /* Confirm that the correct action was received
-        * This ensures the WakeUpReceiver request is only completed on boot completion. */
-        if(intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
+         * This ensures the WakeUpReceiver request is only completed on boot completion. */
+        if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
             Log.i(CLASS_LOG_TAG, "Received wake up request. Checking for alarm toggled permission.");
 
             if (context != null) {

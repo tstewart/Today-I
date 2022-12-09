@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.RippleDrawable;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
@@ -31,19 +30,21 @@ public abstract class DayRatingSelector {
     }
 
     public abstract void setRating(int rating);
+
     public abstract void resetSelected();
 
     void setButtonBackground(Button button, int color) {
         if (button != null) {
             Drawable drawable = button.getBackground();
 
-            if(drawable instanceof ColorDrawable) ((ColorDrawable)drawable).setColor(color);
-            else if(drawable instanceof GradientDrawable) ((GradientDrawable)drawable).setColor(color);
+            if (drawable instanceof ColorDrawable) ((ColorDrawable) drawable).setColor(color);
+            else if (drawable instanceof GradientDrawable)
+                ((GradientDrawable) drawable).setColor(color);
         }
     }
 
     public int getColorForRating(int rating) {
-        int colorIndex = rating-1;
+        int colorIndex = rating - 1;
 
         /* If index is not out of range of colors array */
         if (colorIndex < mColors.length) {
