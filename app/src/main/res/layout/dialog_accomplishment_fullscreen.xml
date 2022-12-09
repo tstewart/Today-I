@@ -145,6 +145,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             style="@style/Widget.Material3.Button.TextButton"
+                            android:background="@color/colorTransparent"
                             android:layout_gravity="top|end"
                             android:src="@drawable/ic_rotate"/>
                 </FrameLayout>

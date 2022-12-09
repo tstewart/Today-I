@@ -39,6 +39,7 @@ import io.github.tstewart.todayi.data.PreferencesKeyStore;
 import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ExportFailedException;
 import io.github.tstewart.todayi.errors.ImportFailedException;
+import io.github.tstewart.todayi.helpers.PermissionHelper;
 import io.github.tstewart.todayi.notifications.DailyReminderAlarmHelper;
 import io.github.tstewart.todayi.ui.activities.BackupExportActivity;
 import io.github.tstewart.todayi.ui.activities.BackupImportActivity;
@@ -257,7 +258,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private boolean onForceBackupToDLClicked(Preference preference) {
         Context context = getContext();
 
-        requestStoragePermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        PermissionHelper.requestPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
         new MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.setting_force_backup_to_downloads)
@@ -279,7 +280,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private boolean onRestoreBackupFromDLClicked(Preference preference) {
         Context context = getContext();
 
-        requestStoragePermission(Manifest.permission.READ_EXTERNAL_STORAGE);
+        PermissionHelper.requestPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE);
 
         new MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.setting_restore_from_downloads)
@@ -449,16 +450,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         }
         /* If version could not be received from PackageInfo, return default value */
         return "Unknown";
-    }
-
-    public void requestStoragePermission(String permission) {
-        int permissionStatus = getContext().checkCallingOrSelfPermission(permission);
-
-        if (permissionStatus != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this.getActivity(),
-                    new String[]{permission},
-                    1);
-        }
     }
 
 }

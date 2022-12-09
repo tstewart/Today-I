@@ -48,6 +48,7 @@ public class AccomplishmentAdapter extends RecyclerView.Adapter<AccomplishmentAd
     private final AccomplishmentTableHelper mTableHelper;
     private Cursor mCursor;
     private ItemTouchHelper mTouchListener;
+    private ImageFullscreenDialog mFullscreenDialog;
     /* HashMap of database IDs and their current position */
     private HashMap<Integer, Integer> mCursorPositions;
 
@@ -135,14 +136,18 @@ public class AccomplishmentAdapter extends RecyclerView.Adapter<AccomplishmentAd
 
         /* Add click listener to expand image to fullscreen on click */
         holder.mImageView.setOnClickListener(view1 -> {
-            ImageFullscreenDialog dialog = new ImageFullscreenDialog();
+            if(mFullscreenDialog != null && mFullscreenDialog.isVisible()) {
+                mFullscreenDialog.dismiss();
+            }
+
+            mFullscreenDialog = new ImageFullscreenDialog();
 
             Bundle args = new Bundle();
             args.putString("image_location", imageLocation);
 
-            dialog.setArguments(args);
+            mFullscreenDialog.setArguments(args);
 
-            dialog.show(mParent.getParentFragmentManager(), dialog.getClass().getSimpleName());
+            mFullscreenDialog.show(mParent.getParentFragmentManager(), mFullscreenDialog.getClass().getSimpleName());
         });
 
         /* Add edit button clicked listener */

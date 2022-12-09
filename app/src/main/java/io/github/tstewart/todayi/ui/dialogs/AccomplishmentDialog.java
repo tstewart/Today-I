@@ -1,5 +1,6 @@
 package io.github.tstewart.todayi.ui.dialogs;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -45,6 +46,7 @@ import io.github.tstewart.todayi.data.AccomplishmentImageIO;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.helpers.DateFormatter;
 import io.github.tstewart.todayi.helpers.ImageSelectorActivityResult;
+import io.github.tstewart.todayi.helpers.PermissionHelper;
 import io.github.tstewart.todayi.helpers.db.AccomplishmentTableHelper;
 
 public class AccomplishmentDialog extends DialogFragment {
@@ -249,6 +251,15 @@ public class AccomplishmentDialog extends DialogFragment {
     }
 
     public void onSelectImageButtonClicked(View view) {
+        /* Request storage before opening dialog. If not granted, don't open this dialog */
+        PermissionHelper.requestPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE);
+
+        /* If not granted, don't continue. */
+        if(!PermissionHelper.permissionGranted(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            Toast.makeText(getContext(), "Storage permission required for adding pictures.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         /* Open dialog to select gallery or camera picker */
         MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(getContext());
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_select_image_type, getActivity().findViewById(R.id.linearLayoutSelectImageDialog));

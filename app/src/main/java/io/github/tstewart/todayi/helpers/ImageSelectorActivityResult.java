@@ -40,26 +40,27 @@ public abstract class ImageSelectorActivityResult implements ActivityResultCallb
 
         Intent data = result.getData();
 
-        if (data != null && result.getResultCode() != Activity.RESULT_CANCELED) {
+        /* If data returned is null, ActivityResult was from a camera result */
+        if(result.getResultCode() == Activity.RESULT_OK &&
+                (data == null || data.getData() == null)) {
+            try {
+                Bitmap image = getImageFromTempFile();
+                onCameraImageSelectionSuccess(image);
+            } catch (IOException e) {
+                onImageSelectionError("Couldn't retrieve taken picture.");
+            }
+        }
+        /* If data was not null, ActivityResult was a gallery result */
+        else if (data != null && result.getResultCode() == Activity.RESULT_OK) {
             Uri galleryImage = data.getData();
 
-            if (galleryImage == null) {
-                try {
-                    Bitmap image = getImageFromTempFile();
-                    onCameraImageSelectionSuccess(image);
-                } catch (IOException e) {
-                    onImageSelectionError("Couldn't retrieve taken picture.");
-                }
-            } else {
+            try {
+                Bitmap imageFile = MediaStore.Images.Media.getBitmap(mContentResolver, galleryImage);
 
-                try {
-                    Bitmap imageFile = MediaStore.Images.Media.getBitmap(mContentResolver, galleryImage);
-
-                    onGalleryImageSelectionSuccess(galleryImage, imageFile);
-                } catch (IOException e) {
-                    onImageSelectionError("Image not found or was unreadable.");
-                    e.printStackTrace();
-                }
+                onGalleryImageSelectionSuccess(galleryImage, imageFile);
+            } catch (IOException e) {
+                onImageSelectionError("Image not found or was unreadable.");
+                e.printStackTrace();
             }
         }
     }
