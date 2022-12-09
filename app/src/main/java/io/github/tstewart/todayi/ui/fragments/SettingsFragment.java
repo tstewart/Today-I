@@ -1,7 +1,6 @@
 package io.github.tstewart.todayi.ui.fragments;
 
-import android.app.AlertDialog;
-import android.app.TimePickerDialog;
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,19 +12,26 @@ import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.Toast;
 
-import org.threeten.bp.LocalTime;
-import org.threeten.bp.format.DateTimeFormatter;
-import org.threeten.bp.format.DateTimeParseException;
-
-import java.util.Objects;
-
+import androidx.core.app.ActivityCompat;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.SwitchPreferenceCompat;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.timepicker.MaterialTimePicker;
+import com.google.android.material.timepicker.TimeFormat;
+
+import org.threeten.bp.LocalTime;
+import org.threeten.bp.format.DateTimeFormatter;
+import org.threeten.bp.format.DateTimeParseException;
+
+import java.util.Objects;
+
 import io.github.tstewart.todayi.R;
+import io.github.tstewart.todayi.TodayI;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
 import io.github.tstewart.todayi.data.LocalDatabaseIO;
@@ -33,7 +39,10 @@ import io.github.tstewart.todayi.data.PreferencesKeyStore;
 import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ExportFailedException;
 import io.github.tstewart.todayi.errors.ImportFailedException;
+import io.github.tstewart.todayi.helpers.PermissionHelper;
 import io.github.tstewart.todayi.notifications.DailyReminderAlarmHelper;
+import io.github.tstewart.todayi.ui.activities.BackupExportActivity;
+import io.github.tstewart.todayi.ui.activities.BackupImportActivity;
 import io.github.tstewart.todayi.ui.activities.DebugActivity;
 
 /*
@@ -41,20 +50,18 @@ Fragment of settings views and their functionality.
  */
 public class SettingsFragment extends PreferenceFragmentCompat {
 
-    /* Preference key store */
-    private PreferencesKeyStore mPreferenceKeys;
-
     /* Is Debug Activity access enabled */
     private static final boolean DEBUG_ENABLED = true;
     /* Number of taps on the version TextView required to open debug menu */
     private static final int DEBUG_ACTIVITY_TAP_REQUIREMENT = 6;
+    /* User preference manager */
+    UserPreferences mUserPreferences;
+    /* Preference key store */
+    private PreferencesKeyStore mPreferenceKeys;
     /* Current debug tap count */
     private int mDebugActivityTapCount = 0;
     /* Toast alerts user how many clicks they need to access debug menu */
     private Toast mClicksToDebugToast;
-
-    /* User preference manager */
-    UserPreferences mUserPreferences;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -67,19 +74,19 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         /* Initialize key store */
         Context context = getContext();
-        if(context != null) {
+        if (context != null) {
             this.mPreferenceKeys = new PreferencesKeyStore(getContext());
         }
 
         /* Set on preference changed listeners for preferences to update settings for the current instance of the app
-        * When settings are changed, their value in the preferences file is updated. However, these changes are not reflected until
-        * the application is restarted. This is a fix for that.  */
+         * When settings are changed, their value in the preferences file is updated. However, these changes are not reflected until
+         * the application is restarted. This is a fix for that.  */
         PreferenceScreen preferenceScreen = getPreferenceScreen();
         int preferenceCount = preferenceScreen.getPreferenceCount();
 
         for (int i = 0; i < preferenceCount; i++) {
             Preference preference = preferenceScreen.getPreference(i);
-            if(preference instanceof PreferenceCategory) {
+            if (preference instanceof PreferenceCategory) {
                 PreferenceCategory preferenceCategory = (PreferenceCategory) preferenceScreen.getPreference(i);
 
                 int preferenceChildCount = preferenceCategory.getPreferenceCount();
@@ -108,7 +115,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         /* Set version click listener for accessing hidden debug menu */
         Preference version = findPreference(PreferencesKeyStore.VERSION_KEY);
-        if(version != null) {
+        if (version != null) {
 
             /* Set version number */
             version.setSummary(getCurrentVersion());
@@ -121,7 +128,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     private void setCurrentNotificationTime() {
         Preference notificationTime = findPreference(mPreferenceKeys.NOTIFICATION_TIME_KEY);
-        if(notificationTime != null) {
+        if (notificationTime != null) {
             notificationTime.setOnPreferenceClickListener(this::onNotificationTimeSelected);
             /* Set subtitle for this preference to the currently selected time */
             notificationTime.setSummary((String) mUserPreferences.get(mPreferenceKeys.NOTIFICATION_TIME_KEY, "18:00"));
@@ -129,15 +136,21 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     }
 
     private void setDataManagementListeners() {
+        Preference importFromDLData = findPreference(PreferencesKeyStore.IMPORT_FROM_DL_DATA_KEY);
+        Preference exportFromDLData = findPreference(PreferencesKeyStore.EXPORT_TO_DL_DATA_KEY);
         Preference importData = findPreference(PreferencesKeyStore.IMPORT_DATA_KEY);
         Preference exportData = findPreference(PreferencesKeyStore.EXPORT_DATA_KEY);
         Preference eraseData = findPreference(PreferencesKeyStore.ERASE_DATA_KEY);
 
-        if(importData != null)
+        if (importFromDLData != null)
+            importFromDLData.setOnPreferenceClickListener(this::onRestoreBackupFromDLClicked);
+        if (exportFromDLData != null)
+            exportFromDLData.setOnPreferenceClickListener(this::onForceBackupToDLClicked);
+        if (importData != null)
             importData.setOnPreferenceClickListener(this::onRestoreBackupClicked);
-        if(exportData != null)
+        if (exportData != null)
             exportData.setOnPreferenceClickListener(this::onForceBackupClicked);
-        if(eraseData != null)
+        if (eraseData != null)
             eraseData.setOnPreferenceClickListener(this::onEraseClicked);
     }
 
@@ -145,45 +158,49 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         String preferenceKey = preference.getKey();
 
-        if(preferenceKey.equals(mPreferenceKeys.ENABLE_CLIP_ACCOMPLISHMENT_KEY)) {
-            UserPreferences.setAccomplishmentClipEmptyLines((boolean)newValue);
-        }
-        else if(preferenceKey.equals(mPreferenceKeys.ENABLE_GESTURES_KEY)) {
-            UserPreferences.setEnableGestures((boolean)newValue);
-        }
-        else if(preferenceKey.equals(mPreferenceKeys.MAX_DAY_RATING_KEY)) {
+        if (preferenceKey.equals(mPreferenceKeys.ENABLE_CLIP_ACCOMPLISHMENT_KEY)) {
+            UserPreferences.setAccomplishmentClipEmptyLines((boolean) newValue);
+        } else if (preferenceKey.equals(mPreferenceKeys.ENABLE_GESTURES_KEY)) {
+            UserPreferences.setEnableGestures((boolean) newValue);
+        } else if (preferenceKey.equals(mPreferenceKeys.MAX_DAY_RATING_KEY)) {
             try {
                 /* Try and cast string response from preference to an integer value */
-                int maxRating = Integer.parseInt((String)newValue);
+                int maxRating = Integer.parseInt((String) newValue);
                 UserPreferences.setMaxDayRating(maxRating);
             } catch (ClassCastException | NumberFormatException e) {
-                Toast.makeText(getContext(),R.string.setting_update_failed, Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), R.string.setting_update_failed, Toast.LENGTH_LONG).show();
             }
-        }
-        else if(preferenceKey.equals(mPreferenceKeys.ENABLE_NOTIFICATIONS_KEY)) {
-            boolean isEnabled = (boolean)newValue;
+        } else if (preferenceKey.equals(mPreferenceKeys.ENABLE_NOTIFICATIONS_KEY)) {
+            boolean isEnabled = (boolean) newValue;
             UserPreferences.setEnableNotifications(isEnabled);
 
             /* Change notification icon depending on if the value was enabled/disabled */
             toggleNotificationIcon(preference);
 
             Context context = getContext();
-            if(context != null) {
-                if (isEnabled) DailyReminderAlarmHelper.registerAlarm(getContext(), UserPreferences.getNotificationTime(), true);
+            if (context != null) {
+                if (isEnabled)
+                    DailyReminderAlarmHelper.registerAlarm(getContext(), UserPreferences.getNotificationTime(), true);
                 else DailyReminderAlarmHelper.unregisterAlarm(getContext());
             }
 
-        }
-        else if(preferenceKey.equals(mPreferenceKeys.NOTIFICATION_TIME_KEY)) {
-            String timeString = (String)newValue;
+        } else if (preferenceKey.equals(mPreferenceKeys.NOTIFICATION_TIME_KEY)) {
+            String timeString = (String) newValue;
             try {
                 LocalTime notificationTime = LocalTime.parse(timeString);
 
                 UserPreferences.setNotificationTime(notificationTime);
-            }
-            catch(DateTimeParseException e) {
+            } catch (DateTimeParseException e) {
                 Toast.makeText(getContext(), R.string.setting_update_failed, Toast.LENGTH_LONG).show();
             }
+        } else if (preferenceKey.equals(mPreferenceKeys.ENABLE_PASSWORD_PROTECTION)) {
+            boolean passwordEnabled = (boolean) newValue;
+
+            UserPreferences.setEnablePasswordProtection(passwordEnabled);
+        } else if (preferenceKey.equals(mPreferenceKeys.ENABLE_AUTO_LOCK)) {
+            boolean autoLockEnabled = (boolean) newValue;
+
+            UserPreferences.setEnableAutoLock(autoLockEnabled);
         }
 
         return true;
@@ -205,41 +222,86 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             currentNotificationTime = LocalTime.parse(
                     (String) mUserPreferences.get(mPreferenceKeys.NOTIFICATION_TIME_KEY, "18:00")
             );
-        }
-        catch (DateTimeParseException e) {
+        } catch (DateTimeParseException e) {
             /* Default to 18:00 if failed to parse */
-            currentNotificationTime = LocalTime.of(18,0);
+            currentNotificationTime = LocalTime.of(18, 0);
         }
 
-        /* Show a time picker */
-        new TimePickerDialog(getContext(),
-                (timeView, hourOfDay, minute) -> {
-                    LocalTime selectedTime = LocalTime.of(hourOfDay,minute);
-                    String selectedTimeString = selectedTime.format(DateTimeFormatter.ofPattern("HH:mm"));
+        MaterialTimePicker timePicker = new MaterialTimePicker.Builder()
+                .setTimeFormat(TimeFormat.CLOCK_24H)
+                .setHour(currentNotificationTime.getHour())
+                .setMinute(currentNotificationTime.getMinute())
+                .build();
 
-                    /* Set summary text for this preference to the selected time */
-                    preference.setSummary(selectedTimeString);
+        timePicker.addOnPositiveButtonClickListener(picker -> {
+            LocalTime selectedTime = LocalTime.of(timePicker.getHour(), timePicker.getMinute());
+            String selectedTimeString = selectedTime.format(DateTimeFormatter.ofPattern("HH:mm"));
 
-                    /* Set notification time value in settings */
-                    if(mUserPreferences != null)
-                        mUserPreferences.set(mPreferenceKeys.NOTIFICATION_TIME_KEY, selectedTimeString);
+            /* Set summary text for this preference to the selected time */
+            preference.setSummary(selectedTimeString);
 
-                    /* Restart notification alarm */
-                    if(getContext() != null)
-                        DailyReminderAlarmHelper.updateAlarm(getContext(),selectedTime);
-                },
-                currentNotificationTime.getHour(),
-                currentNotificationTime.getMinute(),
-                true)
-                .show();
+            /* Set notification time value in settings */
+            if (mUserPreferences != null)
+                mUserPreferences.set(mPreferenceKeys.NOTIFICATION_TIME_KEY, selectedTimeString);
+
+            /* Restart notification alarm */
+            if (getContext() != null)
+                DailyReminderAlarmHelper.updateAlarm(getContext(), selectedTime);
+        });
+
+        timePicker.show(getParentFragmentManager(), timePicker.getClass().getSimpleName());
 
         return true;
     }
 
 
+    private boolean onForceBackupToDLClicked(Preference preference) {
+        Context context = getContext();
+
+        PermissionHelper.requestPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        new MaterialAlertDialogBuilder(context)
+                .setTitle(R.string.setting_force_backup_to_downloads)
+                .setMessage(R.string.force_backup_to_dl_confirmation)
+                .setPositiveButton(R.string.button_yes, (dialog, which) -> {
+                    Intent fileSelector = new Intent(getActivity(), BackupExportActivity.class);
+                    startActivity(fileSelector);
+
+                    /* Prevent auto lock */
+                    TodayI.sIsFileSelecting = true;
+                })
+                .setNegativeButton(R.string.button_no, null)
+                .create()
+                .show();
+
+        return true;
+    }
+
+    private boolean onRestoreBackupFromDLClicked(Preference preference) {
+        Context context = getContext();
+
+        PermissionHelper.requestPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE);
+
+        new MaterialAlertDialogBuilder(context)
+                .setTitle(R.string.setting_restore_from_downloads)
+                .setMessage(R.string.restore_backup_from_dl_confirmation)
+                .setPositiveButton(R.string.button_yes, (dialog, which) -> {
+                    Intent fileSelector = new Intent(getActivity(), BackupImportActivity.class);
+                    startActivity(fileSelector);
+
+                    /* Prevent auto lock */
+                    TodayI.sIsFileSelecting = true;
+                })
+                .setNegativeButton(R.string.button_no, null)
+                .create()
+                .show();
+
+        return true;
+    }
+
     private boolean onRestoreBackupClicked(Preference preference) {
         /* Open an alert dialog to confirm if the user wishes to restore from backup */
-        new AlertDialog.Builder(getContext())
+        new MaterialAlertDialogBuilder(getContext())
                 .setTitle(R.string.setting_restore_backup)
                 .setMessage(R.string.restore_backup_confirmation)
                 .setPositiveButton(R.string.button_yes, new DialogInterface.OnClickListener() {
@@ -248,7 +310,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         Context context = getContext();
                         try {
                             /* Try and load from backup */
-                            LocalDatabaseIO.importBackupDb(context, DBConstants.DB_NAME);
+                            LocalDatabaseIO.importBackupDb(context);
 
                             Toast.makeText(context, R.string.setting_restore_backup_success, Toast.LENGTH_SHORT).show();
 
@@ -267,20 +329,20 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     }
 
     private boolean onForceBackupClicked(Preference preference) {
-        new AlertDialog.Builder(getContext())
+        new MaterialAlertDialogBuilder(getContext())
                 .setTitle(R.string.setting_force_backup)
                 .setMessage(R.string.force_backup_confirmation)
                 .setPositiveButton(R.string.button_yes, (dialog, which) -> {
                     try {
                         /* Force backup database to file */
-                        LocalDatabaseIO.backupDb(getContext(), DBConstants.DB_NAME);
+                        LocalDatabaseIO.backupDb(getContext());
                         /* Update last backed up */
-                        mUserPreferences.set(getString(R.string.user_prefs_last_backed_up_key),System.currentTimeMillis());
+                        mUserPreferences.set(getString(R.string.user_prefs_last_backed_up_key), System.currentTimeMillis());
 
                         /* Update last backed up */
                         setLastBackedUpText();
 
-                        Toast.makeText(getContext(),R.string.setting_force_backup_success, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), R.string.setting_force_backup_success, Toast.LENGTH_SHORT).show();
                     } catch (ExportFailedException e) {
                         /* If failed, alert user and log */
                         Log.w(this.getClass().getSimpleName(), e.getMessage(), e);
@@ -296,9 +358,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     private boolean onEraseClicked(Preference preference) {
         Context context = getContext();
-        if(context != null) {
+        if (context != null) {
             /* Open an alert dialog to confirm if the user wishes to erase all data */
-            new AlertDialog.Builder(getContext())
+            new MaterialAlertDialogBuilder(getContext())
                     .setTitle(R.string.erase_all_warning_dialog_title)
                     .setMessage(R.string.erase_all_warning_dialog_message)
                     .setPositiveButton(R.string.button_yes, (dialogInterface, which) -> {
@@ -350,7 +412,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
      */
     private void setLastBackedUpText() {
         Preference lastBackedUp = findPreference(PreferencesKeyStore.LAST_BACKED_UP_KEY);
-        if(lastBackedUp != null)
+        if (lastBackedUp != null)
             lastBackedUp.setSummary(getLastBackedUpRelativeString());
     }
 
@@ -359,7 +421,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
      */
     private String getLastBackedUpRelativeString() {
         /* Get time last backed up from user preferences */
-        long lastBackedUp = (Long)mUserPreferences.get(getString(R.string.user_prefs_last_backed_up_key), -1L);
+        long lastBackedUp = (Long) mUserPreferences.get(getString(R.string.user_prefs_last_backed_up_key), -1L);
 
         /* If a valid time was returned from user preferences */
         if (lastBackedUp > 0) {
@@ -373,6 +435,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     /**
      * Get the current application version from PackageInfo
+     *
      * @return The current application version
      */
     private String getCurrentVersion() {

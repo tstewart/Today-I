@@ -1,38 +1,52 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:buttonStyle">@style/AppTheme.ButtonTheme</item>
+    <style name="AppTheme" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/md_theme_light_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_light_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/md_theme_light_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_light_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/md_theme_light_secondary</item>
+        <item name="colorOnSecondary">@color/md_theme_light_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/md_theme_light_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_light_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/md_theme_light_tertiary</item>
+        <item name="colorOnTertiary">@color/md_theme_light_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/md_theme_light_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/md_theme_light_onTertiaryContainer</item>
+        <item name="colorError">@color/md_theme_light_error</item>
+        <item name="colorErrorContainer">@color/md_theme_light_errorContainer</item>
+        <item name="colorOnError">@color/md_theme_light_onError</item>
+        <item name="colorOnErrorContainer">@color/md_theme_light_onErrorContainer</item>
+        <item name="android:colorBackground">@color/md_theme_light_background</item>
+        <item name="colorOnBackground">@color/md_theme_light_onBackground</item>
+        <item name="colorSurface">@color/md_theme_light_surface</item>
+        <item name="colorOnSurface">@color/md_theme_light_onSurface</item>
+        <item name="colorSurfaceVariant">@color/md_theme_light_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_light_onSurfaceVariant</item>
+        <item name="colorOutline">@color/md_theme_light_outline</item>
+        <item name="colorOnSurfaceInverse">@color/md_theme_light_inverseOnSurface</item>
+        <item name="colorSurfaceInverse">@color/md_theme_light_inverseSurface</item>
+        <item name="colorPrimaryInverse">@color/md_theme_light_inversePrimary</item>
+        <item name="android:navigationBarColor">?attr/colorOnSurfaceInverse</item>
+
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+
+        <item name="alertDialogTheme">@style/AppTheme.AlertDialogTheme</item>
+        <item name="switchStyle">@style/AppTheme.SettingsSwitch</item>
+        <item name="preferenceCategoryTitleTextAppearance">?textAppearanceTitleMedium</item>
     </style>
 
-    <style name="FullscreenTheme" parent="AppTheme">
-        <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:windowBackground">@null</item>
-        <item name="metaButtonBarStyle">?android:attr/buttonBarStyle</item>
-        <item name="metaButtonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>
+    <style name="AppTheme.FullScreenDialog" parent="ThemeOverlay.Material3.MaterialCalendar.Fullscreen">
+        <item name="android:windowIsFloating">false</item>
+
+        <item name="android:windowBackground">?attr/colorSurface</item>
+
+        <item name="android:windowEnterAnimation">@anim/enter_from_bottom</item>
     </style>
-
-    <style name="FullscreenActionBarStyle" parent="Widget.AppCompat.ActionBar">
-        <item name="android:background">@color/black_overlay</item>
-        <item name="android:titleTextColor">@color/colorWhite</item>
-    </style>
-
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="AppTheme.TimeSelectionTitle">
-        <item name="android:textColor">@color/colorBlack</item>
         <item name="android:textSize">18sp</item>
     </style>
 
@@ -40,23 +54,14 @@
         <item name="android:textSize">16sp</item>
     </style>
 
-    <style name="AppTheme.ListItemText" parent="Widget.AppCompat.ListView">
-        <item name="android:textColor">@color/colorBlack</item>
+    <style name="AppTheme.ListItemTitle" parent="Widget.AppCompat.ListView">
         <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="AppTheme.NewAccomplishmentButton" parent="Widget.AppCompat.Button.Borderless">
         <item name="android:foreground">?selectableItemBackground</item>
         <item name="android:backgroundTint">@color/colorTransparent</item>
-    </style>
-
-    <style name="AppTheme.SplashScreen" parent="AppTheme.NoActionBar">
-        <item name="android:background">@color/colorSplashBackground</item>
-    </style>
-
-    <!-- Button primary theme -->
-    <style name="AppTheme.ButtonTheme" parent="Widget.AppCompat.Button">
-        <item name="android:backgroundTint">@color/colorButtonBg</item>
     </style>
 
     <!-- No background button theme -->
@@ -67,7 +72,8 @@
 
     <!-- Button delete data theme -->
     <style name="AppTheme.ButtonDeleteData" parent="Widget.AppCompat.Button">
-        <item name="android:backgroundTint">@color/colorWarning</item>
+        <item name="android:backgroundTint">?attr/colorOnError</item>
+        <item name="android:textColor">?attr/colorOnError</item>
     </style>
 
     <!-- Day rating fragment -->
@@ -78,21 +84,21 @@
 
     <!-- Settings activity -->
     <style name="AppTheme.OptionsEraseData">
-        <item name="android:textColor">@color/colorWarning</item>
+        <item name="android:textColor">?attr/colorOnError</item>
     </style>
 
     <!-- Calendar activity -->
     <style name="AppTheme.CalendarTheme">
-        <item name="mcv_selectionColor">@color/colorCalendarSelection</item>
-        <item name="mcv_dateTextAppearance">@style/AppTheme.CalendarDateText</item>
+        <item name="mcv_selectionColor">?attr/colorOnSecondaryContainer</item>
+        <item name="mcv_dateTextAppearance">?textAppearanceLabelSmall</item>
         <item name="mcv_headerTextAppearance">@style/AppTheme.CalendarHeaderText</item>
         <item name="mcv_weekDayTextAppearance">@style/AppTheme.CalendarMonthLabelText</item>
-        <item name="mcv_leftArrow">@drawable/navigation_previous</item>
-        <item name="mcv_rightArrow">@drawable/navigation_next</item>
+        <item name="mcv_leftArrow">@drawable/ic_navigation_previous</item>
+        <item name="mcv_rightArrow">@drawable/ic_navigation_next</item>
     </style>
 
     <style name="AppTheme.CalendarDateText">
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
     <style name="AppTheme.CalendarHeaderText">
@@ -102,5 +108,15 @@
 
     <style name="AppTheme.CalendarMonthLabelText">
         <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="AppTheme.AlertDialogTheme" parent="Theme.Material3.Light.Dialog.Alert">
+        <item name="dialogCornerRadius">20dp</item>
+        <item name="backgroundTint">@color/md_theme_light_surfaceTint</item>
+    </style>
+
+    <style name="AppTheme.SettingsSwitch" parent="Widget.Material3.CompoundButton.MaterialSwitch">
+        <item name="track">@drawable/switch_track</item>
+        <item name="android:thumb">@drawable/switch_thumb</item>
     </style>
 </resources>

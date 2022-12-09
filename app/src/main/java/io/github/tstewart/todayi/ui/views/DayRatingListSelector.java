@@ -1,16 +1,17 @@
 package io.github.tstewart.todayi.ui.views;
 
-import android.app.AlertDialog;
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+
 import android.content.Context;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import io.github.tstewart.todayi.R;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import io.github.tstewart.todayi.R;
 
 /*
 Day rating selector view, as a list of ratings
@@ -39,11 +40,11 @@ public class DayRatingListSelector extends DayRatingSelector {
         String[] items = new String[mMaxRating];
 
         for (int i = 0; i < mMaxRating; i++) {
-            items[i] = String.valueOf(i+1);
+            items[i] = String.valueOf(i + 1);
         }
 
-        new AlertDialog.Builder(mContext)
-                .setItems(items, (dialog, which) -> updateRating(which+1))
+        new MaterialAlertDialogBuilder(mContext)
+                .setItems(items, (dialog, which) -> updateRating(which + 1))
                 .create()
                 .show();
     }
@@ -55,18 +56,17 @@ public class DayRatingListSelector extends DayRatingSelector {
 
     @Override
     public void setRating(int rating) {
-        if(rating>0) {
+        if (rating > 0) {
             int color = getColorForRating(rating);
             setButtonBackground(mRateButton, color);
 
             mRateButton.setText(String.format(mContext.getString(R.string.rate_day) + " (%s)", rating));
-        }
-        else resetSelected();
+        } else resetSelected();
     }
 
     @Override
     public void resetSelected() {
-        setButtonBackground(mRateButton,mContext.getColor(R.color.colorTransparent));
+        setButtonBackground(mRateButton, mContext.getColor(R.color.colorTransparent));
         mRateButton.setText(mContext.getString(R.string.rate_day));
     }
 }

@@ -1,5 +1,7 @@
 package io.github.tstewart.todayi.ui.views;
 
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+
 import android.content.Context;
 import android.view.ContextThemeWrapper;
 import android.view.View;
@@ -7,8 +9,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import io.github.tstewart.todayi.R;
-
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 /*
 Day rating selector view, as selectable buttons
@@ -35,7 +35,7 @@ public class DayRatingButtonSelector extends DayRatingSelector {
             /* Set text to current index */
             mButtons[i].setText(String.valueOf(i + 1));
             /* Set button tag to rating (to ensure this button can have it's associated rating checked later) */
-            mButtons[i].setTag(i+1);
+            mButtons[i].setTag(i + 1);
             mButtons[i].setOnClickListener(this::onRatingButtonClicked);
 
             /* Set button layout */
@@ -51,11 +51,11 @@ public class DayRatingButtonSelector extends DayRatingSelector {
     }
 
     private void onRatingButtonClicked(View view) {
-        if(view instanceof Button) {
-            Button button = (Button)view;
+        if (view instanceof Button) {
+            Button button = (Button) view;
 
-            if(button.getTag() instanceof Integer) {
-                int rating = (int)button.getTag();
+            if (button.getTag() instanceof Integer) {
+                int rating = (int) button.getTag();
                 updateRating(rating);
             }
         }
@@ -63,7 +63,7 @@ public class DayRatingButtonSelector extends DayRatingSelector {
 
     private Button getButtonForRating(int rating) {
         for (Button button : mButtons) {
-            if(button.getTag().equals(rating)) return button;
+            if (button.getTag().equals(rating)) return button;
         }
         return null;
     }
@@ -79,7 +79,7 @@ public class DayRatingButtonSelector extends DayRatingSelector {
 
         resetSelected();
 
-        if(rating>0 && button != null) {
+        if (rating > 0 && button != null) {
             int color = getColorForRating(rating);
             setButtonBackground(button, color);
         }

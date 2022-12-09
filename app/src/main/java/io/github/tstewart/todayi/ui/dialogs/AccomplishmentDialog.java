@@ -1,219 +1,390 @@
 package io.github.tstewart.todayi.ui.dialogs;
 
-import android.app.AlertDialog;
-import android.app.TimePickerDialog;
+import android.Manifest;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.net.Uri;
+import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.Toast;
 
-import org.threeten.bp.LocalDateTime;
-import org.threeten.bp.LocalTime;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
+
+import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputEditText;
+
+import org.threeten.bp.Instant;
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.ZoneId;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.UUID;
 
 import io.github.tstewart.todayi.R;
+import io.github.tstewart.todayi.TodayI;
+import io.github.tstewart.todayi.data.AccomplishmentImageIO;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.helpers.DateFormatter;
+import io.github.tstewart.todayi.helpers.ImageSelectorActivityResult;
+import io.github.tstewart.todayi.helpers.PermissionHelper;
+import io.github.tstewart.todayi.helpers.db.AccomplishmentTableHelper;
 
-/*
-Dialog for adding and editing Accomplishments
- */
-public class AccomplishmentDialog extends AlertDialog.Builder {
+public class AccomplishmentDialog extends DialogFragment {
 
-    /* Selected date / time */
-    private LocalDateTime mSelectedDate;
-    /* Time selection label */
-    private final TextView mSelectedTimeLabel;
-
+    private static final int IMAGE_SELECTION_REQ_CODE = 500;
+    public LinearLayout mImageLinearLayout;
+    public ImageView mImageView;
+    /* Image data */
+    public String mImageLocation = null;
+    /* Internal URI, used for restoring from instance state */
+    public Uri mImageInternalLocation = null;
+    public Bitmap mImage = null;
+    /* Selected date */
+    LocalDate mSelectedDate;
+    /* Currently active picker dialog, to prevent opening multiple date/time dialogs */
+    DialogFragment mOpenPickerDialog;
+    /* Dialog title toolbar */
+    Toolbar mToolbar;
+    /* Title input */
+    TextInputEditText mTitleInput;
+    /* Description input */
+    TextInputEditText mDescriptionInput;
+    /* Date input */
+    TextInputEditText mDateInput;
+    /* Image button */
+    Button mSelectImageButton;
     /* Delete button */
-    private final Button mButtonDelete;
-    /* Listener called on delete pressed */
-    private View.OnClickListener mDeleteListener;
+    Button mDeleteButton;
+    /* Cancel button */
+    Button mCancelButton;
     /* Confirm button */
-    private final Button mButtonConfirm;
-    /* This dialog's view */
-    private View mView;
-    /* Activity context */
-    private final Context mContext;
-    /* This dialog's instance. Set when create is called */
-    private AlertDialog mInstance;
+    Button mConfirmButton;
+    /* Current image type dialog */
+    AlertDialog mImageTypeDialog = null;
+    /* Database helper, for inserting and editing Accomplishments */
+    AccomplishmentTableHelper mTableHelper;
+    ActivityResultLauncher<Intent> mImageSelectionResultLauncher;
+    Button mChangeImageButton;
+    Button mDeleteImageButton;
+    ImageButton mRotateImageButton;
 
-    public AccomplishmentDialog(Context context) {
-        super(context);
+    public AccomplishmentDialog() {
+    }
 
-        /* Inflate dialog layout */
-        LayoutInflater inflater = LayoutInflater.from(getContext());
-        View view = inflater.inflate(R.layout.dialog_accomplishment_manage, null);
-        this.setView(view);
-
-        mContext = context;
-        mSelectedTimeLabel = view.findViewById(R.id.textViewSelectedTime);
-        /* Time selection layout, acts as a button */
-        LinearLayout buttonTimeSelection = view.findViewById(R.id.linearLayoutTimeSelection);
-
-        mButtonDelete = view.findViewById(R.id.buttonDelete);
-        mButtonConfirm = view.findViewById(R.id.buttonConfirm);
-
-        if(buttonTimeSelection != null)
-            buttonTimeSelection.setOnClickListener(this::setTimeSelectionButtonListener);
+    public void display(FragmentManager fragmentManager) {
+        this.show(fragmentManager, "accomplishment_dialog");
     }
 
     @Override
-    public AlertDialog create() {
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.AppTheme_FullScreenDialog);
 
-        /* If current selected time was not set, set to current time */
-        if(mSelectedTimeLabel != null && mSelectedTimeLabel.getText().length()==0) {
-            setSelectedTime(LocalDateTime.now());
-        }
-
-        AlertDialog dialog = super.create();
-
-        /* Used for onclick control management */
-        this.mInstance = dialog;
-
-        Window window = dialog.getWindow();
-        if (window != null) {
-            /* Set input mode to auto open keyboard on dialog open */
-            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-        }
-
-        /* Set delete listener */
-        mButtonDelete.setOnClickListener(this::onDeletePressed);
-
-        return dialog;
-    }
-
-    public AccomplishmentDialog setDialogType(DialogType dialogType) {
-        /* If dialog type is new, set dialog to create a new Accomplishment */
-        if (dialogType == DialogType.NEW) {
-            this.setTitle(R.string.new_accomplishment_dialog_title);
-
-            if (mButtonDelete != null) {
-                /* Hide delete button when creating an Accomplishment */
-                mButtonDelete.setVisibility(View.GONE);
-            }
-        }
-        /* If dialog type is edit, set dialog to edit an existing Accomplishment */
-        else if (dialogType == DialogType.EDIT) {
-            this.setTitle(R.string.edit_accomplishment_dialog_title);
-
-            if (mButtonDelete != null) {
-                /* Show delete button when creating an Accomplishment */
-                mButtonDelete.setVisibility(View.VISIBLE);
-            }
-        }
-        return this;
-    }
-
-    /* Set EditText view to provided string */
-    public AccomplishmentDialog setText(String content) {
-        EditText editText = this.getView().findViewById(R.id.editTextAccomplishmentManage);
-
-        if (editText != null) {
-            editText.setText(content);
-            /* Set cursor position to the end of the string */
-            editText.setSelection(content.length());
-        }
-        return this;
-    }
-
-    /* Set selected time */
-    public AccomplishmentDialog setSelectedTime(LocalDateTime date) {
-        if(mSelectedTimeLabel != null && date != null) {
-            DateFormatter dateFormatter = new DateFormatter(DBConstants.TIME_FORMAT);
-            mSelectedTimeLabel.setText(dateFormatter.format(date));
-
-            mSelectedDate = date;
-        }
-        return this;
-    }
-
-    private void setTimeSelectionButtonListener(View view) {
-        if(mContext != null) {
-
-            /* If already provided a time, set the time picker default value to this selected time */
-            if(mSelectedDate == null)
-                mSelectedDate = LocalDateTime.now();
-
-            LocalTime currentTime = mSelectedDate.toLocalTime();
-
-            /* If this Accomplishment dialog is still showing (has not been cancelled) */
-            if(mInstance.isShowing()) {
-                /* Get time picker dialog */
-                new TimePickerDialog(mContext, (timeView, hourOfDay, minute) -> {
-                    LocalTime newTime = LocalTime.of(hourOfDay, minute);
-
-                    mSelectedDate = mSelectedDate.with(newTime);
-
-                    setSelectedTime(mSelectedDate);
-
-                }, currentTime.getHour(), currentTime.getMinute(),
-                        true)
-                        .show();
-            }
-        }
-    }
-
-    public AccomplishmentDialog setConfirmClickListener(View.OnClickListener listener) {
-        if (mButtonConfirm != null) {
-            mButtonConfirm.setOnClickListener(v -> {
-                listener.onClick(v);
-                if (this.mInstance != null) mInstance.dismiss();
-            });
-        }
-        return this;
-    }
-
-    public AccomplishmentDialog setDeleteButtonListener(View.OnClickListener listener) {
-        if (mButtonDelete != null) {
-            this.mDeleteListener = listener;
-        }
-        return this;
-    }
-
-    /* Called when the delete button is pressed
-    * Hide the current dialog and show a new delete confirmation dialog */
-    private void onDeletePressed(View view) {
-        if(mInstance != null) mInstance.dismiss();
-
-        new AlertDialog.Builder(mContext)
-                .setTitle(R.string.confirm_delete)
-                .setPositiveButton(R.string.button_yes, ((dialog, which) ->  {
-                    if(mDeleteListener != null) {
-                        mDeleteListener.onClick(view);
-                        /* Dismiss parent dialog, if it has been reopened (e.g. by pressing No at the same time as pressing Yes) */
-                        if(mInstance.isShowing()) mInstance.dismiss();
+        mImageSelectionResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                new ImageSelectorActivityResult(getContext().getContentResolver()) {
+                    @Override
+                    public void onImageSelectionError(String error) {
+                        if (error != null) {
+                            Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
+                        }
                     }
-                }))
-                .setNegativeButton(R.string.button_no, (dialog, which) -> {
-                    if(mInstance != null) mInstance.show();
-                })
-                .setCancelable(false)
-                .create()
-                .show();
-    }
 
-    public View getView() {
-        return this.mView;
+                    @Override
+                    public void onCameraImageSelectionSuccess(Bitmap image) {
+                        mImage = image;
+                        setCurrentImageLocation(null);
+
+                        onImageAddedSuccess(image);
+                    }
+
+                    private void onImageAddedSuccess(Bitmap image) {
+                        mImageView.setImageBitmap(image);
+                        mImageLinearLayout.setVisibility(View.VISIBLE);
+                        mSelectImageButton.setVisibility(View.GONE);
+                        mImage = image;
+
+                        if (mImageTypeDialog != null) {
+                            mImageTypeDialog.dismiss();
+                        }
+                    }
+
+                    @Override
+                    public void onGalleryImageSelectionSuccess(Uri location, Bitmap image) {
+                        if (image != null && location != null) {
+                            if (mImageLinearLayout != null && mImageView != null) {
+                                setCurrentImageLocation(location.getPath());
+                                mImageInternalLocation = location;
+                                onImageAddedSuccess(image);
+                            }
+                        } else {
+                            Toast.makeText(getContext(), "Failed to select image.", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+
+        Context mContext = getActivity();
+        if (mContext != null) {
+            mTableHelper = new AccomplishmentTableHelper(getActivity());
+        }
     }
 
     @Override
-    public AlertDialog.Builder setView(View view) {
-        super.setView(view);
-        this.mView = view;
-
-        return this;
+    public void onStart() {
+        super.onStart();
+        Dialog dialog = getDialog();
+        if (dialog != null) {
+            int width = ViewGroup.LayoutParams.MATCH_PARENT;
+            int height = ViewGroup.LayoutParams.MATCH_PARENT;
+            dialog.getWindow().setLayout(width, height);
+            //dialog.getWindow().setWindowAnimations(R.anim.enter_from_bottom);
+        }
     }
 
-    /**
-     * Type of current dialog
-     */
-    public enum DialogType {
-        NEW,
-        EDIT
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        View view = inflater.inflate(R.layout.dialog_accomplishment_fullscreen, container, false);
+
+        mToolbar = view.findViewById(R.id.toolbar);
+        mTitleInput = view.findViewById(R.id.editTextAccomplishmentTitle);
+        mDescriptionInput = view.findViewById(R.id.editTextAccomplishmentDescription);
+        mDateInput = view.findViewById(R.id.editTextAccomplishmentDate);
+        mSelectImageButton = view.findViewById(R.id.buttonAddImage);
+        mDeleteButton = view.findViewById(R.id.buttonDelete);
+        mCancelButton = view.findViewById(R.id.buttonCancel);
+        mConfirmButton = view.findViewById(R.id.buttonConfirm);
+
+        /* Image controls */
+        mImageLinearLayout = view.findViewById(R.id.linearLayoutAccomplishmentImage);
+        mImageView = view.findViewById(R.id.imageViewAccomplishmentDialogImage);
+        mChangeImageButton = view.findViewById(R.id.buttonChangeImage);
+        mDeleteImageButton = view.findViewById(R.id.buttonDeleteImage);
+        mRotateImageButton = view.findViewById(R.id.imageButtonRotateImage);
+
+        // Set date/time click listeners
+        mDateInput.setOnClickListener(this::onDateSelectionClicked);
+
+        // Set image selection click listener
+        mSelectImageButton.setOnClickListener(this::onSelectImageButtonClicked);
+        mChangeImageButton.setOnClickListener(this::onSelectImageButtonClicked);
+
+        // Set image delete click listener
+        mDeleteImageButton.setOnClickListener(this::onDeleteImageButtonClicked);
+
+        // Set button click listeners
+        mCancelButton.setOnClickListener(this::onCancelButtonClicked);
+        mConfirmButton.setOnClickListener(this::onConfirmButtonClicked);
+
+        // Set rotate image button click listeners
+        mRotateImageButton.setOnClickListener(this::onRotateImageButtonClicked);
+
+        // Set image view content
+        if (mImageLocation != null) {
+            mImageLinearLayout.setVisibility(View.VISIBLE);
+            mSelectImageButton.setVisibility(View.GONE);
+
+            try {
+                Bitmap image;
+                if (mImageInternalLocation != null) {
+                    image = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), mImageInternalLocation);
+                } else {
+                    image = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), Uri.fromFile(new File(mImageLocation)));
+                }
+
+                mImageView.setImageBitmap(image);
+                mImage = image;
+            } catch (IOException e) {
+                mImageView.setImageResource(R.drawable.ic_image_not_found);
+                Toast.makeText(getContext(), "Failed to load image. It may be missing or deleted.", Toast.LENGTH_LONG).show();
+                e.printStackTrace();
+            }
+        }
+
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mToolbar.setNavigationOnClickListener(v -> dismiss());
+    }
+
+    private void onDateSelectionClicked(View view) {
+        MaterialDatePicker.Builder<Long> mDatePickerBuilder = MaterialDatePicker.Builder.datePicker();
+
+        if (mSelectedDate != null) {
+            mDatePickerBuilder.setSelection(mSelectedDate.toEpochDay() * 86400000);
+        }
+
+        MaterialDatePicker<Long> mDatePicker = mDatePickerBuilder.build();
+
+        mDatePicker.addOnPositiveButtonClickListener((MaterialPickerOnPositiveButtonClickListener<Object>) selection -> {
+            Long dateSelection = mDatePicker.getSelection();
+            if (dateSelection != null) {
+                mSelectedDate = Instant.ofEpochMilli(mDatePicker.getSelection()).atZone(ZoneId.systemDefault()).toLocalDate();
+
+                DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT);
+                mDateInput.setText(dateFormatter.format(mSelectedDate));
+            }
+        });
+        openDialogIfNoneOpen(mDatePicker);
+    }
+
+    public void onSelectImageButtonClicked(View view) {
+        /* Request storage before opening dialog. If not granted, don't open this dialog */
+        PermissionHelper.requestPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE);
+
+        /* If not granted, don't continue. */
+        if(!PermissionHelper.permissionGranted(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            Toast.makeText(getContext(), "Storage permission required for adding pictures.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        /* Open dialog to select gallery or camera picker */
+        MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(getContext());
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_select_image_type, getActivity().findViewById(R.id.linearLayoutSelectImageDialog));
+        dialogBuilder.setView(dialogView);
+
+        mImageTypeDialog = dialogBuilder.create();
+
+        Button cameraButton = dialogView.findViewById(R.id.buttonCamera);
+        Button galleryButton = dialogView.findViewById(R.id.buttonGallery);
+
+        cameraButton.setOnClickListener(view1 -> {
+            onSelectImageTypeButtonClicked(ImageType.CAMERA);
+        });
+        galleryButton.setOnClickListener(view1 -> {
+            onSelectImageTypeButtonClicked(ImageType.GALLERY);
+        });
+
+        mImageTypeDialog.show();
+    }
+
+    private void onSelectImageTypeButtonClicked(ImageType type) {
+        Intent intent = null;
+        if (type == ImageType.CAMERA) {
+            File tempFile;
+            try {
+                tempFile = AccomplishmentImageIO.createTemporaryFile(getContext(), "capture", ".jpeg");
+                tempFile.delete();
+
+                Uri tempFileUri = FileProvider.getUriForFile(getContext(), "io.github.tstewart.todayi.fileprovider", tempFile);
+                intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, tempFileUri);
+
+                /* Alert Intent response listener that there is a new temporary file */
+                ImageSelectorActivityResult.setTempCameraImageLocation(tempFileUri);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(getContext(), "Failed to initialize camera. Couldn't create required temporary file.", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            intent = new Intent(Intent.ACTION_PICK);
+            intent.setType("image/*");
+        }
+
+        if (intent != null) {
+            mImageSelectionResultLauncher.launch(intent);
+
+            /* Prevent auto lock */
+            TodayI.sIsFileSelecting = true;
+        }
+    }
+
+
+    public void onRotateImageButtonClicked(View view) {
+        if (mImage != null) {
+            Matrix matrix = new Matrix();
+            matrix.postRotate(90);
+
+            Bitmap rotatedImage = Bitmap.createBitmap(mImage, 0, 0, mImage.getWidth(), mImage.getHeight(), matrix, true);
+            mImageView.setImageBitmap(rotatedImage);
+            mImage = rotatedImage;
+        }
+    }
+
+    public void onDeleteImageButtonClicked(View view) {
+        setCurrentImageLocation(null);
+        mImage = null;
+        if (mImageLinearLayout != null) {
+            mImageLinearLayout.setVisibility(View.GONE);
+            mSelectImageButton.setVisibility(View.VISIBLE);
+        }
+    }
+
+    void openDialogIfNoneOpen(DialogFragment dialog) {
+        if (mOpenPickerDialog == null || !mOpenPickerDialog.isVisible()) {
+            mOpenPickerDialog = dialog;
+            dialog.show(getChildFragmentManager(), dialog.getTag());
+        }
+    }
+
+    public void onConfirmButtonClicked(View view) {
+        // Do nothing when using generic dialog
+    }
+
+    private void onCancelButtonClicked(View view) {
+        this.dismiss();
+    }
+
+    public void setCurrentImageLocation(String newImageLocation) {
+        this.mImageLocation = newImageLocation;
+    }
+
+
+    public String saveImageFile() throws IOException {
+        if (mImage != null) {
+            /* Create file path to save image */
+            File directory = getContext().getDir("img", Context.MODE_PRIVATE);
+            File outputFile = new File(directory, UUID.randomUUID().toString() + ".jpeg");
+
+            /* Attempt to save image file */
+            new AccomplishmentImageIO(getContext(), outputFile).saveImage(mImage);
+
+            return outputFile.getAbsoluteFile().getPath();
+        } else {
+            return null;
+        }
+    }
+
+    public String saveImageThumbnailFile() throws IOException {
+        if (mImage != null) {
+            /* Create file path to save image */
+            File directory = getContext().getDir("img_thumb", Context.MODE_PRIVATE);
+            File outputFile = new File(directory, UUID.randomUUID().toString() + ".jpeg");
+
+            /* Attempt to save image file */
+            new AccomplishmentImageIO(getContext(), outputFile).saveImageThumbnail(mImage);
+
+            return outputFile.getAbsoluteFile().getPath();
+        } else {
+            return null;
+        }
+    }
+
+    private enum ImageType {
+        CAMERA,
+        GALLERY
     }
 }

@@ -15,26 +15,42 @@
     <!-- Calendar Activity -->
     <string name="gather_dates_failed">Failed to gather dates posted on. Database may be corrupt.</string>
 
+    <!-- Password Activity -->
+    <string name="title_activity_password">Application Locked</string>
+    <string name="button_login">Log in</string>
+
     <!-- Day Rater -->
     <string name="rate_day">Rate your day…</string>
 
     <!-- Accomplishment dialog -->
-    <string name="new_accomplishment_dialog_title">Enter your new accomplishment:</string>
-    <string name="edit_accomplishment_dialog_title">Edit accomplishment:</string>
-    <string name="current_accomplishment_time">Set time</string>
-    <string name="button_set_custom_time">Set time…</string>
+    <string name="new_accomplishment_dialog_title">New Accomplishment</string>
+    <string name="edit_accomplishment_dialog_title">Edit Accomplishment</string>
+    <string name="accomplishment_title_hint">Title</string>
+    <string name="accomplishment_description_hint">Description (optional)</string>
+    <string name="accomplishment_date_hint">Date</string>
     <string name="confirm_delete">Delete this Accomplishment?</string>
+    <string name="button_choose_img">Select image…</string>
+    <string name="dialog_select_image_title">Select Image</string>
 
     <!-- Options Activity -->
     <!-- General Settings -->
     <string name="setting_general_title">General</string>
 
     <string name="setting_enable_gestures">Gestures</string>
-    <string name="setting_enable_gestures_summary">Allow swiping to change current day</string>
-    <string name="setting_clip_accomplishments">Auto Clipping</string>
+    <string name="setting_enable_gestures_summary">Allow swiping date to change current day</string>
+    <string name="setting_clip_accomplishments">Auto clipping</string>
     <string name="setting_clip_accomplishments_summary">Remove empty lines from Accomplishment posts</string>
-    <string name="setting_day_ratings">Maximum Day Rating</string>
+    <string name="setting_time_selection">Time Selection</string>
+    <string name="setting_time_selection_summary">Allow time picking for Accomplishment posts</string>
+    <string name="setting_day_ratings">Maximum day rating</string>
     <string name="setting_day_ratings_summary">Select your rating for the day from 1-%s</string>
+
+    <!-- Privacy Settings -->
+    <string name="setting_privacy_title">Privacy</string>
+    <string name="setting_enable_password_protection">Password protection</string>
+    <string name="setting_enable_password_protection_summary">Require your password or biometrics to initially unlock the application</string>
+    <string name="setting_enable_auto_lock">Auto lock</string>
+    <string name="setting_enable_auto_lock_summary">Lock application automatically when not in focus</string>
 
     <!-- Notification Settings -->
     <string name="setting_notification_title">Notifications</string>
@@ -47,14 +63,19 @@
 
     <!-- Data Management Settings -->
     <string name="setting_data_management_title">Data Management</string>
-    <string name="setting_restore_backup">Restore Backup</string>
+    <string name="setting_restore_backup">Restore backup</string>
     <string name="setting_restore_backup_summary">Reset application data to your most recent backup</string>
     <string name="setting_restore_backup_success">Backup restored successfully!</string>
     <string name="setting_restore_backup_failed">Failed to import backup: %s</string>
-    <string name="setting_force_backup">Force Backup</string>
+    <string name="setting_force_backup">Force backup</string>
     <string name="setting_force_backup_summary">Backup all application data. Replaces existing backup</string>
     <string name="setting_force_backup_success">Backed up successfully!</string>
     <string name="setting_force_backup_failed">Backup failed: %s</string>
+    <string name="setting_restore_from_downloads">Import from file</string>
+    <string name="setting_force_backup_to_downloads">Export to file</string>
+    <string name="setting_force_backup_to_downloads_summary">Export the database to the downloads folder</string>
+    <string name="setting_export_backup_success">Backup exported successfully!</string>
+    <string name="setting_restore_from_downloads_summary">Import the database from the downloads folder</string>
     <string name="about_last_backed_up">Last backed up</string>
     <string name="setting_erase_all_data">Erase all data</string>
 
@@ -62,7 +83,7 @@
     <string name="about_title">About</string>
 
     <string name="about_created_by">Created by</string>
-    <string name="about_created_by_summary">Thomas Stewart</string>
+    <string name="about_created_by_summary">Taylor Stewart</string>
     <string name="about_version">Version</string>
     <string name="about_version_default_summary">Unknown</string>
 
@@ -71,6 +92,8 @@
     <string name="erase_all_warning_dialog_message">This cannot be undone.</string>
     <string name="restore_backup_confirmation">Are you sure you want to restore from backup? All data not backed up will be removed.</string>
     <string name="force_backup_confirmation">Are you sure you want to force backup? Your current backup will be overwritten.</string>
+    <string name="force_backup_to_dl_confirmation">Are you sure you want to backup your data to a file?</string>
+    <string name="restore_backup_from_dl_confirmation">Are you sure you want to restore a backup? Your current data will be overwritten.</string>
     <string name="erase_all_confirmed">All data erased.</string>
 
     <!-- Notifications -->
@@ -78,30 +101,48 @@
     <string name="daily_reminder_notification_title">Daily Reminder</string>
     <string name="daily_reminder_notification_content">What have you done today?</string>
 
-    <!-- Tutorial -->
-    <string name="tutorial_next">Next</string>
-    <string name="tutorial_start">Start!</string>
-    <string name="tutorial_welcome">Welcome to Today I, a mini application to track your accomplishments for the day, as well rate your overall feeling of each day.</string>
-    <string name="tutorial_new_accomplishment">To add new Accomplishments, select the New button.</string>
-    <string name="tutorial_current_day">The current selected day is shown here.</string>
-    <string name="tutorial_previous_day">You can change to the previous day by selecting this button.</string>
-    <string name="tutorial_next_day">You can change to the next day by selecting this button.</string>
-    <string name="tutorial_gesture">You can also swipe left and right to change days (If this is enabled in Settings.)</string>
-    <string name="tutorial_day_rating">You can rate your day on a scale from 1–5 by selecting a rating.</string>
-    <string name="tutorial_calendar">You can view past day ratings and quickly find Accomplishments from previous days in the calendar.</string>
-
+    <!-- Onboarding -->
+    <string name="ob_intro_title">Welcome to Today I</string>
+    <string name="ob_intro_description">A mini application to track your accomplishments and day ratings, created by Taylor Stewart.</string>
+    <string name="ob_accomplishments_title">Accomplishments</string>
+    <string name="ob_accomplishments_description">Add accomplishments by pressing the + button on the bottom right.</string>
+    <string name="ob_editor_title">Editor</string>
+    <string name="ob_editor_description">You can give your accomplishment a title, description, and an image.</string>
+    <string name="ob_accomp_card_title">Managing your Accomplishment</string>
+    <string name="ob_accomp_card_description">Once an accomplishment is added, you can manage it by clicking the card to show additional options.</string>
+    <string name="ob_reordering_title">Re-ordering</string>
+    <string name="ob_reordering_description">You can re-order an accomplishment by pressing and dragging on the icon on the top right of an accomplishment card.</string>
+    <string name="ob_rating_title">Ratings</string>
+    <string name="ob_rating_description">Rate your day by pressing one of the numbers located below the date. (You can adjust this scale in settings).</string>
+    <string name="ob_calendar_title">Calendar</string>
+    <string name="ob_calendar_description">Click the date to show the calendar view. This gives you an overview of ratings, as well as showing days you have added accomplishments to. You can also use this to quickly change between dates.</string>
+    <string name="ob_end_dialog">End Onboarding?</string>
     <!-- Other -->
     <string name="button_confirm">Confirm</string>
+    <string name="button_save">Save</string>
+    <string name="button_edit">Edit</string>
     <string name="button_delete">Delete</string>
+    <string name="button_cancel">Cancel</string>
     <string name="button_yes">Yes</string>
     <string name="button_no">No</string>
+    <string name="button_skip">Skip</string>
+    <string name="button_next">Next</string>
+    <string name="button_previous">Previous</string>
+    <string name="button_change_img">Change Image</string>
+    <string name="button_delete_img">Delete Image</string>
+    <string name="button_end">End</string>
+    <string name="button_camera">Camera</string>
+    <string name="button_gallery">Gallery</string>
+
     <string name="new_accomplishment_invalid_text">Your accomplishment must be between 1 and 200 characters.</string>
     <string name="automatic_backup_failed">Automatic backup failed: %s</string>
 
     <!-- User Preferences keys -->
     <string name="user_prefs_file_location_key">io.github.tstewart.todayi.userprefs</string>
     <string name="user_prefs_last_backed_up_key">last_backed_up</string>
-    <string name="user_prefs_tutorial_shown">tutorial_shown</string>
+    <string name="user_prefs_onboarding_shown">onboarding_shown</string>
+    <string name="user_prefs_password_protection">password_protection_enabled</string>
+    <string name="user_prefs_auto_lock">auto_lock</string>
     <string name="user_prefs_notifications_enabled">notifications_enabled</string>
     <string name="user_prefs_notification_time">notification_time</string>
     <string name="user_prefs_gestures_enabled">gestures_enabled</string>
@@ -117,10 +158,14 @@
     <string name="debug_get_accomplishments">Get all Accomplishments</string>
     <string name="debug_get_ratings">Get all Ratings</string>
     <string name="debug_send_notification">Send test notification</string>
-    <string name="debug_show_tutorial">Show tutorial</string>
+    <string name="debug_show_onboarding">Show onboarding</string>
     <string name="debug_back">Back</string>
+
+    <!-- Shortcuts -->
+    <string name="shortcut_create_short">New Accomplishment</string>
+    <string name="shortcut_create_long">Create a new Accomplishment post</string>
 
     <!-- Accessibility -->
     <string name="application_logo_description">Application logo</string>
-
+    <string name="password_protection_failed_no_biometrics">Failed to lock the application. Missing biometrics or password on this device.</string>
 </resources>

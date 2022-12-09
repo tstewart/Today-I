@@ -19,9 +19,9 @@ public class DailyAlarmReceiver extends BroadcastReceiver {
         /* Set Activity to be launched when notification is clicked */
         Intent mainActivityIntent = new Intent(context, MainActivity.class);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(context,0,mainActivityIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, mainActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         /* Show notification to user */
-        sender.sendNotification(pendingIntent, false,context.getString(R.string.daily_reminder_notification_title), context.getString(R.string.daily_reminder_notification_content));
+        sender.sendNotification(pendingIntent, false, context.getString(R.string.daily_reminder_notification_title), context.getString(R.string.daily_reminder_notification_content));
     }
 }

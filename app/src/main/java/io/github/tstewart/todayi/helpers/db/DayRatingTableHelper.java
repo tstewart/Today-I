@@ -4,9 +4,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import androidx.annotation.NonNull;
+
 import org.threeten.bp.LocalDate;
 
-import androidx.annotation.NonNull;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.errors.ValidationFailedException;
 import io.github.tstewart.todayi.helpers.DateFormatter;
@@ -24,7 +25,8 @@ public class DayRatingTableHelper extends DatabaseHelper {
 
     /**
      * Set rating for the provided date
-     * @param date Date to set rating for
+     *
+     * @param date   Date to set rating for
      * @param rating Rating to set for provided date
      * @throws IllegalArgumentException If the rating is invalid (e.g. the rating is outside the provided bounds)
      */
@@ -37,14 +39,14 @@ public class DayRatingTableHelper extends DatabaseHelper {
 
             SQLiteDatabase db = getDatabase();
             /* Format the date to database requirements */
-            String dateFormatted = new DateFormatter(DBConstants.DATE_FORMAT_NO_TIME).format(date);
+            String dateFormatted = new DateFormatter(DBConstants.DATE_FORMAT).format(date);
             /* Get a cursor with the provided date, to check if the Ratings table already contains a value for this date */
             Cursor existingRowCheck = db.rawQuery(DBConstants.DAY_RATING_QUERY, new String[]{dateFormatted});
 
             /* If the cursor is able to move to a record for this date, then a record already exists */
             if (existingRowCheck.moveToFirst()) {
                 /* Update the existing record */
-                super.update( dayRating, DBConstants.COLUMN_DATE + "=?", new String[]{dateFormatted});
+                super.updateDBObject(dayRating, DBConstants.COLUMN_DATE + "=?", new String[]{dateFormatted});
             } else {
                 /* Insert a new record for this date */
                 super.insert(dayRating);
@@ -56,7 +58,8 @@ public class DayRatingTableHelper extends DatabaseHelper {
 
     /**
      * Get a rating for the provided date
-     * @param date Date to get rating for
+     *
+     * @param date         Date to get rating for
      * @param defaultValue Default value, returned if there is no record for this date
      * @return Returns the rating for the date, or a defaultValue if no rating was recorded for the provided date
      */
@@ -67,7 +70,7 @@ public class DayRatingTableHelper extends DatabaseHelper {
             SQLiteDatabase db = getDatabase();
 
             /* Format the date to database requirements */
-            String dateFormatted = new DateFormatter(DBConstants.DATE_FORMAT_NO_TIME).format(date);
+            String dateFormatted = new DateFormatter(DBConstants.DATE_FORMAT).format(date);
             /* Get a cursor with the provided date, to check if the Ratings table contains a value for this date */
             Cursor cursor = db.rawQuery(DBConstants.DAY_RATING_QUERY, new String[]{dateFormatted});
 

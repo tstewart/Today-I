@@ -1,72 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="io.github.tstewart.todayi">
+        package="io.github.tstewart.todayi">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
-        android:name=".TodayI"
-        android:allowBackup="true"
-        android:fullBackupContent="@xml/backup_descriptor"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:requestLegacyExternalStorage="true"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity
-            android:name=".ui.activities.SettingsActivity"
-            android:label="@string/activity_settings">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.activities.MainActivity" />
-        </activity>
-        <activity
-            android:name=".ui.activities.DebugActivity"
-            android:parentActivityName=".ui.activities.SettingsActivity"
+            android:name=".TodayI"
+            android:allowBackup="true"
+            android:fullBackupContent="@xml/backup_descriptor"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:requestLegacyExternalStorage="true"
+            android:roundIcon="@mipmap/ic_launcher_round"
+            android:supportsRtl="true"
             android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.activities.SettingsActivity" />
+        <activity
+                android:name=".ui.activities.OnboardingActivity"
+                android:exported="false">
         </activity>
         <activity
-            android:name=".ui.activities.CalendarActivity"
-            android:parentActivityName=".ui.activities.MainActivity"
-            android:theme="@style/AppTheme">
+                android:name=".ui.activities.PasswordActivity"
+                android:exported="false"
+                android:label="@string/title_activity_password"
+                android:launchMode="singleInstance" />
+        <activity
+                android:name=".ui.activities.SettingsActivity"
+                android:label="@string/activity_settings">
             <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.activities.MainActivity" />
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".ui.activities.MainActivity" />
         </activity>
         <activity
-            android:name=".ui.activities.SplashScreenActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:theme="@style/AppTheme.SplashScreen">
+                android:name=".ui.activities.DebugActivity"
+                android:parentActivityName=".ui.activities.SettingsActivity"
+                android:theme="@style/AppTheme">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".ui.activities.SettingsActivity" />
+        </activity>
+        <activity
+                android:name=".ui.activities.MainActivity"
+                android:configChanges="orientation|screenSize"
+                android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".ui.activities.MainActivity"
-            android:launchMode="singleTask"
-            android:configChanges="orientation|screenSize">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
 
+            <meta-data
+                    android:name="android.app.shortcuts"
+                    android:resource="@xml/shortcuts" />
+        </activity>
+        <activity android:name=".ui.activities.BackupImportActivity" />
+        <activity android:name=".ui.activities.BackupExportActivity" />
         <receiver
-            android:name=".notifications.receivers.WakeUpAlarmReceiver"
-            android:enabled="true">
+                android:name=".notifications.receivers.WakeUpAlarmReceiver"
+                android:enabled="true"
+                android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".notifications.receivers.DailyAlarmReceiver"
-            android:enabled="true" />
+                android:name=".notifications.receivers.DailyAlarmReceiver"
+                android:enabled="true" />
+
+        <provider
+                android:name="androidx.core.content.FileProvider"
+                android:authorities="io.github.tstewart.todayi.fileprovider"
+                android:grantUriPermissions="true"
+                android:exported="false">
+            <meta-data
+                    android:name="android.support.FILE_PROVIDER_PATHS"
+                    android:resource="@xml/filepaths" />
+        </provider>
     </application>
 
 </manifest>

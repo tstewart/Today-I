@@ -2,9 +2,10 @@ package io.github.tstewart.todayi.models;
 
 import android.content.ContentValues;
 
-import org.threeten.bp.LocalDateTime;
-
 import androidx.annotation.NonNull;
+
+import org.threeten.bp.LocalDate;
+
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.UserPreferences;
 import io.github.tstewart.todayi.errors.ValidationFailedException;
@@ -17,43 +18,77 @@ import io.github.tstewart.todayi.interfaces.DatabaseObject;
  */
 public class Accomplishment implements DatabaseObject {
 
-    /* Maximum length of an Accomplishment body */
-    private static final int MAX_CONTENT_LENGTH = 200;
-
+    /* Maximum length of an Accomplishment title */
+    private static final int MAX_TITLE_LENGTH = 100;
+    /* Maximum length of an Accomplishment description */
+    private static final int MAX_DESCRIPTION_LENGTH = 1000;
+    /* Title of Accomplishment */
+    private final String mTitle;
     /* Date Accomplishment was created on */
-    private LocalDateTime mDate;
-    /* Content of Accomplishment */
-    private String mContent;
+    private LocalDate mDate;
+    /* Description of Accomplishment */
+    private String mDescription;
+    /* Accomplishment image location */
+    private String mImageLocation;
+    /* Accomplishment image thumbnail location */
+    private String mImageThumbnailLocation;
 
-    public Accomplishment(@NonNull LocalDateTime mDate, @NonNull String content) {
+    public Accomplishment(@NonNull LocalDate date, @NonNull String title, String description) {
+        this.mDate = date;
+        this.mTitle = title;
+        this.mDescription = description;
+        mImageLocation = null;
+        mImageThumbnailLocation = null;
+    }
+
+    public Accomplishment(@NonNull LocalDate mDate, @NonNull String mTitle, String mDescription, String imageLocation, String imageThumbnailLocation) {
         this.mDate = mDate;
-        /* Set content, removing empty lines if this is required */
-        setContent(content);
+        this.mTitle = mTitle;
+        this.mDescription = mDescription;
+        this.mImageLocation = imageLocation;
+        this.mImageThumbnailLocation = imageThumbnailLocation;
+    }
+
+    /* Create new Accomplishment for inserting into database. Clips Accomplishment content if enabled. */
+    public static Accomplishment create(@NonNull LocalDate date, @NonNull String title, String description, String imageLocation, String imageThumbnailLocation) {
+        Accomplishment accomplishment = new Accomplishment(date, title, description, imageLocation, imageThumbnailLocation);
+        /* Clip content if enabled */
+        accomplishment.setContent(description);
+
+        return accomplishment;
+    }
+
+    public static Accomplishment create(@NonNull LocalDate date, @NonNull String title, String description) {
+        return create(date, title, description, null, null);
     }
 
     /**
      * Validates the Accomplishment to Database standards.
-     * @throws IllegalArgumentException If the validation failed for any reason (e.g. Length was longer than MAX_CONTENT_LENGTH)
+     *
+     * @throws IllegalArgumentException If the validation failed for any reason (e.g. Length was longer than MAX_TITLE_LENGTH)
      */
     @Override
     public void validate() throws ValidationFailedException {
 
         /* If the content has been assigned as null (through setContent) */
-        if(mContent == null) {
+        if (mDescription == null) {
             throw new ValidationFailedException("Content cannot be null.");
         }
 
         /* If the content string is empty with spaces removed */
-        if (mContent.trim().isEmpty()) {
+        if (mTitle.trim().isEmpty()) {
             throw new ValidationFailedException("Accomplishment must not be empty.");
             /* If the content string is larger than the maximum content length */
-        } else if (mContent.length() > MAX_CONTENT_LENGTH) {
-            throw new ValidationFailedException("Accomplishment can not be longer than " + MAX_CONTENT_LENGTH + " characters.");
+        } else if (mTitle.length() > MAX_TITLE_LENGTH) {
+            throw new ValidationFailedException("Accomplishment title can not be longer than " + MAX_TITLE_LENGTH + " characters.");
+        } else if (mDescription.length() > MAX_DESCRIPTION_LENGTH) {
+            throw new ValidationFailedException("Accomplishment description can not be longer than " + MAX_DESCRIPTION_LENGTH + " characters.");
         }
     }
 
     /**
      * Bundle variables into ContentValues object, for insertion into Database
+     *
      * @return ContentValues instance with variables bundled
      */
     @Override
@@ -67,29 +102,59 @@ public class Accomplishment implements DatabaseObject {
             contentValues.put(DBConstants.COLUMN_DATE, dateFormatter.format(mDate));
         }
 
-        contentValues.put(DBConstants.COLUMN_CONTENT, mContent);
+        contentValues.put(DBConstants.COLUMN_TITLE, mTitle);
+
+        contentValues.put(DBConstants.COLUMN_DESCRIPTION, mDescription);
+
+        contentValues.put(DBConstants.COLUMN_IMAGE, mImageLocation);
+
+        contentValues.put(DBConstants.COLUMN_THUMBNAIL, mImageThumbnailLocation);
 
         return contentValues;
     }
 
-    public LocalDateTime getDate() {
+    public LocalDate getDate() {
         return mDate;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(LocalDate date) {
         this.mDate = date;
     }
 
-    public String getContent() {
-        return mContent;
+    public String getTitle() {
+        return mTitle;
+    }
+
+    public String getDescription() {
+        return mDescription;
+    }
+
+    public void setDescription(String description) {
+        this.mDescription = description;
+    }
+
+    public String getImageLocation() {
+        return mImageLocation;
+    }
+
+    public void setImageLocation(String imageLocation) {
+        this.mImageLocation = imageLocation;
+    }
+
+    public String getImageThumbnailLocation() {
+        return mImageThumbnailLocation;
+    }
+
+    public void setImageThumbnailLocation(String imageThumbnailLocation) {
+        this.mImageThumbnailLocation = imageThumbnailLocation;
     }
 
     public void setContent(String content) {
         /* If empty lines should be removed when creating Accomplishments */
-        if(content != null && UserPreferences.isAccomplishmentClipEmptyLines()) {
+        if (content != null && UserPreferences.isAccomplishmentClipEmptyLines()) {
             content = content.replaceAll("(?m)^[ \t]*\r?\n", "");
         }
-        this.mContent = content;
+        this.mDescription = content;
     }
 
 }

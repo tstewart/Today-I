@@ -5,9 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import androidx.annotation.NonNull;
+
 import org.threeten.bp.LocalDate;
 
-import androidx.annotation.NonNull;
 import io.github.tstewart.todayi.data.DBConstants;
 import io.github.tstewart.todayi.data.Database;
 import io.github.tstewart.todayi.events.OnDatabaseInteracted;
@@ -22,9 +23,9 @@ public class DatabaseHelper {
     /* Application environment context */
     final Context mContext;
     /* Table of database to read/write data from */
-    private final String mTable;
+    final String mTable;
     /* Database to read/write data from */
-    private SQLiteDatabase mDb;
+    SQLiteDatabase mDb;
 
     public DatabaseHelper(@NonNull Context context, @NonNull String table) {
         this.mContext = context;
@@ -33,6 +34,7 @@ public class DatabaseHelper {
 
     /**
      * Checks if the table has no records
+     *
      * @return True if the table has no records
      */
     public boolean isEmpty() {
@@ -51,6 +53,7 @@ public class DatabaseHelper {
 
     /**
      * Get all records from the table
+     *
      * @return Cursor containing all records for the table
      */
     public Cursor getAll() {
@@ -59,6 +62,7 @@ public class DatabaseHelper {
 
     /**
      * Insert DatabaseObject into table
+     *
      * @param object DatabaseObject to be inserted into table
      */
     public void insert(@NonNull DatabaseObject object) {
@@ -68,6 +72,7 @@ public class DatabaseHelper {
 
         /* If the ContentValues were generated successfully, insert into table */
         if (cv != null) {
+
             mDb.insert(this.mTable, null, cv);
         }
 
@@ -77,27 +82,37 @@ public class DatabaseHelper {
 
     /**
      * Update DatabaseObject from table
-     * @param object DatabaseObject to update existing record with
+     *
+     * @param object      DatabaseObject to update existing record with
      * @param whereClause Replace records that match clause
-     * @param whereArgs Replaces '?' wildcards in whereClause
+     * @param whereArgs   Replaces '?' wildcards in whereClause
      */
-    public void update(@NonNull DatabaseObject object, String whereClause, String[] whereArgs) {
-        mDb = getDatabase();
+    public void updateDBObject(@NonNull DatabaseObject object, String whereClause, String[] whereArgs) {
         ContentValues cv = object.createCV();
+
+        update(cv, whereClause, whereArgs, true);
+    }
+
+    public void update(ContentValues cv, String whereClause, String[] whereArgs, boolean notifyUpdate) {
+        mDb = getDatabase();
 
         /* If the ContentValues were generated successfully, update record */
         if (cv != null) {
+
             mDb.update(this.mTable, cv, whereClause, whereArgs);
         }
 
-        /* Notify event listeners that the database was interacted with */
-        OnDatabaseInteracted.notifyDatabaseInteracted();
+        if (notifyUpdate) {
+            /* Notify event listeners that the database was interacted with */
+            OnDatabaseInteracted.notifyDatabaseInteracted();
+        }
     }
 
     /**
      * Delete record from table
+     *
      * @param whereClause Delete records that match clause
-     * @param whereArgs Replaces '?' wildcards in whereClause
+     * @param whereArgs   Replaces '?' wildcards in whereClause
      */
     public void delete(String whereClause, String[] whereArgs) {
         mDb = getDatabase();
@@ -110,6 +125,7 @@ public class DatabaseHelper {
 
     /**
      * Get a database instance from the provided context environment.
+     *
      * @return Returns a SQLiteDatabase instance
      */
     public SQLiteDatabase getDatabase() {
@@ -117,15 +133,16 @@ public class DatabaseHelper {
     }
 
     /**
-     * Get date query with wildcard at the end, to match all records with the same date without the time
+     * Get date query, to match all records with the same date
+     *
      * @param date Date to check for records on
      * @return A formatted query to check for records on the provided date
      */
-    public String getDateQueryWildcardFormat(LocalDate date) {
-        DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT_NO_TIME);
+    public String getDateQuery(LocalDate date) {
+        DateFormatter dateFormatter = new DateFormatter(DBConstants.DATE_FORMAT);
 
-        if(date != null) {
-            return dateFormatter.format(date) + "%";
+        if (date != null) {
+            return dateFormatter.format(date);
         }
         return null;
     }

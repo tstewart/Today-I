@@ -25,6 +25,25 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/setting_privacy_title">
+
+        <SwitchPreferenceCompat
+            android:id="@+id/switchPreferenceCompat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:icon="@drawable/setting_icon_lock"
+            app:key="@string/user_prefs_password_protection"
+            app:summary="@string/setting_enable_password_protection_summary"
+            app:title="@string/setting_enable_password_protection" />
+        <SwitchPreferenceCompat
+            android:id="@+id/switchPreferenceCompat2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:dependency="@string/user_prefs_password_protection"
+            app:key="@string/user_prefs_auto_lock"
+            app:summary="@string/setting_enable_auto_lock_summary"
+            app:title="@string/setting_enable_auto_lock" />
+    </PreferenceCategory>
     <PreferenceCategory app:title="@string/setting_notification_title">
 
         <SwitchPreferenceCompat
@@ -40,6 +59,16 @@
 
     </PreferenceCategory>
     <PreferenceCategory app:title="@string/setting_data_management_title">
+
+        <!--<Preference
+            app:key="importFromDL"
+            app:title="@string/setting_restore_from_downloads"
+            app:summary="@string/setting_restore_from_downloads_summary"/>
+
+        <Preference
+            app:key="exportToDL"
+            app:title="@string/setting_force_backup_to_downloads"
+            app:summary="@string/setting_force_backup_to_downloads_summary"/> -->
 
         <Preference
             app:key="import"
